@@ -793,7 +793,7 @@ index 0000000000000000000000000000000000000000..c7a4186bb93992733f393ac58fb4d65b
 +}
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..6c20c7a9c8a4dd4957a7b3d8a10429dab0476aa2
+index 0000000000000000000000000000000000000000..8f8fd98f96cd390ba43033521982a13044df91cf
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 @@ -0,0 +1,30 @@
@@ -807,7 +807,7 @@ index 0000000000000000000000000000000000000000..6c20c7a9c8a4dd4957a7b3d8a10429da
 +
 +@SuppressWarnings({"CanBeFinal", "FieldCanBeLocal", "FieldMayBeFinal", "NotNullFieldNotInitialized", "InnerClassMayBeStatic"})
 +public class GaleGlobalConfiguration extends ConfigurationPart {
-+    static final int CURRENT_VERSION = 18;
++    static final int CURRENT_VERSION = 1;
 +    private static GaleGlobalConfiguration instance;
 +    public static GaleGlobalConfiguration get() {
 +        return instance;
@@ -848,7 +848,7 @@ index 0000000000000000000000000000000000000000..9db322100dacbf2343fbb86e3e83d99f
 +}
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..898f7f85ec155ce28dd4d380b4b9825582b37d34
+index 0000000000000000000000000000000000000000..b82bb95b524c95cdefb81abef906eded0717e9a1
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 @@ -0,0 +1,40 @@
@@ -868,7 +868,7 @@ index 0000000000000000000000000000000000000000..898f7f85ec155ce28dd4d380b4b98255
 +@SuppressWarnings({"FieldCanBeLocal", "FieldMayBeFinal", "NotNullFieldNotInitialized", "InnerClassMayBeStatic"})
 +public class GaleWorldConfiguration extends ConfigurationPart {
 +    private static final Logger LOGGER = LogUtils.getLogger();
-+    public static final int CURRENT_VERSION = 19;
++    public static final int CURRENT_VERSION = 1;
 +
 +    private transient final SpigotWorldConfig spigotConfig;
 +    private transient final ResourceLocation worldKey;
