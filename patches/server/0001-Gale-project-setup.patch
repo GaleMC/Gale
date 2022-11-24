@@ -1,0 +1,27 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MartijnMuijsers <martijnmuijsers@live.nl>
+Date: Thu, 24 Nov 2022 21:26:57 +0100
+Subject: [PATCH] Gale project setup
+
+
+diff --git a/build.gradle.kts b/build.gradle.kts
+index b0e4f11e8af4b909a56bb5576d05ef0537fb25f7..3103e811e1f41b782a5b95537b921c59cac2054f 100644
+--- a/build.gradle.kts
++++ b/build.gradle.kts
+@@ -7,8 +7,14 @@ plugins {
+ }
+ 
+ dependencies {
+-    implementation(project(":paper-api"))
+-    implementation(project(":paper-mojangapi"))
++    // Gale start - project setup
++    // Depend on own API
++    implementation(project(":gale-api"))
++    // Depend on Paper MojangAPI
++    implementation("io.papermc.paper:paper-mojangapi:1.19.2-R0.1-SNAPSHOT") {
++        exclude("io.papermc.paper", "paper-api")
++    }
++    // Gale end - project setup
+     // Paper start
+     implementation("org.jline:jline-terminal-jansi:3.21.0")
+     implementation("net.minecrell:terminalconsoleappender:1.3.0")
