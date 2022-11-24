@@ -5,7 +5,7 @@ Subject: [PATCH] Gale configuration
 
 
 diff --git a/src/main/java/co/aikar/timings/TimingsExport.java b/src/main/java/co/aikar/timings/TimingsExport.java
-index 06bff37e4c1fddd3be6343049a66787c63fb420c..09e8cf64d85ef7147e0106ba0c477590b6f1c534 100644
+index 06bff37e4c1fddd3be6343049a66787c63fb420c..ce257cf454300603d93ed68eb409461111bbac31 100644
 --- a/src/main/java/co/aikar/timings/TimingsExport.java
 +++ b/src/main/java/co/aikar/timings/TimingsExport.java
 @@ -241,7 +241,10 @@ public class TimingsExport extends Thread {
@@ -30,7 +30,7 @@ index 06bff37e4c1fddd3be6343049a66787c63fb420c..09e8cf64d85ef7147e0106ba0c477590
          JSONObject object = new JSONObject();
          for (String key : config.getKeys(false)) {
 diff --git a/src/main/java/io/papermc/paper/configuration/ConfigurationPart.java b/src/main/java/io/papermc/paper/configuration/ConfigurationPart.java
-index 7a4a7a654fe2516ed894a68f2657344df9d70f4c..b81dec5f603a9224e48a01d401ab262a2deb0844 100644
+index 7a4a7a654fe2516ed894a68f2657344df9d70f4c..82e6716c006492b9f24f148a918944b50231a158 100644
 --- a/src/main/java/io/papermc/paper/configuration/ConfigurationPart.java
 +++ b/src/main/java/io/papermc/paper/configuration/ConfigurationPart.java
 @@ -1,6 +1,6 @@
@@ -42,7 +42,7 @@ index 7a4a7a654fe2516ed894a68f2657344df9d70f4c..b81dec5f603a9224e48a01d401ab262a
      public static abstract class Post extends ConfigurationPart {
  
 diff --git a/src/main/java/io/papermc/paper/configuration/Configurations.java b/src/main/java/io/papermc/paper/configuration/Configurations.java
-index c2dca89291361d60cbf160cab77749cb0130035a..ea03a1c02732a2b068686c603adcd443f05fba89 100644
+index c2dca89291361d60cbf160cab77749cb0130035a..cf6d50218769e3fecd12dbde70a03b5042feddf4 100644
 --- a/src/main/java/io/papermc/paper/configuration/Configurations.java
 +++ b/src/main/java/io/papermc/paper/configuration/Configurations.java
 @@ -5,7 +5,10 @@ import io.leangen.geantyref.TypeToken;
@@ -110,7 +110,7 @@ index c2dca89291361d60cbf160cab77749cb0130035a..ea03a1c02732a2b068686c603adcd443
 +
  }
 diff --git a/src/main/java/io/papermc/paper/configuration/InnerClassFieldDiscoverer.java b/src/main/java/io/papermc/paper/configuration/InnerClassFieldDiscoverer.java
-index a0aa1f1a7adf986d500a2135aa42e138aa3c4f08..b58bbb0643dc72eba056e421d35362de855eb6f8 100644
+index a0aa1f1a7adf986d500a2135aa42e138aa3c4f08..6d19b985222d78750828fd2719c1fbf738e69a56 100644
 --- a/src/main/java/io/papermc/paper/configuration/InnerClassFieldDiscoverer.java
 +++ b/src/main/java/io/papermc/paper/configuration/InnerClassFieldDiscoverer.java
 @@ -5,6 +5,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
@@ -152,7 +152,7 @@ index a0aa1f1a7adf986d500a2135aa42e138aa3c4f08..b58bbb0643dc72eba056e421d35362de
      }
  }
 diff --git a/src/main/java/io/papermc/paper/configuration/PaperConfigurations.java b/src/main/java/io/papermc/paper/configuration/PaperConfigurations.java
-index e731de3ac158c5a4cff236c6f5001674cd488a77..b51df5d61745890faff60ea32bee754aed28b939 100644
+index e731de3ac158c5a4cff236c6f5001674cd488a77..ceef4eed87363298816426dfc19f3207be1af682 100644
 --- a/src/main/java/io/papermc/paper/configuration/PaperConfigurations.java
 +++ b/src/main/java/io/papermc/paper/configuration/PaperConfigurations.java
 @@ -125,13 +125,13 @@ public class PaperConfigurations extends Configurations<GlobalConfiguration, Wor
@@ -217,7 +217,7 @@ index e731de3ac158c5a4cff236c6f5001674cd488a77..b51df5d61745890faff60ea32bee754a
 +    // Gale end - Gale configuration
  }
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 5bfeb649336f023d05392c07d040299c605133c8..afd22d4446b29e83fea9c84b97ef96798d7e6895 100644
+index 18df8eab2e33a7cde7d12f111d3dbfcaeab3abd5..121495135676a7de4d1e6b06cb6c77e5523a2b0d 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -2,9 +2,6 @@ package net.minecraft.server;
@@ -285,7 +285,7 @@ index 5bfeb649336f023d05392c07d040299c605133c8..afd22d4446b29e83fea9c84b97ef9679
      // CraftBukkit end
  
 diff --git a/src/main/java/net/minecraft/server/Services.java b/src/main/java/net/minecraft/server/Services.java
-index ef6ff78af2ae747e939895b82ee9d11c75012dcd..7e4f2b3ecaeac731ee3a6b66ce85f239fe5f11b6 100644
+index ef6ff78af2ae747e939895b82ee9d11c75012dcd..b445d4562304fec912131ee32c4e0f894f44a928 100644
 --- a/src/main/java/net/minecraft/server/Services.java
 +++ b/src/main/java/net/minecraft/server/Services.java
 @@ -6,12 +6,13 @@ import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
@@ -329,7 +329,7 @@ index ef6ff78af2ae747e939895b82ee9d11c75012dcd..7e4f2b3ecaeac731ee3a6b66ce85f239
      }
  }
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index ff3eced0e20c39b825586897ee2fed01dd471d88..acb9e2f67a5ffe46136e1687561630f96b27ce06 100644
+index ff3eced0e20c39b825586897ee2fed01dd471d88..661794310eb10d4b9fe29c9445abd57826214d41 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 @@ -1,20 +1,15 @@
@@ -366,7 +366,7 @@ index ff3eced0e20c39b825586897ee2fed01dd471d88..acb9e2f67a5ffe46136e1687561630f9
          if (this.convertOldUsers()) {
              this.getProfileCache().save(false); // Paper
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index feb0a6d6a90850977b393440881c472c317a9323..73e5a7893c49d488525ed53ca09e91d8f90cc7bd 100644
+index feb0a6d6a90850977b393440881c472c317a9323..4b7058dc684d15a782455dd52a4d57e21ba18592 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
 @@ -125,12 +125,10 @@ import net.minecraft.world.level.chunk.storage.EntityStorage;
@@ -392,7 +392,7 @@ index feb0a6d6a90850977b393440881c472c317a9323..73e5a7893c49d488525ed53ca09e91d8
          this.convertable = convertable_conversionsession;
          this.uuid = WorldUUID.getUUID(convertable_conversionsession.levelDirectory.path().toFile());
 diff --git a/src/main/java/net/minecraft/world/level/Level.java b/src/main/java/net/minecraft/world/level/Level.java
-index 596fb8ee21ba8450db13a11890d241ef3974d81d..ed65805906a6e1e03c2d96b76bba749a9dfd27be 100644
+index 596fb8ee21ba8450db13a11890d241ef3974d81d..756e0ef8fa2226812c3322d1fe605c60132b01df 100644
 --- a/src/main/java/net/minecraft/world/level/Level.java
 +++ b/src/main/java/net/minecraft/world/level/Level.java
 @@ -1,10 +1,7 @@
@@ -468,7 +468,7 @@ index 596fb8ee21ba8450db13a11890d241ef3974d81d..ed65805906a6e1e03c2d96b76bba749a
          this.world = new CraftWorld((ServerLevel) this, gen, biomeProvider, env);
  
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index e41e390a2eaf7f9dc489304db3e499d5055e7cff..4ccd6640bf0125d5b6734ef0de993e675fd9d45a 100644
+index f394324450ec17c8df5a40d27eb0297b091e912f..f63cadbecb126e58ededb61e87e600b7701df57b 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 @@ -966,6 +966,7 @@ public final class CraftServer implements Server {
@@ -496,7 +496,7 @@ index e41e390a2eaf7f9dc489304db3e499d5055e7cff..4ccd6640bf0125d5b6734ef0de993e67
              org.spigotmc.RestartCommand.restart();
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleConfigurations.java b/src/main/java/org/galemc/gale/configuration/GaleConfigurations.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..e42a31422ea04243f62a5d34753d10269f7e977e
+index 0000000000000000000000000000000000000000..c7a4186bb93992733f393ac58fb4d65bbc8db861
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/configuration/GaleConfigurations.java
 @@ -0,0 +1,291 @@
@@ -582,7 +582,7 @@ index 0000000000000000000000000000000000000000..e42a31422ea04243f62a5d34753d1026
 +            their respective world folder. The files are named %s
 +
 +            Wiki: https://github.com/GaleMC/Gale/wiki
-+            Discord: TODO""", WORLD_CONFIG_FILE_NAME);
++            Discord: https://discord.gg/dKp4wTDNrw""", WORLD_CONFIG_FILE_NAME);
 +
 +    private static final String WORLD_DEFAULTS_HEADER = """
 +            This is the world defaults configuration file for Gale.
@@ -596,7 +596,7 @@ index 0000000000000000000000000000000000000000..e42a31422ea04243f62a5d34753d1026
 +            the world-specific config file inside each world folder.
 +
 +            Wiki: https://github.com/GaleMC/Gale/wiki
-+            Discord: TODO""";
++            Discord: https://discord.gg/dKp4wTDNrw""";
 +
 +    private static final Function<ContextMap, String> WORLD_HEADER = map -> String.format("""
 +        This is a world configuration file for Gale.
@@ -793,7 +793,7 @@ index 0000000000000000000000000000000000000000..e42a31422ea04243f62a5d34753d1026
 +}
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..83b804746cce3660f4e3d1027375b052d4d7f59a
+index 0000000000000000000000000000000000000000..6c20c7a9c8a4dd4957a7b3d8a10429dab0476aa2
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 @@ -0,0 +1,30 @@
@@ -829,7 +829,7 @@ index 0000000000000000000000000000000000000000..83b804746cce3660f4e3d1027375b052
 +}
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleRemovedConfigurations.java b/src/main/java/org/galemc/gale/configuration/GaleRemovedConfigurations.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..f95f4166999d5b6d5363a49a181ffae618e2dce0
+index 0000000000000000000000000000000000000000..9db322100dacbf2343fbb86e3e83d99febfa9d9d
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/configuration/GaleRemovedConfigurations.java
 @@ -0,0 +1,13 @@
@@ -848,7 +848,7 @@ index 0000000000000000000000000000000000000000..f95f4166999d5b6d5363a49a181ffae6
 +}
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..b2113c0ad2a7e6e19b3b981428cfc6f9df8423ac
+index 0000000000000000000000000000000000000000..898f7f85ec155ce28dd4d380b4b9825582b37d34
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 @@ -0,0 +1,40 @@
@@ -894,7 +894,7 @@ index 0000000000000000000000000000000000000000..b2113c0ad2a7e6e19b3b981428cfc6f9
 +}
 diff --git a/src/main/java/org/galemc/gale/configuration/timingsexport/GaleConfigurationTimingsExport.java b/src/main/java/org/galemc/gale/configuration/timingsexport/GaleConfigurationTimingsExport.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..5196416daeba635b303fa553c92d0741d5fb154c
+index 0000000000000000000000000000000000000000..579c2e69d8f6ce8398eb1297d1d1ead98c9068a5
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/configuration/timingsexport/GaleConfigurationTimingsExport.java
 @@ -0,0 +1,19 @@
