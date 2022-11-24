@@ -1,0 +1,60 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MartijnMuijsers <martijnmuijsers@live.nl>
+Date: Thu, 24 Nov 2022 23:39:32 +0100
+Subject: [PATCH] Do nog log invalid statistics
+
+License: MIT (https://opensource.org/licenses/MIT)
+
+This patch is based on the following patch:
+"Ignore statistics warnings"
+By: Aikar <aikar@aikar.co>
+As part of: EmpireCraft (https://github.com/starlis/empirecraft)
+Licensed under: MIT (https://opensource.org/licenses/MIT)
+
+diff --git a/src/main/java/net/minecraft/stats/ServerStatsCounter.java b/src/main/java/net/minecraft/stats/ServerStatsCounter.java
+index c59f98ca3adfdd90cdc5999aeadbb0834efedc0f..efdea88c7d7de90330c2606435b52b60e204b56c 100644
+--- a/src/main/java/net/minecraft/stats/ServerStatsCounter.java
++++ b/src/main/java/net/minecraft/stats/ServerStatsCounter.java
+@@ -35,6 +35,7 @@ import net.minecraft.server.level.ServerPlayer;
+ import net.minecraft.util.datafix.DataFixTypes;
+ import net.minecraft.world.entity.player.Player;
+ import org.apache.commons.io.FileUtils;
++import org.galemc.gale.configuration.GaleGlobalConfiguration;
+ import org.slf4j.Logger;
+ 
+ public class ServerStatsCounter extends StatsCounter {
+@@ -134,15 +135,15 @@ public class ServerStatsCounter extends StatsCounter {
+                                             Util.ifElse(this.getStat(statisticwrapper, s2), (statistic) -> {
+                                                 this.stats.put(statistic, nbttagcompound2.getInt(s2));
+                                             }, () -> {
+-                                                ServerStatsCounter.LOGGER.warn("Invalid statistic in {}: Don't know what {} is", this.file, s2);
++                                                if (GaleGlobalConfiguration.get().logToConsole.invalidStatistics) ServerStatsCounter.LOGGER.warn("Invalid statistic in {}: Don't know what {} is", this.file, s2); // Gale - EMC - do not log invalid statistics
+                                             });
+                                         } else {
+-                                            ServerStatsCounter.LOGGER.warn("Invalid statistic value in {}: Don't know what {} is for key {}", new Object[]{this.file, nbttagcompound2.get(s2), s2});
++                                            if (GaleGlobalConfiguration.get().logToConsole.invalidStatistics) ServerStatsCounter.LOGGER.warn("Invalid statistic value in {}: Don't know what {} is for key {}", new Object[]{this.file, nbttagcompound2.get(s2), s2}); // Gale - EMC - do not log invalid statistics
+                                         }
+                                     }
+ 
+                                 }, () -> {
+-                                    ServerStatsCounter.LOGGER.warn("Invalid statistic type in {}: Don't know what {} is", this.file, s1);
++                                    if (GaleGlobalConfiguration.get().logToConsole.invalidStatistics) ServerStatsCounter.LOGGER.warn("Invalid statistic type in {}: Don't know what {} is", this.file, s1); // Gale - EMC - do not log invalid statistics
+                                 });
+                             }
+                         }
+diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
+index a1d5197a5e7a00fad1025741ef8adcea45d42533..c67adaa664bfe2b371f14efa83ea200b0e1006f0 100644
+--- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
++++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
+@@ -53,4 +53,11 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+ 
+     }
+ 
++    public LogToConsole logToConsole;
++    public class LogToConsole extends ConfigurationPart {
++
++        public boolean invalidStatistics = true; // Gale - EMC - do not log invalid statistics
++
++    }
++
+ }
