@@ -1,0 +1,78 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MartijnMuijsers <martijnmuijsers@live.nl>
+Date: Wed, 23 Nov 2022 20:12:48 +0100
+Subject: [PATCH] Reduce acquire POI for stuck entities
+
+License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+
+This patch is based on the following patch:
+"Skip POI finding if stuck in vehicle"
+By: Paul Sauve <paul@technove.co>
+As part of: Airplane (https://github.com/TECHNOVE/Airplane)
+Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+
+* Airplane copyright *
+
+Airplane
+Copyright (C) 2020 Technove LLC
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+diff --git a/src/main/java/net/minecraft/world/entity/ai/behavior/AcquirePoi.java b/src/main/java/net/minecraft/world/entity/ai/behavior/AcquirePoi.java
+index 43243537b765a2d270be6de3f053fea77ff67d18..b7013df56364a4503bfc9e56533cb1fcef49f4c6 100644
+--- a/src/main/java/net/minecraft/world/entity/ai/behavior/AcquirePoi.java
++++ b/src/main/java/net/minecraft/world/entity/ai/behavior/AcquirePoi.java
+@@ -65,7 +65,10 @@ public class AcquirePoi extends Behavior<PathfinderMob> {
+             this.nextScheduledStart = entity.level.getGameTime() + (long)world.random.nextInt(20);
+             return false;
+         } else {
+-            return world.getGameTime() >= this.nextScheduledStart;
++            // Gale start - Airplane - reduce acquire POI for stuck entities
++            long stuckEntityAdditionalWaitTime = world.galeConfig().smallOptimizations.reducedIntervals.acquirePoiForStuckEntity;
++            return world.getGameTime() >= this.nextScheduledStart + (stuckEntityAdditionalWaitTime <= 0L ? 0L : entity.getNavigation().isStuck() ? stuckEntityAdditionalWaitTime : 0L);
++            // Gale end - Airplane - reduce acquire POI for stuck entities
+         }
+     }
+ 
+diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
+index fa513614e32963fede05e05cacefbf31010d0c07..a277e64b3bcfe3add3d3652b65255c8c91cdbdd8 100644
+--- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
++++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
+@@ -83,6 +83,26 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+         }
+         // Gale end - Airplane - reduce projectile chunk loading
+ 
++        public ReducedIntervals reducedIntervals;
++        public class ReducedIntervals extends ConfigurationPart {
++
++            // Gale start - Airplane - reduce acquire POI for stuck entities
++            /**
++             * Extra interval (on top of the regular interval)
++             * for entities that are stuck (e.g. in a vehicle) to attempt to acquire a POI.
++             * If they become unstuck during this time, they will immediately be free to acquire a POI again.
++             * Given in ticks.
++             * Any value < 0 behaves like 0.
++             * <ul>
++             *     <li><i>Default</i>: 200 (10 seconds)</li>
++             *     <li><i>Vanilla</i>: 0</li>
++             * </ul>
++             */
++            public int acquirePoiForStuckEntity = 200;
++            // Gale end - Airplane - reduce acquire POI for stuck entities
++
++        }
++
+     }
+ 
+ }

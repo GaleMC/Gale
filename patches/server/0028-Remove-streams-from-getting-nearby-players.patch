@@ -1,0 +1,82 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MartijnMuijsers <martijnmuijsers@live.nl>
+Date: Wed, 23 Nov 2022 22:56:19 +0100
+Subject: [PATCH] Remove streams from getting nearby players
+
+This patch is based on the following patch:
+"Remove streams from getting nearby players"
+By: Paul Sauve <paul@technove.co>
+As part of: Airplane (https://github.com/TECHNOVE/Airplane)
+Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+
+* Airplane copyright *
+
+Airplane
+Copyright (C) 2020 Technove LLC
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
+index 6fa47becd0f83ac4273ef3a10c314aa27b08184b..3f265ea03ac101aa6915f5013602cb60389c2257 100644
+--- a/src/main/java/net/minecraft/world/entity/Entity.java
++++ b/src/main/java/net/minecraft/world/entity/Entity.java
+@@ -487,17 +487,37 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+         this.isLegacyTrackingEntity = isLegacyTrackingEntity;
+     }
+ 
++    // Gale start - Airplane - remove streams from getting nearby players
++    private org.spigotmc.TrackingRange.TrackingRangeType getFurthestEntity(Entity entity, net.minecraft.server.level.ChunkMap chunkMap, org.spigotmc.TrackingRange.TrackingRangeType type, int range) {
++        List<Entity> passengers = entity.getPassengers();
++        for (int i = 0, size = passengers.size(); i < size; i++) {
++            Entity passenger = passengers.get(i);
++            org.spigotmc.TrackingRange.TrackingRangeType passengerType = passenger.trackingRangeType;
++            int passengerRange = chunkMap.getEntityTrackerRange(passengerType.ordinal());
++            if (passengerRange > range) {
++                type = passengerType;
++                range = passengerRange;
++            }
++
++            type = this.getFurthestEntity(passenger, chunkMap, type, range);
++        }
++
++        return type;
++    }
++    // Gale end - Airplane - remove streams from getting nearby players
++
+     public final com.destroystokyo.paper.util.misc.PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<ServerPlayer> getPlayersInTrackRange() {
+         // determine highest range of passengers
+         if (this.passengers.isEmpty()) {
+             return ((ServerLevel)this.level).getChunkSource().chunkMap.playerEntityTrackerTrackMaps[this.trackingRangeType.ordinal()]
+                 .getObjectsInRange(MCUtil.getCoordinateKey(this));
+         }
+-        Iterable<Entity> passengers = this.getIndirectPassengers();
+         net.minecraft.server.level.ChunkMap chunkMap = ((ServerLevel)this.level).getChunkSource().chunkMap;
+         org.spigotmc.TrackingRange.TrackingRangeType type = this.trackingRangeType;
+         int range = chunkMap.getEntityTrackerRange(type.ordinal());
+ 
++        // Gale start - Airplane - remove streams from getting nearby players - use getFurthestEntity to skip getIndirectPassengers
++        /*
+         for (Entity passenger : passengers) {
+             org.spigotmc.TrackingRange.TrackingRangeType passengerType = passenger.trackingRangeType;
+             int passengerRange = chunkMap.getEntityTrackerRange(passengerType.ordinal());
+@@ -506,6 +526,9 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+                 range = passengerRange;
+             }
+         }
++         */
++        type = this.getFurthestEntity(this, chunkMap, type, range);
++        // Gale end - Airplane - remove streams from getting nearby players - use getFurthestEntity to skip getIndirectPassengers
+ 
+         return chunkMap.playerEntityTrackerTrackMaps[type.ordinal()].getObjectsInRange(MCUtil.getCoordinateKey(this));
+     }

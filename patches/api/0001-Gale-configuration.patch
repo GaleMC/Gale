@@ -1,0 +1,26 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MartijnMuijsers <martijnmuijsers@live.nl>
+Date: Wed, 23 Nov 2022 21:03:04 +0100
+Subject: [PATCH] Gale configuration
+
+
+diff --git a/src/main/java/org/bukkit/Server.java b/src/main/java/org/bukkit/Server.java
+index e43fef0152468944d8a33036344a43e95fe58476..5d03be9b9ff305aa46f9e2443750387dbc2e1623 100644
+--- a/src/main/java/org/bukkit/Server.java
++++ b/src/main/java/org/bukkit/Server.java
+@@ -1967,6 +1967,15 @@ public interface Server extends PluginMessageRecipient, net.kyori.adventure.audi
+         {
+             throw new UnsupportedOperationException("Not supported yet.");
+         }
++
++        // Gale start - Gale configuration - API
++        @NotNull
++        public org.bukkit.configuration.file.YamlConfiguration getGaleConfig()
++        {
++            throw new UnsupportedOperationException("Not supported yet.");
++        }
++        // Gale end - Gale configuration - API
++
+         // Paper end
+ 
+         /**

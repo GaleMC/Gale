@@ -1,0 +1,63 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MartijnMuijsers <martijnmuijsers@live.nl>
+Date: Wed, 23 Nov 2022 20:18:05 +0100
+Subject: [PATCH] Remove iterators from Inventory#contains
+
+License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+
+This patch is based on the following patch:
+"Remove iterators from inventory contains"
+By: Paul Sauve <paul@technove.co>
+As part of: Airplane (https://github.com/TECHNOVE/Airplane)
+Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+
+* Airplane copyright *
+
+Airplane
+Copyright (C) 2020 Technove LLC
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+diff --git a/src/main/java/net/minecraft/world/entity/player/Inventory.java b/src/main/java/net/minecraft/world/entity/player/Inventory.java
+index a1a625a8dacf4d2bbf75ddd90dce1b1be663c919..e1bd7984d08f43ba6646e4223fce9201178c174d 100644
+--- a/src/main/java/net/minecraft/world/entity/player/Inventory.java
++++ b/src/main/java/net/minecraft/world/entity/player/Inventory.java
+@@ -681,6 +681,8 @@ public class Inventory implements Container, Nameable {
+     }
+ 
+     public boolean contains(ItemStack stack) {
++        // Gale start - Airplane - remove iterators from Inventory#contains
++        /*
+         Iterator iterator = this.compartments.iterator();
+ 
+         while (iterator.hasNext()) {
+@@ -695,7 +697,18 @@ public class Inventory implements Container, Nameable {
+                 }
+             }
+         }
++         */
++        for (int i = 0; i < this.compartments.size(); i++) {
++            List<ItemStack> list = this.compartments.get(i);
++            for (int j = 0; j < list.size(); j++) {
++                ItemStack itemstack1 = list.get(j);
+ 
++                if (!itemstack1.isEmpty() && itemstack1.sameItem(stack)) {
++                    return true;
++                }
++            }
++        }
++        // Gale end - Airplane - remove iterators from Inventory#contains
+         return false;
+     }
+ 

@@ -1,0 +1,69 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MartijnMuijsers <martijnmuijsers@live.nl>
+Date: Wed, 23 Nov 2022 20:40:40 +0100
+Subject: [PATCH] Cache on climbable check
+
+License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+
+This patch is based on the following patch:
+"Cache climbing check for activation"
+By: Paul Sauve <paul@technove.co>
+As part of: Airplane (https://github.com/TECHNOVE/Airplane)
+Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+
+* Airplane copyright *
+
+Airplane
+Copyright (C) 2020 Technove LLC
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
+index 4eb6d1536cdc105aacf7507b69b7ac16a2dbd78a..842f12ad6106eaa9a5bde69d3702abcac4d347b1 100644
+--- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
++++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
+@@ -1906,6 +1906,20 @@ public abstract class LivingEntity extends Entity {
+         return this.lastClimbablePos;
+     }
+ 
++
++    // Gale start - Airplane - cache on climbable check
++    private boolean cachedOnClimable = false;
++    private BlockPos lastClimbingPosition = null;
++
++    public boolean onClimbableCached() {
++        if (!this.blockPosition().equals(this.lastClimbingPosition)) {
++            this.cachedOnClimable = this.onClimbable();
++            this.lastClimbingPosition = this.blockPosition();
++        }
++        return this.cachedOnClimable;
++    }
++    // Gale end - Airplane - cache on climbable check
++
+     public boolean onClimbable() {
+         if (this.isSpectator()) {
+             return false;
+diff --git a/src/main/java/org/spigotmc/ActivationRange.java b/src/main/java/org/spigotmc/ActivationRange.java
+index 1b42c98956342832c37f0aa266f85271daa4ba5b..c9da41176d03c572b83d18f160b873c732686bd2 100644
+--- a/src/main/java/org/spigotmc/ActivationRange.java
++++ b/src/main/java/org/spigotmc/ActivationRange.java
+@@ -291,7 +291,7 @@ public class ActivationRange
+         if ( entity instanceof LivingEntity )
+         {
+             LivingEntity living = (LivingEntity) entity;
+-            if ( living.onClimbable() || living.jumping || living.hurtTime > 0 || living.activeEffects.size() > 0 ) // Paper
++            if ( living.onClimbableCached() || living.jumping || living.hurtTime > 0 || living.activeEffects.size() > 0 ) // Paper // Gale - Airplane - cache on climbable check - use cached
+             {
+                 return 1; // Paper
+             }

@@ -1,0 +1,542 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MartijnMuijsers <martijnmuijsers@live.nl>
+Date: Wed, 23 Nov 2022 15:34:33 +0100
+Subject: [PATCH] Gale branding changes
+
+
+diff --git a/src/main/java/com/destroystokyo/paper/Metrics.java b/src/main/java/com/destroystokyo/paper/Metrics.java
+index 7b1843e16745ca8db2244e17490d291401f22679..20fa3302f9b3153e24033feb2d05f0b22b0efeb3 100644
+--- a/src/main/java/com/destroystokyo/paper/Metrics.java
++++ b/src/main/java/com/destroystokyo/paper/Metrics.java
+@@ -593,7 +593,7 @@ public class Metrics {
+             boolean logFailedRequests = config.getBoolean("logFailedRequests", false);
+             // Only start Metrics, if it's enabled in the config
+             if (config.getBoolean("enabled", true)) {
+-                Metrics metrics = new Metrics("Paper", serverUUID, logFailedRequests, Bukkit.getLogger());
++                Metrics metrics = new Metrics("Paper", serverUUID, logFailedRequests, Bukkit.getLogger()); // Gale - branding changes - TODO - make Gale (register with bStats)
+ 
+                 metrics.addCustomChart(new Metrics.SimplePie("minecraft_version", () -> {
+                     String minecraftVersion = Bukkit.getVersion();
+diff --git a/src/main/java/com/destroystokyo/paper/PaperVersionFetcher.java b/src/main/java/com/destroystokyo/paper/PaperVersionFetcher.java
+index bf42969859545a8a520923ef1836ffa4a5cc24a0..91e97c57c3202f84986ec4d9cb1a374fd5256eac 100644
+--- a/src/main/java/com/destroystokyo/paper/PaperVersionFetcher.java
++++ b/src/main/java/com/destroystokyo/paper/PaperVersionFetcher.java
+@@ -1,85 +1,40 @@
+ package com.destroystokyo.paper;
+ 
+-import com.destroystokyo.paper.util.VersionFetcher;
+ import com.google.common.base.Charsets;
+ import com.google.common.io.Resources;
+-import com.google.gson.*;
+-import net.kyori.adventure.text.Component;
+-import net.kyori.adventure.text.event.ClickEvent;
+-import net.kyori.adventure.text.format.NamedTextColor;
+-import net.kyori.adventure.text.format.TextDecoration;
+-import net.kyori.adventure.text.TextComponent;
++import com.google.gson.Gson;
++import com.google.gson.JsonArray;
++import com.google.gson.JsonObject;
++import com.google.gson.JsonSyntaxException;
++import org.galemc.gale.version.AbstractPaperVersionFetcher;
+ 
+-import javax.annotation.Nonnull;
+ import javax.annotation.Nullable;
+-import java.io.*;
+-import java.net.HttpURLConnection;
++import java.io.BufferedReader;
++import java.io.IOException;
+ import java.net.URL;
+ import java.util.stream.StreamSupport;
+ 
+-public class PaperVersionFetcher implements VersionFetcher {
+-    private static final java.util.regex.Pattern VER_PATTERN = java.util.regex.Pattern.compile("^([0-9\\.]*)\\-.*R"); // R is an anchor, will always give '-R' at end
+-    private static final String GITHUB_BRANCH_NAME = "master";
+-    private static final String DOWNLOAD_PAGE = "https://papermc.io/downloads";
+-    private static @Nullable String mcVer;
++// Gale start - branding changes - version fetcher
++/**
++ * The original version fetcher for Paper. Most of the original content of this class has been moved to
++ * {@link AbstractPaperVersionFetcher}.
++ */
++public class PaperVersionFetcher extends AbstractPaperVersionFetcher {
+ 
+-    @Override
+-    public long getCacheTime() {
+-        return 720000;
++    public PaperVersionFetcher() {
++        super("master", "https://papermc.io/downloads", "Paper", "PaperMC", "PaperMC", "Paper");
+     }
+ 
+-    @Nonnull
+     @Override
+-    public Component getVersionMessage(@Nonnull String serverVersion) {
+-        String[] parts = serverVersion.substring("git-Paper-".length()).split("[-\\s]");
+-        final Component updateMessage = getUpdateStatusMessage("PaperMC/Paper", GITHUB_BRANCH_NAME, parts[0]);
+-        final Component history = getHistory();
+-
+-        return history != null ? TextComponent.ofChildren(updateMessage, Component.newline(), history) : updateMessage;
+-    }
+-
+-    private static @Nullable String getMinecraftVersion() {
+-        if (mcVer == null) {
+-            java.util.regex.Matcher matcher = VER_PATTERN.matcher(org.bukkit.Bukkit.getBukkitVersion());
+-            if (matcher.find()) {
+-                String result = matcher.group();
+-                mcVer = result.substring(0, result.length() - 2); // strip 'R' anchor and trailing '-'
+-            } else {
+-                org.bukkit.Bukkit.getLogger().warning("Unable to match version to pattern! Report to PaperMC!");
+-                org.bukkit.Bukkit.getLogger().warning("Pattern: " + VER_PATTERN.toString());
+-                org.bukkit.Bukkit.getLogger().warning("Version: " + org.bukkit.Bukkit.getBukkitVersion());
+-            }
+-        }
+-
+-        return mcVer;
++    protected boolean canFetchDistanceFromSiteApi() {
++        return true;
+     }
+ 
+-    private static Component getUpdateStatusMessage(@Nonnull String repo, @Nonnull String branch, @Nonnull String versionInfo) {
+-        int distance;
+-        try {
+-            int jenkinsBuild = Integer.parseInt(versionInfo);
+-            distance = fetchDistanceFromSiteApi(jenkinsBuild, getMinecraftVersion());
+-        } catch (NumberFormatException ignored) {
+-            versionInfo = versionInfo.replace("\"", "");
+-            distance = fetchDistanceFromGitHub(repo, branch, versionInfo);
+-        }
+-
+-        switch (distance) {
+-            case -1:
+-                return Component.text("Error obtaining version information", NamedTextColor.YELLOW);
+-            case 0:
+-                return Component.text("You are running the latest version", NamedTextColor.GREEN);
+-            case -2:
+-                return Component.text("Unknown version", NamedTextColor.YELLOW);
+-            default:
+-                return Component.text("You are " + distance + " version(s) behind", NamedTextColor.YELLOW)
+-                        .append(Component.newline())
+-                        .append(Component.text("Download the new version at: ")
+-                                .append(Component.text(DOWNLOAD_PAGE, NamedTextColor.GOLD)
+-                                        .hoverEvent(Component.text("Click to open", NamedTextColor.WHITE))
+-                                        .clickEvent(ClickEvent.openUrl(DOWNLOAD_PAGE))));
+-        }
++    @Override
++    protected int fetchDistanceFromSiteApi(int jenkinsBuild) {
++        return fetchDistanceFromSiteApi(jenkinsBuild, this.getMinecraftVersion());
+     }
++    // Gale end - branding changes - version fetcher
+ 
+     private static int fetchDistanceFromSiteApi(int jenkinsBuild, @Nullable String siteApiVersion) {
+         if (siteApiVersion == null) { return -1; }
+@@ -105,45 +60,4 @@ public class PaperVersionFetcher implements VersionFetcher {
+         }
+     }
+ 
+-    // Contributed by Techcable <Techcable@outlook.com> in GH-65
+-    private static int fetchDistanceFromGitHub(@Nonnull String repo, @Nonnull String branch, @Nonnull String hash) {
+-        try {
+-            HttpURLConnection connection = (HttpURLConnection) new URL("https://api.github.com/repos/" + repo + "/compare/" + branch + "..." + hash).openConnection();
+-            connection.connect();
+-            if (connection.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) return -2; // Unknown commit
+-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), Charsets.UTF_8))) {
+-                JsonObject obj = new Gson().fromJson(reader, JsonObject.class);
+-                String status = obj.get("status").getAsString();
+-                switch (status) {
+-                    case "identical":
+-                        return 0;
+-                    case "behind":
+-                        return obj.get("behind_by").getAsInt();
+-                    default:
+-                        return -1;
+-                }
+-            } catch (JsonSyntaxException | NumberFormatException e) {
+-                e.printStackTrace();
+-                return -1;
+-            }
+-        } catch (IOException e) {
+-            e.printStackTrace();
+-            return -1;
+-        }
+-    }
+-
+-    @Nullable
+-    private Component getHistory() {
+-        final VersionHistoryManager.VersionData data = VersionHistoryManager.INSTANCE.getVersionData();
+-        if (data == null) {
+-            return null;
+-        }
+-
+-        final String oldVersion = data.getOldVersion();
+-        if (oldVersion == null) {
+-            return null;
+-        }
+-
+-        return Component.text("Previous version: " + oldVersion, NamedTextColor.GRAY, TextDecoration.ITALIC);
+-    }
+ }
+diff --git a/src/main/java/com/destroystokyo/paper/console/PaperConsole.java b/src/main/java/com/destroystokyo/paper/console/PaperConsole.java
+index c5d5648f4ca603ef2b1df723b58f9caf4dd3c722..dc5557fb3682934fee31ac2b7d6a3f244049e62d 100644
+--- a/src/main/java/com/destroystokyo/paper/console/PaperConsole.java
++++ b/src/main/java/com/destroystokyo/paper/console/PaperConsole.java
+@@ -17,7 +17,7 @@ public final class PaperConsole extends SimpleTerminalConsole {
+     @Override
+     protected LineReader buildReader(LineReaderBuilder builder) {
+         builder
+-                .appName("Paper")
++                .appName("Gale") // Gale - branding changes
+                 .variable(LineReader.HISTORY_FILE, java.nio.file.Paths.get(".console_history"))
+                 .completer(new ConsoleCommandCompleter(this.server))
+                 .option(LineReader.Option.COMPLETE_IN_WORD, true);
+diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
+index 6dc6c3bccb4ba34268a87b0754c87eb1e0df4135..5bfeb649336f023d05392c07d040299c605133c8 100644
+--- a/src/main/java/net/minecraft/server/MinecraftServer.java
++++ b/src/main/java/net/minecraft/server/MinecraftServer.java
+@@ -921,7 +921,13 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+         shutdownThread = Thread.currentThread();
+         org.spigotmc.WatchdogThread.doStop(); // Paper
+         if (!isSameThread()) {
+-            MinecraftServer.LOGGER.info("Stopping main thread (Ignore any thread death message you see! - DO NOT REPORT THREAD DEATH TO PAPER)");
++            // Gale start - branding changes
++            /*
++            We do not want people to report thread issues to Paper,
++            but we do want people to report thread issues to Gale.
++             */
++            MinecraftServer.LOGGER.info("Stopping main thread (Ignore any thread death message you see! - DO NOT REPORT THREAD DEATH TO PAPER - If you think this is a Gale bug, please report it at https://github.com/GaleMC/Gale/issues )");
++            // Gale end - branding changes
+             while (this.getRunningThread().isAlive()) {
+                 this.getRunningThread().stop();
+                 try {
+@@ -1654,7 +1660,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+ 
+     @DontObfuscate
+     public String getServerModName() {
+-        return "Paper"; // Paper - Paper > // Spigot - Spigot > // CraftBukkit - cb > vanilla!
++        return "Gale"; // Gale - branding changes - Gale > // Paper - Paper > // Spigot - Spigot > // CraftBukkit - cb > vanilla!
+     }
+ 
+     public SystemReport fillSystemReport(SystemReport details) {
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+index 07eac5439164a7345476c55277538a152359630a..e41e390a2eaf7f9dc489304db3e499d5055e7cff 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+@@ -248,7 +248,7 @@ import javax.annotation.Nullable; // Paper
+ import javax.annotation.Nonnull; // Paper
+ 
+ public final class CraftServer implements Server {
+-    private final String serverName = "Paper"; // Paper
++    private final String serverName = "Gale"; // Paper // Gale - branding changes
+     private final String serverVersion;
+     private final String bukkitVersion = Versioning.getBukkitVersion();
+     private final Logger logger = Logger.getLogger("Minecraft");
+diff --git a/src/main/java/org/bukkit/craftbukkit/scheduler/CraftScheduler.java b/src/main/java/org/bukkit/craftbukkit/scheduler/CraftScheduler.java
+index cdefb2025eedea7e204d70d568adaf1c1ec4c03c..d9c1047df7f7bbe6d89c1cfd57711de6d224c0d6 100644
+--- a/src/main/java/org/bukkit/craftbukkit/scheduler/CraftScheduler.java
++++ b/src/main/java/org/bukkit/craftbukkit/scheduler/CraftScheduler.java
+@@ -504,7 +504,7 @@ public class CraftScheduler implements BukkitScheduler {
+                 this.parsePending();
+             } else {
+                 //this.debugTail = this.debugTail.setNext(new CraftAsyncDebugger(currentTick + CraftScheduler.RECENT_TICKS, task.getOwner(), task.getTaskClass())); // Paper
+-                task.getOwner().getLogger().log(Level.SEVERE, "Unexpected Async Task in the Sync Scheduler. Report this to Paper"); // Paper
++                task.getOwner().getLogger().log(Level.SEVERE, "Unexpected Async Task in the Sync Scheduler. Report this to Gale"); // Paper // Gale - branding changes
+                 // We don't need to parse pending
+                 // (async tasks must live with race-conditions if they attempt to cancel between these few lines of code)
+             }
+diff --git a/src/main/java/org/bukkit/craftbukkit/util/CraftMagicNumbers.java b/src/main/java/org/bukkit/craftbukkit/util/CraftMagicNumbers.java
+index 103ab25119bfcdd21eac7e1deeac025108e3c138..7819f7d3b0dd766cd8b53b654937d9e34d316086 100644
+--- a/src/main/java/org/bukkit/craftbukkit/util/CraftMagicNumbers.java
++++ b/src/main/java/org/bukkit/craftbukkit/util/CraftMagicNumbers.java
+@@ -435,7 +435,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
+ 
+     @Override
+     public com.destroystokyo.paper.util.VersionFetcher getVersionFetcher() {
+-        return new com.destroystokyo.paper.PaperVersionFetcher();
++        return new org.galemc.gale.version.GaleVersionFetcher(); // Gale - branding changes - version fetcher
+     }
+ 
+     @Override
+diff --git a/src/main/java/org/bukkit/craftbukkit/util/Versioning.java b/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
+index 774556a62eb240da42e84db4502e2ed43495be17..a10b3d4484a3ce3ec0ea5eb49d89497fcc9e955e 100644
+--- a/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
++++ b/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
+@@ -11,7 +11,7 @@ public final class Versioning {
+     public static String getBukkitVersion() {
+         String result = "Unknown-Version";
+ 
+-        InputStream stream = Bukkit.class.getClassLoader().getResourceAsStream("META-INF/maven/io.papermc.paper/paper-api/pom.properties");
++        InputStream stream = Bukkit.class.getClassLoader().getResourceAsStream("META-INF/maven/org.galemc.gale/gale-api/pom.properties"); // Gale - branding changes
+         Properties properties = new Properties();
+ 
+         if (stream != null) {
+diff --git a/src/main/java/org/galemc/gale/version/AbstractPaperVersionFetcher.java b/src/main/java/org/galemc/gale/version/AbstractPaperVersionFetcher.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..11404abc8891ef4a0340fd4006d32c66769bee59
+--- /dev/null
++++ b/src/main/java/org/galemc/gale/version/AbstractPaperVersionFetcher.java
+@@ -0,0 +1,179 @@
++// Gale - branding changes - version fetcher
++
++package org.galemc.gale.version;
++
++import com.destroystokyo.paper.PaperVersionFetcher;
++import com.destroystokyo.paper.VersionHistoryManager;
++import com.destroystokyo.paper.util.VersionFetcher;
++import com.google.common.base.Charsets;
++import com.google.gson.Gson;
++import com.google.gson.JsonObject;
++import com.google.gson.JsonSyntaxException;
++import net.kyori.adventure.text.Component;
++import net.kyori.adventure.text.TextComponent;
++import net.kyori.adventure.text.event.ClickEvent;
++import net.kyori.adventure.text.format.NamedTextColor;
++import net.kyori.adventure.text.format.TextDecoration;
++
++import javax.annotation.Nonnull;
++import javax.annotation.Nullable;
++import java.io.BufferedReader;
++import java.io.IOException;
++import java.io.InputStreamReader;
++import java.net.HttpURLConnection;
++import java.net.URL;
++
++/**
++ * An abstract version fetcher, derived from {@link PaperVersionFetcher}.
++ * This class was then made to be a superclass of both {@link PaperVersionFetcher}
++ * and {@link GaleVersionFetcher}.
++ * <br>
++ * Changes to {@link PaperVersionFetcher} are indicated by Gale marker comments.
++ */
++public abstract class AbstractPaperVersionFetcher implements VersionFetcher {
++    private static final java.util.regex.Pattern VER_PATTERN = java.util.regex.Pattern.compile("^([0-9\\.]*)\\-.*R"); // R is an anchor, will always give '-R' at end
++    private static @Nullable String mcVer;
++
++    // Gale start - branding changes - version fetcher
++
++    protected final String gitHubBranchName;
++    protected final String downloadPage;
++    protected final String projectDisplayName;
++    protected final String organizationDisplayName;
++    protected final String gitHubOrganizationName;
++    protected final String gitHubRepoName;
++
++    protected AbstractPaperVersionFetcher(String githubBranchName, String downloadPage, String projectDisplayName, String organizationDisplayName, String gitHubOrganizationName, String gitHubRepoName) {
++        this.gitHubBranchName = githubBranchName;
++        this.downloadPage = downloadPage;
++        this.projectDisplayName = projectDisplayName;
++        this.organizationDisplayName = organizationDisplayName;
++        this.gitHubOrganizationName = gitHubOrganizationName;
++        this.gitHubRepoName = gitHubRepoName;
++    }
++
++    // Gale end - branding changes - version fetcher
++
++    @Override
++    public long getCacheTime() {
++        return 720000;
++    }
++
++    @Nonnull
++    @Override
++    public Component getVersionMessage(@Nonnull String serverVersion) {
++        // Gale start - branding changes - version fetcher
++        String[] parts = serverVersion.substring(("git-" + this.projectDisplayName + "-").length()).split("[-\\s]");
++        final Component updateMessage = getUpdateStatusMessage(this.gitHubOrganizationName + "/" + this.gitHubRepoName, this.gitHubBranchName, parts[0]);
++        // Gale end - branding changes - version fetcher
++        final Component history = getHistory();
++
++        return history != null ? TextComponent.ofChildren(updateMessage, Component.newline(), history) : updateMessage;
++    }
++
++    protected @Nullable String getMinecraftVersion() { // Gale - branding changes - version fetcher
++        if (mcVer == null) {
++            java.util.regex.Matcher matcher = VER_PATTERN.matcher(org.bukkit.Bukkit.getBukkitVersion());
++            if (matcher.find()) {
++                String result = matcher.group();
++                mcVer = result.substring(0, result.length() - 2); // strip 'R' anchor and trailing '-'
++            } else {
++                org.bukkit.Bukkit.getLogger().warning("Unable to match version to pattern! Report to " + this.organizationDisplayName + "!"); // Gale - branding changes - version fetcher
++                org.bukkit.Bukkit.getLogger().warning("Pattern: " + VER_PATTERN.toString());
++                org.bukkit.Bukkit.getLogger().warning("Version: " + org.bukkit.Bukkit.getBukkitVersion());
++            }
++        }
++
++        return mcVer;
++    }
++
++    // Gale start - branding changes - version fetcher
++
++    protected boolean canFetchDistanceFromSiteApi() {
++        return false;
++    }
++
++    protected int fetchDistanceFromSiteApi(int jenkinsBuild) {
++        return -1;
++    }
++
++    // Gale end - branding changes - version fetcher
++
++    private Component getUpdateStatusMessage(@Nonnull String repo, @Nonnull String branch, @Nonnull String versionInfo) {
++        // Gale start - branding changes - version fetcher
++        int distance = -1;
++        boolean readFromSiteApi = false;
++        if (this.canFetchDistanceFromSiteApi()) {
++        // Gale end - branding changes - version fetcher
++        try {
++            int jenkinsBuild = Integer.parseInt(versionInfo);
++            // Gale start - branding changes - version fetcher
++            distance = this.fetchDistanceFromSiteApi(jenkinsBuild);
++            readFromSiteApi = true;
++        } catch (NumberFormatException ignored) {}
++        }
++        if (!readFromSiteApi) {
++            // Gale end - branding changes - version fetcher
++            versionInfo = versionInfo.replace("\"", "");
++            distance = fetchDistanceFromGitHub(repo, branch, versionInfo);
++        }
++
++        switch (distance) {
++            case -1:
++                return Component.text("Error obtaining version information", NamedTextColor.YELLOW);
++            case 0:
++                return Component.text("You are running the latest version", NamedTextColor.GREEN);
++            case -2:
++                return Component.text("Unknown version", NamedTextColor.YELLOW);
++            default:
++                return Component.text("You are " + distance + " version(s) behind", NamedTextColor.YELLOW)
++                        .append(Component.newline())
++                        .append(Component.text("Download the new version at: ")
++                                .append(Component.text(this.downloadPage, NamedTextColor.GOLD) // Gale - branding changes - version fetcher
++                                        .hoverEvent(Component.text("Click to open", NamedTextColor.WHITE))
++                                        .clickEvent(ClickEvent.openUrl(this.downloadPage)))); // Gale - branding changes - version fetcher
++        }
++    }
++
++    // Contributed by Techcable <Techcable@outlook.com> in GH-65
++    private static int fetchDistanceFromGitHub(@Nonnull String repo, @Nonnull String branch, @Nonnull String hash) {
++        try {
++            HttpURLConnection connection = (HttpURLConnection) new URL("https://api.github.com/repos/" + repo + "/compare/" + branch + "..." + hash).openConnection();
++            connection.connect();
++            if (connection.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) return -2; // Unknown commit
++            try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), Charsets.UTF_8))) {
++                JsonObject obj = new Gson().fromJson(reader, JsonObject.class);
++                String status = obj.get("status").getAsString();
++                switch (status) {
++                    case "identical":
++                        return 0;
++                    case "behind":
++                        return obj.get("behind_by").getAsInt();
++                    default:
++                        return -1;
++                }
++            } catch (JsonSyntaxException | NumberFormatException e) {
++                e.printStackTrace();
++                return -1;
++            }
++        } catch (IOException e) {
++            e.printStackTrace();
++            return -1;
++        }
++    }
++
++    @Nullable
++    private Component getHistory() {
++        final VersionHistoryManager.VersionData data = VersionHistoryManager.INSTANCE.getVersionData();
++        if (data == null) {
++            return null;
++        }
++
++        final String oldVersion = data.getOldVersion();
++        if (oldVersion == null) {
++            return null;
++        }
++
++        return Component.text("Previous version: " + oldVersion, NamedTextColor.GRAY, TextDecoration.ITALIC);
++    }
++}
+diff --git a/src/main/java/org/galemc/gale/version/GaleVersionFetcher.java b/src/main/java/org/galemc/gale/version/GaleVersionFetcher.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..28518511dbb705a693af8f2dfba20e58b39e1446
+--- /dev/null
++++ b/src/main/java/org/galemc/gale/version/GaleVersionFetcher.java
+@@ -0,0 +1,11 @@
++// Gale - branding changes - version fetcher
++
++package org.galemc.gale.version;
++
++public class GaleVersionFetcher extends AbstractPaperVersionFetcher {
++
++    public GaleVersionFetcher() {
++        super("master", "https://github.com/GaleMC/Gale", "Gale", "GaleMC", "GaleMC", "Gale");
++    }
++
++}
+diff --git a/src/main/java/org/spigotmc/WatchdogThread.java b/src/main/java/org/spigotmc/WatchdogThread.java
+index e9fa7faaa4451e36b3908cbcbbe0baf213abde96..65cf07734299dae297fca838172f9c210691e2a6 100644
+--- a/src/main/java/org/spigotmc/WatchdogThread.java
++++ b/src/main/java/org/spigotmc/WatchdogThread.java
+@@ -1,5 +1,6 @@
+ package org.spigotmc;
+ 
++import java.awt.print.Paper;
+ import java.lang.management.ManagementFactory;
+ import java.lang.management.MonitorInfo;
+ import java.lang.management.ThreadInfo;
+@@ -155,14 +156,20 @@ public final class WatchdogThread extends io.papermc.paper.util.TickThread // Pa
+                 if (isLongTimeout) {
+                 // Paper end
+                 log.log( Level.SEVERE, "------------------------------" );
+-                log.log( Level.SEVERE, "The server has stopped responding! This is (probably) not a Paper bug." ); // Paper
++                // Gale start - branding changes
++                /*
++                We do not want people to report thread issues to Paper,
++                but we do want people to report thread issues to Gale.
++                 */
++                log.log( Level.SEVERE, "The server has stopped responding! This is (probably) not a Paper bug. This could be a Gale bug." ); // Paper
++                // Gale end - branding changes
+                 log.log( Level.SEVERE, "If you see a plugin in the Server thread dump below, then please report it to that author" );
+                 log.log( Level.SEVERE, "\t *Especially* if it looks like HTTP or MySQL operations are occurring" );
+                 log.log( Level.SEVERE, "If you see a world save or edit, then it means you did far more than your server can handle at once" );
+                 log.log( Level.SEVERE, "\t If this is the case, consider increasing timeout-time in spigot.yml but note that this will replace the crash with LARGE lag spikes" );
+-                log.log( Level.SEVERE, "If you are unsure or still think this is a Paper bug, please report this to https://github.com/PaperMC/Paper/issues" );
++                log.log( Level.SEVERE, "If you are unsure or think this is a Gale bug, please report this to https://github.com/GaleMC/Gale/issues - and if you think this is a Paper bug, please report this to https://github.com/PaperMC/Paper/issues" ); // Gale - branding changes
+                 log.log( Level.SEVERE, "Be sure to include ALL relevant console errors and Minecraft crash reports" );
+-                log.log( Level.SEVERE, "Paper version: " + Bukkit.getServer().getVersion() );
++                log.log( Level.SEVERE, "Gale version: " + Bukkit.getServer().getVersion() ); // Gale - branding changes
+                 //
+                 if ( net.minecraft.world.level.Level.lastPhysicsProblem != null )
+                 {
+@@ -185,12 +192,18 @@ public final class WatchdogThread extends io.papermc.paper.util.TickThread // Pa
+                 // Paper end
+                 } else
+                 {
+-                    log.log(Level.SEVERE, "--- DO NOT REPORT THIS TO PAPER - THIS IS NOT A BUG OR A CRASH  - " + Bukkit.getServer().getVersion() + " ---");
++                    // Gale start - branding changes
++                    /*
++                    We do not want people to report thread issues to Paper,
++                    but we do want people to report thread issues to Gale.
++                     */
++                    log.log(Level.SEVERE, "--- DO NOT REPORT THIS TO PAPER - If you think this is a Gale bug, please report it at https://github.com/GaleMC/Gale/issues - THIS IS NOT A PAPER BUG OR CRASH - " + Bukkit.getServer().getVersion() + " ---");
++                    // Gale end - branding changes
+                     log.log(Level.SEVERE, "The server has not responded for " + (currentTime - lastTick) / 1000 + " seconds! Creating thread dump");
+                 }
+                 // Paper end - Different message for short timeout
+                 log.log( Level.SEVERE, "------------------------------" );
+-                log.log( Level.SEVERE, "Server thread dump (Look for plugins here before reporting to Paper!):" ); // Paper
++                log.log( Level.SEVERE, "Server thread dump (Look for plugins here before reporting to Gale!):" ); // Paper // Gale - branding changes
+                 io.papermc.paper.chunk.system.scheduling.ChunkTaskScheduler.dumpAllChunkLoadInfo(isLongTimeout); // Paper // Paper - rewrite chunk system
+                 this.dumpTickingInfo(); // Paper - log detailed tick information
+                 WatchdogThread.dumpThread( ManagementFactory.getThreadMXBean().getThreadInfo( MinecraftServer.getServer().serverThread.getId(), Integer.MAX_VALUE ), log );
+@@ -206,7 +219,13 @@ public final class WatchdogThread extends io.papermc.paper.util.TickThread // Pa
+                     WatchdogThread.dumpThread( thread, log );
+                 }
+                 } else {
+-                    log.log(Level.SEVERE, "--- DO NOT REPORT THIS TO PAPER - THIS IS NOT A BUG OR A CRASH ---");
++                    // Gale start - branding changes
++                    /*
++                    We do not want people to report thread issues to Paper,
++                    but we do want people to report thread issues to Gale.
++                     */
++                    log.log(Level.SEVERE, "--- DO NOT REPORT THIS TO PAPER - If you think this is a Gale bug, please report it at https://github.com/GaleMC/Gale/issues - THIS IS NOT A PAPER BUG OR CRASH ---");
++                    // Gale end - branding changes
+                 }
+ 
+                 log.log( Level.SEVERE, "------------------------------" );

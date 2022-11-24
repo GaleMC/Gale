@@ -1,0 +1,55 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MartijnMuijsers <martijnmuijsers@live.nl>
+Date: Wed, 23 Nov 2022 23:01:31 +0100
+Subject: [PATCH] Skip cloning loot parameters
+
+License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+
+This patch is based on the following patch:
+"Skip cloning loot parameters"
+By: Paul Sauve <paul@technove.co>
+As part of: Airplane (https://github.com/TECHNOVE/Airplane)
+Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+
+* Airplane description *
+
+Small improvement in CPU, much larger improvement in allocations. As a
+new loot context is created every time a player moves (along with a lot
+of other times) the constant cloning churns out a lot of useless
+objects.
+
+* Airplane copyright *
+
+Airplane
+Copyright (C) 2020 Technove LLC
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+diff --git a/src/main/java/net/minecraft/world/level/storage/loot/LootContext.java b/src/main/java/net/minecraft/world/level/storage/loot/LootContext.java
+index 35f9b11a3a61976c952a2c1c64bb2a932538f54f..27a07b15f85c8d0711654f0266236f4910daa4d2 100644
+--- a/src/main/java/net/minecraft/world/level/storage/loot/LootContext.java
++++ b/src/main/java/net/minecraft/world/level/storage/loot/LootContext.java
+@@ -41,8 +41,10 @@ public class LootContext {
+         this.level = world;
+         this.lootTables = tableGetter;
+         this.conditions = conditionGetter;
+-        this.params = ImmutableMap.copyOf(parameters);
+-        this.dynamicDrops = ImmutableMap.copyOf(drops);
++        // Gale start - Airplane - skip cloning loot parameters - use unmodifiable maps instead of immutable ones to skip the copy
++        this.params = java.util.Collections.unmodifiableMap(parameters);
++        this.dynamicDrops = java.util.Collections.unmodifiableMap(drops);
++        // Gale end - Airplane - skip cloning loot parameters - use unmodifiable maps instead of immutable ones to skip the copy
+     }
+ 
+     public boolean hasParam(LootContextParam<?> parameter) {
