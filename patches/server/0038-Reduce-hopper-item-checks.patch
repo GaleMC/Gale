@@ -1,0 +1,297 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MartijnMuijsers <martijnmuijsers@live.nl>
+Date: Thu, 24 Nov 2022 23:03:52 +0100
+Subject: [PATCH] Reduce hopper item checks
+
+License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
+
+This patch is based on the following patch:
+"Improve Hopper Performance"
+By: Aikar <aikar@aikar.co>
+As part of: EmpireCraft (https://github.com/starlis/empirecraft)
+Licensed under: MIT (https://opensource.org/licenses/MIT)
+
+* EmpireCraft description *
+
+Only do an item "suck in" action once per second
+
+diff --git a/src/main/java/net/minecraft/world/entity/item/ItemEntity.java b/src/main/java/net/minecraft/world/entity/item/ItemEntity.java
+index cab6cc8255704f89cca909f16c9c182d95700e4a..3a99e20f7e9c0f04a9d976ab6cac8cd191a64697 100644
+--- a/src/main/java/net/minecraft/world/entity/item/ItemEntity.java
++++ b/src/main/java/net/minecraft/world/entity/item/ItemEntity.java
+@@ -19,11 +19,13 @@ import net.minecraft.world.entity.Entity;
+ import net.minecraft.world.entity.EntityType;
+ import net.minecraft.world.entity.MoverType;
+ import net.minecraft.world.entity.player.Player;
++import net.minecraft.world.entity.vehicle.MinecartHopper;
+ import net.minecraft.world.item.Item;
+ import net.minecraft.world.item.ItemStack;
+ import net.minecraft.world.item.Items;
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.gameevent.GameEvent;
++import net.minecraft.world.phys.AABB;
+ import net.minecraft.world.phys.Vec3;
+ // CraftBukkit start
+ import net.minecraft.server.MinecraftServer;
+@@ -196,11 +198,31 @@ public class ItemEntity extends Entity {
+                 }
+                 // CraftBukkit end
+                 this.discard();
++                return; // Gale - EMC - reduce hopper item checks
+             }
++            this.markNearbyHopperCartsAsImmune(); // Gale - EMC - reduce hopper item checks
+ 
+         }
+     }
+ 
++    // Gale start - EMC - reduce hopper item checks
++    private void markNearbyHopperCartsAsImmune() {
++        var config = level.galeConfig().smallOptimizations.reducedIntervals.checkNearbyItem.hopperMinecart;
++        // No need to mark hopper minecarts as immune if they can pull every tick anyway
++        if (config.interval <= 1) {
++            return;
++        }
++        if (config.temporaryImmunity.duration > 0 && this.isAlive() && this.onGround && !this.isRemoved() && (config.temporaryImmunity.nearbyItemMaxAge == -1 || this.age <= config.temporaryImmunity.nearbyItemMaxAge) && this.age % Math.max(1, config.temporaryImmunity.checkForMinecartNearItemInterval) == 0 && config.temporaryImmunity.maxItemHorizontalDistance >= 0 && config.temporaryImmunity.maxItemVerticalDistance >= 0) {
++            AABB aabb = this.getBoundingBox().inflate(config.temporaryImmunity.maxItemHorizontalDistance, config.temporaryImmunity.maxItemVerticalDistance, config.temporaryImmunity.maxItemHorizontalDistance);
++            for (Entity entity : this.level.getEntities(this, aabb)) {
++                if (entity instanceof MinecartHopper) {
++                    ((MinecartHopper) entity).pickupImmunity = MinecraftServer.currentTick + config.temporaryImmunity.duration;
++                }
++            }
++        }
++    }
++    // Gale end - EMC - reduce hopper item checks
++
+     // Spigot start - copied from above
+     @Override
+     public void inactiveTick() {
+@@ -220,7 +242,13 @@ public class ItemEntity extends Entity {
+             }
+             // CraftBukkit end
+             this.discard();
++            return; // Gale - EMC - reduce hopper item checks
++        }
++        // Gale start - EMC - reduce hopper item checks
++        if (level.galeConfig().smallOptimizations.reducedIntervals.checkNearbyItem.hopperMinecart.temporaryImmunity.checkForMinecartNearItemWhileInactive) {
++            this.markNearbyHopperCartsAsImmune();
+         }
++        // Gale end - EMC - reduce hopper item checks
+     }
+     // Spigot end
+ 
+diff --git a/src/main/java/net/minecraft/world/entity/vehicle/MinecartHopper.java b/src/main/java/net/minecraft/world/entity/vehicle/MinecartHopper.java
+index 70f1916185b79bbb9f033f4ef8119d7b17a13ef8..eb12e78d3bf504cd0d641753934491733bfafdf6 100644
+--- a/src/main/java/net/minecraft/world/entity/vehicle/MinecartHopper.java
++++ b/src/main/java/net/minecraft/world/entity/vehicle/MinecartHopper.java
+@@ -22,6 +22,7 @@ public class MinecartHopper extends AbstractMinecartContainer implements Hopper
+     private boolean enabled = true;
+     public int cooldownTime = -1;
+     private final BlockPos lastPosition = BlockPos.ZERO;
++    public int pickupImmunity = 0; // Gale - EMC - reduce hopper item checks
+ 
+     public MinecartHopper(EntityType<? extends MinecartHopper> type, Level world) {
+         super(type, world);
+@@ -159,4 +160,12 @@ public class MinecartHopper extends AbstractMinecartContainer implements Hopper
+     }
+     // Paper end
+ 
++    // Gale start - EMC - reduce hopper item checks
++    private long tickAttempts = 0;
++    @Override
++    public long getAndIncrementAttemptCounter() {
++        return tickAttempts++;
++    }
++    // Gale end EMC - - reduce hopper item checks
++
+ }
+diff --git a/src/main/java/net/minecraft/world/level/block/entity/Hopper.java b/src/main/java/net/minecraft/world/level/block/entity/Hopper.java
+index 6a1405a8630e90db3b5a3c9152259ba6f5f0c784..f55af1cadca08a426d9b4741ae3f1c32c31d8fa3 100644
+--- a/src/main/java/net/minecraft/world/level/block/entity/Hopper.java
++++ b/src/main/java/net/minecraft/world/level/block/entity/Hopper.java
+@@ -16,6 +16,8 @@ public interface Hopper extends Container {
+ 
+     default net.minecraft.core.BlockPos getBlockPosition() { return new net.minecraft.core.BlockPos(getLevelX(), getLevelY(), getLevelZ()); } // Paper
+ 
++    long getAndIncrementAttemptCounter(); // Gale - EMC - reduce hopper item checks
++
+     double getLevelX();
+ 
+     double getLevelY();
+diff --git a/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java
+index 877e07c62a6235670c756edef3eebb385bccccd4..91fd012328e701a2c7526cdeef543a381ccf049e 100644
+--- a/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java
++++ b/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java
+@@ -10,6 +10,7 @@ import net.minecraft.core.Direction;
+ import net.minecraft.core.NonNullList;
+ import net.minecraft.nbt.CompoundTag;
+ import net.minecraft.network.chat.Component;
++import net.minecraft.server.MinecraftServer;
+ import net.minecraft.world.CompoundContainer;
+ import net.minecraft.world.Container;
+ import net.minecraft.world.ContainerHelper;
+@@ -495,7 +496,7 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
+                 }
+                 // Paper end
+             });
+-        } else {
++        } else if (shouldSuckIn(world, hopper)) { // Gale - EMC - reduce hopper item checks
+             Iterator iterator = HopperBlockEntity.getItemsAtAndAbove(world, hopper).iterator();
+ 
+             ItemEntity entityitem;
+@@ -510,6 +511,7 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
+ 
+             return true;
+         }
++        return false; // Gale - EMC - reduce hopper item checks
+     }
+ 
+     // Paper - method unused as logic is inlined above
+@@ -728,6 +730,31 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
+         return !first.is(second.getItem()) ? false : (first.getDamageValue() != second.getDamageValue() ? false : (first.getCount() > first.getMaxStackSize() ? false : ItemStack.tagMatches(first, second)));
+     }
+ 
++    // Gale start - EMC - reduce hopper item checks
++    private long tickAttempts = 0;
++    @Override
++    public long getAndIncrementAttemptCounter() {
++        return tickAttempts++;
++    }
++    private static boolean shouldSuckIn(Level world, Hopper hopper) {
++        int suckInterval;
++        if (hopper instanceof MinecartHopper minecartHopper) {
++            if (minecartHopper.pickupImmunity > MinecraftServer.currentTick) {
++                return true;
++            }
++            suckInterval = world.galeConfig().smallOptimizations.reducedIntervals.checkNearbyItem.hopperMinecart.interval;
++        } else {
++            suckInterval = world.galeConfig().smallOptimizations.reducedIntervals.checkNearbyItem.hopper.interval;
++        }
++        if (suckInterval <= 1) {
++            return true;
++        }
++
++        final int hopperId = (int) hopper.getLevelX() + (int) hopper.getLevelY() + (int) hopper.getLevelZ();
++        return (hopper.getAndIncrementAttemptCounter() + hopperId) % suckInterval == 0;
++    }
++    // Gale end - EMC - reduce hopper item checks
++
+     @Override
+     public double getLevelX() {
+         return (double) this.worldPosition.getX() + 0.5D;
+diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
+index e6df3b765627d5aa800b1b697d1cfa96a676fe8e..d054da6cc24fb0f4636ed6a017ecf8e151fa1731 100644
+--- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
++++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
+@@ -116,6 +116,112 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+             public int checkStuckInWall = 10;
+             // Gale end - Pufferfish - reduce in wall checks
+ 
++            public CheckNearbyItem checkNearbyItem;
++            public class CheckNearbyItem extends ConfigurationPart {
++
++                // Gale start - EMC - reduce hopper item checks
++                public Hopper hopper;
++                public class Hopper extends ConfigurationPart {
++
++                    /**
++                     * Frequency with which hoppers check for items to pickup.
++                     * Given in ticks.
++                     * Any value <= 0 behaves like 1.
++                     * <ul>
++                     *     <li><i>Default</i>: 20 (1 second)</li>
++                     *     <li><i>Vanilla</i>: 1</li>
++                     * </ul>
++                     */
++                    public int interval = 20;
++
++                }
++
++                public HopperMinecart hopperMinecart;
++                public class HopperMinecart extends ConfigurationPart {
++
++                    /**
++                     * Frequency with which hopper minecarts check for items to pickup.
++                     * Given in ticks.
++                     * Any value <= 0 behaves like 1.
++                     * <ul>
++                     *     <li><i>Default</i>: 20 (1 second)</li>
++                     *     <li><i>Vanilla</i>: 1</li>
++                     * </ul>
++                     */
++                    public int interval = 20;
++
++                    public TemporaryImmunity temporaryImmunity;
++                    public class TemporaryImmunity {
++
++                        /**
++                         * Duration for which hopper minecarts have immunity from being affected by {@link HopperMinecart#interval}
++                         * after being made immune.
++                         * Given in ticks.
++                         * Any value <= 0 means hopper minecarts never have immunity.
++                         * <ul>
++                         *     <li><i>Default</i>: 200 (10 seconds)</li>
++                         * </ul>
++                         */
++                        public int duration = 100;
++
++                        /**
++                         * Items with an age higher than this value will not cause nearby hopper minecarts to become immune.
++                         * Given in ticks.
++                         * Any value < 0 means no age limit: all items can give nearby hopper minecarts
++                         * temporary immunity to pick up items.
++                         * <ul>
++                         *     <li><i>Default</i>: 1200 (1 minute)</li>
++                         * </ul>
++                         */
++                        public int nearbyItemMaxAge = 1200;
++
++                        /**
++                         * How often to check for hopper minecarts near items, to give the minecarts temporary immunity
++                         * to pick up items.
++                         * Given in ticks.
++                         * Any value <= 0 behaves like 1.
++                         * <ul>
++                         *     <li><i>Default</i>: 20</li>
++                         * </ul>
++                         */
++                        public int checkForMinecartNearItemInterval = 20;
++
++                        /**
++                         * Whether to check for hopper minecarts near items that are inactive, to give the minecarts
++                         * temporary immunity to pick up items.
++                         * <ul>
++                         *     <li><i>Default</i>: true</li>
++                         * </ul>
++                         */
++                        public boolean checkForMinecartNearItemWhileInactive = true;
++
++                        /**
++                         * The maximum distance a dropped item can be to give hopper minecarts temporary immunity
++                         * to pick up items.
++                         * Any value < 0 means hopper minecarts never have immunity.
++                         * <ul>
++                         *     <li><i>Default</i>: 24.0</li>
++                         * </ul>
++                         */
++                        public double maxItemHorizontalDistance = 24.0;
++
++                        /**
++                         * The maximum distance a dropped item can be to give hopper minecarts temporary immunity
++                         * to pick up items.
++                         * Any value < 0 means hopper minecarts never have immunity.
++                         * <ul>
++                         *     <li><i>Default</i>: 4.0</li>
++                         * </ul>
++                         */
++                        public double maxItemVerticalDistance = 4.0;
++
++                    }
++
++                }
++                // Gale end - EMC - reduce hopper item checks
++
++            }
++
+         }
+ 
+     }
