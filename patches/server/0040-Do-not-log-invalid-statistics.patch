@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: MartijnMuijsers <martijnmuijsers@live.nl>
 Date: Thu, 24 Nov 2022 23:39:32 +0100
-Subject: [PATCH] Do nog log invalid statistics
+Subject: [PATCH] Do not log invalid statistics
 
 License: MIT (https://opensource.org/licenses/MIT)
 

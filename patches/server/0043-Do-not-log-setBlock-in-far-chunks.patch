@@ -1,0 +1,45 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MartijnMuijsers <martijnmuijsers@live.nl>
+Date: Fri, 25 Nov 2022 13:28:38 +0100
+Subject: [PATCH] Do not log setBlock in far chunks
+
+License: MIT (https://opensource.org/licenses/MIT)
+
+This patch is based on the following patch:
+"Logger settings (suppressing pointless logs)"
+By: William Blake Galbreath <blake.galbreath@gmail.com>
+As part of: Purpur (https://github.com/PurpurMC/Purpur)
+Licensed under: MIT (https://opensource.org/licenses/MIT)
+
+diff --git a/src/main/java/net/minecraft/server/level/WorldGenRegion.java b/src/main/java/net/minecraft/server/level/WorldGenRegion.java
+index 80c1e0e47818486a68e0114b063395290365346b..c9e719e676ea26ee94673538db2dfd9ce5c957ae 100644
+--- a/src/main/java/net/minecraft/server/level/WorldGenRegion.java
++++ b/src/main/java/net/minecraft/server/level/WorldGenRegion.java
+@@ -53,6 +53,7 @@ import net.minecraft.world.phys.AABB;
+ import net.minecraft.world.phys.Vec3;
+ import net.minecraft.world.ticks.LevelTickAccess;
+ import net.minecraft.world.ticks.WorldGenTickAccess;
++import org.galemc.gale.configuration.GaleGlobalConfiguration;
+ import org.slf4j.Logger;
+ 
+ public class WorldGenRegion implements WorldGenLevel {
+@@ -295,6 +296,7 @@ public class WorldGenRegion implements WorldGenLevel {
+             return true;
+         } else {
+             // Paper start
++            if (GaleGlobalConfiguration.get().logToConsole.setBlockInFarChunk) // Gale - Purpur - do not log setBlock in far chunks
+             if (!hasSetFarWarned) {
+             Util.logAndPauseIfInIde("Detected setBlock in a far chunk [" + i + ", " + j + "], pos: " + pos + ", status: " + this.generatingStatus + (this.currentlyGenerating == null ? "" : ", currently generating: " + (String) this.currentlyGenerating.get()));
+             hasSetFarWarned = true;
+diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
+index ae00ec83b9ba545f56d606a5c9802aab97fdefcb..242f39617ec5f146766c460ab65f4716f2847354 100644
+--- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
++++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
+@@ -58,6 +58,7 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+ 
+         public boolean invalidStatistics = true; // Gale - EMC - do not log invalid statistics
+         public boolean ignoredAdvancements = true; // Gale - Purpur - do not log ignored advancements
++        public boolean setBlockInFarChunk = true; // Gale - Purpur - do not log setBlock in far chunks
+ 
+         public Chat chat;
+         public class Chat extends ConfigurationPart {
