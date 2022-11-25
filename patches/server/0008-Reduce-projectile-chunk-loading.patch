@@ -1,0 +1,141 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MartijnMuijsers <martijnmuijsers@live.nl>
+Date: Thu, 24 Nov 2022 12:00:55 +0100
+Subject: [PATCH] Reduce projectile chunk loading
+
+License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+
+This patch is based on the following patch:
+"Reduce projectile chunk loading"
+By: Paul Sauve <paul@technove.co>
+As part of: Airplane (https://github.com/TECHNOVE/Airplane)
+Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+
+* Airplane copyright *
+
+Airplane
+Copyright (C) 2020 Technove LLC
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+diff --git a/src/main/java/net/minecraft/world/entity/projectile/Projectile.java b/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
+index 713c11d6547cb02ac4b6a02aec07a8ba68019f3f..2c6efa6503eee64cb33a100afb692b79bba67f68 100644
+--- a/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
++++ b/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
+@@ -42,6 +42,44 @@ public abstract class Projectile extends Entity {
+         super(type, world);
+     }
+ 
++    // Gale start - Airplane - reduce projectile chunk loading
++    private static int chunksLoadedThisTick = 0;
++    private static int chunksLoadedInTick;
++    private int chunksLoadedByProjectile = 0;
++
++    @Override
++    public void setPos(double x, double y, double z) {
++        int currentTick = net.minecraft.server.MinecraftServer.currentTick;
++        if (chunksLoadedInTick != currentTick) {
++            chunksLoadedInTick = currentTick;
++            chunksLoadedThisTick = 0;
++        }
++        int previousX = Mth.floor(this.getX()) >> 4, previousZ = Mth.floor(this.getZ()) >> 4;
++        int newX = Mth.floor(x) >> 4, newZ = Mth.floor(z) >> 4;
++        if (previousX != newX || previousZ != newZ) {
++            boolean isLoaded = ((net.minecraft.server.level.ServerChunkCache) this.level.getChunkSource()).getChunkAtIfLoadedImmediately(newX, newZ) != null;
++            if (!isLoaded) {
++                int maxChunkLoadsPerTick = this.level.galeConfig().smallOptimizations.maxProjectileChunkLoads.perTick;
++                if (maxChunkLoadsPerTick >= 0 && chunksLoadedThisTick > maxChunkLoadsPerTick) {
++                    return;
++                }
++                int maxChunkLoadsPerProjectile = this.level.galeConfig().smallOptimizations.maxProjectileChunkLoads.perProjectile.max;
++                if (maxChunkLoadsPerProjectile >= 0 && this.chunksLoadedByProjectile >= maxChunkLoadsPerProjectile) {
++                    if (this.level.galeConfig().smallOptimizations.maxProjectileChunkLoads.perProjectile.removeFromWorld) {
++                        this.discard();
++                    } else if (this.level.galeConfig().smallOptimizations.maxProjectileChunkLoads.perProjectile.resetMovement) {
++                        this.setDeltaMovement(0, this.getDeltaMovement().y, 0);
++                    }
++                    return;
++                }
++                chunksLoadedThisTick++;
++                this.chunksLoadedByProjectile++;
++            }
++        }
++        super.setPos(x, y, z);
++    }
++    // Gale end - Airplane - reduce projectile chunk loading
++
+     public void setOwner(@Nullable Entity entity) {
+         if (entity != null) {
+             this.ownerUUID = entity.getUUID();
+diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
+index b82bb95b524c95cdefb81abef906eded0717e9a1..3e2e442fea6ba6fa5b0eabef724478a62bf460a0 100644
+--- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
++++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
+@@ -33,7 +33,55 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+     public SmallOptimizations smallOptimizations;
+     public class SmallOptimizations extends ConfigurationPart {
+ 
+-        public int dummyValue = 0;
++        // Gale start - Airplane - reduce projectile chunk loading
++        public MaxProjectileChunkLoads maxProjectileChunkLoads;
++        public class MaxProjectileChunkLoads extends ConfigurationPart {
++
++            /**
++             * The maximum number of chunks that can be synchronously loaded by all projectiles in one world in a tick.
++             * Any value < 0 means no maximum.
++             * <ul>
++             *     <li><i>Default</i>: 10</li>
++             *     <li><i>Vanilla</i>: -1</li>
++             * </ul>
++             */
++            public int perTick = 10;
++
++            public PerProjectile perProjectile;
++            public class PerProjectile extends ConfigurationPart {
++
++                /**
++                 * The maximum number of chunks that can be synchronously loaded by a projectile throughout its lifetime.
++                 * Any value < 0 means no maximum.
++                 * <ul>
++                 *     <li><i>Default</i>: 10</li>
++                 *     <li><i>Vanilla</i>: -1</li>
++                 * </ul>
++                 */
++                public int max = 10;
++
++                /**
++                 * Whether to set the planar velocity of projectiles that cross the {@link #max} threshold
++                 * to zero, so that they stop attempting to cross chunk boundaries.
++                 * This has no effect if {@link #removeFromWorld} is true.
++                 * <ul>
++                 *     <li><i>Default</i>: false</li>
++                 * </ul>
++                 */
++                public boolean resetMovement = false;
++
++                /**
++                 * Whether to remove projectiles that cross the {@link #max} threshold from the world entirely.
++                 * <ul>
++                 *     <li><i>Default</i>: false</li>
++                 * </ul>
++                 */
++                public boolean removeFromWorld = false;
++
++            }
++
++        }
++        // Gale end - Airplane - reduce projectile chunk loading
+ 
+     }
+ 

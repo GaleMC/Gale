@@ -1,0 +1,52 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MartijnMuijsers <martijnmuijsers@live.nl>
+Date: Wed, 23 Nov 2022 22:29:05 +0100
+Subject: [PATCH] Use fast item merge raytracing
+
+License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+
+This patch is based on the following patch:
+"Patch Paper to use fast item merge raytracing"
+By: Paul Sauve <paul@technove.co>
+As part of: Airplane (https://github.com/TECHNOVE/Airplane)
+Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+
+* Airplane copyright *
+
+Airplane
+Copyright (C) 2020 Technove LLC
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+diff --git a/src/main/java/net/minecraft/world/entity/item/ItemEntity.java b/src/main/java/net/minecraft/world/entity/item/ItemEntity.java
+index fcc5444a1268931a0fd2df1e6bbbc17cfd5a61e0..cab6cc8255704f89cca909f16c9c182d95700e4a 100644
+--- a/src/main/java/net/minecraft/world/entity/item/ItemEntity.java
++++ b/src/main/java/net/minecraft/world/entity/item/ItemEntity.java
+@@ -252,10 +252,16 @@ public class ItemEntity extends Entity {
+                 if (entityitem.isMergable()) {
+                     // Paper Start - Fix items merging through walls
+                         if (this.level.paperConfig().fixes.fixItemsMergingThroughWalls) {
++                            // Gale start - Airplane - use fast item merge raytracing - skip the allocations
++                            /*
+                             net.minecraft.world.level.ClipContext rayTrace = new net.minecraft.world.level.ClipContext(this.position(), entityitem.position(),
+                                 net.minecraft.world.level.ClipContext.Block.COLLIDER, net.minecraft.world.level.ClipContext.Fluid.NONE, this);
+                             net.minecraft.world.phys.BlockHitResult rayTraceResult = level.clip(rayTrace);
+                             if (rayTraceResult.getType() == net.minecraft.world.phys.HitResult.Type.BLOCK) continue;
++                             */
++                            if (level.rayTraceDirect(this.position(), entityitem.position(), net.minecraft.world.phys.shapes.CollisionContext.of(this)) ==
++                                net.minecraft.world.phys.HitResult.Type.BLOCK) continue;
++                            // Gale end - Airplane - use fast item merge raytracing - skip the allocations
+                         }
+                     // Paper End
+                     this.tryToMerge(entityitem);
