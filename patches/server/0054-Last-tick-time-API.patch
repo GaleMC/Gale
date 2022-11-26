@@ -1,0 +1,40 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MartijnMuijsers <martijnmuijsers@live.nl>
+Date: Sat, 26 Nov 2022 17:12:08 +0100
+Subject: [PATCH] Last tick time API
+
+License: MIT (https://opensource.org/licenses/MIT)
+
+This patch is based on the following patch:
+"Add getLastTickMs api"
+By: tr7zw <tr7zw@live.de>
+As part of: YAPFA (https://github.com/tr7zw/YAPFA)
+Licensed under: MIT (https://opensource.org/licenses/MIT)
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+index 874f17fd7e3ff945eeccdf5e0b1991366240ea6b..7220920bf87a78224c63c017cc4a623f547c7b80 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+@@ -2927,4 +2927,22 @@ public final class CraftServer implements Server {
+     }
+ 
+     // Paper end
++
++    // Gale start - YAPFA - last tick time - API
++    @Override
++    public long getLastTickTotalTime() {
++        return MinecraftServer.lastTickProperTime + MinecraftServer.lastTickOversleepTime;
++    }
++
++    @Override
++    public long getLastTickProperTime() {
++        return MinecraftServer.lastTickProperTime;
++    }
++
++    @Override
++    public long getLastTickOversleepTime() {
++        return MinecraftServer.lastTickOversleepTime;
++    }
++    // Gale end - YAPFA - last tick time - API
++
+ }

@@ -12,7 +12,7 @@ As part of: YAPFA (https://github.com/tr7zw/YAPFA)
 Licensed under: MIT (https://opensource.org/licenses/MIT)
 
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 4311a2e22704606f7f2f0928df6dcbe65e3fa8d6..446fedf32ea0a2eb3a0f2206dba237e2bf82fb73 100644
+index 4311a2e22704606f7f2f0928df6dcbe65e3fa8d6..9720e5360beabe7e15b0b964cb3b81d5af2b4bf8 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -1094,6 +1094,11 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
@@ -33,7 +33,7 @@ index 4311a2e22704606f7f2f0928df6dcbe65e3fa8d6..446fedf32ea0a2eb3a0f2206dba237e2
                  this.profiler.push("tick");
 +                long tickProperStart = System.nanoTime(); // Gale - YAPFA - last tick time
                  this.tickServer(this::haveTime);
-+                this.lastTickProperTime = System.nanoTime() - tickProperStart; // Gale - YAPFA - last tick time
++                this.lastTickProperTime = (System.nanoTime() - tickProperStart) / 1000000L; // Gale - YAPFA - last tick time
                  this.profiler.popPush("nextTickWait");
                  this.mayHaveDelayedTasks = true;
                  this.delayedTasksMaxNextTickTime = Math.max(Util.getMillis() + 50L, this.nextTickTime);
@@ -45,7 +45,7 @@ index 4311a2e22704606f7f2f0928df6dcbe65e3fa8d6..446fedf32ea0a2eb3a0f2206dba237e2
          this.managedBlock(() -> {
              return !this.canSleepForTickNoOversleep(); // Paper - move oversleep into full server tick
          });
-+        this.lastTickOversleepTime = System.nanoTime() - tickOversleepStart; // Gale - YAPFA - last tick time
++        this.lastTickOversleepTime = (System.nanoTime() - tickOversleepStart) / 1000000L; // Gale - YAPFA - last tick time
      }
  
      @Override
