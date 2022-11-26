@@ -1,0 +1,51 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MartijnMuijsers <martijnmuijsers@live.nl>
+Date: Sat, 26 Nov 2022 16:54:05 +0100
+Subject: [PATCH] Measure last tick time
+
+License: MIT (https://opensource.org/licenses/MIT)
+
+This patch is based on the following patch:
+"Add getLastTickMs api"
+By: tr7zw <tr7zw@live.de>
+As part of: YAPFA (https://github.com/tr7zw/YAPFA)
+Licensed under: MIT (https://opensource.org/licenses/MIT)
+
+diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
+index 4311a2e22704606f7f2f0928df6dcbe65e3fa8d6..446fedf32ea0a2eb3a0f2206dba237e2bf82fb73 100644
+--- a/src/main/java/net/minecraft/server/MinecraftServer.java
++++ b/src/main/java/net/minecraft/server/MinecraftServer.java
+@@ -1094,6 +1094,11 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+ 
+     public static volatile RuntimeException chunkSystemCrash; // Paper - rewrite chunk system
+ 
++    // Gale start - YAPFA - last tick time
++    public static long lastTickProperTime;
++    public static long lastTickOversleepTime;
++    // Gale end - YAPFA - last tick time
++
+     protected void runServer() {
+         try {
+             long serverStartTime = Util.getNanos(); // Paper
+@@ -1170,7 +1175,9 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+                 this.nextTickTime += 50L;
+                 this.startMetricsRecordingTick();
+                 this.profiler.push("tick");
++                long tickProperStart = System.nanoTime(); // Gale - YAPFA - last tick time
+                 this.tickServer(this::haveTime);
++                this.lastTickProperTime = System.nanoTime() - tickProperStart; // Gale - YAPFA - last tick time
+                 this.profiler.popPush("nextTickWait");
+                 this.mayHaveDelayedTasks = true;
+                 this.delayedTasksMaxNextTickTime = Math.max(Util.getMillis() + 50L, this.nextTickTime);
+@@ -1286,9 +1293,11 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+ 
+     protected void waitUntilNextTick() {
+         //this.executeAll(); // Paper - move this into the tick method for timings
++        long tickOversleepStart = System.nanoTime(); // Gale - YAPFA - last tick time
+         this.managedBlock(() -> {
+             return !this.canSleepForTickNoOversleep(); // Paper - move oversleep into full server tick
+         });
++        this.lastTickOversleepTime = System.nanoTime() - tickOversleepStart; // Gale - YAPFA - last tick time
+     }
+ 
+     @Override
