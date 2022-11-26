@@ -16,7 +16,7 @@ Licensed under: MIT (https://opensource.org/licenses/MIT)
 Only do an item "suck in" action once per second
 
 diff --git a/src/main/java/net/minecraft/world/entity/item/ItemEntity.java b/src/main/java/net/minecraft/world/entity/item/ItemEntity.java
-index cab6cc8255704f89cca909f16c9c182d95700e4a..3a99e20f7e9c0f04a9d976ab6cac8cd191a64697 100644
+index cab6cc8255704f89cca909f16c9c182d95700e4a..3c4cffddc08f6a24f49ae58a89bc5e70e3ac153c 100644
 --- a/src/main/java/net/minecraft/world/entity/item/ItemEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/item/ItemEntity.java
 @@ -19,11 +19,13 @@ import net.minecraft.world.entity.Entity;
@@ -46,7 +46,7 @@ index cab6cc8255704f89cca909f16c9c182d95700e4a..3a99e20f7e9c0f04a9d976ab6cac8cd1
  
 +    // Gale start - EMC - reduce hopper item checks
 +    private void markNearbyHopperCartsAsImmune() {
-+        var config = level.galeConfig().smallOptimizations.reducedIntervals.checkNearbyItem.hopperMinecart;
++        var config = level.galeConfig().smallOptimizations.reducedIntervals.checkNearbyItem.hopper.minecart;
 +        // No need to mark hopper minecarts as immune if they can pull every tick anyway
 +        if (config.interval <= 1) {
 +            return;
@@ -72,7 +72,7 @@ index cab6cc8255704f89cca909f16c9c182d95700e4a..3a99e20f7e9c0f04a9d976ab6cac8cd1
 +            return; // Gale - EMC - reduce hopper item checks
 +        }
 +        // Gale start - EMC - reduce hopper item checks
-+        if (level.galeConfig().smallOptimizations.reducedIntervals.checkNearbyItem.hopperMinecart.temporaryImmunity.checkForMinecartNearItemWhileInactive) {
++        if (level.galeConfig().smallOptimizations.reducedIntervals.checkNearbyItem.hopper.minecart.temporaryImmunity.checkForMinecartNearItemWhileInactive) {
 +            this.markNearbyHopperCartsAsImmune();
          }
 +        // Gale end - EMC - reduce hopper item checks
@@ -118,7 +118,7 @@ index 6a1405a8630e90db3b5a3c9152259ba6f5f0c784..f55af1cadca08a426d9b4741ae3f1c32
  
      double getLevelY();
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java
-index 877e07c62a6235670c756edef3eebb385bccccd4..91fd012328e701a2c7526cdeef543a381ccf049e 100644
+index 877e07c62a6235670c756edef3eebb385bccccd4..3b5b3750265ea72d6d0c33c7261f0dab9fea2413 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java
 @@ -10,6 +10,7 @@ import net.minecraft.core.Direction;
@@ -162,7 +162,7 @@ index 877e07c62a6235670c756edef3eebb385bccccd4..91fd012328e701a2c7526cdeef543a38
 +            if (minecartHopper.pickupImmunity > MinecraftServer.currentTick) {
 +                return true;
 +            }
-+            suckInterval = world.galeConfig().smallOptimizations.reducedIntervals.checkNearbyItem.hopperMinecart.interval;
++            suckInterval = world.galeConfig().smallOptimizations.reducedIntervals.checkNearbyItem.hopper.minecart.interval;
 +        } else {
 +            suckInterval = world.galeConfig().smallOptimizations.reducedIntervals.checkNearbyItem.hopper.interval;
 +        }
@@ -179,7 +179,7 @@ index 877e07c62a6235670c756edef3eebb385bccccd4..91fd012328e701a2c7526cdeef543a38
      public double getLevelX() {
          return (double) this.worldPosition.getX() + 0.5D;
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index e6df3b765627d5aa800b1b697d1cfa96a676fe8e..d054da6cc24fb0f4636ed6a017ecf8e151fa1731 100644
+index d34ee90eaf160a72d4898feed13d94b0b61eded3..729600e22e1fee8ae33e51ed2da66a489cec2659 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 @@ -116,6 +116,112 @@ public class GaleWorldConfiguration extends ConfigurationPart {
@@ -204,86 +204,86 @@ index e6df3b765627d5aa800b1b697d1cfa96a676fe8e..d054da6cc24fb0f4636ed6a017ecf8e1
 +                     */
 +                    public int interval = 20;
 +
-+                }
-+
-+                public HopperMinecart hopperMinecart;
-+                public class HopperMinecart extends ConfigurationPart {
-+
-+                    /**
-+                     * Frequency with which hopper minecarts check for items to pickup.
-+                     * Given in ticks.
-+                     * Any value <= 0 behaves like 1.
-+                     * <ul>
-+                     *     <li><i>Default</i>: 20 (1 second)</li>
-+                     *     <li><i>Vanilla</i>: 1</li>
-+                     * </ul>
-+                     */
-+                    public int interval = 20;
-+
-+                    public TemporaryImmunity temporaryImmunity;
-+                    public class TemporaryImmunity {
++                    public Minecart minecart;
++                    public class Minecart extends ConfigurationPart {
 +
 +                        /**
-+                         * Duration for which hopper minecarts have immunity from being affected by {@link HopperMinecart#interval}
-+                         * after being made immune.
-+                         * Given in ticks.
-+                         * Any value <= 0 means hopper minecarts never have immunity.
-+                         * <ul>
-+                         *     <li><i>Default</i>: 200 (10 seconds)</li>
-+                         * </ul>
-+                         */
-+                        public int duration = 100;
-+
-+                        /**
-+                         * Items with an age higher than this value will not cause nearby hopper minecarts to become immune.
-+                         * Given in ticks.
-+                         * Any value < 0 means no age limit: all items can give nearby hopper minecarts
-+                         * temporary immunity to pick up items.
-+                         * <ul>
-+                         *     <li><i>Default</i>: 1200 (1 minute)</li>
-+                         * </ul>
-+                         */
-+                        public int nearbyItemMaxAge = 1200;
-+
-+                        /**
-+                         * How often to check for hopper minecarts near items, to give the minecarts temporary immunity
-+                         * to pick up items.
++                         * Frequency with which hopper minecarts check for items to pickup.
 +                         * Given in ticks.
 +                         * Any value <= 0 behaves like 1.
 +                         * <ul>
-+                         *     <li><i>Default</i>: 20</li>
++                         *     <li><i>Default</i>: 20 (1 second)</li>
++                         *     <li><i>Vanilla</i>: 1</li>
 +                         * </ul>
 +                         */
-+                        public int checkForMinecartNearItemInterval = 20;
++                        public int interval = 20;
 +
-+                        /**
-+                         * Whether to check for hopper minecarts near items that are inactive, to give the minecarts
-+                         * temporary immunity to pick up items.
-+                         * <ul>
-+                         *     <li><i>Default</i>: true</li>
-+                         * </ul>
-+                         */
-+                        public boolean checkForMinecartNearItemWhileInactive = true;
++                        public TemporaryImmunity temporaryImmunity;
++                        public class TemporaryImmunity extends ConfigurationPart {
 +
-+                        /**
-+                         * The maximum distance a dropped item can be to give hopper minecarts temporary immunity
-+                         * to pick up items.
-+                         * Any value < 0 means hopper minecarts never have immunity.
-+                         * <ul>
-+                         *     <li><i>Default</i>: 24.0</li>
-+                         * </ul>
-+                         */
-+                        public double maxItemHorizontalDistance = 24.0;
++                            /**
++                             * Duration for which hopper minecarts have immunity from being affected by {@link Minecart#interval}
++                             * after being made immune.
++                             * Given in ticks.
++                             * Any value <= 0 means hopper minecarts never have immunity.
++                             * <ul>
++                             *     <li><i>Default</i>: 200 (10 seconds)</li>
++                             * </ul>
++                             */
++                            public int duration = 100;
 +
-+                        /**
-+                         * The maximum distance a dropped item can be to give hopper minecarts temporary immunity
-+                         * to pick up items.
-+                         * Any value < 0 means hopper minecarts never have immunity.
-+                         * <ul>
-+                         *     <li><i>Default</i>: 4.0</li>
-+                         * </ul>
-+                         */
-+                        public double maxItemVerticalDistance = 4.0;
++                            /**
++                             * Items with an age higher than this value will not cause nearby hopper minecarts to become immune.
++                             * Given in ticks.
++                             * Any value < 0 means no age limit: all items can give nearby hopper minecarts
++                             * temporary immunity to pick up items.
++                             * <ul>
++                             *     <li><i>Default</i>: 1200 (1 minute)</li>
++                             * </ul>
++                             */
++                            public int nearbyItemMaxAge = 1200;
++
++                            /**
++                             * How often to check for hopper minecarts near items, to give the minecarts temporary immunity
++                             * to pick up items.
++                             * Given in ticks.
++                             * Any value <= 0 behaves like 1.
++                             * <ul>
++                             *     <li><i>Default</i>: 20</li>
++                             * </ul>
++                             */
++                            public int checkForMinecartNearItemInterval = 20;
++
++                            /**
++                             * Whether to check for hopper minecarts near items that are inactive, to give the minecarts
++                             * temporary immunity to pick up items.
++                             * <ul>
++                             *     <li><i>Default</i>: true</li>
++                             * </ul>
++                             */
++                            public boolean checkForMinecartNearItemWhileInactive = true;
++
++                            /**
++                             * The maximum distance a dropped item can be to give hopper minecarts temporary immunity
++                             * to pick up items.
++                             * Any value < 0 means hopper minecarts never have immunity.
++                             * <ul>
++                             *     <li><i>Default</i>: 24.0</li>
++                             * </ul>
++                             */
++                            public double maxItemHorizontalDistance = 24.0;
++
++                            /**
++                             * The maximum distance a dropped item can be to give hopper minecarts temporary immunity
++                             * to pick up items.
++                             * Any value < 0 means hopper minecarts never have immunity.
++                             * <ul>
++                             *     <li><i>Default</i>: 4.0</li>
++                             * </ul>
++                             */
++                            public double maxItemVerticalDistance = 4.0;
++
++                        }
 +
 +                    }
 +
