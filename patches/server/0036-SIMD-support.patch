@@ -32,7 +32,7 @@ index 3103e811e1f41b782a5b95537b921c59cac2054f..6de2f2ebca9f4580f5f0463dbbacd11e
      archiveClassifier.set("dev")
  
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index 661794310eb10d4b9fe29c9445abd57826214d41..7d36f27c856fa28d844f8f12272862183583adf5 100644
+index d2b14c65e6a925ba4a29d48bcedc0d9504092052..007fe6820e208c04e81acbd7bb7eaf0a22f6f64f 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 @@ -14,6 +14,8 @@ import java.util.Locale;
@@ -44,15 +44,15 @@ index 661794310eb10d4b9fe29c9445abd57826214d41..7d36f27c856fa28d844f8f1227286218
  import net.minecraft.DefaultUncaughtExceptionHandler;
  import net.minecraft.DefaultUncaughtExceptionHandlerWithName;
  import net.minecraft.SharedConstants;
-@@ -50,6 +52,7 @@ import net.minecraft.world.level.GameRules;
- import net.minecraft.world.level.GameType;
+@@ -51,6 +53,7 @@ import net.minecraft.world.level.GameType;
  import net.minecraft.world.level.block.entity.SkullBlockEntity;
  import net.minecraft.world.level.storage.LevelStorageSource;
+ import org.galemc.gale.command.GaleCommands;
 +import org.galemc.gale.configuration.GaleGlobalConfiguration;
  import org.slf4j.Logger;
  
  // CraftBukkit start
-@@ -226,6 +229,21 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
+@@ -228,6 +231,21 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
          io.papermc.paper.brigadier.PaperBrigadierProviderImpl.INSTANCE.getClass(); // init PaperBrigadierProvider
          // Paper end
  
