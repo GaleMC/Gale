@@ -26,10 +26,10 @@ index 661794310eb10d4b9fe29c9445abd57826214d41..d2b14c65e6a925ba4a29d48bcedc0d95
          io.papermc.paper.brigadier.PaperBrigadierProviderImpl.INSTANCE.getClass(); // init PaperBrigadierProvider
 diff --git a/src/main/java/org/galemc/gale/command/GaleCommand.java b/src/main/java/org/galemc/gale/command/GaleCommand.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..005718cac1c74527e02b70852acb1922243c6016
+index 0000000000000000000000000000000000000000..87d3aed35341dfa9358af064dd54d7de95078269
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/command/GaleCommand.java
-@@ -0,0 +1,176 @@
+@@ -0,0 +1,179 @@
 +// Gale - Gale commands - /gale command
 +
 +package org.galemc.gale.command;
@@ -44,6 +44,9 @@ index 0000000000000000000000000000000000000000..005718cac1c74527e02b70852acb1922
 +import org.bukkit.permissions.Permission;
 +import org.bukkit.permissions.PermissionDefault;
 +import org.bukkit.plugin.PluginManager;
++import org.galemc.gale.command.subcommands.InfoCommand;
++import org.galemc.gale.command.subcommands.ReloadCommand;
++import org.galemc.gale.command.subcommands.VersionCommand;
 +import org.jetbrains.annotations.Nullable;
 +
 +import java.util.ArrayList;
@@ -65,18 +68,18 @@ index 0000000000000000000000000000000000000000..005718cac1c74527e02b70852acb1922
 +
 +public final class GaleCommand extends Command {
 +    public static final String COMMAND_LABEL = "gale";
-+    static final String BASE_PERM = GaleCommands.COMMAND_BASE_PERM + "." + COMMAND_LABEL;
++    public static final String BASE_PERM = GaleCommands.COMMAND_BASE_PERM + "." + COMMAND_LABEL;
 +    private static final Permission basePermission = new Permission(BASE_PERM, PermissionDefault.TRUE);
 +    // subcommand label -> subcommand
-+    private static final GaleSubcommand RELOAD_SUBCOMMAND = new ReloadSubcommand();
-+    private static final GaleSubcommand VERSION_SUBCOMMAND = new VersionSubcommand();
-+    private static final GaleSubcommand INFO_SUBCOMMAND = new InfoSubcommand();
++    private static final GaleSubcommand RELOAD_SUBCOMMAND = new ReloadCommand();
++    private static final GaleSubcommand VERSION_SUBCOMMAND = new VersionCommand();
++    private static final GaleSubcommand INFO_SUBCOMMAND = new InfoCommand();
 +    private static final Map<String, GaleSubcommand> SUBCOMMANDS = Util.make(() -> {
 +        final Map<Set<String>, GaleSubcommand> commands = new HashMap<>();
 +
-+        commands.put(Set.of(ReloadSubcommand.LITERAL_ARGUMENT), RELOAD_SUBCOMMAND);
-+        commands.put(Set.of(VersionSubcommand.LITERAL_ARGUMENT), VERSION_SUBCOMMAND);
-+        commands.put(Set.of(InfoSubcommand.LITERAL_ARGUMENT), INFO_SUBCOMMAND);
++        commands.put(Set.of(ReloadCommand.LITERAL_ARGUMENT), RELOAD_SUBCOMMAND);
++        commands.put(Set.of(VersionCommand.LITERAL_ARGUMENT), VERSION_SUBCOMMAND);
++        commands.put(Set.of(InfoCommand.LITERAL_ARGUMENT), INFO_SUBCOMMAND);
 +
 +        return commands.entrySet().stream()
 +            .flatMap(entry -> entry.getKey().stream().map(s -> Map.entry(s, entry.getValue())))
@@ -86,8 +89,8 @@ index 0000000000000000000000000000000000000000..005718cac1c74527e02b70852acb1922
 +    private static final Map<String, String> ALIASES = Util.make(() -> {
 +        final Map<String, Set<String>> aliases = new HashMap<>();
 +
-+        aliases.put(VersionSubcommand.LITERAL_ARGUMENT, Set.of("ver"));
-+        aliases.put(InfoSubcommand.LITERAL_ARGUMENT, Set.of("about"));
++        aliases.put(VersionCommand.LITERAL_ARGUMENT, Set.of("ver"));
++        aliases.put(InfoCommand.LITERAL_ARGUMENT, Set.of("about"));
 +
 +        return aliases.entrySet().stream()
 +            .flatMap(entry -> entry.getValue().stream().map(s -> Map.entry(s, entry.getKey())))
@@ -169,7 +172,7 @@ index 0000000000000000000000000000000000000000..005718cac1c74527e02b70852acb1922
 +
 +        // If they did not give a subcommand
 +        if (args.length == 0) {
-+            INFO_SUBCOMMAND.execute(sender, InfoSubcommand.LITERAL_ARGUMENT, new String[0]);
++            INFO_SUBCOMMAND.execute(sender, InfoCommand.LITERAL_ARGUMENT, new String[0]);
 +            sender.sendMessage(newline().append(text("Command usage: " + specificUsageMessage, GRAY)));
 +            return false;
 +        }
@@ -276,53 +279,6 @@ index 0000000000000000000000000000000000000000..7bcf875f91f5018daa06ef3280c4cdd7
 +    @Nullable Permission getPermission();
 +
 +}
-diff --git a/src/main/java/org/galemc/gale/command/InfoSubcommand.java b/src/main/java/org/galemc/gale/command/InfoSubcommand.java
-new file mode 100644
-index 0000000000000000000000000000000000000000..c51ce1d7d602e587b3fb43aa3e3564ff60b92bca
---- /dev/null
-+++ b/src/main/java/org/galemc/gale/command/InfoSubcommand.java
-@@ -0,0 +1,41 @@
-+// Gale - Gale commands - /gale info command
-+
-+package org.galemc.gale.command;
-+
-+import net.kyori.adventure.text.event.ClickEvent;
-+import net.kyori.adventure.text.format.TextDecoration;
-+import org.bukkit.command.CommandSender;
-+import org.bukkit.permissions.Permission;
-+import org.checkerframework.checker.nullness.qual.NonNull;
-+import org.checkerframework.framework.qual.DefaultQualifier;
-+import org.jetbrains.annotations.Nullable;
-+
-+import static net.kyori.adventure.text.Component.text;
-+
-+@DefaultQualifier(NonNull.class)
-+public final class InfoSubcommand implements GaleSubcommand {
-+
-+    public final static String LITERAL_ARGUMENT = "info";
-+
-+    @Override
-+    public boolean execute(final CommandSender sender, final String subCommand, final String[] args) {
-+        sender.sendMessage(
-+            text("Gale is a performant Minecraft server system. Find us on: ")
-+            .append(text("https://github.com/GaleMC/Gale")
-+                .decorate(TextDecoration.UNDERLINED)
-+                .clickEvent(ClickEvent.openUrl("https://github.com/GaleMC/Gale")))
-+        );
-+        return true;
-+    }
-+
-+    @Override
-+    public boolean testPermission(CommandSender sender) {
-+        return true;
-+    }
-+
-+    @Override
-+    public @Nullable Permission getPermission() {
-+        return null;
-+    }
-+
-+}
 diff --git a/src/main/java/org/galemc/gale/command/PermissionedGaleSubcommand.java b/src/main/java/org/galemc/gale/command/PermissionedGaleSubcommand.java
 new file mode 100644
 index 0000000000000000000000000000000000000000..35ffa5f1bb682ac962ab9466e682a461efa65e7b
@@ -361,15 +317,63 @@ index 0000000000000000000000000000000000000000..35ffa5f1bb682ac962ab9466e682a461
 +    }
 +
 +}
-diff --git a/src/main/java/org/galemc/gale/command/ReloadSubcommand.java b/src/main/java/org/galemc/gale/command/ReloadSubcommand.java
+diff --git a/src/main/java/org/galemc/gale/command/subcommands/InfoCommand.java b/src/main/java/org/galemc/gale/command/subcommands/InfoCommand.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..7cfc541e023b8a975c2d1ad25d1e5e3a4cb0e15e
+index 0000000000000000000000000000000000000000..a781afaf6821a4b7bd770b33eaf65527bfbed04e
 --- /dev/null
-+++ b/src/main/java/org/galemc/gale/command/ReloadSubcommand.java
-@@ -0,0 +1,44 @@
++++ b/src/main/java/org/galemc/gale/command/subcommands/InfoCommand.java
+@@ -0,0 +1,42 @@
++// Gale - Gale commands - /gale info command
++
++package org.galemc.gale.command.subcommands;
++
++import net.kyori.adventure.text.event.ClickEvent;
++import net.kyori.adventure.text.format.TextDecoration;
++import org.bukkit.command.CommandSender;
++import org.bukkit.permissions.Permission;
++import org.checkerframework.checker.nullness.qual.NonNull;
++import org.checkerframework.framework.qual.DefaultQualifier;
++import org.galemc.gale.command.GaleSubcommand;
++import org.jetbrains.annotations.Nullable;
++
++import static net.kyori.adventure.text.Component.text;
++
++@DefaultQualifier(NonNull.class)
++public final class InfoCommand implements GaleSubcommand {
++
++    public final static String LITERAL_ARGUMENT = "info";
++
++    @Override
++    public boolean execute(final CommandSender sender, final String subCommand, final String[] args) {
++        sender.sendMessage(
++            text("Gale is a performant Minecraft server system. Find us on: ")
++            .append(text("https://github.com/GaleMC/Gale")
++                .decorate(TextDecoration.UNDERLINED)
++                .clickEvent(ClickEvent.openUrl("https://github.com/GaleMC/Gale")))
++        );
++        return true;
++    }
++
++    @Override
++    public boolean testPermission(CommandSender sender) {
++        return true;
++    }
++
++    @Override
++    public @Nullable Permission getPermission() {
++        return null;
++    }
++
++}
+diff --git a/src/main/java/org/galemc/gale/command/subcommands/ReloadCommand.java b/src/main/java/org/galemc/gale/command/subcommands/ReloadCommand.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..c6ca5d3cf7e709f59f68ccd28db378e9e6303fdd
+--- /dev/null
++++ b/src/main/java/org/galemc/gale/command/subcommands/ReloadCommand.java
+@@ -0,0 +1,46 @@
 +// Gale - Gale commands - /gale reload command
 +
-+package org.galemc.gale.command;
++package org.galemc.gale.command.subcommands;
 +
 +import net.minecraft.server.MinecraftServer;
 +import org.bukkit.command.Command;
@@ -378,18 +382,20 @@ index 0000000000000000000000000000000000000000..7cfc541e023b8a975c2d1ad25d1e5e3a
 +import org.bukkit.permissions.PermissionDefault;
 +import org.checkerframework.checker.nullness.qual.NonNull;
 +import org.checkerframework.framework.qual.DefaultQualifier;
++import org.galemc.gale.command.GaleCommand;
++import org.galemc.gale.command.PermissionedGaleSubcommand;
 +
 +import static net.kyori.adventure.text.Component.text;
 +import static net.kyori.adventure.text.format.NamedTextColor.GREEN;
 +import static net.kyori.adventure.text.format.NamedTextColor.RED;
 +
 +@DefaultQualifier(NonNull.class)
-+public final class ReloadSubcommand extends PermissionedGaleSubcommand {
++public final class ReloadCommand extends PermissionedGaleSubcommand {
 +
 +    public final static String LITERAL_ARGUMENT = "reload";
-+    static final String PERM = GaleCommand.BASE_PERM + "." + LITERAL_ARGUMENT;
++    public static final String PERM = GaleCommand.BASE_PERM + "." + LITERAL_ARGUMENT;
 +
-+    ReloadSubcommand() {
++    public ReloadCommand() {
 +        super(PERM, PermissionDefault.OP);
 +    }
 +
@@ -411,15 +417,15 @@ index 0000000000000000000000000000000000000000..7cfc541e023b8a975c2d1ad25d1e5e3a
 +    }
 +
 +}
-diff --git a/src/main/java/org/galemc/gale/command/VersionSubcommand.java b/src/main/java/org/galemc/gale/command/VersionSubcommand.java
+diff --git a/src/main/java/org/galemc/gale/command/subcommands/VersionCommand.java b/src/main/java/org/galemc/gale/command/subcommands/VersionCommand.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..ef7182ad67371eef8777d3ede3852498abfc04c0
+index 0000000000000000000000000000000000000000..675cd4295dabfade1b9cc5473010b5b20dc32039
 --- /dev/null
-+++ b/src/main/java/org/galemc/gale/command/VersionSubcommand.java
-@@ -0,0 +1,37 @@
++++ b/src/main/java/org/galemc/gale/command/subcommands/VersionCommand.java
+@@ -0,0 +1,39 @@
 +// Gale - Gale commands - /gale version command
 +
-+package org.galemc.gale.command;
++package org.galemc.gale.command.subcommands;
 +
 +import net.minecraft.server.MinecraftServer;
 +import org.bukkit.command.Command;
@@ -428,14 +434,16 @@ index 0000000000000000000000000000000000000000..ef7182ad67371eef8777d3ede3852498
 +import org.checkerframework.checker.nullness.qual.NonNull;
 +import org.checkerframework.checker.nullness.qual.Nullable;
 +import org.checkerframework.framework.qual.DefaultQualifier;
++import org.galemc.gale.command.GaleCommand;
++import org.galemc.gale.command.PermissionedGaleSubcommand;
 +
 +@DefaultQualifier(NonNull.class)
-+public final class VersionSubcommand extends PermissionedGaleSubcommand {
++public final class VersionCommand extends PermissionedGaleSubcommand {
 +
 +    public final static String LITERAL_ARGUMENT = "version";
-+    static final String PERM = GaleCommand.BASE_PERM + "." + LITERAL_ARGUMENT;
++    public static final String PERM = GaleCommand.BASE_PERM + "." + LITERAL_ARGUMENT;
 +
-+    VersionSubcommand() {
++    public VersionCommand() {
 +        super(PERM, PermissionDefault.TRUE);
 +    }
 +
