@@ -1007,3 +1007,45 @@ index 049d750d3af991dd14ac8cf644330404e74b2151..f0b3e5307226ebcad45edcec3ccfe363
      }
  
      @Override
+diff --git a/src/main/java/org/galemc/gale/command/GaleCommand.java b/src/main/java/org/galemc/gale/command/GaleCommand.java
+index 87d3aed35341dfa9358af064dd54d7de95078269..034dd291cdd7d1f71c2714e361112533e091420e 100644
+--- a/src/main/java/org/galemc/gale/command/GaleCommand.java
++++ b/src/main/java/org/galemc/gale/command/GaleCommand.java
+@@ -4,6 +4,7 @@ package org.galemc.gale.command;
+ 
+ import io.papermc.paper.command.CommandUtil;
+ import it.unimi.dsi.fastutil.Pair;
++import me.titaniumtown.ArrayConstants;
+ import net.minecraft.Util;
+ import org.bukkit.Bukkit;
+ import org.bukkit.Location;
+@@ -140,7 +141,7 @@ public final class GaleCommand extends Command {
+ 
+         // If they did not give a subcommand
+         if (args.length == 0) {
+-            INFO_SUBCOMMAND.execute(sender, InfoCommand.LITERAL_ARGUMENT, new String[0]);
++            INFO_SUBCOMMAND.execute(sender, InfoCommand.LITERAL_ARGUMENT, ArrayConstants.emptyStringArray); // Gale - JettPack - reduce array allocations
+             sender.sendMessage(newline().append(text("Command usage: " + specificUsageMessage, GRAY)));
+             return false;
+         }
+diff --git a/src/main/java/org/galemc/gale/command/subcommands/VersionCommand.java b/src/main/java/org/galemc/gale/command/subcommands/VersionCommand.java
+index 675cd4295dabfade1b9cc5473010b5b20dc32039..509751f640a195e4aacd2b651f9af39627f84bfd 100644
+--- a/src/main/java/org/galemc/gale/command/subcommands/VersionCommand.java
++++ b/src/main/java/org/galemc/gale/command/subcommands/VersionCommand.java
+@@ -2,6 +2,7 @@
+ 
+ package org.galemc.gale.command.subcommands;
+ 
++import me.titaniumtown.ArrayConstants;
+ import net.minecraft.server.MinecraftServer;
+ import org.bukkit.command.Command;
+ import org.bukkit.command.CommandSender;
+@@ -26,7 +27,7 @@ public final class VersionCommand extends PermissionedGaleSubcommand {
+     public boolean execute(final CommandSender sender, final String subCommand, final String[] args) {
+         final @Nullable Command ver = MinecraftServer.getServer().server.getCommandMap().getCommand("version");
+         if (ver != null) {
+-            ver.execute(sender, GaleCommand.COMMAND_LABEL, new String[0]);
++            ver.execute(sender, GaleCommand.COMMAND_LABEL, ArrayConstants.emptyStringArray); // Gale - JettPack - reduce array allocations
+         }
+         return true;
+     }
