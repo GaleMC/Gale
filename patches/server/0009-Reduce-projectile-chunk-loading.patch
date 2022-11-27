@@ -30,7 +30,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 diff --git a/src/main/java/net/minecraft/world/entity/projectile/Projectile.java b/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
-index 713c11d6547cb02ac4b6a02aec07a8ba68019f3f..2c6efa6503eee64cb33a100afb692b79bba67f68 100644
+index 713c11d6547cb02ac4b6a02aec07a8ba68019f3f..420ea4cca5a26c1da96585a215eb3ed1d3c5a10c 100644
 --- a/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
 +++ b/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
 @@ -42,6 +42,44 @@ public abstract class Projectile extends Entity {
@@ -60,9 +60,9 @@ index 713c11d6547cb02ac4b6a02aec07a8ba68019f3f..2c6efa6503eee64cb33a100afb692b79
 +                }
 +                int maxChunkLoadsPerProjectile = this.level.galeConfig().smallOptimizations.maxProjectileChunkLoads.perProjectile.max;
 +                if (maxChunkLoadsPerProjectile >= 0 && this.chunksLoadedByProjectile >= maxChunkLoadsPerProjectile) {
-+                    if (this.level.galeConfig().smallOptimizations.maxProjectileChunkLoads.perProjectile.removeFromWorld) {
++                    if (this.level.galeConfig().smallOptimizations.maxProjectileChunkLoads.perProjectile.removeFromWorldAfterReachLimit) {
 +                        this.discard();
-+                    } else if (this.level.galeConfig().smallOptimizations.maxProjectileChunkLoads.perProjectile.resetMovement) {
++                    } else if (this.level.galeConfig().smallOptimizations.maxProjectileChunkLoads.perProjectile.resetMovementAfterReachLimit) {
 +                        this.setDeltaMovement(0, this.getDeltaMovement().y, 0);
 +                    }
 +                    return;
@@ -79,7 +79,7 @@ index 713c11d6547cb02ac4b6a02aec07a8ba68019f3f..2c6efa6503eee64cb33a100afb692b79
          if (entity != null) {
              this.ownerUUID = entity.getUUID();
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index b82bb95b524c95cdefb81abef906eded0717e9a1..3e2e442fea6ba6fa5b0eabef724478a62bf460a0 100644
+index b82bb95b524c95cdefb81abef906eded0717e9a1..a83675d8d2f94a8e73cc2c7fa11d0aaf6f78be2c 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 @@ -33,7 +33,55 @@ public class GaleWorldConfiguration extends ConfigurationPart {
@@ -117,12 +117,12 @@ index b82bb95b524c95cdefb81abef906eded0717e9a1..3e2e442fea6ba6fa5b0eabef724478a6
 +                /**
 +                 * Whether to set the planar velocity of projectiles that cross the {@link #max} threshold
 +                 * to zero, so that they stop attempting to cross chunk boundaries.
-+                 * This has no effect if {@link #removeFromWorld} is true.
++                 * This has no effect if {@link #removeFromWorldAfterReachLimit} is true.
 +                 * <ul>
 +                 *     <li><i>Default</i>: false</li>
 +                 * </ul>
 +                 */
-+                public boolean resetMovement = false;
++                public boolean resetMovementAfterReachLimit = false;
 +
 +                /**
 +                 * Whether to remove projectiles that cross the {@link #max} threshold from the world entirely.
@@ -130,7 +130,7 @@ index b82bb95b524c95cdefb81abef906eded0717e9a1..3e2e442fea6ba6fa5b0eabef724478a6
 +                 *     <li><i>Default</i>: false</li>
 +                 * </ul>
 +                 */
-+                public boolean removeFromWorld = false;
++                public boolean removeFromWorldAfterReachLimit = false;
 +
 +            }
 +
