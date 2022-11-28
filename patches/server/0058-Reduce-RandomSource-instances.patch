@@ -1,0 +1,157 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MartijnMuijsers <martijnmuijsers@live.nl>
+Date: Tue, 29 Nov 2022 00:45:45 +0100
+Subject: [PATCH] Reduce RandomSource instances
+
+License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+
+This patch is based on the following patch:
+"don't create new random instance"
+By: foss-mc <69294560+foss-mc@users.noreply.github.com>
+As part of: Patina (https://github.com/PatinaMC/Patina)
+Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+
+diff --git a/src/main/java/net/minecraft/server/commands/SpreadPlayersCommand.java b/src/main/java/net/minecraft/server/commands/SpreadPlayersCommand.java
+index 23dcdc71a8a6fd5472cdc1c22331b56c6bb3ded9..c3f88980f1ea2f7b04ad110494962725274d25a4 100644
+--- a/src/main/java/net/minecraft/server/commands/SpreadPlayersCommand.java
++++ b/src/main/java/net/minecraft/server/commands/SpreadPlayersCommand.java
+@@ -65,7 +65,7 @@ public class SpreadPlayersCommand {
+         if (maxY < j) {
+             throw SpreadPlayersCommand.ERROR_INVALID_MAX_HEIGHT.create(maxY, j);
+         } else {
+-            RandomSource randomsource = RandomSource.create();
++            RandomSource randomsource = source.getLevel().random; // Gale - Patina - reduce RandomSource instances
+             double d0 = (double) (center.x - maxRange);
+             double d1 = (double) (center.y - maxRange);
+             double d2 = (double) (center.x + maxRange);
+diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
+index 3b122f521c166253f20d233c0fcebdede6660be5..18a774d310a06a90fb2ba2eb8c9fbd26ca28ddc3 100644
+--- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
++++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
+@@ -380,7 +380,7 @@ public class ServerPlayer extends Player {
+             long l = k * k;
+             int i1 = l > 2147483647L ? Integer.MAX_VALUE : (int) l;
+             int j1 = this.getCoprime(i1);
+-            int k1 = RandomSource.create().nextInt(i1);
++            int k1 = worldserver.random.nextInt(i1); // Gale - Patina - reduce RandomSource instances
+ 
+             for (int l1 = 0; l1 < i1; ++l1) {
+                 int i2 = (k1 + j1 * l1) % i1;
+@@ -417,7 +417,7 @@ public class ServerPlayer extends Player {
+             long l = k * k;
+             int i1 = l > 2147483647L ? Integer.MAX_VALUE : (int) l;
+             int j1 = this.getCoprime(i1);
+-            int k1 = RandomSource.create().nextInt(i1);
++            int k1 = world.random.nextInt(i1); // Gale - Patina - reduce RandomSource instances
+ 
+             for (int l1 = 0; l1 < i1; ++l1) {
+                 int i2 = (k1 + j1 * l1) % i1;
+diff --git a/src/main/java/net/minecraft/server/rcon/thread/QueryThreadGs4.java b/src/main/java/net/minecraft/server/rcon/thread/QueryThreadGs4.java
+index 1ef089dbf83de35d875c00efdf468c397be56978..b9f5dc95f859acb8f8fd4739537485af7187ae3b 100644
+--- a/src/main/java/net/minecraft/server/rcon/thread/QueryThreadGs4.java
++++ b/src/main/java/net/minecraft/server/rcon/thread/QueryThreadGs4.java
+@@ -349,7 +349,7 @@ public class QueryThreadGs4 extends GenericThread {
+             this.identBytes[2] = bs[5];
+             this.identBytes[3] = bs[6];
+             this.ident = new String(this.identBytes, StandardCharsets.UTF_8);
+-            this.challenge = RandomSource.create().nextInt(16777216);
++            this.challenge = java.util.concurrent.ThreadLocalRandom.current().nextInt(16777216); // Gale - Patina - reduce RandomSource instances
+             this.challengeBytes = String.format(Locale.ROOT, "\t%s%d\u0000", this.ident, this.challenge).getBytes(StandardCharsets.UTF_8);
+         }
+ 
+diff --git a/src/main/java/net/minecraft/world/entity/projectile/FishingHook.java b/src/main/java/net/minecraft/world/entity/projectile/FishingHook.java
+index f5886a88fd98ede5e85a91eccccb05ac33eb40e2..cf6499a232d57ffc5337a483086f13920cf95189 100644
+--- a/src/main/java/net/minecraft/world/entity/projectile/FishingHook.java
++++ b/src/main/java/net/minecraft/world/entity/projectile/FishingHook.java
+@@ -79,7 +79,7 @@ public class FishingHook extends Projectile {
+ 
+     private FishingHook(EntityType<? extends FishingHook> type, Level world, int luckOfTheSeaLevel, int lureLevel) {
+         super(type, world);
+-        this.syncronizedRandom = RandomSource.create();
++        this.syncronizedRandom = world.random; // Gale - Patina - reduce RandomSource instances
+         this.openWater = true;
+         this.currentState = FishingHook.FishHookState.FLYING;
+         this.noCulling = true;
+diff --git a/src/main/java/net/minecraft/world/entity/raid/Raid.java b/src/main/java/net/minecraft/world/entity/raid/Raid.java
+index 6a0a1731fd6804eb69d3641213712d31bce085b2..afb901cd0edff05b26fc09298b2eb8eb3d4be737 100644
+--- a/src/main/java/net/minecraft/world/entity/raid/Raid.java
++++ b/src/main/java/net/minecraft/world/entity/raid/Raid.java
+@@ -110,7 +110,7 @@ public class Raid {
+ 
+     public Raid(int id, ServerLevel world, BlockPos pos) {
+         this.raidEvent = new ServerBossEvent(Raid.RAID_NAME_COMPONENT, BossEvent.BossBarColor.RED, BossEvent.BossBarOverlay.NOTCHED_10);
+-        this.random = RandomSource.create();
++        this.random = world.random; // Gale - Patina - reduce RandomSource instances
+         this.waveSpawnPos = Optional.empty();
+         this.id = id;
+         this.level = world;
+@@ -124,7 +124,7 @@ public class Raid {
+ 
+     public Raid(ServerLevel world, CompoundTag nbt) {
+         this.raidEvent = new ServerBossEvent(Raid.RAID_NAME_COMPONENT, BossEvent.BossBarColor.RED, BossEvent.BossBarOverlay.NOTCHED_10);
+-        this.random = RandomSource.create();
++        this.random = world.random; // Gale - Patina - reduce RandomSource instances
+         this.waveSpawnPos = Optional.empty();
+         this.level = world;
+         this.id = nbt.getInt("Id");
+diff --git a/src/main/java/net/minecraft/world/level/Explosion.java b/src/main/java/net/minecraft/world/level/Explosion.java
+index 31708d1e94b557896d42199aa0bc6ed26a4c6d8a..b47593d35ff55d40feee4e8b06deaa81da934f2b 100644
+--- a/src/main/java/net/minecraft/world/level/Explosion.java
++++ b/src/main/java/net/minecraft/world/level/Explosion.java
+@@ -85,7 +85,7 @@ public class Explosion {
+     }
+ 
+     public Explosion(Level world, @Nullable Entity entity, @Nullable DamageSource damageSource, @Nullable ExplosionDamageCalculator behavior, double x, double y, double z, float power, boolean createFire, Explosion.BlockInteraction destructionType) {
+-        this.random = RandomSource.create();
++        this.random = world.random; // Gale - Patina - reduce RandomSource instances
+         this.toBlow = new ObjectArrayList();
+         this.hitPlayers = Maps.newHashMap();
+         this.level = world;
+diff --git a/src/main/java/net/minecraft/world/level/block/entity/TheEndGatewayBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/TheEndGatewayBlockEntity.java
+index 89bf5fc4fab2cf39378600aa8925ac4bb7707428..1d3a51575571978ae7791aa2b6f879e237cb3018 100644
+--- a/src/main/java/net/minecraft/world/level/block/entity/TheEndGatewayBlockEntity.java
++++ b/src/main/java/net/minecraft/world/level/block/entity/TheEndGatewayBlockEntity.java
+@@ -354,7 +354,7 @@ public class TheEndGatewayBlockEntity extends TheEndPortalBlockEntity {
+     }
+ 
+     private static void spawnGatewayPortal(ServerLevel world, BlockPos pos, EndGatewayConfiguration config) {
+-        Feature.END_GATEWAY.place(config, world, world.getChunkSource().getGenerator(), RandomSource.create(), pos);
++        Feature.END_GATEWAY.place(config, world, world.getChunkSource().getGenerator(), world.random, pos); // Gale - Patina - reduce RandomSource instances
+     }
+ 
+     @Override
+diff --git a/src/main/java/net/minecraft/world/level/dimension/end/EndDragonFight.java b/src/main/java/net/minecraft/world/level/dimension/end/EndDragonFight.java
+index a9052dd27005d244a96511fc5dbfa92f20a21f46..4d858d23feaee902bb0b04146d81919388f84457 100644
+--- a/src/main/java/net/minecraft/world/level/dimension/end/EndDragonFight.java
++++ b/src/main/java/net/minecraft/world/level/dimension/end/EndDragonFight.java
+@@ -406,7 +406,7 @@ public class EndDragonFight {
+ 
+     private void spawnNewGateway(BlockPos pos) {
+         this.level.levelEvent(3000, pos, 0);
+-        EndFeatures.END_GATEWAY_DELAYED.value().place(this.level, this.level.getChunkSource().getGenerator(), RandomSource.create(), pos);
++        EndFeatures.END_GATEWAY_DELAYED.value().place(this.level, this.level.getChunkSource().getGenerator(), this.level.random, pos); // Gale - Patina - reduce RandomSource instances
+     }
+ 
+     public void spawnExitPortal(boolean previouslyKilled) {
+@@ -421,7 +421,7 @@ public class EndDragonFight {
+             this.portalLocation = this.portalLocation.atY(this.level.getMinBuildHeight() + 1);
+         }
+         // Paper end
+-        endPodiumFeature.place(FeatureConfiguration.NONE, this.level, this.level.getChunkSource().getGenerator(), RandomSource.create(), this.portalLocation);
++        endPodiumFeature.place(FeatureConfiguration.NONE, this.level, this.level.getChunkSource().getGenerator(), this.level.random, this.portalLocation); // Gale - Patina - reduce RandomSource instances
+     }
+ 
+     private EnderDragon createNewDragon() {
+diff --git a/src/main/java/net/minecraft/world/level/storage/loot/LootContext.java b/src/main/java/net/minecraft/world/level/storage/loot/LootContext.java
+index eb399244af70c8fe735657d429d883c48215af0a..e78a8d68c4af056af9e1452f76651fea545189ba 100644
+--- a/src/main/java/net/minecraft/world/level/storage/loot/LootContext.java
++++ b/src/main/java/net/minecraft/world/level/storage/loot/LootContext.java
+@@ -202,7 +202,7 @@ public class LootContext {
+                 } else {
+                     RandomSource randomSource = this.random;
+                     if (randomSource == null) {
+-                        randomSource = RandomSource.create();
++                        randomSource = level.random; // Gale - Patina - reduce RandomSource instances
+                     }
+ 
+                     MinecraftServer minecraftServer = this.level.getServer();
