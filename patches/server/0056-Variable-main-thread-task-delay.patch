@@ -1,0 +1,1104 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MartijnMuijsers <martijnmuijsers@live.nl>
+Date: Sun, 27 Nov 2022 16:32:36 +0100
+Subject: [PATCH] Variable main thread task delay
+
+License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
+
+diff --git a/src/main/java/com/destroystokyo/paper/antixray/ChunkPacketBlockControllerAntiXray.java b/src/main/java/com/destroystokyo/paper/antixray/ChunkPacketBlockControllerAntiXray.java
+index dabd93c35bdbac6a8b668a82d5f3d4173a1baa4a..da07ef850f54f1e0225a48ccf24e28e170935a7d 100644
+--- a/src/main/java/com/destroystokyo/paper/antixray/ChunkPacketBlockControllerAntiXray.java
++++ b/src/main/java/com/destroystokyo/paper/antixray/ChunkPacketBlockControllerAntiXray.java
+@@ -21,6 +21,7 @@ import net.minecraft.world.level.block.EntityBlock;
+ import net.minecraft.world.level.block.state.BlockState;
+ import net.minecraft.world.level.chunk.*;
+ import org.bukkit.Bukkit;
++import org.galemc.gale.concurrent.MinecraftServerBlockableEventLoop;
+ 
+ import java.util.*;
+ import java.util.concurrent.Executor;
+@@ -180,7 +181,7 @@ public final class ChunkPacketBlockControllerAntiXray extends ChunkPacketBlockCo
+ 
+         if (!Bukkit.isPrimaryThread()) {
+             // Plugins?
+-            MinecraftServer.getServer().scheduleOnMain(() -> modifyBlocks(chunkPacket, chunkPacketInfo));
++            MinecraftServer.getServer().tell(() -> modifyBlocks(chunkPacket, chunkPacketInfo), MinecraftServerBlockableEventLoop.ANTI_XRAY_MODIFY_BLOCKS_TASK_MAX_DELAY); // Gale - main thread tasks with variable delay
+             return;
+         }
+ 
+diff --git a/src/main/java/net/minecraft/network/protocol/PacketUtils.java b/src/main/java/net/minecraft/network/protocol/PacketUtils.java
+index 8bc0cb9ad5bb4e76d962ff54305e2c08e279a17b..0ecccc1f6a17c9fb15c2ac1f33dcffc8d5a87cdd 100644
+--- a/src/main/java/net/minecraft/network/protocol/PacketUtils.java
++++ b/src/main/java/net/minecraft/network/protocol/PacketUtils.java
+@@ -2,6 +2,7 @@ package net.minecraft.network.protocol;
+ 
+ import com.mojang.logging.LogUtils;
+ import net.minecraft.network.PacketListener;
++import org.galemc.gale.concurrent.AbstractBlockableEventLoop;
+ import org.slf4j.Logger;
+ 
+ // CraftBukkit start
+@@ -36,10 +37,10 @@ public class PacketUtils {
+     public PacketUtils() {}
+ 
+     public static <T extends PacketListener> void ensureRunningOnSameThread(Packet<T> packet, T listener, ServerLevel world) throws RunningOnDifferentThreadException {
+-        PacketUtils.ensureRunningOnSameThread(packet, listener, (BlockableEventLoop) world.getServer());
++        PacketUtils.ensureRunningOnSameThread(packet, listener, world.getServer()); // Gale - main thread tasks with variable delay
+     }
+ 
+-    public static <T extends PacketListener> void ensureRunningOnSameThread(Packet<T> packet, T listener, BlockableEventLoop<?> engine) throws RunningOnDifferentThreadException {
++    public static <T extends PacketListener> void ensureRunningOnSameThread(Packet<T> packet, T listener, AbstractBlockableEventLoop engine) throws RunningOnDifferentThreadException { // Gale - main thread tasks with variable delay
+         if (!engine.isSameThread()) {
+             engine.executeIfPossible(() -> {
+                 packetProcessing.push(listener); // Paper - detailed watchdog information
+diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
+index 9720e5360beabe7e15b0b964cb3b81d5af2b4bf8..a30024ab934b81cd76e282fab4bbf6052bdaaaaf 100644
+--- a/src/main/java/net/minecraft/server/MinecraftServer.java
++++ b/src/main/java/net/minecraft/server/MinecraftServer.java
+@@ -40,7 +40,6 @@ import java.util.Optional;
+ import java.util.Set;
+ import java.util.concurrent.CompletableFuture;
+ import java.util.concurrent.Executor;
+-import java.util.concurrent.RejectedExecutionException;
+ import java.util.concurrent.atomic.AtomicReference;
+ import java.util.function.BooleanSupplier;
+ import java.util.function.Consumer;
+@@ -115,7 +114,6 @@ import net.minecraft.util.profiling.metrics.profiling.InactiveMetricsRecorder;
+ import net.minecraft.util.profiling.metrics.profiling.MetricsRecorder;
+ import net.minecraft.util.profiling.metrics.profiling.ServerMetricsSamplersProvider;
+ import net.minecraft.util.profiling.metrics.storage.MetricsPersister;
+-import net.minecraft.util.thread.ReentrantBlockableEventLoop;
+ import net.minecraft.world.Difficulty;
+ import net.minecraft.world.entity.Entity;
+ import net.minecraft.world.entity.ai.village.VillageSiege;
+@@ -150,6 +148,7 @@ import net.minecraft.world.level.storage.loot.PredicateManager;
+ import net.minecraft.world.phys.Vec2;
+ import net.minecraft.world.phys.Vec3;
+ import org.apache.commons.lang3.Validate;
++import org.galemc.gale.concurrent.MinecraftServerBlockableEventLoop;
+ import org.galemc.gale.configuration.GaleConfigurations;
+ import org.galemc.gale.configuration.GaleGlobalConfiguration;
+ import org.slf4j.Logger;
+@@ -174,9 +173,9 @@ import org.bukkit.event.server.ServerLoadEvent;
+ 
+ import co.aikar.timings.MinecraftTimings; // Paper
+ 
+-public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTask> implements CommandSource, AutoCloseable {
++public abstract class MinecraftServer extends MinecraftServerBlockableEventLoop implements CommandSource, AutoCloseable { // Gale - main thread tasks with variable delay
+ 
+-    private static MinecraftServer SERVER; // Paper
++    public static MinecraftServer SERVER; // Paper // Gale - main thread tasks with variable delay - private -> public
+     public static final Logger LOGGER = LogUtils.getLogger();
+     public static final String VANILLA_BRAND = "vanilla";
+     private static final float AVERAGE_TICK_TIME_SMOOTHING = 0.8F;
+@@ -246,7 +245,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+     public final Thread serverThread;
+     private long nextTickTime;
+     private long delayedTasksMaxNextTickTime;
+-    private boolean mayHaveDelayedTasks;
++    public boolean mayHaveDelayedTasks; // Gale - main thread tasks with variable delay - private -> public
+     private final PackRepository packRepository;
+     private final ServerScoreboard scoreboard;
+     @Nullable
+@@ -314,7 +313,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+     }
+ 
+     public MinecraftServer(OptionSet options, DataPackConfig datapackconfiguration, DynamicOps<Tag> registryreadops, Thread thread, LevelStorageSource.LevelStorageAccess convertable_conversionsession, PackRepository resourcepackrepository, WorldStem worldstem, Proxy proxy, DataFixer datafixer, Services services, ChunkProgressListenerFactory worldloadlistenerfactory) {
+-        super("Server");
++        super(); // Gale - main thread tasks with variable delay
+         SERVER = this; // Paper - better singleton
+         this.metricsRecorder = InactiveMetricsRecorder.INSTANCE;
+         this.profiler = this.metricsRecorder.getProfiler();
+@@ -893,7 +892,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+     }
+ 
+     // CraftBukkit start
+-    private boolean hasStopped = false;
++    public boolean hasStopped = false; // Gale - main thread tasks with variable delay - private -> public
+     public volatile boolean hasFullyShutdown = false; // Paper
+     private boolean hasLoggedStop = false; // Paper
+     private final Object stopLock = new Object();
+@@ -922,8 +921,10 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+              */
+             MinecraftServer.LOGGER.info("Stopping main thread (Ignore any thread death message you see! - DO NOT REPORT THREAD DEATH TO PAPER - If you think this is a Gale bug, please report it at https://github.com/GaleMC/Gale/issues )");
+             // Gale end - branding changes
+-            while (this.getRunningThread().isAlive()) {
+-                this.getRunningThread().stop();
++            // Gale start - main thread tasks with variable delay
++            while (this.serverThread.isAlive()) {
++                this.serverThread.stop();
++                // Gale end - main thread tasks with variable delay
+                 try {
+                     Thread.sleep(1);
+                 } catch (InterruptedException e) {}
+@@ -1263,7 +1264,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+         return crashreport;
+     }
+ 
+-    private boolean haveTime() {
++    public boolean haveTime() { // Gale - main thread tasks with variable delay - private -> public
+         // Paper start
+         if (this.forceTicks) {
+             return true;
+@@ -1286,7 +1287,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+     // Paper end
+ 
+     private void executeModerately() {
+-        this.runAllTasks();
++        this.runAllTasksForAllTicks();
+         java.util.concurrent.locks.LockSupport.parkNanos("executing tasks", 1000L);
+     }
+     // CraftBukkit end
+@@ -1300,56 +1301,6 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+         this.lastTickOversleepTime = (System.nanoTime() - tickOversleepStart) / 1000000L; // Gale - YAPFA - last tick time
+     }
+ 
+-    @Override
+-    public TickTask wrapRunnable(Runnable runnable) {
+-        // Paper start - anything that does try to post to main during watchdog crash, run on watchdog
+-        if (this.hasStopped && Thread.currentThread().equals(shutdownThread)) {
+-            runnable.run();
+-            runnable = () -> {};
+-        }
+-        // Paper end
+-        return new TickTask(this.tickCount, runnable);
+-    }
+-
+-    protected boolean shouldRun(TickTask ticktask) {
+-        return ticktask.getTick() + 3 < this.tickCount || this.haveTime();
+-    }
+-
+-    @Override
+-    public boolean pollTask() {
+-        boolean flag = this.pollTaskInternal();
+-
+-        this.mayHaveDelayedTasks = flag;
+-        return flag;
+-    }
+-
+-    private boolean pollTaskInternal() {
+-        if (super.pollTask()) {
+-            this.executeMidTickTasks(); // Paper - execute chunk tasks mid tick
+-            return true;
+-        } else {
+-            boolean ret = false; // Paper - force execution of all worlds, do not just bias the first
+-            if (this.haveTime()) {
+-                Iterator iterator = this.getAllLevels().iterator();
+-
+-                while (iterator.hasNext()) {
+-                    ServerLevel worldserver = (ServerLevel) iterator.next();
+-
+-                    if (worldserver.getChunkSource().pollTask()) {
+-                        ret = true; // Paper - force execution of all worlds, do not just bias the first
+-                    }
+-                }
+-            }
+-
+-            return ret; // Paper - force execution of all worlds, do not just bias the first
+-        }
+-    }
+-
+-    public void doRunTask(TickTask ticktask) { // CraftBukkit - decompile error
+-        this.getProfiler().incrementCounter("runTask");
+-        super.doRunTask(ticktask);
+-    }
+-
+     private void updateStatusIcon(ServerStatus metadata) {
+         Optional<File> optional = Optional.of(this.getFile("server-icon.png")).filter(File::isFile);
+ 
+@@ -1405,6 +1356,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+         new com.destroystokyo.paper.event.server.ServerTickStartEvent(this.tickCount+1).callEvent(); // Paper
+ 
+         ++this.tickCount;
++        MinecraftServerBlockableEventLoop.tickPendingRunnables(); // Gale - main thread tasks with variable delay
+         this.tickChildren(shouldKeepTicking);
+         if (i - this.lastServerStatus >= 5000000000L) {
+             this.lastServerStatus = i;
+@@ -1453,7 +1405,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+         io.papermc.paper.util.CachedLists.reset(); // Paper
+         // Paper start - move executeAll() into full server tick timing
+         try (co.aikar.timings.Timing ignored = MinecraftTimings.processTasksTimer.startTiming()) {
+-            this.runAllTasks();
++            this.runAllTasksWithinTimeOrForCurrentTick();
+         }
+         // Paper end
+         // Paper start
+@@ -1979,25 +1931,6 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+         return 29999984;
+     }
+ 
+-    @Override
+-    public boolean scheduleExecutables() {
+-        return super.scheduleExecutables() && !this.isStopped();
+-    }
+-
+-    @Override
+-    public void executeIfPossible(Runnable runnable) {
+-        if (this.isStopped()) {
+-            throw new RejectedExecutionException("Server already shutting down");
+-        } else {
+-            super.executeIfPossible(runnable);
+-        }
+-    }
+-
+-    @Override
+-    public Thread getRunningThread() {
+-        return this.serverThread;
+-    }
+-
+     public int getCompressionThreshold() {
+         return 256;
+     }
+@@ -2473,7 +2406,6 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+     }
+ 
+     // CraftBukkit start
+-    @Override
+     public boolean isSameThread() {
+         return io.papermc.paper.util.TickThread.isTickThread(); // Paper - rewrite chunk system
+     }
+diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
+index a1ee89845ec41063d0c7983b1f4adf86843aaadf..8a191bf52554adde15c618c41d5e399f04963dbe 100644
+--- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
++++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
+@@ -184,6 +184,7 @@ import net.minecraft.world.phys.shapes.BooleanOp;
+ import net.minecraft.world.phys.shapes.Shapes;
+ import net.minecraft.world.phys.shapes.VoxelShape;
+ import org.apache.commons.lang3.StringUtils;
++import org.galemc.gale.concurrent.MinecraftServerBlockableEventLoop;
+ import org.galemc.gale.configuration.GaleGlobalConfiguration;
+ import org.slf4j.Logger;
+ 
+@@ -535,7 +536,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+ 
+         Objects.requireNonNull(this.connection);
+         // CraftBukkit - Don't wait
+-        minecraftserver.scheduleOnMain(networkmanager::handleDisconnection); // Paper
++        minecraftserver.tell(networkmanager::handleDisconnection, MinecraftServerBlockableEventLoop.HANDLE_DISCONNECT_TASK_MAX_DELAY); // Paper // Gale - main thread tasks with variable delay
+     }
+ 
+     private <T, R> CompletableFuture<R> filterTextPacket(T text, BiFunction<TextFilter, T, CompletableFuture<R>> filterer) {
+@@ -874,13 +875,13 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+         // PacketUtils.ensureRunningOnSameThread(packet, this, this.player.getLevel()); // Paper - run this async
+         // CraftBukkit start
+         if (this.chatSpamTickCount.addAndGet(io.papermc.paper.configuration.GlobalConfiguration.get().spamLimiter.tabSpamIncrement) > io.papermc.paper.configuration.GlobalConfiguration.get().spamLimiter.tabSpamLimit && !this.server.getPlayerList().isOp(this.player.getGameProfile())) { // Paper start - split and make configurable
+-            server.scheduleOnMain(() -> this.disconnect(Component.translatable("disconnect.spam", ArrayConstants.emptyObjectArray), org.bukkit.event.player.PlayerKickEvent.Cause.SPAM)); // Paper - kick event cause // Gale - JettPack - reduce array allocations
++            server.tell(() -> this.disconnect(Component.translatable("disconnect.spam", ArrayConstants.emptyObjectArray), org.bukkit.event.player.PlayerKickEvent.Cause.SPAM), MinecraftServerBlockableEventLoop.KICK_FOR_COMMAND_PACKET_SPAM_TASK_MAX_DELAY); // Paper - kick event cause // Gale - JettPack - reduce array allocations // Gale - main thread tasks with variable delay
+             return;
+         }
+         // Paper start
+         String str = packet.getCommand(); int index = -1;
+         if (str.length() > 64 && ((index = str.indexOf(' ')) == -1 || index >= 64)) {
+-            server.scheduleOnMain(() -> this.disconnect(Component.translatable("disconnect.spam", ArrayConstants.emptyObjectArray), org.bukkit.event.player.PlayerKickEvent.Cause.SPAM)); // Paper - kick event cause // Gale - JettPack - reduce array allocations
++            server.tell(() -> this.disconnect(Component.translatable("disconnect.spam", ArrayConstants.emptyObjectArray), org.bukkit.event.player.PlayerKickEvent.Cause.SPAM), MinecraftServerBlockableEventLoop.KICK_FOR_COMMAND_PACKET_SPAM_TASK_MAX_DELAY); // Paper - kick event cause // Gale - JettPack - reduce array allocations // Gale - main thread tasks with variable delay
+             return;
+         }
+         // Paper end
+@@ -905,7 +906,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+             if (!event.isHandled()) {
+                 if (!event.isCancelled()) {
+ 
+-                    this.server.scheduleOnMain(() -> { // This needs to be on main
++                    this.server.tell(() -> { // This needs to be on main // Gale - main thread tasks with variable delay
+                         ParseResults<CommandSourceStack> parseresults = this.server.getCommands().getDispatcher().parse(stringreader, this.player.createCommandSourceStack());
+ 
+                         this.server.getCommands().getDispatcher().getCompletionSuggestions(parseresults).thenAccept((suggestions) -> {
+@@ -916,7 +917,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+                             this.connection.send(new ClientboundCommandSuggestionsPacket(packet.getId(), suggestEvent.getSuggestions()));
+                             // Paper end - Brigadier API
+                         });
+-                    });
++                    }, MinecraftServerBlockableEventLoop.SEND_COMMAND_COMPLETION_SUGGESTIONS_TASK_MAX_DELAY); // Gale - main thread tasks with variable delay
+                 }
+             } else if (!completions.isEmpty()) {
+                 final com.mojang.brigadier.suggestion.SuggestionsBuilder builder0 = new com.mojang.brigadier.suggestion.SuggestionsBuilder(command, stringreader.getTotalLength());
+@@ -1225,7 +1226,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+                 int byteLength = testString.getBytes(java.nio.charset.StandardCharsets.UTF_8).length;
+                 if (byteLength > 256 * 4) {
+                     ServerGamePacketListenerImpl.LOGGER.warn(this.player.getScoreboardName() + " tried to send a book with with a page too large!");
+-                    server.scheduleOnMain(() -> this.disconnect("Book too large!", org.bukkit.event.player.PlayerKickEvent.Cause.ILLEGAL_ACTION)); // Paper - kick event cause
++                    server.tell(() -> this.disconnect("Book too large!", org.bukkit.event.player.PlayerKickEvent.Cause.ILLEGAL_ACTION), MinecraftServerBlockableEventLoop.KICK_FOR_BOOK_TOO_LARGE_PACKET_TASK_MAX_DELAY); // Paper - kick event cause // Gale - main thread tasks with variable delay
+                     return;
+                 }
+                 byteTotal += byteLength;
+@@ -1248,14 +1249,14 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+ 
+             if (byteTotal > byteAllowed) {
+                 ServerGamePacketListenerImpl.LOGGER.warn(this.player.getScoreboardName() + " tried to send too large of a book. Book Size: " + byteTotal + " - Allowed:  "+ byteAllowed + " - Pages: " + pageList.size());
+-                server.scheduleOnMain(() -> this.disconnect("Book too large!", org.bukkit.event.player.PlayerKickEvent.Cause.ILLEGAL_ACTION)); // Paper - kick event cause
++                server.tell(() -> this.disconnect("Book too large!", org.bukkit.event.player.PlayerKickEvent.Cause.ILLEGAL_ACTION), MinecraftServerBlockableEventLoop.KICK_FOR_BOOK_TOO_LARGE_PACKET_TASK_MAX_DELAY); // Paper - kick event cause // Gale - main thread tasks with variable delay
+                 return;
+             }
+         }
+         // Paper end
+         // CraftBukkit start
+         if (this.lastBookTick + 20 > MinecraftServer.currentTick) {
+-            server.scheduleOnMain(() -> this.disconnect("Book edited too quickly!", org.bukkit.event.player.PlayerKickEvent.Cause.ILLEGAL_ACTION)); // Paper - kick event cause // Paper - Also ensure this is called on main
++            server.tell(() -> this.disconnect("Book edited too quickly!", org.bukkit.event.player.PlayerKickEvent.Cause.ILLEGAL_ACTION), MinecraftServerBlockableEventLoop.KICK_FOR_EDITING_BOOK_TOO_QUICKLY_TASK_MAX_DELAY); // Paper - kick event cause // Paper - Also ensure this is called on main // Gale - main thread tasks with variable delay
+             return;
+         }
+         this.lastBookTick = MinecraftServer.currentTick;
+@@ -2207,9 +2208,9 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+         }
+         // CraftBukkit end
+         if (ServerGamePacketListenerImpl.isChatMessageIllegal(packet.message())) {
+-            this.server.scheduleOnMain(() -> { // Paper - push to main for event firing
++            this.server.tell(() -> { // Paper - push to main for event firing // Gale - main thread tasks with variable delay
+             this.disconnect(Component.translatable("multiplayer.disconnect.illegal_characters"), org.bukkit.event.player.PlayerKickEvent.Cause.ILLEGAL_CHARACTERS); // Paper - add cause
+-            }); // Paper - push to main for event firing
++            }, MinecraftServerBlockableEventLoop.KICK_FOR_ILLEGAL_CHARACTERS_IN_CHAT_PACKET_TASK_MAX_DELAY); // Paper - push to main for event firing // Gale - main thread tasks with variable delay
+         } else {
+             if (this.tryHandleChat(packet.message(), packet.timeStamp(), packet.lastSeenMessages())) {
+                 // this.server.submit(() -> { // CraftBukkit - async chat
+@@ -2237,9 +2238,9 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+     @Override
+     public void handleChatCommand(ServerboundChatCommandPacket packet) {
+         if (ServerGamePacketListenerImpl.isChatMessageIllegal(packet.command())) {
+-            this.server.scheduleOnMain(() -> { // Paper - push to main for event firing
++            this.server.tell(() -> { // Paper - push to main for event firing // Gale - main thread tasks with variable delay
+             this.disconnect(Component.translatable("multiplayer.disconnect.illegal_characters"), org.bukkit.event.player.PlayerKickEvent.Cause.ILLEGAL_CHARACTERS); // Paper
+-            }); // Paper - push to main for event firing
++            }, MinecraftServerBlockableEventLoop.KICK_FOR_ILLEGAL_CHARACTERS_IN_CHAT_PACKET_TASK_MAX_DELAY); // Paper - push to main for event firing // Gale - main thread tasks with variable delay
+         } else {
+             if (this.tryHandleChat(packet.command(), packet.timeStamp(), packet.lastSeenMessages())) {
+                 this.server.submit(() -> {
+@@ -2336,9 +2337,9 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+     private boolean tryHandleChat(String message, Instant timestamp, LastSeenMessages.Update acknowledgment) {
+         if (!this.updateChatOrder(timestamp)) {
+             ServerGamePacketListenerImpl.LOGGER.warn("{} sent out-of-order chat: '{}': {} > {}", this.player.getName().getString(), message, this.lastChatTimeStamp.get().getEpochSecond(), timestamp.getEpochSecond()); // Paper
+-            this.server.scheduleOnMain(() -> { // Paper - push to main
++            this.server.tell(() -> { // Paper - push to main // Gale - main thread tasks with variable delay
+             this.disconnect(Component.translatable("multiplayer.disconnect.out_of_order_chat"), org.bukkit.event.player.PlayerKickEvent.Cause.OUT_OF_ORDER_CHAT); // Paper - kick event cause
+-            }); // Paper - push to main
++            }, MinecraftServerBlockableEventLoop.KICK_FOR_OUT_OF_ORDER_CHAT_PACKET_TASK_MAX_DELAY); // Paper - push to main // Gale - main thread tasks with variable delay
+             return false;
+         } else if (this.player.isRemoved() || this.player.getChatVisibility() == ChatVisiblity.HIDDEN) { // CraftBukkit - dead men tell no tales
+             this.send(new ClientboundSystemChatPacket(Component.translatable("chat.disabled.options").withStyle(ChatFormatting.RED), false));
+@@ -3395,7 +3396,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+         // Paper start
+         if (!org.bukkit.Bukkit.isPrimaryThread()) {
+             if (recipeSpamPackets.addAndGet(io.papermc.paper.configuration.GlobalConfiguration.get().spamLimiter.recipeSpamIncrement) > io.papermc.paper.configuration.GlobalConfiguration.get().spamLimiter.recipeSpamLimit) {
+-                server.scheduleOnMain(() -> this.disconnect(net.minecraft.network.chat.Component.translatable("disconnect.spam", ArrayConstants.emptyObjectArray), org.bukkit.event.player.PlayerKickEvent.Cause.SPAM)); // Paper - kick event cause // Gale - JettPack - reduce array allocations
++                server.tell(() -> this.disconnect(net.minecraft.network.chat.Component.translatable("disconnect.spam", ArrayConstants.emptyObjectArray), org.bukkit.event.player.PlayerKickEvent.Cause.SPAM), MinecraftServerBlockableEventLoop.KICK_FOR_RECIPE_PACKET_SPAM_TASK_MAX_DELAY); // Paper - kick event cause // Gale - JettPack - reduce array allocations // Gale - main thread tasks with variable delay
+                 return;
+             }
+         }
+diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
+index 507017c1ea03cd028be2149b18c8de7f8353e37e..48642ffb13330bbca06437ba4912a86ba6b144e4 100644
+--- a/src/main/java/net/minecraft/server/players/PlayerList.java
++++ b/src/main/java/net/minecraft/server/players/PlayerList.java
+@@ -98,6 +98,7 @@ import net.minecraft.world.scores.Objective;
+ import net.minecraft.world.scores.PlayerTeam;
+ import net.minecraft.world.scores.Scoreboard; // Paper
+ import net.minecraft.world.scores.Team;
++import org.galemc.gale.concurrent.MinecraftServerBlockableEventLoop;
+ import org.galemc.gale.configuration.GaleGlobalConfiguration;
+ import org.slf4j.Logger;
+ 
+@@ -303,7 +304,7 @@ public abstract class PlayerList {
+             worldserver1, chunkX, chunkZ, net.minecraft.server.level.ChunkHolder.FullChunkStatus.ENTITY_TICKING, true,
+             ca.spottedleaf.concurrentutil.executor.standard.PrioritisedExecutor.Priority.HIGHEST,
+             (chunk) -> {
+-                MinecraftServer.getServer().scheduleOnMain(() -> {
++                MinecraftServer.getServer().tell(() -> { // Gale - main thread tasks with variable delay
+                     try {
+                         if (!playerconnection.connection.isConnected()) {
+                             return;
+@@ -316,7 +317,7 @@ public abstract class PlayerList {
+                     } finally {
+                         finalWorldserver.pendingLogin.remove(player);
+                     }
+-                });
++                }, MinecraftServerBlockableEventLoop.POST_CHUNK_LOAD_JOIN_TASK_MAX_DELAY); // Gale - main thread tasks with variable delay
+             }
+         );
+     }
+diff --git a/src/main/java/net/minecraft/util/thread/BlockableEventLoop.java b/src/main/java/net/minecraft/util/thread/BlockableEventLoop.java
+index 83701fbfaa56a232593ee8f11a3afb8941238bfa..30e6da28c30b169763417b271dbe72cc6bdba1ea 100644
+--- a/src/main/java/net/minecraft/util/thread/BlockableEventLoop.java
++++ b/src/main/java/net/minecraft/util/thread/BlockableEventLoop.java
+@@ -10,13 +10,16 @@ import java.util.concurrent.Executor;
+ import java.util.concurrent.locks.LockSupport;
+ import java.util.function.BooleanSupplier;
+ import java.util.function.Supplier;
++
++import net.minecraft.server.MinecraftServer;
+ import net.minecraft.util.profiling.metrics.MetricCategory;
+ import net.minecraft.util.profiling.metrics.MetricSampler;
+ import net.minecraft.util.profiling.metrics.MetricsRegistry;
+ import net.minecraft.util.profiling.metrics.ProfilerMeasured;
++import org.galemc.gale.concurrent.AbstractBlockableEventLoop;
+ import org.slf4j.Logger;
+ 
+-public abstract class BlockableEventLoop<R extends Runnable> implements ProfilerMeasured, ProcessorHandle<R>, Executor {
++public abstract class BlockableEventLoop<R extends Runnable> implements ProfilerMeasured, ProcessorHandle<R>, AbstractBlockableEventLoop { // Gale - main thread tasks with variable delay
+     private final String name;
+     private static final Logger LOGGER = LogUtils.getLogger();
+     private final Queue<R> pendingRunnables = Queues.newConcurrentLinkedQueue();
+@@ -31,6 +34,7 @@ public abstract class BlockableEventLoop<R extends Runnable> implements Profiler
+ 
+     protected abstract boolean shouldRun(R task);
+ 
++    @Override // Gale - main thread tasks with variable delay
+     public boolean isSameThread() {
+         return Thread.currentThread() == this.getRunningThread();
+     }
+@@ -102,6 +106,7 @@ public abstract class BlockableEventLoop<R extends Runnable> implements Profiler
+ 
+     }
+ 
++    @Override // Gale - main thread tasks with variable delay
+     public void executeIfPossible(Runnable runnable) {
+         this.execute(runnable);
+     }
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
+index 55d83a9a691d11c9408d2c3260c3e77dfb51b97e..f8a5bac64d9877ba18d18cc341fd7a3f4a8a6a0d 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
+@@ -135,6 +135,7 @@ import org.bukkit.util.Consumer;
+ import org.bukkit.util.RayTraceResult;
+ import org.bukkit.util.StructureSearchResult;
+ import org.bukkit.util.Vector;
++import org.galemc.gale.concurrent.MinecraftServerBlockableEventLoop;
+ 
+ public class CraftWorld extends CraftRegionAccessor implements World {
+     public static final int CUSTOM_DIMENSION_OFFSET = 10;
+@@ -2353,11 +2354,11 @@ public class CraftWorld extends CraftRegionAccessor implements World {
+         java.util.concurrent.CompletableFuture<Chunk> ret = new java.util.concurrent.CompletableFuture<>();
+ 
+         io.papermc.paper.chunk.system.ChunkSystem.scheduleChunkLoad(this.getHandle(), x, z, gen, ChunkStatus.FULL, true, priority, (c) -> {
+-            net.minecraft.server.MinecraftServer.getServer().scheduleOnMain(() -> {
++            net.minecraft.server.MinecraftServer.getServer().tell(() -> { // Gale - main thread tasks with variable delay
+                 net.minecraft.world.level.chunk.LevelChunk chunk = (net.minecraft.world.level.chunk.LevelChunk)c;
+                 if (chunk != null) addTicket(x, z); // Paper
+                 ret.complete(chunk == null ? null : chunk.getBukkitChunk());
+-            });
++            }, MinecraftServerBlockableEventLoop.COMPLETE_CHUNK_FUTURE_TASK_MAX_DELAY); // Gale - main thread tasks with variable delay
+         });
+ 
+         return ret;
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
+index 9368ec01e498f913bc5b7b3e77fe87659090d9b5..ee20bf57734bcd24f7c898cd52efea70b9a7d45f 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
+@@ -189,6 +189,7 @@ import org.bukkit.plugin.Plugin;
+ import org.bukkit.util.BoundingBox;
+ import org.bukkit.util.NumberConversions;
+ import org.bukkit.util.Vector;
++import org.galemc.gale.concurrent.MinecraftServerBlockableEventLoop;
+ 
+ public abstract class CraftEntity implements org.bukkit.entity.Entity {
+     private static PermissibleBase perm;
+@@ -1260,7 +1261,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
+             for (net.minecraft.world.level.chunk.ChunkAccess chunk : list) {
+                 chunkProviderServer.addTicketAtLevel(net.minecraft.server.level.TicketType.POST_TELEPORT, chunk.getPos(), 33, CraftEntity.this.getEntityId());
+             }
+-            net.minecraft.server.MinecraftServer.getServer().scheduleOnMain(() -> {
++            net.minecraft.server.MinecraftServer.getServer().tell(() -> { // Gale - main thread tasks with variable delay
+                 try {
+                     ret.complete(CraftEntity.this.teleport(locationClone, cause) ? Boolean.TRUE : Boolean.FALSE);
+                 } catch (Throwable throwable) {
+@@ -1270,7 +1271,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
+                     net.minecraft.server.MinecraftServer.LOGGER.error("Failed to teleport entity " + CraftEntity.this, throwable);
+                     ret.completeExceptionally(throwable);
+                 }
+-            });
++            }, MinecraftServerBlockableEventLoop.TELEPORT_ASYNC_TASK_MAX_DELAY); // Gale - main thread tasks with variable delay
+         });
+ 
+         return ret;
+diff --git a/src/main/java/org/galemc/gale/concurrent/AbstractBlockableEventLoop.java b/src/main/java/org/galemc/gale/concurrent/AbstractBlockableEventLoop.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..7371d738437c6e043f484ccac8891940830f399e
+--- /dev/null
++++ b/src/main/java/org/galemc/gale/concurrent/AbstractBlockableEventLoop.java
+@@ -0,0 +1,18 @@
++// Gale - main thread tasks with variable delay
++
++package org.galemc.gale.concurrent;
++
++import net.minecraft.util.thread.BlockableEventLoop;
++
++import java.util.concurrent.Executor;
++
++/**
++ * An interface for the common functionality of {@link BlockableEventLoop} and {@link MinecraftServerBlockableEventLoop}.
++ */
++public interface AbstractBlockableEventLoop extends Executor {
++
++    boolean isSameThread();
++
++    void executeIfPossible(Runnable runnable);
++
++}
+diff --git a/src/main/java/org/galemc/gale/concurrent/MinecraftServerBlockableEventLoop.java b/src/main/java/org/galemc/gale/concurrent/MinecraftServerBlockableEventLoop.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..8396a613b80ce1767cd9b1f078b9c72863e9bca6
+--- /dev/null
++++ b/src/main/java/org/galemc/gale/concurrent/MinecraftServerBlockableEventLoop.java
+@@ -0,0 +1,322 @@
++// Gale - main thread tasks with variable delay
++
++package org.galemc.gale.concurrent;
++
++import com.mojang.logging.LogUtils;
++import io.papermc.paper.util.TickThread;
++import net.minecraft.server.MinecraftServer;
++import net.minecraft.server.level.ServerLevel;
++import net.minecraft.util.thread.BlockableEventLoop;
++import net.minecraft.util.thread.ProcessorHandle;
++import net.minecraft.util.thread.ReentrantBlockableEventLoop;
++import org.slf4j.Logger;
++
++import java.util.Iterator;
++import java.util.Queue;
++import java.util.concurrent.CompletableFuture;
++import java.util.concurrent.Executor;
++import java.util.concurrent.RejectedExecutionException;
++import java.util.concurrent.locks.Lock;
++import java.util.concurrent.locks.LockSupport;
++import java.util.concurrent.locks.ReadWriteLock;
++import java.util.concurrent.locks.ReentrantReadWriteLock;
++import java.util.function.BooleanSupplier;
++import java.util.function.Supplier;
++
++/**
++ * This is a base class for {@link MinecraftServer}, as a replacement of {@link BlockableEventLoop}
++ * (and the intermediary class {@link ReentrantBlockableEventLoop}.
++ */
++public class MinecraftServerBlockableEventLoop implements ProcessorHandle<Runnable>, AbstractBlockableEventLoop {
++
++    public static int DEFAULT_TASK_MAX_DELAY = 2;
++    public static int COMPLETE_CHUNK_FUTURE_TASK_MAX_DELAY = DEFAULT_TASK_MAX_DELAY;
++    public static int POST_CHUNK_LOAD_JOIN_TASK_MAX_DELAY = DEFAULT_TASK_MAX_DELAY;
++    public static int ANTI_XRAY_MODIFY_BLOCKS_TASK_MAX_DELAY = DEFAULT_TASK_MAX_DELAY;
++    public static int TELEPORT_ASYNC_TASK_MAX_DELAY = DEFAULT_TASK_MAX_DELAY;
++    public static int SEND_COMMAND_COMPLETION_SUGGESTIONS_TASK_MAX_DELAY = DEFAULT_TASK_MAX_DELAY;
++    public static int KICK_FOR_COMMAND_PACKET_SPAM_TASK_MAX_DELAY = DEFAULT_TASK_MAX_DELAY;
++    public static int KICK_FOR_RECIPE_PACKET_SPAM_TASK_MAX_DELAY = DEFAULT_TASK_MAX_DELAY;
++    public static int KICK_FOR_BOOK_TOO_LARGE_PACKET_TASK_MAX_DELAY = DEFAULT_TASK_MAX_DELAY;
++    public static int KICK_FOR_EDITING_BOOK_TOO_QUICKLY_TASK_MAX_DELAY = DEFAULT_TASK_MAX_DELAY;
++    public static int KICK_FOR_ILLEGAL_CHARACTERS_IN_CHAT_PACKET_TASK_MAX_DELAY = DEFAULT_TASK_MAX_DELAY;
++    public static int KICK_FOR_OUT_OF_ORDER_CHAT_PACKET_TASK_MAX_DELAY = DEFAULT_TASK_MAX_DELAY;
++    public static int HANDLE_DISCONNECT_TASK_MAX_DELAY = DEFAULT_TASK_MAX_DELAY;
++
++    private static final String NAME = "Server";
++    private static final Logger LOGGER = LogUtils.getLogger();
++
++    /**
++     * A number of queues, which the queue at index i being the queue to be used after another i ticks pass
++     * even when {@link MinecraftServer#haveTime()} is false.
++     */
++    public static Queue[] pendingRunnables = new Queue[0];
++
++    public static volatile int firstQueueWithElementsIndex = 0;
++    public static volatile long stamp = 0;
++
++    private static final ReadWriteLock pendingRunnablesLock = new ReentrantReadWriteLock();
++    private static final Lock pendingRunnablesReadLock = pendingRunnablesLock.readLock();
++    public static final Lock pendingRunnablesWriteLock = pendingRunnablesLock.writeLock();
++
++    private static int blockingCount;
++    private static int reentrantCount;
++
++    public static boolean scheduleExecutables() {
++        return (reentrantCount != 0 || !(Thread.currentThread() instanceof TickThread)) && !MinecraftServer.SERVER.isStopped();
++    }
++
++    protected boolean runningTask() {
++        return reentrantCount != 0;
++    }
++
++    /**
++     * This moves the queues in {@link #pendingRunnables}.
++     */
++    public static void tickPendingRunnables() {
++        while (!pendingRunnablesWriteLock.tryLock()) {}
++        try {
++            stamp++;
++            // Move the queues to the preceding position
++            Queue firstQueue = pendingRunnables[0];
++            for (int i = 1; i < pendingRunnables.length; i++) {
++                pendingRunnables[i - 1] = pendingRunnables[i];
++            }
++            // Re-use the same instance that was the old first queue as the new last queue
++            pendingRunnables[pendingRunnables.length - 1] = firstQueue;
++            // Move any elements that were still present in the previous first queue to the new first queue
++            pendingRunnables[0].addAll(firstQueue);
++            firstQueue.clear();
++            stamp++;
++        } finally {
++            pendingRunnablesWriteLock.unlock();
++        }
++    }
++
++    private static boolean hasPendingTasks() {
++        while (!pendingRunnablesReadLock.tryLock());
++        try {
++            for (int i = 0; i < pendingRunnables.length; i++) {
++                if (!pendingRunnables[i].isEmpty()) {
++                    return true;
++                }
++            }
++            return false;
++        } finally {
++            pendingRunnablesReadLock.unlock();
++        }
++    }
++
++    public int getPendingTasksCount() {
++        while (!pendingRunnablesReadLock.tryLock());
++        try {
++            int count = 0;
++            for (int i = 0; i < pendingRunnables.length; i++) {
++                count += pendingRunnables[i].size();
++            }
++            return count;
++        } finally {
++            pendingRunnablesReadLock.unlock();
++        }
++    }
++
++    public <V> CompletableFuture<V> submit(Supplier<V> task) {
++        return scheduleExecutables() ? CompletableFuture.supplyAsync(task, this) : CompletableFuture.completedFuture(task.get());
++    }
++
++    private CompletableFuture<Void> submitAsync(Runnable runnable) {
++        return CompletableFuture.supplyAsync(() -> {
++            runnable.run();
++            return null;
++        }, this);
++    }
++
++    public CompletableFuture<Void> submit(Runnable task) {
++        if (scheduleExecutables()) {
++            return this.submitAsync(task);
++        } else {
++            task.run();
++            return CompletableFuture.completedFuture((Void)null);
++        }
++    }
++
++    public void executeBlocking(Runnable runnable) {
++        if (Thread.currentThread() != MinecraftServer.SERVER.serverThread) {
++            this.submitAsync(runnable).join();
++        } else {
++            runnable.run();
++        }
++
++    }
++
++    @Override
++    public void tell(Runnable runnable) {
++        this.tell(runnable, DEFAULT_TASK_MAX_DELAY);
++    }
++
++    public void tell(Runnable runnable, int maxDelay) {
++        // Paper start - anything that does try to post to main during watchdog crash, run on watchdog
++        if (MinecraftServer.SERVER.hasStopped && Thread.currentThread() == MinecraftServer.SERVER.shutdownThread) {
++            runnable.run();
++            return;
++        }
++        // Paper end
++        while (!pendingRunnablesReadLock.tryLock()) {}
++        try {
++            stamp++;
++            this.pendingRunnables[maxDelay].add(runnable);
++            if (maxDelay < firstQueueWithElementsIndex) {
++                firstQueueWithElementsIndex = maxDelay;
++            }
++            LockSupport.unpark(MinecraftServer.SERVER.serverThread);
++            stamp++;
++        } finally {
++            pendingRunnablesReadLock.unlock();
++        }
++    }
++
++    @Override
++    public void execute(Runnable runnable) {
++        if (scheduleExecutables()) {
++            this.tell(runnable);
++        } else {
++            runnable.run();
++        }
++
++    }
++
++    @Override
++    public boolean isSameThread() {
++        return Thread.currentThread() instanceof TickThread;
++    }
++
++    @Override
++    public void executeIfPossible(Runnable runnable) {
++        if (MinecraftServer.SERVER.isStopped()) {
++            throw new RejectedExecutionException("Server already shutting down");
++        } else {
++            this.execute(runnable);
++        }
++    }
++
++    /**
++     * Runs all tasks, regardless of which tick they must be finished in, or whether there is time.
++     */
++    protected void runAllTasksForAllTicks() {
++        while (this.pollTask(false) || hasPendingTasks()) {}
++    }
++
++    /**
++     * Runs all tasks while there is time.
++     * Runs at least all tasks that must be finished in the current tick, regardless of whether there is time.
++     */
++    protected void runAllTasksWithinTimeOrForCurrentTick() {
++        while (this.pollTask(true) || !pendingRunnables[0].isEmpty()) {}
++    }
++
++    public boolean pollTask(boolean mustBeWithinTimeOrForCurrentTick) {
++        if (this.pollTaskInternal(mustBeWithinTimeOrForCurrentTick)) {
++            MinecraftServer.SERVER.executeMidTickTasks(); // Paper - execute chunk tasks mid tick
++            MinecraftServer.SERVER.mayHaveDelayedTasks = true;
++            return true;
++        } else {
++            boolean ret = false; // Paper - force execution of all worlds, do not just bias the first
++            if (MinecraftServer.SERVER.haveTime()) {
++                Iterator iterator = MinecraftServer.SERVER.getAllLevels().iterator();
++
++                while (iterator.hasNext()) {
++                    ServerLevel worldserver = (ServerLevel) iterator.next();
++
++                    if (worldserver.getChunkSource().pollTask()) {
++                        ret = true; // Paper - force execution of all worlds, do not just bias the first
++                    }
++                }
++            }
++
++            MinecraftServer.SERVER.mayHaveDelayedTasks = ret;
++            return ret; // Paper - force execution of all worlds, do not just bias the first
++        }
++    }
++
++    public boolean pollTaskInternal(boolean mustBeWithinTimeOrForCurrentTick) {
++        mustBeWithinTimeOrForCurrentTick &= blockingCount == 0; // If we are in some way within a managedBlock call, we just want to run some tasks to fill up the time, regardless of whether there is tick time left or what moment a task is supposed to be finished by
++        while (true) {
++            // Make sure we use the first queue if it is non-empty
++            Runnable runnable = (Runnable) pendingRunnables[0].peek();
++            int indexThatRunnableIsFrom = 0;
++            // Keep trying to get a runnable
++            if (runnable == null) {
++                tryGetRunnableUntilSuccessOrNothingChanged: while (true) {
++                    int oldFirstQueueWithElementsIndex = firstQueueWithElementsIndex;
++                    long oldStamp = stamp;
++                    // First try from firstQueueWithElementsIndex until the end of pendingRunnables, then try all pendingRunnables again just in case
++                    for (int attempt = 0; attempt < 2; attempt++) {
++                        for (int i = attempt == 0 ? oldFirstQueueWithElementsIndex : 0; i < pendingRunnables.length; i++) {
++                            runnable = (Runnable) pendingRunnables[i].peek();
++                            if (runnable != null) {
++                                if (attempt == 0 ? i > firstQueueWithElementsIndex : i < firstQueueWithElementsIndex) {
++                                    firstQueueWithElementsIndex = i;
++                                }
++                                indexThatRunnableIsFrom = i;
++                                break tryGetRunnableUntilSuccessOrNothingChanged;
++                            }
++                        }
++                    }
++                    if (oldFirstQueueWithElementsIndex == firstQueueWithElementsIndex && oldStamp == stamp) { // If we did not find an element and nothing has changed, we give up
++                        return false;
++                    }
++                }
++            }
++            if (mustBeWithinTimeOrForCurrentTick && !(indexThatRunnableIsFrom == 0 || MinecraftServer.SERVER.haveTime() || !pendingRunnables[0].isEmpty())) {
++                return false;
++            } else {
++                runnable = (Runnable) pendingRunnables[indexThatRunnableIsFrom].poll();
++                if (runnable == null) {
++                    // We lost a race condition between the peek() and poll() calls: just try again
++                    continue;
++                }
++                doRunTask(runnable);
++                return true;
++            }
++        }
++    }
++
++    public void managedBlock(BooleanSupplier stopCondition) {
++        ++blockingCount;
++
++        try {
++            while(!stopCondition.getAsBoolean()) {
++                if (!this.pollTask(false)) {
++                    this.waitForTasks();
++                }
++            }
++        } finally {
++            --blockingCount;
++        }
++
++    }
++
++    private static void waitForTasks() {
++        Thread.yield();
++        LockSupport.parkNanos("waiting for tasks", 100000L);
++    }
++
++    private static void doRunTask(Runnable task) {
++        MinecraftServer.SERVER.getProfiler().incrementCounter("runTask");
++        ++reentrantCount;
++        try {
++            task.run();
++        } catch (Exception var3) {
++            if (var3.getCause() instanceof ThreadDeath) throw var3; // Paper
++            LOGGER.error(LogUtils.FATAL_MARKER, "Error executing task on {}", NAME, var3);
++        } finally {
++            --reentrantCount;
++        }
++    }
++
++    @Override
++    public String name() {
++        return NAME;
++    }
++
++}
+diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
+index abfceeb28f0f48d4ee8dde47c2354d0e095787e1..8a4d6082015a014b9377f2a14f483c5773c52571 100644
+--- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
++++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
+@@ -2,11 +2,14 @@
+ 
+ package org.galemc.gale.configuration;
+ 
++import ca.spottedleaf.concurrentutil.collection.MultiThreadedQueue;
+ import io.papermc.paper.configuration.Configuration;
+ import io.papermc.paper.configuration.ConfigurationPart;
+ import net.minecraft.world.level.levelgen.structure.PoolElementStructurePiece;
++import org.galemc.gale.concurrent.MinecraftServerBlockableEventLoop;
+ import org.spongepowered.configurate.objectmapping.meta.Setting;
+ 
++import java.util.Arrays;
+ import java.util.Locale;
+ import java.util.function.Consumer;
+ 
+@@ -55,6 +58,223 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+         }
+         // Gale end - Pufferfish - SIMD support
+ 
++        // Gale start - main thread tasks with variable delay
++        public MainThreadTaskMaxDelay mainThreadTaskMaxDelay;
++        public class MainThreadTaskMaxDelay extends ConfigurationPart.Post {
++
++            /**
++             * The default maximum delay for tasks.
++             * Given in ticks.
++             * Any value < 0 uses the vanilla maximum delay for tasks, which is currently 2.
++             * <ul>
++             *     <li><i>Default</i>: -1</li>
++             *     <li><i>Vanilla</i>: -1</li>
++             * </ul>
++             */
++            @Setting("default")
++            public int defaultValue = -1;
++
++            /**
++             * The default maximum delay for completing a {@link java.util.concurrent.CompletableFuture}
++             * for a chunk load, after the chunk has already finished loading.
++             * Given in ticks.
++             * Any value < 0 uses {@link #defaultValue}.
++             * <ul>
++             *     <li><i>Default</i>: 0</li>
++             *     <li><i>Vanilla</i>: -1</li>
++             * </ul>
++             */
++            public int completeChunkFuture = 0;
++
++            /**
++             * The default maximum delay for completing the steps needed to take when a player is joining and the
++             * necessary chunk has been loaded.
++             * Given in ticks.
++             * Any value < 0 uses {@link #defaultValue}.
++             * <ul>
++             *     <li><i>Default</i>: 19</li>
++             *     <li><i>Vanilla</i>: -1</li>
++             * </ul>
++             */
++            public int postChunkLoadJoin = 19;
++
++            /**
++             * The default maximum delay for chunk packets to be modified for anti-xray.
++             * Given in ticks.
++             * Any value < 0 uses {@link #defaultValue}.
++             * <ul>
++             *     <li><i>Default</i>: 19</li>
++             *     <li><i>Vanilla</i>: -1</li>
++             * </ul>
++             */
++            public int antiXrayModifyBlocks = 19;
++
++            /**
++             * The default maximum delay for entities to be teleported when a teleport is started asynchronously.
++             * Given in ticks.
++             * Any value < 0 uses {@link #defaultValue}.
++             * <ul>
++             *     <li><i>Default</i>: -1</li>
++             *     <li><i>Vanilla</i>: -1</li>
++             * </ul>
++             */
++            public int teleportAsync = -1;
++
++            /**
++             * The default maximum delay for command completion suggestions to be sent to the player.
++             * Any value < 0 uses {@link #defaultValue}.
++             * <ul>
++             *     <li><i>Default</i>: 9</li>
++             *     <li><i>Vanilla</i>: -1</li>
++             * </ul>
++             */
++            public int sendCommandCompletionSuggestions = 9;
++
++            /**
++             * The default maximum delay for players to get kicked for command packet spam.
++             * Given in ticks.
++             * Any value < 0 uses {@link #defaultValue}.
++             * <ul>
++             *     <li><i>Default</i>: 0</li>
++             *     <li><i>Vanilla</i>: -1</li>
++             * </ul>
++             */
++            public int kickForCommandPacketSpam = 0;
++
++            /**
++             * The default maximum delay for players to get kicked for place-recipe packet spam.
++             * Given in ticks.
++             * Any value < 0 uses {@link #defaultValue}.
++             * <ul>
++             *     <li><i>Default</i>: 0</li>
++             *     <li><i>Vanilla</i>: -1</li>
++             * </ul>
++             */
++            public int kickForRecipePacketSpam = 0;
++
++            /**
++             * The default maximum delay for players to get kicked for sending invalid packets trying to
++             * send book content that is too large, which usually indicates they are attempting to abuse an exploit.
++             * Given in ticks.
++             * Any value < 0 uses {@link #defaultValue}.
++             * <ul>
++             *     <li><i>Default</i>: -1</li>
++             *     <li><i>Vanilla</i>: -1</li>
++             * </ul>
++             */
++            public int kickForBookTooLargePacket = -1;
++
++            /**
++             * The default maximum delay for players to get kicked for editing a book too quickly.
++             * Given in ticks.
++             * Any value < 0 uses {@link #defaultValue}.
++             * <ul>
++             *     <li><i>Default</i>: -1</li>
++             *     <li><i>Vanilla</i>: -1</li>
++             * </ul>
++             */
++            public int kickForEditingBookTooQuickly = -1;
++
++            /**
++             * The default maximum delay for players to get kicked for sending a chat packet with illegal characters.
++             * Given in ticks.
++             * Any value < 0 uses {@link #defaultValue}.
++             * <ul>
++             *     <li><i>Default</i>: -1</li>
++             *     <li><i>Vanilla</i>: -1</li>
++             * </ul>
++             */
++            public int kickForIllegalCharactersInChatPacket = -1;
++
++            /**
++             * The default maximum delay for players to get kicked for sending an out-of-order chat packet.
++             * Given in ticks.
++             * Any value < 0 uses {@link #defaultValue}.
++             * <ul>
++             *     <li><i>Default</i>: -1</li>
++             *     <li><i>Vanilla</i>: -1</li>
++             * </ul>
++             */
++            public int kickForOutOfOrderChatPacket = -1;
++
++            /**
++             * The default maximum delay for handling player disconnects.
++             * Any value < 0 uses {@link #defaultValue}.
++             * <ul>
++             *     <li><i>Default</i>: -1</li>
++             *     <li><i>Vanilla</i>: -1</li>
++             * </ul>
++             */
++            public int handleDisconnect = -1;
++
++            @Override
++            public void postProcess() {
++                while (!MinecraftServerBlockableEventLoop.pendingRunnablesWriteLock.tryLock()) {}
++                try {
++                    // Update the values in MinecraftServerBlockableEventLoop for quick access
++                    MinecraftServerBlockableEventLoop.DEFAULT_TASK_MAX_DELAY = this.defaultValue >= 0 ? this.defaultValue : 2;
++                    MinecraftServerBlockableEventLoop.COMPLETE_CHUNK_FUTURE_TASK_MAX_DELAY = this.completeChunkFuture >= 0 ? this.completeChunkFuture : MinecraftServerBlockableEventLoop.DEFAULT_TASK_MAX_DELAY;
++                    MinecraftServerBlockableEventLoop.POST_CHUNK_LOAD_JOIN_TASK_MAX_DELAY = this.postChunkLoadJoin >= 0 ? this.postChunkLoadJoin : MinecraftServerBlockableEventLoop.DEFAULT_TASK_MAX_DELAY;
++                    MinecraftServerBlockableEventLoop.ANTI_XRAY_MODIFY_BLOCKS_TASK_MAX_DELAY = this.antiXrayModifyBlocks >= 0 ? this.antiXrayModifyBlocks : MinecraftServerBlockableEventLoop.DEFAULT_TASK_MAX_DELAY;
++                    MinecraftServerBlockableEventLoop.TELEPORT_ASYNC_TASK_MAX_DELAY = this.teleportAsync >= 0 ? this.teleportAsync : MinecraftServerBlockableEventLoop.DEFAULT_TASK_MAX_DELAY;
++                    MinecraftServerBlockableEventLoop.SEND_COMMAND_COMPLETION_SUGGESTIONS_TASK_MAX_DELAY = this.sendCommandCompletionSuggestions >= 0 ? this.sendCommandCompletionSuggestions : MinecraftServerBlockableEventLoop.DEFAULT_TASK_MAX_DELAY;
++                    MinecraftServerBlockableEventLoop.KICK_FOR_COMMAND_PACKET_SPAM_TASK_MAX_DELAY = this.kickForCommandPacketSpam >= 0 ? this.kickForCommandPacketSpam : MinecraftServerBlockableEventLoop.DEFAULT_TASK_MAX_DELAY;
++                    MinecraftServerBlockableEventLoop.KICK_FOR_RECIPE_PACKET_SPAM_TASK_MAX_DELAY = this.kickForRecipePacketSpam >= 0 ? this.kickForRecipePacketSpam : MinecraftServerBlockableEventLoop.DEFAULT_TASK_MAX_DELAY;
++                    MinecraftServerBlockableEventLoop.KICK_FOR_BOOK_TOO_LARGE_PACKET_TASK_MAX_DELAY = this.kickForBookTooLargePacket >= 0 ? this.kickForBookTooLargePacket : MinecraftServerBlockableEventLoop.DEFAULT_TASK_MAX_DELAY;
++                    MinecraftServerBlockableEventLoop.KICK_FOR_EDITING_BOOK_TOO_QUICKLY_TASK_MAX_DELAY = this.kickForEditingBookTooQuickly >= 0 ? this.kickForEditingBookTooQuickly : MinecraftServerBlockableEventLoop.DEFAULT_TASK_MAX_DELAY;
++                    MinecraftServerBlockableEventLoop.KICK_FOR_ILLEGAL_CHARACTERS_IN_CHAT_PACKET_TASK_MAX_DELAY = this.kickForIllegalCharactersInChatPacket >= 0 ? this.kickForIllegalCharactersInChatPacket : MinecraftServerBlockableEventLoop.DEFAULT_TASK_MAX_DELAY;
++                    MinecraftServerBlockableEventLoop.KICK_FOR_OUT_OF_ORDER_CHAT_PACKET_TASK_MAX_DELAY = this.kickForOutOfOrderChatPacket >= 0 ? this.kickForOutOfOrderChatPacket : MinecraftServerBlockableEventLoop.DEFAULT_TASK_MAX_DELAY;
++                    MinecraftServerBlockableEventLoop.HANDLE_DISCONNECT_TASK_MAX_DELAY = this.handleDisconnect >= 0 ? this.handleDisconnect : MinecraftServerBlockableEventLoop.DEFAULT_TASK_MAX_DELAY;
++                    // Change the length of the pendingRunnables array of queues
++                    int maxDelay = 0;
++                    for (int delay : new int[]{
++                        MinecraftServerBlockableEventLoop.DEFAULT_TASK_MAX_DELAY,
++                        MinecraftServerBlockableEventLoop.COMPLETE_CHUNK_FUTURE_TASK_MAX_DELAY,
++                        MinecraftServerBlockableEventLoop.POST_CHUNK_LOAD_JOIN_TASK_MAX_DELAY,
++                        MinecraftServerBlockableEventLoop.ANTI_XRAY_MODIFY_BLOCKS_TASK_MAX_DELAY,
++                        MinecraftServerBlockableEventLoop.TELEPORT_ASYNC_TASK_MAX_DELAY,
++                        MinecraftServerBlockableEventLoop.SEND_COMMAND_COMPLETION_SUGGESTIONS_TASK_MAX_DELAY,
++                        MinecraftServerBlockableEventLoop.KICK_FOR_COMMAND_PACKET_SPAM_TASK_MAX_DELAY,
++                        MinecraftServerBlockableEventLoop.KICK_FOR_RECIPE_PACKET_SPAM_TASK_MAX_DELAY,
++                        MinecraftServerBlockableEventLoop.KICK_FOR_BOOK_TOO_LARGE_PACKET_TASK_MAX_DELAY,
++                        MinecraftServerBlockableEventLoop.KICK_FOR_EDITING_BOOK_TOO_QUICKLY_TASK_MAX_DELAY,
++                        MinecraftServerBlockableEventLoop.KICK_FOR_ILLEGAL_CHARACTERS_IN_CHAT_PACKET_TASK_MAX_DELAY,
++                        MinecraftServerBlockableEventLoop.KICK_FOR_OUT_OF_ORDER_CHAT_PACKET_TASK_MAX_DELAY,
++                        MinecraftServerBlockableEventLoop.HANDLE_DISCONNECT_TASK_MAX_DELAY
++                    }) {
++                        if (delay > maxDelay) {
++                            maxDelay = delay;
++                        }
++                    }
++                    int newPendingRunnablesLength = maxDelay + 1;
++                    int oldPendingRunnablesLength = MinecraftServerBlockableEventLoop.pendingRunnables.length;
++                    if (oldPendingRunnablesLength != newPendingRunnablesLength) {
++                        if (oldPendingRunnablesLength > newPendingRunnablesLength) {
++                            // Move all tasks in queues that will be removed to the last queue
++                            for (int i = newPendingRunnablesLength + 1; i < MinecraftServerBlockableEventLoop.pendingRunnables.length; i++) {
++                                MinecraftServerBlockableEventLoop.pendingRunnables[maxDelay].addAll(MinecraftServerBlockableEventLoop.pendingRunnables[i]);
++                            }
++                            // Update the first queue with elements index
++                            if (MinecraftServerBlockableEventLoop.firstQueueWithElementsIndex >= newPendingRunnablesLength) {
++                                MinecraftServerBlockableEventLoop.firstQueueWithElementsIndex = maxDelay;
++                            }
++                        }
++                        MinecraftServerBlockableEventLoop.pendingRunnables = Arrays.copyOf(MinecraftServerBlockableEventLoop.pendingRunnables, newPendingRunnablesLength);
++                        if (newPendingRunnablesLength > oldPendingRunnablesLength) {
++                            // Create new queues
++                            for (int i = oldPendingRunnablesLength; i < newPendingRunnablesLength; i++) {
++                                MinecraftServerBlockableEventLoop.pendingRunnables[i] = new MultiThreadedQueue<>();
++                            }
++                        }
++                    }
++                } finally {
++                    MinecraftServerBlockableEventLoop.pendingRunnablesWriteLock.unlock();
++                }
++            }
++
++        }
++        // Gale end - main thread tasks with variable delay
++
+     }
+ 
+     public LogToConsole logToConsole;
