@@ -33,14 +33,18 @@ index b9cb39efe14a877ddedc5a5e4141ee5199ea8daf..bf2a4e129edf2c919c3e422756c67ea9
          // Paper start - fix MC-252817 (green map markers do not disappear)
          this.getFramedMapIdFromItem(itemstack).ifPresent((i) -> {
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index db8d97a14d1334c231732cc03c1f85a107b52a34..2dd5729366c463781b686a050f6e10e96d1595d4 100644
+index 22321ab19af662c8f75620422c1775fe805356f3..075af07a5c0e8328fb411d22fd29cea9c2b07711 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-@@ -248,6 +248,7 @@ public class GaleWorldConfiguration extends ConfigurationPart {
-         public class Fixes extends ConfigurationPart {
-             public boolean sandDuping = true; // Gale - Purpur - make sand duping fix configurable
-             public boolean mc238526 = false; // Gale - Purpur - fix MC-238526
-+            public boolean mc123848 = false; // Gale - Purpur - fix MC-123848
+@@ -254,6 +254,11 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+             public boolean mc238526 = false;
+             // Gale end - Purpur - fix MC-238526
+ 
++            // Gale start - Purpur - fix MC-123848
++            @Setting("mc-123848")
++            public boolean mc123848 = false;
++            // Gale end - Purpur - fix MC-123848
++
          }
  
      }

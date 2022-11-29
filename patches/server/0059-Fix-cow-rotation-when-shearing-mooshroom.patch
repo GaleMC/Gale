@@ -34,14 +34,16 @@ index c4441ef250b95663198cfc9607d714dbe346512c..81ca0f568e484b1d013a9abfa809f1ba
                  entitycow.setCustomName(this.getCustomName());
                  entitycow.setCustomNameVisible(this.isCustomNameVisible());
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index 2dd5729366c463781b686a050f6e10e96d1595d4..ef31d93069d55580aaa62751d4a4c37496d767e1 100644
+index 075af07a5c0e8328fb411d22fd29cea9c2b07711..a774fbeaa3829b1ae702fb61a0acb9d69d18a081 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-@@ -249,6 +249,7 @@ public class GaleWorldConfiguration extends ConfigurationPart {
-             public boolean sandDuping = true; // Gale - Purpur - make sand duping fix configurable
-             public boolean mc238526 = false; // Gale - Purpur - fix MC-238526
-             public boolean mc123848 = false; // Gale - Purpur - fix MC-123848
-+            public boolean keepMooshroomRotationAfterShearing = true; // Gale - Purpur - fix cow rotation when shearing mooshroom
-         }
+@@ -248,7 +248,8 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+         public class Fixes extends ConfigurationPart {
  
-     }
+             public boolean sandDuping = true; // Gale - Purpur - make sand duping fix configurable
+-
++            public boolean keepMooshroomRotationAfterShearing = true; // Gale - Purpur - fix cow rotation when shearing mooshroom
++            
+             // Gale start - Purpur - fix MC-238526
+             @Setting("mc-238526")
+             public boolean mc238526 = false;

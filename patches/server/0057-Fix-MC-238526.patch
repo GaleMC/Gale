@@ -24,14 +24,20 @@ index 18389f46902bb9879ac6d734723e9a720724dc48..613970368890d78ab589f654a66024ee
      }
  }
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index 5b1a20efac4835eb10f8f068166f501ddc19ae0c..db8d97a14d1334c231732cc03c1f85a107b52a34 100644
+index 82946c6784b9b42681e03a815d82931ae150aaba..22321ab19af662c8f75620422c1775fe805356f3 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-@@ -247,6 +247,7 @@ public class GaleWorldConfiguration extends ConfigurationPart {
-         public Fixes fixes;
+@@ -248,7 +248,12 @@ public class GaleWorldConfiguration extends ConfigurationPart {
          public class Fixes extends ConfigurationPart {
+ 
              public boolean sandDuping = true; // Gale - Purpur - make sand duping fix configurable
-+            public boolean mc238526 = false; // Gale - Purpur - fix MC-238526
+-            
++
++            // Gale start - Purpur - fix MC-238526
++            @Setting("mc-238526")
++            public boolean mc238526 = false;
++            // Gale end - Purpur - fix MC-238526
++
          }
  
      }
