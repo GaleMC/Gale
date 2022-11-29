@@ -384,10 +384,10 @@ index 9de597c11c3bd0f23e87c3a6187b2036987356e0..4b99b15c950d11451a70b8362aec5124
              }
          }
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index 507017c1ea03cd028be2149b18c8de7f8353e37e..48642ffb13330bbca06437ba4912a86ba6b144e4 100644
+index d2e6a92a44416bfaa161c78dd4b9a7b3ad78792a..1c419c1b97b2109d43e3488e1583fb8a6ec6833d 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
-@@ -98,6 +98,7 @@ import net.minecraft.world.scores.Objective;
+@@ -100,6 +100,7 @@ import net.minecraft.world.scores.Objective;
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Scoreboard; // Paper
  import net.minecraft.world.scores.Team;
@@ -395,7 +395,7 @@ index 507017c1ea03cd028be2149b18c8de7f8353e37e..48642ffb13330bbca06437ba4912a86b
  import org.galemc.gale.configuration.GaleGlobalConfiguration;
  import org.slf4j.Logger;
  
-@@ -303,7 +304,7 @@ public abstract class PlayerList {
+@@ -306,7 +307,7 @@ public abstract class PlayerList {
              worldserver1, chunkX, chunkZ, net.minecraft.server.level.ChunkHolder.FullChunkStatus.ENTITY_TICKING, true,
              ca.spottedleaf.concurrentutil.executor.standard.PrioritisedExecutor.Priority.HIGHEST,
              (chunk) -> {
@@ -404,7 +404,7 @@ index 507017c1ea03cd028be2149b18c8de7f8353e37e..48642ffb13330bbca06437ba4912a86b
                      try {
                          if (!playerconnection.connection.isConnected()) {
                              return;
-@@ -316,7 +317,7 @@ public abstract class PlayerList {
+@@ -319,7 +320,7 @@ public abstract class PlayerList {
                      } finally {
                          finalWorldserver.pendingLogin.remove(player);
                      }
