@@ -12,26 +12,20 @@ As part of: Pufferfish (https://github.com/pufferfish-gg/Pufferfish)
 Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 9f5694204091e23c4771657127a06f98e27ad8f1..27aa04782d9c5aecdcbbe0314dd5be1a076b4f50 100644
+index fdb495c0e0f1ce702a590e6a7bcdcf40fd418d1c..2c3c8fbba6247a44b1782dbed45a00fdaa051473 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
-@@ -83,6 +83,13 @@ val generateApiVersioningFile by tasks.registering {
-     }
+@@ -89,6 +89,7 @@ tasks.withType<JavaCompile> {
+     compilerArgs.add("-Xlint:-module")
+     compilerArgs.add("-Xlint:-removal")
+     compilerArgs.add("-Xlint:-dep-ann")
++    compilerArgs.add("--add-modules=jdk.incubator.vector") // Gale - Pufferfish - SIMD support
  }
+ // Gale end - hide irrelevant compilation warnings
  
-+// Gale start - Pufferfish - SIMD support
-+tasks.withType<JavaCompile> {
-+    val compilerArgs = options.compilerArgs
-+    compilerArgs.add("--add-modules=jdk.incubator.vector")
-+}
-+// Gale end - Pufferfish - SIMD support
-+
- tasks.jar {
-     from(generateApiVersioningFile.map { it.outputs.files.singleFile }) {
-         into("META-INF/maven/${project.group}/${project.name}")
 diff --git a/src/main/java/gg/pufferfish/pufferfish/simd/SIMDChecker.java b/src/main/java/gg/pufferfish/pufferfish/simd/SIMDChecker.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..22f20b934c0481c27248a808535987176216f400
+index 0000000000000000000000000000000000000000..d51f9de6ac01f518ca9577827dc719daad78df4c
 --- /dev/null
 +++ b/src/main/java/gg/pufferfish/pufferfish/simd/SIMDChecker.java
 @@ -0,0 +1,44 @@
@@ -81,7 +75,7 @@ index 0000000000000000000000000000000000000000..22f20b934c0481c27248a80853598717
 +}
 diff --git a/src/main/java/gg/pufferfish/pufferfish/simd/SIMDDetection.java b/src/main/java/gg/pufferfish/pufferfish/simd/SIMDDetection.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..5eca1f3099401bebab322953771a232e532bee11
+index 0000000000000000000000000000000000000000..ad304cfa228060adc12902da4604ccef31f27445
 --- /dev/null
 +++ b/src/main/java/gg/pufferfish/pufferfish/simd/SIMDDetection.java
 @@ -0,0 +1,37 @@

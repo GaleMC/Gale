@@ -59,7 +59,7 @@ index e1614462ba2f186db2b9febcc86afc270754199c..d8ee1536244ab780bc0c5d4e1a72dad4
      public boolean hurt(DamageSource source, float amount) {
          if (this.isInvulnerableTo(source)) {
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index a80748f108c4973e1a3df7e0ff0e11160c91adb9..e6df3b765627d5aa800b1b697d1cfa96a676fe8e 100644
+index b993c2276d14c0a384898e9705a1af6fa6d585cf..d34ee90eaf160a72d4898feed13d94b0b61eded3 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 @@ -101,6 +101,21 @@ public class GaleWorldConfiguration extends ConfigurationPart {

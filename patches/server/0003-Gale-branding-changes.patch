@@ -5,7 +5,7 @@ Subject: [PATCH] Gale branding changes
 
 
 diff --git a/src/main/java/com/destroystokyo/paper/Metrics.java b/src/main/java/com/destroystokyo/paper/Metrics.java
-index 7b1843e16745ca8db2244e17490d291401f22679..20fa3302f9b3153e24033feb2d05f0b22b0efeb3 100644
+index 7b1843e16745ca8db2244e17490d291401f22679..9c883616224f368beac5bedb68f8ec9cf6dfbfb9 100644
 --- a/src/main/java/com/destroystokyo/paper/Metrics.java
 +++ b/src/main/java/com/destroystokyo/paper/Metrics.java
 @@ -593,7 +593,7 @@ public class Metrics {
@@ -18,7 +18,7 @@ index 7b1843e16745ca8db2244e17490d291401f22679..20fa3302f9b3153e24033feb2d05f0b2
                  metrics.addCustomChart(new Metrics.SimplePie("minecraft_version", () -> {
                      String minecraftVersion = Bukkit.getVersion();
 diff --git a/src/main/java/com/destroystokyo/paper/PaperVersionFetcher.java b/src/main/java/com/destroystokyo/paper/PaperVersionFetcher.java
-index bf42969859545a8a520923ef1836ffa4a5cc24a0..91e97c57c3202f84986ec4d9cb1a374fd5256eac 100644
+index bf42969859545a8a520923ef1836ffa4a5cc24a0..f6183c39b3e6895953047ee1e2d967b3ab43eb4a 100644
 --- a/src/main/java/com/destroystokyo/paper/PaperVersionFetcher.java
 +++ b/src/main/java/com/destroystokyo/paper/PaperVersionFetcher.java
 @@ -1,85 +1,40 @@
@@ -175,7 +175,7 @@ index bf42969859545a8a520923ef1836ffa4a5cc24a0..91e97c57c3202f84986ec4d9cb1a374f
 -    }
  }
 diff --git a/src/main/java/com/destroystokyo/paper/console/PaperConsole.java b/src/main/java/com/destroystokyo/paper/console/PaperConsole.java
-index c5d5648f4ca603ef2b1df723b58f9caf4dd3c722..dc5557fb3682934fee31ac2b7d6a3f244049e62d 100644
+index c5d5648f4ca603ef2b1df723b58f9caf4dd3c722..e45e6b44b2a8f2cdae6e0048a812b92126aa17ca 100644
 --- a/src/main/java/com/destroystokyo/paper/console/PaperConsole.java
 +++ b/src/main/java/com/destroystokyo/paper/console/PaperConsole.java
 @@ -17,7 +17,7 @@ public final class PaperConsole extends SimpleTerminalConsole {
@@ -188,7 +188,7 @@ index c5d5648f4ca603ef2b1df723b58f9caf4dd3c722..dc5557fb3682934fee31ac2b7d6a3f24
                  .completer(new ConsoleCommandCompleter(this.server))
                  .option(LineReader.Option.COMPLETE_IN_WORD, true);
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 6dc6c3bccb4ba34268a87b0754c87eb1e0df4135..5bfeb649336f023d05392c07d040299c605133c8 100644
+index 6dc6c3bccb4ba34268a87b0754c87eb1e0df4135..18df8eab2e33a7cde7d12f111d3dbfcaeab3abd5 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -921,7 +921,13 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
@@ -216,7 +216,7 @@ index 6dc6c3bccb4ba34268a87b0754c87eb1e0df4135..5bfeb649336f023d05392c07d040299c
  
      public SystemReport fillSystemReport(SystemReport details) {
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index 07eac5439164a7345476c55277538a152359630a..e41e390a2eaf7f9dc489304db3e499d5055e7cff 100644
+index 07eac5439164a7345476c55277538a152359630a..f394324450ec17c8df5a40d27eb0297b091e912f 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 @@ -248,7 +248,7 @@ import javax.annotation.Nullable; // Paper
@@ -229,7 +229,7 @@ index 07eac5439164a7345476c55277538a152359630a..e41e390a2eaf7f9dc489304db3e499d5
      private final String bukkitVersion = Versioning.getBukkitVersion();
      private final Logger logger = Logger.getLogger("Minecraft");
 diff --git a/src/main/java/org/bukkit/craftbukkit/scheduler/CraftScheduler.java b/src/main/java/org/bukkit/craftbukkit/scheduler/CraftScheduler.java
-index cdefb2025eedea7e204d70d568adaf1c1ec4c03c..d9c1047df7f7bbe6d89c1cfd57711de6d224c0d6 100644
+index cdefb2025eedea7e204d70d568adaf1c1ec4c03c..3997a7fec43e05b455644b4d58c68995fad541f4 100644
 --- a/src/main/java/org/bukkit/craftbukkit/scheduler/CraftScheduler.java
 +++ b/src/main/java/org/bukkit/craftbukkit/scheduler/CraftScheduler.java
 @@ -504,7 +504,7 @@ public class CraftScheduler implements BukkitScheduler {
@@ -242,7 +242,7 @@ index cdefb2025eedea7e204d70d568adaf1c1ec4c03c..d9c1047df7f7bbe6d89c1cfd57711de6
                  // (async tasks must live with race-conditions if they attempt to cancel between these few lines of code)
              }
 diff --git a/src/main/java/org/bukkit/craftbukkit/util/CraftMagicNumbers.java b/src/main/java/org/bukkit/craftbukkit/util/CraftMagicNumbers.java
-index 103ab25119bfcdd21eac7e1deeac025108e3c138..7819f7d3b0dd766cd8b53b654937d9e34d316086 100644
+index 103ab25119bfcdd21eac7e1deeac025108e3c138..f39c6f0a837c1a8f6477b8be2f6f9f007a15d566 100644
 --- a/src/main/java/org/bukkit/craftbukkit/util/CraftMagicNumbers.java
 +++ b/src/main/java/org/bukkit/craftbukkit/util/CraftMagicNumbers.java
 @@ -435,7 +435,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
@@ -255,7 +255,7 @@ index 103ab25119bfcdd21eac7e1deeac025108e3c138..7819f7d3b0dd766cd8b53b654937d9e3
  
      @Override
 diff --git a/src/main/java/org/bukkit/craftbukkit/util/Versioning.java b/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
-index 774556a62eb240da42e84db4502e2ed43495be17..a10b3d4484a3ce3ec0ea5eb49d89497fcc9e955e 100644
+index 774556a62eb240da42e84db4502e2ed43495be17..0b5979723bb30f9011ac64c36d894aa41713ec9b 100644
 --- a/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
 +++ b/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
 @@ -11,7 +11,7 @@ public final class Versioning {
@@ -269,7 +269,7 @@ index 774556a62eb240da42e84db4502e2ed43495be17..a10b3d4484a3ce3ec0ea5eb49d89497f
          if (stream != null) {
 diff --git a/src/main/java/org/galemc/gale/version/AbstractPaperVersionFetcher.java b/src/main/java/org/galemc/gale/version/AbstractPaperVersionFetcher.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..11404abc8891ef4a0340fd4006d32c66769bee59
+index 0000000000000000000000000000000000000000..7fee1c2779ab390586b2d3f75f56890846323500
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/version/AbstractPaperVersionFetcher.java
 @@ -0,0 +1,179 @@
@@ -454,7 +454,7 @@ index 0000000000000000000000000000000000000000..11404abc8891ef4a0340fd4006d32c66
 +}
 diff --git a/src/main/java/org/galemc/gale/version/GaleVersionFetcher.java b/src/main/java/org/galemc/gale/version/GaleVersionFetcher.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..28518511dbb705a693af8f2dfba20e58b39e1446
+index 0000000000000000000000000000000000000000..e329f866bc5d7ba9838b124e84ae8d7045799ffa
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/version/GaleVersionFetcher.java
 @@ -0,0 +1,11 @@
@@ -470,7 +470,7 @@ index 0000000000000000000000000000000000000000..28518511dbb705a693af8f2dfba20e58
 +
 +}
 diff --git a/src/main/java/org/spigotmc/WatchdogThread.java b/src/main/java/org/spigotmc/WatchdogThread.java
-index e9fa7faaa4451e36b3908cbcbbe0baf213abde96..65cf07734299dae297fca838172f9c210691e2a6 100644
+index e9fa7faaa4451e36b3908cbcbbe0baf213abde96..832f1ee4fb11c981bd109510eb908d7c7ef91bd4 100644
 --- a/src/main/java/org/spigotmc/WatchdogThread.java
 +++ b/src/main/java/org/spigotmc/WatchdogThread.java
 @@ -1,5 +1,6 @@

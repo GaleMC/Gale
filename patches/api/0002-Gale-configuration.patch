@@ -5,7 +5,7 @@ Subject: [PATCH] Gale configuration
 
 
 diff --git a/src/main/java/org/bukkit/Server.java b/src/main/java/org/bukkit/Server.java
-index e43fef0152468944d8a33036344a43e95fe58476..5d03be9b9ff305aa46f9e2443750387dbc2e1623 100644
+index e43fef0152468944d8a33036344a43e95fe58476..fc0f70f7af8e12347ea67d9985d06c8323b2a3c0 100644
 --- a/src/main/java/org/bukkit/Server.java
 +++ b/src/main/java/org/bukkit/Server.java
 @@ -1967,6 +1967,15 @@ public interface Server extends PluginMessageRecipient, net.kyori.adventure.audi

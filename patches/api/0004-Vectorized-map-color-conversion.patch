@@ -18,7 +18,7 @@ classes and methods added by this patch should NOT be used in plugins.
 
 diff --git a/src/main/java/gg/pufferfish/pufferfish/simd/VectorMapPalette.java b/src/main/java/gg/pufferfish/pufferfish/simd/VectorMapPalette.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..ed7671eae309a0c72957bd8c9dc8a0de480e2bf6
+index 0000000000000000000000000000000000000000..88b98e6bd23a2ab4aeb9e09977ff1d1bd959ad66
 --- /dev/null
 +++ b/src/main/java/gg/pufferfish/pufferfish/simd/VectorMapPalette.java
 @@ -0,0 +1,86 @@
@@ -109,7 +109,7 @@ index 0000000000000000000000000000000000000000..ed7671eae309a0c72957bd8c9dc8a0de
 +	
 +}
 diff --git a/src/main/java/org/bukkit/map/MapPalette.java b/src/main/java/org/bukkit/map/MapPalette.java
-index 3a9aaca2e76411a9c27f9f5e0f22d060d5a66d06..b21c4b9c379951f749b5b1db81f94d2c504d31d2 100644
+index 3a9aaca2e76411a9c27f9f5e0f22d060d5a66d06..f2061156b9a0ce79d10935b443d641bb8b3a837a 100644
 --- a/src/main/java/org/bukkit/map/MapPalette.java
 +++ b/src/main/java/org/bukkit/map/MapPalette.java
 @@ -5,6 +5,8 @@ import java.awt.Color;
