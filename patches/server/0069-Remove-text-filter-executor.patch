@@ -1,0 +1,28 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MartijnMuijsers <martijnmuijsers@live.nl>
+Date: Tue, 29 Nov 2022 15:15:10 +0100
+Subject: [PATCH] Remove text filter executor
+
+License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
+
+diff --git a/src/main/java/net/minecraft/server/network/TextFilterClient.java b/src/main/java/net/minecraft/server/network/TextFilterClient.java
+index a6941c39802bd1b50e32a7ad00c65cfd59191bcf..4ad2827379ddcb7f3844cb17e39f3af56a6e2dd4 100644
+--- a/src/main/java/net/minecraft/server/network/TextFilterClient.java
++++ b/src/main/java/net/minecraft/server/network/TextFilterClient.java
+@@ -32,6 +32,7 @@ import net.minecraft.Util;
+ import net.minecraft.network.chat.FilterMask;
+ import net.minecraft.util.GsonHelper;
+ import net.minecraft.util.thread.ProcessorMailbox;
++import org.galemc.gale.concurrent.AsyncExecutor;
+ import org.slf4j.Logger;
+ 
+ public class TextFilterClient implements AutoCloseable {
+@@ -62,7 +63,7 @@ public class TextFilterClient implements AutoCloseable {
+         this.joinEncoder = joinEncoder;
+         this.leaveEndpoint = leaveEndpoint;
+         this.leaveEncoder = leaveEncoder;
+-        this.workerPool = Executors.newFixedThreadPool(parallelism, THREAD_FACTORY);
++        this.workerPool = AsyncExecutor.instance; // Gale - centralized async execution - remove text filter executor
+     }
+ 
+     private static URL getEndpoint(URI root, @Nullable JsonObject endpoints, String key, String fallback) throws MalformedURLException {

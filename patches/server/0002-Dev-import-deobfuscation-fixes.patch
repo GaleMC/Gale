@@ -1,0 +1,73 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MartijnMuijsers <martijnmuijsers@live.nl>
+Date: Tue, 29 Nov 2022 15:16:54 +0100
+Subject: [PATCH] Dev import deobfuscation fixes
+
+
+diff --git a/src/main/java/net/minecraft/server/network/TextFilterClient.java b/src/main/java/net/minecraft/server/network/TextFilterClient.java
+index 92a60fc35145b7dd5fe17ea9b6823a919f483945..a6941c39802bd1b50e32a7ad00c65cfd59191bcf 100644
+--- a/src/main/java/net/minecraft/server/network/TextFilterClient.java
++++ b/src/main/java/net/minecraft/server/network/TextFilterClient.java
+@@ -98,38 +98,38 @@ public class TextFilterClient implements AutoCloseable {
+                     URL uRL2 = getEndpoint(uRI, jsonObject2, "join", "v1/join");
+                     URL uRL3 = getEndpoint(uRI, jsonObject2, "leave", "v1/leave");
+                     TextFilterClient.JoinOrLeaveEncoder joinOrLeaveEncoder = (profile) -> {
+-                        JsonObject jsonObject = new JsonObject();
+-                        jsonObject.addProperty("server", string2);
+-                        jsonObject.addProperty("room", string3);
+-                        jsonObject.addProperty("user_id", profile.getId().toString());
+-                        jsonObject.addProperty("user_display_name", profile.getName());
+-                        return jsonObject;
++                        JsonObject jsonObject1 = new JsonObject();
++                        jsonObject1.addProperty("server", string2);
++                        jsonObject1.addProperty("room", string3);
++                        jsonObject1.addProperty("user_id", profile.getId().toString());
++                        jsonObject1.addProperty("user_display_name", profile.getName());
++                        return jsonObject1;
+                     };
+                     TextFilterClient.MessageEncoder messageEncoder;
+                     if (bl) {
+                         messageEncoder = (profile, message) -> {
+-                            JsonObject jsonObject = new JsonObject();
+-                            jsonObject.addProperty("rule", i);
+-                            jsonObject.addProperty("server", string2);
+-                            jsonObject.addProperty("room", string3);
+-                            jsonObject.addProperty("player", profile.getId().toString());
+-                            jsonObject.addProperty("player_display_name", profile.getName());
+-                            jsonObject.addProperty("text", message);
+-                            jsonObject.addProperty("language", "*");
+-                            return jsonObject;
++                            JsonObject jsonObject1 = new JsonObject();
++                            jsonObject1.addProperty("rule", i);
++                            jsonObject1.addProperty("server", string2);
++                            jsonObject1.addProperty("room", string3);
++                            jsonObject1.addProperty("player", profile.getId().toString());
++                            jsonObject1.addProperty("player_display_name", profile.getName());
++                            jsonObject1.addProperty("text", message);
++                            jsonObject1.addProperty("language", "*");
++                            return jsonObject1;
+                         };
+                     } else {
+                         String string5 = String.valueOf(i);
+                         messageEncoder = (profile, message) -> {
+-                            JsonObject jsonObject = new JsonObject();
+-                            jsonObject.addProperty("rule_id", string5);
+-                            jsonObject.addProperty("category", string2);
+-                            jsonObject.addProperty("subcategory", string3);
+-                            jsonObject.addProperty("user_id", profile.getId().toString());
+-                            jsonObject.addProperty("user_display_name", profile.getName());
+-                            jsonObject.addProperty("text", message);
+-                            jsonObject.addProperty("language", "*");
+-                            return jsonObject;
++                            JsonObject jsonObject1 = new JsonObject();
++                            jsonObject1.addProperty("rule_id", string5);
++                            jsonObject1.addProperty("category", string2);
++                            jsonObject1.addProperty("subcategory", string3);
++                            jsonObject1.addProperty("user_id", profile.getId().toString());
++                            jsonObject1.addProperty("user_display_name", profile.getName());
++                            jsonObject1.addProperty("text", message);
++                            jsonObject1.addProperty("language", "*");
++                            return jsonObject1;
+                         };
+                     }
+ 
