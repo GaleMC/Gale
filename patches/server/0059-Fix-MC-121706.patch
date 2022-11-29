@@ -1,0 +1,53 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MartijnMuijsers <martijnmuijsers@live.nl>
+Date: Tue, 29 Nov 2022 16:42:48 +0100
+Subject: [PATCH] Fix MC-121706
+
+License: MIT (https://opensource.org/licenses/MIT)
+
+This patch is based on the following patch:
+"MC-121706 - Fix mobs not looking up and down when strafing"
+By: Krakenied <Krakenied1@gmail.com>
+As part of: Purpur (https://github.com/PurpurMC/Purpur)
+Licensed under: MIT (https://opensource.org/licenses/MIT)
+
+diff --git a/src/main/java/net/minecraft/world/entity/ai/goal/RangedBowAttackGoal.java b/src/main/java/net/minecraft/world/entity/ai/goal/RangedBowAttackGoal.java
+index 6558b0d4bea99948fdc2b51751f3cfdc239d4b67..bedb5b8ee24817a494455f17e1f32b42d64c4dd2 100644
+--- a/src/main/java/net/minecraft/world/entity/ai/goal/RangedBowAttackGoal.java
++++ b/src/main/java/net/minecraft/world/entity/ai/goal/RangedBowAttackGoal.java
+@@ -102,7 +102,10 @@ public class RangedBowAttackGoal<T extends Monster & RangedAttackMob> extends Go
+                 this.strafingTime = 0;
+             }
+ 
+-            if (this.strafingTime > -1) {
++            // Gale start - Purpur - fix MC-121706
++            boolean hasStrafingTime = this.strafingTime > -1;
++            if (hasStrafingTime) {
++                // Gale end - Purpur - fix MC-121706
+                 if (d > (double)(this.attackRadiusSqr * 0.75F)) {
+                     this.strafingBackwards = false;
+                 } else if (d < (double)(this.attackRadiusSqr * 0.25F)) {
+@@ -111,7 +114,10 @@ public class RangedBowAttackGoal<T extends Monster & RangedAttackMob> extends Go
+ 
+                 this.mob.getMoveControl().strafe(this.strafingBackwards ? -0.5F : 0.5F, this.strafingClockwise ? 0.5F : -0.5F);
+                 this.mob.lookAt(livingEntity, 30.0F, 30.0F);
+-            } else {
++                // Gale start - Purpur - fix MC-121706
++            }
++            if (!hasStrafingTime || this.mob.level.galeConfig().gameplayMechanics.fixes.mc121706) {
++            // Gale end - Purpur - fix MC-121706
+                 this.mob.getLookControl().setLookAt(livingEntity, 30.0F, 30.0F);
+             }
+ 
+diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
+index ef31d93069d55580aaa62751d4a4c37496d767e1..dc3c1705fb586db34954bebe420fb94928a03602 100644
+--- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
++++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
+@@ -250,6 +250,7 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+             public boolean mc238526 = false; // Gale - Purpur - fix MC-238526
+             public boolean mc123848 = false; // Gale - Purpur - fix MC-123848
+             public boolean keepMooshroomRotationAfterShearing = true; // Gale - Purpur - fix cow rotation when shearing mooshroom
++            public boolean mc121706 = false; // Gale - Purpur - fix MC-121706
+         }
+ 
+     }
