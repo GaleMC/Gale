@@ -1,0 +1,46 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MartijnMuijsers <martijnmuijsers@live.nl>
+Date: Tue, 29 Nov 2022 16:25:51 +0100
+Subject: [PATCH] Fix MC-123848
+
+License: MIT (https://opensource.org/licenses/MIT)
+
+This patch is based on the following patch:
+"Fix MC-123848"
+By: BillyGalbreath <blake.galbreath@gmail.com>
+As part of: Purpur (https://github.com/PurpurMC/Purpur)
+Licensed under: MIT (https://opensource.org/licenses/MIT)
+
+diff --git a/src/main/java/net/minecraft/world/entity/decoration/ItemFrame.java b/src/main/java/net/minecraft/world/entity/decoration/ItemFrame.java
+index b9cb39efe14a877ddedc5a5e4141ee5199ea8daf..bf2a4e129edf2c919c3e422756c67ea904b83b00 100644
+--- a/src/main/java/net/minecraft/world/entity/decoration/ItemFrame.java
++++ b/src/main/java/net/minecraft/world/entity/decoration/ItemFrame.java
+@@ -282,6 +282,16 @@ public class ItemFrame extends HangingEntity {
+         }
+     }
+ 
++    // Gale start - Purpur - fix MC-123848
++    @Nullable
++    public net.minecraft.world.entity.item.ItemEntity spawnAtLocation(ItemStack stack) {
++        if (!this.level.galeConfig().gameplayMechanics.fixes.mc123848) {
++            return this.spawnAtLocation(stack);
++        }
++        return this.spawnAtLocation(stack, getDirection().equals(Direction.DOWN) ? -0.6F : 0.0F);
++    }
++    // Gale end - Purpur - fix MC-123848
++
+     private void removeFramedMap(ItemStack itemstack) {
+         // Paper start - fix MC-252817 (green map markers do not disappear)
+         this.getFramedMapIdFromItem(itemstack).ifPresent((i) -> {
+diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
+index db8d97a14d1334c231732cc03c1f85a107b52a34..2dd5729366c463781b686a050f6e10e96d1595d4 100644
+--- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
++++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
+@@ -248,6 +248,7 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+         public class Fixes extends ConfigurationPart {
+             public boolean sandDuping = true; // Gale - Purpur - make sand duping fix configurable
+             public boolean mc238526 = false; // Gale - Purpur - fix MC-238526
++            public boolean mc123848 = false; // Gale - Purpur - fix MC-123848
+         }
+ 
+     }
