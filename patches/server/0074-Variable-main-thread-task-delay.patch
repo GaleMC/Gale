@@ -258,10 +258,10 @@ index 9720e5360beabe7e15b0b964cb3b81d5af2b4bf8..a30024ab934b81cd76e282fab4bbf605
          return io.papermc.paper.util.TickThread.isTickThread(); // Paper - rewrite chunk system
      }
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 9de597c11c3bd0f23e87c3a6187b2036987356e0..4b99b15c950d11451a70b8362aec5124a9494526 100644
+index 4b5e65ae2b57b7353ac0f26fda125e2d3661e9ed..f2d88654ab7b67ac8265dca2ba4d743a8da7a616 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -184,6 +184,7 @@ import net.minecraft.world.phys.shapes.BooleanOp;
+@@ -186,6 +186,7 @@ import net.minecraft.world.phys.shapes.BooleanOp;
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
  import org.apache.commons.lang3.StringUtils;
@@ -269,7 +269,7 @@ index 9de597c11c3bd0f23e87c3a6187b2036987356e0..4b99b15c950d11451a70b8362aec5124
  import org.galemc.gale.configuration.GaleGlobalConfiguration;
  import org.slf4j.Logger;
  
-@@ -535,7 +536,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -556,7 +557,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
  
          Objects.requireNonNull(this.connection);
          // CraftBukkit - Don't wait
@@ -278,7 +278,7 @@ index 9de597c11c3bd0f23e87c3a6187b2036987356e0..4b99b15c950d11451a70b8362aec5124
      }
  
      private <T, R> CompletableFuture<R> filterTextPacket(T text, BiFunction<TextFilter, T, CompletableFuture<R>> filterer) {
-@@ -874,13 +875,13 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -895,13 +896,13 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
          // PacketUtils.ensureRunningOnSameThread(packet, this, this.player.getLevel()); // Paper - run this async
          // CraftBukkit start
          if (this.chatSpamTickCount.addAndGet(io.papermc.paper.configuration.GlobalConfiguration.get().spamLimiter.tabSpamIncrement) > io.papermc.paper.configuration.GlobalConfiguration.get().spamLimiter.tabSpamLimit && !this.server.getPlayerList().isOp(this.player.getGameProfile())) { // Paper start - split and make configurable
@@ -294,7 +294,7 @@ index 9de597c11c3bd0f23e87c3a6187b2036987356e0..4b99b15c950d11451a70b8362aec5124
              return;
          }
          // Paper end
-@@ -905,7 +906,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -926,7 +927,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
              if (!event.isHandled()) {
                  if (!event.isCancelled()) {
  
@@ -303,7 +303,7 @@ index 9de597c11c3bd0f23e87c3a6187b2036987356e0..4b99b15c950d11451a70b8362aec5124
                          ParseResults<CommandSourceStack> parseresults = this.server.getCommands().getDispatcher().parse(stringreader, this.player.createCommandSourceStack());
  
                          this.server.getCommands().getDispatcher().getCompletionSuggestions(parseresults).thenAccept((suggestions) -> {
-@@ -916,7 +917,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -937,7 +938,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
                              this.connection.send(new ClientboundCommandSuggestionsPacket(packet.getId(), suggestEvent.getSuggestions()));
                              // Paper end - Brigadier API
                          });
@@ -312,7 +312,7 @@ index 9de597c11c3bd0f23e87c3a6187b2036987356e0..4b99b15c950d11451a70b8362aec5124
                  }
              } else if (!completions.isEmpty()) {
                  final com.mojang.brigadier.suggestion.SuggestionsBuilder builder0 = new com.mojang.brigadier.suggestion.SuggestionsBuilder(command, stringreader.getTotalLength());
-@@ -1225,7 +1226,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -1246,7 +1247,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
                  int byteLength = testString.getBytes(java.nio.charset.StandardCharsets.UTF_8).length;
                  if (byteLength > 256 * 4) {
                      ServerGamePacketListenerImpl.LOGGER.warn(this.player.getScoreboardName() + " tried to send a book with with a page too large!");
@@ -321,7 +321,7 @@ index 9de597c11c3bd0f23e87c3a6187b2036987356e0..4b99b15c950d11451a70b8362aec5124
                      return;
                  }
                  byteTotal += byteLength;
-@@ -1248,14 +1249,14 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -1269,14 +1270,14 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
  
              if (byteTotal > byteAllowed) {
                  ServerGamePacketListenerImpl.LOGGER.warn(this.player.getScoreboardName() + " tried to send too large of a book. Book Size: " + byteTotal + " - Allowed:  "+ byteAllowed + " - Pages: " + pageList.size());
@@ -338,7 +338,7 @@ index 9de597c11c3bd0f23e87c3a6187b2036987356e0..4b99b15c950d11451a70b8362aec5124
              return;
          }
          this.lastBookTick = MinecraftServer.currentTick;
-@@ -2207,9 +2208,9 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -2228,9 +2229,9 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
          }
          // CraftBukkit end
          if (ServerGamePacketListenerImpl.isChatMessageIllegal(packet.message())) {
@@ -350,7 +350,7 @@ index 9de597c11c3bd0f23e87c3a6187b2036987356e0..4b99b15c950d11451a70b8362aec5124
          } else {
              if (this.tryHandleChat(packet.message(), packet.timeStamp(), packet.lastSeenMessages())) {
                  // this.server.submit(() -> { // CraftBukkit - async chat
-@@ -2237,9 +2238,9 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -2258,9 +2259,9 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
      @Override
      public void handleChatCommand(ServerboundChatCommandPacket packet) {
          if (ServerGamePacketListenerImpl.isChatMessageIllegal(packet.command())) {
@@ -362,7 +362,7 @@ index 9de597c11c3bd0f23e87c3a6187b2036987356e0..4b99b15c950d11451a70b8362aec5124
          } else {
              if (this.tryHandleChat(packet.command(), packet.timeStamp(), packet.lastSeenMessages())) {
                  this.server.submit(() -> {
-@@ -2336,9 +2337,9 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -2357,9 +2358,9 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
      private boolean tryHandleChat(String message, Instant timestamp, LastSeenMessages.Update acknowledgment) {
          if (!this.updateChatOrder(timestamp)) {
              ServerGamePacketListenerImpl.LOGGER.warn("{} sent out-of-order chat: '{}': {} > {}", this.player.getName().getString(), message, this.lastChatTimeStamp.get().getEpochSecond(), timestamp.getEpochSecond()); // Paper
@@ -374,7 +374,7 @@ index 9de597c11c3bd0f23e87c3a6187b2036987356e0..4b99b15c950d11451a70b8362aec5124
              return false;
          } else if (this.player.isRemoved() || this.player.getChatVisibility() == ChatVisiblity.HIDDEN) { // CraftBukkit - dead men tell no tales
              this.send(new ClientboundSystemChatPacket(Component.translatable("chat.disabled.options").withStyle(ChatFormatting.RED), false));
-@@ -3399,7 +3400,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -3420,7 +3421,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
          // Paper start
          if (!org.bukkit.Bukkit.isPrimaryThread()) {
              if (recipeSpamPackets.addAndGet(io.papermc.paper.configuration.GlobalConfiguration.get().spamLimiter.recipeSpamIncrement) > io.papermc.paper.configuration.GlobalConfiguration.get().spamLimiter.recipeSpamLimit) {
@@ -864,7 +864,7 @@ index 0000000000000000000000000000000000000000..4b82aea23b99180f13c71a1797c4d829
 +
 +}
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index 84b7325776b166553b9655e844ad6619d346432e..0abb81e5a68f75470a0a522fcf1a072a87880feb 100644
+index eb1a5b20810cbad9f47505a8534a42b20b8653d5..a3280d7e485289785ac0dec42561a2d357860264 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 @@ -2,11 +2,14 @@

@@ -12,16 +12,13 @@ As part of: YAPFA (https://github.com/tr7zw/YAPFA)
 Licensed under: MIT (https://opensource.org/licenses/MIT)
 
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index 0965f43068d12a85090906568e2c1b731730f015..84b7325776b166553b9655e844ad6619d346432e 100644
+index 024cf924592999726458976b4d73df4b71843a2e..eb1a5b20810cbad9f47505a8534a42b20b8653d5 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-@@ -91,4 +91,17 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+@@ -101,6 +101,14 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+             
+         }
  
-     }
- 
-+    public Misc misc;
-+    public class Misc extends ConfigurationPart {
-+
 +        // Gale start - YAPFA - last tick time - in TPS command
 +        public LastTickTimeInTpsCommand lastTickTimeInTpsCommand;
 +        public class LastTickTimeInTpsCommand extends ConfigurationPart {
@@ -30,8 +27,8 @@ index 0965f43068d12a85090906568e2c1b731730f015..84b7325776b166553b9655e844ad6619
 +        }
 +        // Gale end - YAPFA - last tick time - in TPS command
 +
-+    }
-+
+     }
+ 
  }
 diff --git a/src/main/java/org/spigotmc/TicksPerSecondCommand.java b/src/main/java/org/spigotmc/TicksPerSecondCommand.java
 index 9bede6a26c08ede063c7a38f1149c811df14b258..da3b5e6653707220109b76e41b0bf0e88c365915 100644

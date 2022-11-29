@@ -1,0 +1,106 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MartijnMuijsers <martijnmuijsers@live.nl>
+Date: Wed, 30 Nov 2022 00:43:42 +0100
+Subject: [PATCH] Send multiple keep-alive packets
+
+License: MIT (https://opensource.org/licenses/MIT)
+
+This patch is based on the following patch:
+"Alternative Keepalive Handling"
+By: William Blake Galbreath <blake.galbreath@gmail.com>
+As part of: Purpur (https://github.com/PurpurMC/Purpur)
+Licensed under: MIT (https://opensource.org/licenses/MIT)
+
+diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
+index 9de597c11c3bd0f23e87c3a6187b2036987356e0..4b5e65ae2b57b7353ac0f26fda125e2d3661e9ed 100644
+--- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
++++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
+@@ -9,6 +9,8 @@ import com.mojang.datafixers.util.Pair;
+ import com.mojang.logging.LogUtils;
+ import it.unimi.dsi.fastutil.ints.Int2ObjectMap.Entry;
+ import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
++import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
++import it.unimi.dsi.fastutil.longs.LongSet;
+ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+ import it.unimi.dsi.fastutil.objects.ObjectIterator;
+ import java.time.Instant;
+@@ -258,6 +260,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+     private long keepAliveTime = Util.getMillis();
+     private boolean keepAlivePending;
+     private long keepAliveChallenge;
++    private LongSet keepAlives = new LongOpenHashSet(); // Gale - Purpur - send multiple keep-alive packets
+     // CraftBukkit start - multithreaded fields
+     private final AtomicInteger chatSpamTickCount = new AtomicInteger();
+     private final java.util.concurrent.atomic.AtomicInteger tabSpamLimiter = new java.util.concurrent.atomic.AtomicInteger(); // Paper - configurable tab spam limits
+@@ -294,7 +297,10 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+     private final SignedMessageChain.Decoder signedMessageDecoder;
+     private final LastSeenMessagesValidator lastSeenMessagesValidator;
+     private final FutureChain chatMessageChain;
+-    private static final long KEEPALIVE_LIMIT = Long.getLong("paper.playerconnection.keepalive", 30) * 1000; // Paper - provide property to set keepalive limit
++    // Gale start - Purpur - send multiple keep-alive packets
++    private static final long KEEPALIVE_LIMIT_IN_SECONDS = Long.getLong("paper.playerconnection.keepalive", 30); // Paper - provide property to set keepalive limit
++    private static final long KEEPALIVE_LIMIT = KEEPALIVE_LIMIT_IN_SECONDS * 1000;
++    // Gale end - Purpur - send multiple keep-alive packets
+     private static final int MAX_SIGN_LINE_LENGTH = Integer.getInteger("Paper.maxSignLength", 80); // Paper
+ 
+     private String clientBrandName = null; // Paper - Brand name
+@@ -405,6 +411,21 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+         long currentTime = Util.getMillis();
+         long elapsedTime = currentTime - this.keepAliveTime;
+ 
++        // Gale start - Purpur - send multiple keep-alive packets
++        if (GaleGlobalConfiguration.get().misc.keepalive.sendMultiple) {
++            if (elapsedTime >= 1000L) { // 1 second
++                if (!this.processedDisconnect && this.keepAlives.size() > KEEPALIVE_LIMIT_IN_SECONDS) {
++                    LOGGER.warn("{} was kicked due to keepalive timeout!", this.player.getName());
++                    disconnect(Component.translatable("disconnect.timeout"), org.bukkit.event.player.PlayerKickEvent.Cause.TIMEOUT);
++                } else {
++                    this.keepAliveTime = currentTime; // hijack this field for 1 second intervals
++                    this.keepAlives.add(currentTime); // currentTime is ID
++                    send(new ClientboundKeepAlivePacket(currentTime));
++                }
++            }
++        } else
++        // Gale end - Purpur - send multiple keep-alive packets
++
+         if (this.keepAlivePending) {
+             if (!this.processedDisconnect && elapsedTime >= KEEPALIVE_LIMIT) { // check keepalive limit, don't fire if already disconnected
+                 ServerGamePacketListenerImpl.LOGGER.warn("{} was kicked due to keepalive timeout!", this.player.getScoreboardName()); // more info
+@@ -3598,6 +3619,16 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+ 
+     @Override
+     public void handleKeepAlive(ServerboundKeepAlivePacket packet) {
++        // Gale start - Purpur - send multiple keep-alive packets
++        if (GaleGlobalConfiguration.get().misc.keepalive.sendMultiple) {
++            long id = packet.getId();
++            if (!this.keepAlives.isEmpty() && this.keepAlives.contains(id)) {
++                int ping = (int) (Util.getMillis() - id);
++                this.player.latency = (this.player.latency * 3 + ping) / 4;
++                this.keepAlives.clear(); // We got a valid response, let's roll with it and forget the rest
++            }
++        } else
++        // Gale end - Purpur - send multiple keep-alive packets
+         //PacketUtils.ensureRunningOnSameThread(packet, this, this.player.getLevel()); // CraftBukkit // Paper - This shouldn't be on the main thread
+         if (this.keepAlivePending && packet.getId() == this.keepAliveChallenge) {
+             int i = (int) (Util.getMillis() - this.keepAliveTime);
+diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
+index 0965f43068d12a85090906568e2c1b731730f015..024cf924592999726458976b4d73df4b71843a2e 100644
+--- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
++++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
+@@ -91,4 +91,16 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+ 
+     }
+ 
++    public Misc misc;
++    public class Misc extends ConfigurationPart {
++
++        public Keepalive keepalive;
++        public class Keepalive extends ConfigurationPart {
++
++            public boolean sendMultiple = true; // Gale end - Purpur - send multiple keep-alive packets
++            
++        }
++
++    }
++
+ }
