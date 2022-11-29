@@ -1,0 +1,37 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MartijnMuijsers <martijnmuijsers@live.nl>
+Date: Tue, 29 Nov 2022 21:30:27 +0100
+Subject: [PATCH] End gateway should check if entity can use portal
+
+License: MIT (https://opensource.org/licenses/MIT)
+
+This patch is based on the following patch:
+"End gateway should check if entity can use portal"
+By: William Blake Galbreath <blake.galbreath@gmail.com>
+As part of: Purpur (https://github.com/PurpurMC/Purpur)
+Licensed under: MIT (https://opensource.org/licenses/MIT)
+
+diff --git a/src/main/java/net/minecraft/world/level/block/entity/TheEndGatewayBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/TheEndGatewayBlockEntity.java
+index 89bf5fc4fab2cf39378600aa8925ac4bb7707428..8f3fb24afd3df8e9e4caa2917f598fcf74289726 100644
+--- a/src/main/java/net/minecraft/world/level/block/entity/TheEndGatewayBlockEntity.java
++++ b/src/main/java/net/minecraft/world/level/block/entity/TheEndGatewayBlockEntity.java
+@@ -177,6 +177,7 @@ public class TheEndGatewayBlockEntity extends TheEndPortalBlockEntity {
+ 
+     public static void teleportEntity(Level world, BlockPos pos, BlockState state, Entity entity, TheEndGatewayBlockEntity blockEntity) {
+         if (world instanceof ServerLevel && !blockEntity.isCoolingDown()) {
++            if (entity.level.galeConfig().gameplayMechanics.fixes.checkCanChangeDimensionsBeforeUseEndGateway && world.galeConfig().gameplayMechanics.fixes.checkCanChangeDimensionsBeforeUseEndGateway && !entity.canChangeDimensions()) return; // Gale - Purpur - end gateway should check if entity can use portal
+             ServerLevel worldserver = (ServerLevel) world;
+ 
+             blockEntity.teleportCooldown = 100;
+diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
+index 0ae303da1858ed75cb0eb4b224a0e21fa352fc70..3b023cbd132c6aa263dbbe54ed7d30e1049d3875 100644
+--- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
++++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
+@@ -249,6 +249,7 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+ 
+             public boolean sandDuping = true; // Gale - Purpur - make sand duping fix configurable
+             public boolean keepMooshroomRotationAfterShearing = true; // Gale - Purpur - fix cow rotation when shearing mooshroom
++            public boolean checkCanChangeDimensionsBeforeUseEndGateway = false; // Gale - Purpur - end gateway should check if entity can use portal
+ 
+             // Gale start - Purpur - fix MC-238526
+             @Setting("mc-238526")
