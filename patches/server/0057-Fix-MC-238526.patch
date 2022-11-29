@@ -1,0 +1,37 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MartijnMuijsers <martijnmuijsers@live.nl>
+Date: Tue, 29 Nov 2022 16:16:35 +0100
+Subject: [PATCH] Fix MC-238526
+
+License: MIT (https://opensource.org/licenses/MIT)
+
+This patch is based on the following patch:
+"MC-238526 - Fix spawner not spawning water animals correctly"
+By: BillyGalbreath <Blake.Galbreath@Gmail.com>
+As part of: Purpur (https://github.com/PurpurMC/Purpur)
+Licensed under: MIT (https://opensource.org/licenses/MIT)
+
+diff --git a/src/main/java/net/minecraft/world/entity/animal/WaterAnimal.java b/src/main/java/net/minecraft/world/entity/animal/WaterAnimal.java
+index 18389f46902bb9879ac6d734723e9a720724dc48..613970368890d78ab589f654a66024eeef23983a 100644
+--- a/src/main/java/net/minecraft/world/entity/animal/WaterAnimal.java
++++ b/src/main/java/net/minecraft/world/entity/animal/WaterAnimal.java
+@@ -83,6 +83,6 @@ public abstract class WaterAnimal extends PathfinderMob {
+         i = world.getMinecraftWorld().paperConfig().entities.spawning.wateranimalSpawnHeight.maximum.or(i);
+         j = world.getMinecraftWorld().paperConfig().entities.spawning.wateranimalSpawnHeight.minimum.or(j);
+         // Paper end
+-        return pos.getY() >= j && pos.getY() <= i && world.getFluidState(pos.below()).is(FluidTags.WATER) && world.getBlockState(pos.above()).is(Blocks.WATER);
++        return ((reason == MobSpawnType.SPAWNER && world.getMinecraftWorld().galeConfig().gameplayMechanics.fixes.mc238526) || (pos.getY() >= j && pos.getY() <= i)) && world.getFluidState(pos.below()).is(FluidTags.WATER) && world.getBlockState(pos.above()).is(Blocks.WATER); // Gale - Purpur - fix MC-238526
+     }
+ }
+diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
+index 5b1a20efac4835eb10f8f068166f501ddc19ae0c..db8d97a14d1334c231732cc03c1f85a107b52a34 100644
+--- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
++++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
+@@ -247,6 +247,7 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+         public Fixes fixes;
+         public class Fixes extends ConfigurationPart {
+             public boolean sandDuping = true; // Gale - Purpur - make sand duping fix configurable
++            public boolean mc238526 = false; // Gale - Purpur - fix MC-238526
+         }
+ 
+     }
