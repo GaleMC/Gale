@@ -1,0 +1,68 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MartijnMuijsers <martijnmuijsers@live.nl>
+Date: Tue, 29 Nov 2022 13:10:20 +0100
+Subject: [PATCH] Remove Paper async executor
+
+License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
+
+diff --git a/src/main/java/io/papermc/paper/util/MCUtil.java b/src/main/java/io/papermc/paper/util/MCUtil.java
+index 1e812c4f5a8d54293084de29e8731e0b8ddcc0ae..06507695eb53067b0da9cb66e4d443f21cb6f070 100644
+--- a/src/main/java/io/papermc/paper/util/MCUtil.java
++++ b/src/main/java/io/papermc/paper/util/MCUtil.java
+@@ -34,6 +34,7 @@ import org.bukkit.Location;
+ import org.bukkit.block.BlockFace;
+ import org.bukkit.craftbukkit.CraftWorld;
+ import org.bukkit.craftbukkit.util.Waitable;
++import org.galemc.gale.concurrent.AsyncExecutor;
+ import org.spigotmc.AsyncCatcher;
+ 
+ import javax.annotation.Nonnull;
+@@ -45,6 +46,7 @@ import java.util.Queue;
+ import java.util.Set;
+ import java.util.concurrent.CompletableFuture;
+ import java.util.concurrent.ExecutionException;
++import java.util.concurrent.Executor;
+ import java.util.concurrent.LinkedBlockingQueue;
+ import java.util.concurrent.ThreadPoolExecutor;
+ import java.util.concurrent.TimeUnit;
+@@ -55,14 +57,7 @@ import java.util.function.Consumer;
+ import java.util.function.Supplier;
+ 
+ public final class MCUtil {
+-    public static final ThreadPoolExecutor asyncExecutor = new ThreadPoolExecutor(
+-        0, 2, 60L, TimeUnit.SECONDS,
+-        new LinkedBlockingQueue<>(),
+-        new ThreadFactoryBuilder()
+-            .setNameFormat("Paper Async Task Handler Thread - %1$d")
+-            .setUncaughtExceptionHandler(new net.minecraft.DefaultUncaughtExceptionHandlerWithName(MinecraftServer.LOGGER))
+-            .build()
+-    );
++    public static final Executor asyncExecutor = AsyncExecutor.instance; // Gale - centralized async execution - remove Paper async executor
+     public static final ThreadPoolExecutor cleanerExecutor = new ThreadPoolExecutor(
+         1, 1, 0L, TimeUnit.SECONDS,
+         new LinkedBlockingQueue<>(),
+diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
+index a30024ab934b81cd76e282fab4bbf6052bdaaaaf..2534aa4fa9a023ed23b2d710fcffecd5f2fca6b9 100644
+--- a/src/main/java/net/minecraft/server/MinecraftServer.java
++++ b/src/main/java/net/minecraft/server/MinecraftServer.java
+@@ -148,6 +148,7 @@ import net.minecraft.world.level.storage.loot.PredicateManager;
+ import net.minecraft.world.phys.Vec2;
+ import net.minecraft.world.phys.Vec3;
+ import org.apache.commons.lang3.Validate;
++import org.galemc.gale.concurrent.AsyncExecutor;
+ import org.galemc.gale.concurrent.MinecraftServerBlockableEventLoop;
+ import org.galemc.gale.configuration.GaleConfigurations;
+ import org.galemc.gale.configuration.GaleGlobalConfiguration;
+@@ -980,8 +981,10 @@ public abstract class MinecraftServer extends MinecraftServerBlockableEventLoop
+             MinecraftServer.LOGGER.error("Failed to unlock level {}", this.storageSource.getLevelId(), ioexception1);
+         }
+         // Spigot start
+-        io.papermc.paper.util.MCUtil.asyncExecutor.shutdown(); // Paper
+-        try { io.papermc.paper.util.MCUtil.asyncExecutor.awaitTermination(30, java.util.concurrent.TimeUnit.SECONDS); // Paper
++        // Gale start - centralized async execution - remove Paper async executor
++        AsyncExecutor.instance.shutdown(); // Paper
++        try { AsyncExecutor.instance.awaitTermination(30, java.util.concurrent.TimeUnit.SECONDS); // Paper
++            // Gale end - centralized async execution - remove Paper async executor
+         } catch (java.lang.InterruptedException ignored) {} // Paper
+         if (org.spigotmc.SpigotConfig.saveUserCacheOnStopOnly) {
+             MinecraftServer.LOGGER.info("Saving usercache.json");
