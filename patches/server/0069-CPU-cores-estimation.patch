@@ -44,10 +44,10 @@ index 7220920bf87a78224c63c017cc4a623f547c7b80..bd77ede11311ebd156b3de5d7297b287
  import org.yaml.snakeyaml.constructor.SafeConstructor;
  import org.yaml.snakeyaml.error.MarkedYAMLException;
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index 8a4d6082015a014b9377f2a14f483c5773c52571..232e52e8654b47cc163dd7a46504d45403008f85 100644
+index 0abb81e5a68f75470a0a522fcf1a072a87880feb..da07854b99f7e0e097bd9f6cf18572253052bfdf 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-@@ -285,6 +285,7 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+@@ -286,6 +286,7 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
          public boolean setBlockInFarChunk = true; // Gale - Purpur - do not log setBlock in far chunks
          public boolean unrecognizedRecipes = false; // Gale - Purpur - do not log unrecognized recipes
          public boolean legacyMaterialInitialization = false; // Gale - Purpur - do not log legacy Material initialization

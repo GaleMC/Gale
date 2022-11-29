@@ -1,0 +1,119 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MartijnMuijsers <martijnmuijsers@live.nl>
+Date: Tue, 29 Nov 2022 21:03:47 +0100
+Subject: [PATCH] Fix legacy colors in console
+
+License: MIT (https://opensource.org/licenses/MIT)
+
+This patch is based on the following patch:
+"Fix legacy colors in console"
+By: BillyGalbreath <blake.galbreath@gmail.com>
+As part of: Purpur (https://github.com/PurpurMC/Purpur)
+Licensed under: MIT (https://opensource.org/licenses/MIT)
+
+diff --git a/src/main/java/io/papermc/paper/console/HexFormattingConverter.java b/src/main/java/io/papermc/paper/console/HexFormattingConverter.java
+index b4d0b7ecd56ab952319946854168c1299cb0b1be..beea5c17f07f85825ed1ba5a016f6edc93112115 100644
+--- a/src/main/java/io/papermc/paper/console/HexFormattingConverter.java
++++ b/src/main/java/io/papermc/paper/console/HexFormattingConverter.java
+@@ -17,6 +17,7 @@ import org.apache.logging.log4j.core.pattern.PatternFormatter;
+ import org.apache.logging.log4j.core.pattern.PatternParser;
+ import org.apache.logging.log4j.util.PerformanceSensitive;
+ import org.apache.logging.log4j.util.PropertiesUtil;
++import org.galemc.gale.configuration.GaleGlobalConfiguration;
+ 
+ import java.util.List;
+ import java.util.regex.Matcher;
+@@ -38,6 +39,7 @@ public final class HexFormattingConverter extends LogEventPatternConverter {
+     private static final String ANSI_RESET = "\u001B[m";
+ 
+     private static final char COLOR_CHAR = 0x7f;
++    private static final char LEGACY_CHAR = 0xa7; // Gale - Purpur - fix legacy colors in console
+     public static final LegacyComponentSerializer SERIALIZER = LegacyComponentSerializer.builder()
+         .hexColors()
+         .flattener(PaperAdventure.FLATTENER)
+@@ -48,6 +50,10 @@ public final class HexFormattingConverter extends LogEventPatternConverter {
+     private static final String RGB_ANSI = "\u001B[38;2;%d;%d;%dm";
+     private static final Pattern NAMED_PATTERN = Pattern.compile(COLOR_CHAR + "[0-9a-fk-orA-FK-OR]");
+     private static final Pattern RGB_PATTERN = Pattern.compile(COLOR_CHAR + "#([0-9a-fA-F]){6}");
++    // Gale start - Purpur - fix legacy colors in console
++    private static final Pattern LEGACY_RGB_PATTERN = Pattern.compile(LEGACY_CHAR + "x((" + LEGACY_CHAR + "[0-9a-fA-F]){6})");
++    private static final Pattern LEGACY_PATTERN = Pattern.compile(LEGACY_CHAR + "([0-9a-fk-orxA-FK-ORX])");
++    // Gale end - Purpur - fix legacy colors in console
+ 
+     private static final String[] RGB_ANSI_CODES = new String[]{
+         formatHexAnsi(NamedTextColor.BLACK),         // Black §0
+@@ -133,7 +139,27 @@ public final class HexFormattingConverter extends LogEventPatternConverter {
+     }
+ 
+     private static String convertRGBColors(final String input) {
+-        return RGB_PATTERN.matcher(input).replaceAll(result -> {
++        // Gale start - Purpur - fix legacy colors in console - lets just shove this back in place
++        String toConvert;
++        if (fixLegacyColors()) {
++            Matcher matcher = LEGACY_RGB_PATTERN.matcher(input);
++            StringBuilder buffer = new StringBuilder();
++            while (matcher.find()) {
++                String s = matcher.group().replace(String.valueOf(LEGACY_CHAR), "").replace('x', '#');
++                int hex = Integer.decode(s);
++                int red = (hex >> 16) & 0xFF;
++                int green = (hex >> 8) & 0xFF;
++                int blue = hex & 0xFF;
++                String replacement = String.format(RGB_ANSI, red, green, blue);
++                matcher.appendReplacement(buffer, replacement);
++            }
++            matcher.appendTail(buffer);
++            toConvert = buffer.toString();
++        } else {
++            toConvert = input;
++        }
++        return RGB_PATTERN.matcher(toConvert).replaceAll(result -> {
++            // Gale end - Purpur - fix legacy colors in console - lets just shove this back in place
+             final int hex = Integer.decode(result.group().substring(1));
+             return formatHexAnsi(hex);
+         });
+@@ -151,10 +177,18 @@ public final class HexFormattingConverter extends LogEventPatternConverter {
+     }
+ 
+     private static String stripRGBColors(final String input) {
+-        return RGB_PATTERN.matcher(input).replaceAll("");
++        // Gale start - Purpur - fix legacy colors in console
++        String removedRGB = RGB_PATTERN.matcher(input).replaceAll("");
++        return fixLegacyColors() ? LEGACY_RGB_PATTERN.matcher(removedRGB).replaceAll("") : removedRGB;
++        // Gale end - Purpur - fix legacy colors in console
+     }
+ 
+     static void format(String content, StringBuilder result, int start, boolean ansi) {
++        // Gale start - Purpur - fix legacy colors in console
++        if (fixLegacyColors()) {
++            content = LEGACY_PATTERN.matcher(content).replaceAll(COLOR_CHAR + "$1");
++        }
++        // Gale end - Purpur - fix legacy colors in console
+         int next = content.indexOf(COLOR_CHAR);
+         int last = content.length() - 1;
+         if (next == -1 || next == last) {
+@@ -209,4 +243,13 @@ public final class HexFormattingConverter extends LogEventPatternConverter {
+         return new HexFormattingConverter(formatters, strip);
+     }
+ 
++    // Gale start - Purpur - fix legacy colors in console
++    private static boolean fixLegacyColors() {
++        try {
++            return GaleGlobalConfiguration.get().logToConsole.legacyColors;
++        } catch (NullPointerException ignored) {}
++        return false;
++    }
++    // Gale end - Purpur - fix legacy colors in console
++
+ }
+diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
+index 24ed4fb7ddacba24873755edfa88912ffdf81cc8..0965f43068d12a85090906568e2c1b731730f015 100644
+--- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
++++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
+@@ -60,6 +60,7 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+     public LogToConsole logToConsole;
+     public class LogToConsole extends ConfigurationPart.Post { // Gale - EMC - softly log invalid pool element errors
+ 
++        public boolean legacyColors = true; // Gale - Purpur - fix legacy colors in console
+         public boolean invalidStatistics = true; // Gale - EMC - do not log invalid statistics
+         public boolean ignoredAdvancements = true; // Gale - Purpur - do not log ignored advancements
+         public boolean setBlockInFarChunk = true; // Gale - Purpur - do not log setBlock in far chunks
