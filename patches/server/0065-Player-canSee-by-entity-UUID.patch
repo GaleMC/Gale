@@ -1,0 +1,31 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MartijnMuijsers <martijnmuijsers@live.nl>
+Date: Tue, 29 Nov 2022 23:37:12 +0100
+Subject: [PATCH] Player#canSee by entity UUID
+
+License: MIT (https://opensource.org/licenses/MIT)
+
+This patch is based on the following patch:
+"Spread out and optimise player list ticksSpread out and optimise player list ticks"
+By: James Lyne <jim+github@not-null.co.uk>
+As part of: Purpur (https://github.com/PurpurMC/Purpur)
+Licensed under: MIT (https://opensource.org/licenses/MIT)
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+index a5220a4e514865c70700527bcd2f941d852564c0..db83c62770d5bac7255251d26c75771ec6897317 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+@@ -1890,6 +1890,13 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+         return !this.hiddenEntities.containsKey(entity.getUniqueId());
+     }
+ 
++    // Gale start - Purpur - Player#canSee by entity UUID
++    @Override
++    public boolean canSee(UUID entityUUID) {
++        return !this.hiddenEntities.containsKey(entityUUID);
++    }
++    // Gale end - Purpur - Player#canSee by entity UUID
++
+     @Override
+     public Map<String, Object> serialize() {
+         Map<String, Object> result = new LinkedHashMap<String, Object>();

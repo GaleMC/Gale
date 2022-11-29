@@ -384,7 +384,7 @@ index 9de597c11c3bd0f23e87c3a6187b2036987356e0..4b99b15c950d11451a70b8362aec5124
              }
          }
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index d2e6a92a44416bfaa161c78dd4b9a7b3ad78792a..1c419c1b97b2109d43e3488e1583fb8a6ec6833d 100644
+index a60db92d8c6afab40e12b3ac28241beac06bcf63..a9f5ce015e1f99391c8ba91cbe0c91de327c693f 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
 @@ -100,6 +100,7 @@ import net.minecraft.world.scores.Objective;

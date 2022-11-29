@@ -1,0 +1,34 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MartijnMuijsers <martijnmuijsers@live.nl>
+Date: Tue, 29 Nov 2022 23:38:12 +0100
+Subject: [PATCH] Player#canSee by entity UUID
+
+License: MIT (https://opensource.org/licenses/MIT)
+
+This patch is based on the following patch:
+"Spread out and optimise player list ticksSpread out and optimise player list ticks"
+By: James Lyne <jim+github@not-null.co.uk>
+As part of: Purpur (https://github.com/PurpurMC/Purpur)
+Licensed under: MIT (https://opensource.org/licenses/MIT)
+
+diff --git a/src/main/java/org/bukkit/entity/Player.java b/src/main/java/org/bukkit/entity/Player.java
+index 1e27b9de47f111b9c000243214e22890e323f7fc..9ce603a0c905017f512260de110cf7d8d2097028 100644
+--- a/src/main/java/org/bukkit/entity/Player.java
++++ b/src/main/java/org/bukkit/entity/Player.java
+@@ -1466,6 +1466,16 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
+     @org.jetbrains.annotations.ApiStatus.Experimental // Paper
+     public boolean canSee(@NotNull Entity entity);
+ 
++    // Gale start - Purpur - Player#canSee by entity UUID
++    /**
++     * Checks to see if an entity has been visually hidden from this player.
++     *
++     * @param uuid The {@link Entity#getUniqueId()} of the entity to check
++     * @return True if the entity with the provided UUID is not being hidden from this player
++     */
++    boolean canSee(@NotNull UUID entityUUID);
++    // Gale end - Purpur - Player#canSee by entity UUID
++
+     /**
+      * Checks to see if this player is currently flying or not.
+      *
