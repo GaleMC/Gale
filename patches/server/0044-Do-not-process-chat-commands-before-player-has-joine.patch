@@ -12,15 +12,17 @@ As part of: EmpireCraft (https://github.com/starlis/empirecraft)
 Licensed under: MIT (https://opensource.org/licenses/MIT)
 
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index d31a345edfffe39f127073fc3aec8b3489bae79c..68d07621c377d96f8a9c13b20a1c82358d98cf94 100644
+index d31a345edfffe39f127073fc3aec8b3489bae79c..0d72941a124a6fddad70362b25647743e601aafd 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -2345,7 +2345,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -2345,6 +2345,10 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
          } else if (this.player.isRemoved() || this.player.getChatVisibility() == ChatVisiblity.HIDDEN) { // CraftBukkit - dead men tell no tales
              this.send(new ClientboundSystemChatPacket(Component.translatable("chat.disabled.options").withStyle(ChatFormatting.RED), false));
              return false;
--        } else {
-+        } else if (!player.didPlayerJoinEvent) { return false; // Gale - EMC - do not process chat/commands before player has joined
++            // Gale start - EMC - do not process chat/commands before player has joined
++        } else if (!player.didPlayerJoinEvent) {
++            return false;
++            // Gale end - EMC - do not process chat/commands before player has joined
+         } else {
              LastSeenMessagesValidator lastseenmessagesvalidator = this.lastSeenMessagesValidator;
              Set set;
- 

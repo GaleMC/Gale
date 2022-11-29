@@ -6,10 +6,10 @@ Subject: [PATCH] Do not log expired message warnings
 License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
 
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 563578d814ab4a589671e954909412c96196e2de..ae68219457c0545ae72927f45fece411d39641c0 100644
+index dd9d52552cc61729cdcd37caa87079e5026964d7..3c63449a36c6882b6e47f69f3cdf83e874a9a694 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -2610,7 +2610,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -2614,7 +2614,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
          }
  
          if (message.hasExpiredServer(Instant.now())) {
