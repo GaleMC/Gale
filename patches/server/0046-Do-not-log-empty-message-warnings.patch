@@ -6,7 +6,7 @@ Subject: [PATCH] Do not log empty message warnings
 License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
 
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index d31a345edfffe39f127073fc3aec8b3489bae79c..426a7fd3df09aa34967ab7707959ea7e037381fb 100644
+index 68d07621c377d96f8a9c13b20a1c82358d98cf94..563578d814ab4a589671e954909412c96196e2de 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -185,6 +185,7 @@ import net.minecraft.world.phys.shapes.BooleanOp;

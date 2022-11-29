@@ -478,7 +478,7 @@ index e7505144eba068e687f1ce7617f09d838bceab85..023cd8d948ff7360ac8348b980473ef1
          return ret;
      }
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 497ff02924047f0d876ffca7aaa1ceb21084a8f7..a1ee89845ec41063d0c7983b1f4adf86843aaadf 100644
+index ae68219457c0545ae72927f45fece411d39641c0..7f88092235170465d4320e5f909288a6d26f206e 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -28,6 +28,8 @@ import java.util.function.UnaryOperator;
