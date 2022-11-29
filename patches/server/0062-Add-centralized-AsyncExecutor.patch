@@ -1,0 +1,105 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MartijnMuijsers <martijnmuijsers@live.nl>
+Date: Tue, 29 Nov 2022 12:35:35 +0100
+Subject: [PATCH] Add centralized AsyncExecutor
+
+License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
+
+diff --git a/src/main/java/org/galemc/gale/concurrent/AsyncExecutor.java b/src/main/java/org/galemc/gale/concurrent/AsyncExecutor.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..00b8d5e54b822c114583edd9b0ff6d59e76e15d7
+--- /dev/null
++++ b/src/main/java/org/galemc/gale/concurrent/AsyncExecutor.java
+@@ -0,0 +1,92 @@
++// Gale - centralized async execution
++
++package org.galemc.gale.concurrent;
++
++import org.galemc.gale.util.CPUCoresEstimation;
++
++import java.util.concurrent.BlockingQueue;
++import java.util.concurrent.LinkedBlockingQueue;
++import java.util.concurrent.ThreadPoolExecutor;
++import java.util.concurrent.TimeUnit;
++import java.util.concurrent.locks.Condition;
++import java.util.concurrent.locks.ReentrantLock;
++
++/**
++ * An executor for tasks that can run asynchronously.
++ * <br>
++ * It can be paused when all CPU cores may be needed for something else.
++ *
++ * @author Martijn Muijsers
++ */
++public final class AsyncExecutor extends ThreadPoolExecutor {
++
++    /**
++     * The fixed number of threads that will be used by this {@link AsyncExecutor}.
++     * <br>
++     * By default, we do not use two cores, so that there is always a core for the main thread that we do not use,
++     * and another core that we do not use to run other important threads such as garbage collection on.
++     * <br>
++     * This value is at least 1.
++     */
++    public static final int parallelism = Math.max(1, Integer.getInteger("gale.threads.async", CPUCoresEstimation.get() - 2));
++
++    /**
++     * The queue of tasks in the {@link AsyncExecutor} singleton instance.
++     * This queue can be accessed externally to steal work from the executor.
++     */
++    public static final BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>();
++
++    /**
++     * Singleton {@link AsyncExecutor} instance.
++     */
++    public static final AsyncExecutor instance = new AsyncExecutor();
++
++    private static volatile boolean isPaused = true;
++    private static final ReentrantLock pauseLock = new ReentrantLock();
++    private static final Condition pauseCondition = pauseLock.newCondition();
++
++    private AsyncExecutor() {
++        super(parallelism, parallelism, 0L, TimeUnit.MILLISECONDS, queue);
++    }
++
++    @Override
++    protected void beforeExecute(Thread t, Runnable r) {
++        super.beforeExecute(t, r);
++        pauseLock.lock();
++        try {
++            while (isPaused) pauseCondition.await();
++        } catch (InterruptedException ie) {
++            t.interrupt();
++        } finally {
++            pauseLock.unlock();
++        }
++    }
++
++    /**
++     * Pauses the {@link AsyncExecutor} from starting to run any new task until {@link #resume()} is called.
++     * <br>
++     * This does not affect execution of tasks that are already being performed when this method is called.
++     */
++    public static void pause() {
++        pauseLock.lock();
++        try {
++            isPaused = true;
++        } finally {
++            pauseLock.unlock();
++        }
++    }
++
++    /**
++     * Resumes the {@link AsyncExecutor} singleton instance after it has been paused using {@link #pause()}.
++     */
++    public static void resume() {
++        pauseLock.lock();
++        try {
++            isPaused = false;
++            pauseCondition.signalAll();
++        } finally {
++            pauseLock.unlock();
++        }
++    }
++
++}

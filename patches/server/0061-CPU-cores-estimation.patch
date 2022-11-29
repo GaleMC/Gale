@@ -1,0 +1,162 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MartijnMuijsers <martijnmuijsers@live.nl>
+Date: Tue, 29 Nov 2022 12:27:47 +0100
+Subject: [PATCH] CPU cores estimation
+
+License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
+
+diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
+index 007fe6820e208c04e81acbd7bb7eaf0a22f6f64f..b48eddfa0cdd2c03f6dce974c71d72dd9935448c 100644
+--- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
++++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
+@@ -54,6 +54,7 @@ import net.minecraft.world.level.block.entity.SkullBlockEntity;
+ import net.minecraft.world.level.storage.LevelStorageSource;
+ import org.galemc.gale.command.GaleCommands;
+ import org.galemc.gale.configuration.GaleGlobalConfiguration;
++import org.galemc.gale.util.CPUCoresEstimation;
+ import org.slf4j.Logger;
+ 
+ // CraftBukkit start
+@@ -231,6 +232,12 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
+         io.papermc.paper.brigadier.PaperBrigadierProviderImpl.INSTANCE.getClass(); // init PaperBrigadierProvider
+         // Paper end
+ 
++        // Gale start - CPU core estimation
++        if (GaleGlobalConfiguration.get().logToConsole.cpuCoresEstimation) {
++            CPUCoresEstimation.log(LOGGER);
++        }
++        // Gale end - CPU core estimation
++
+         // Gale start - Pufferfish - SIMD support
+         // Attempt to detect vectorization
+         try {
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+index 7220920bf87a78224c63c017cc4a623f547c7b80..bd77ede11311ebd156b3de5d7297b287203c35af 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+@@ -238,6 +238,8 @@ import org.bukkit.scoreboard.Criteria;
+ import org.bukkit.structure.StructureManager;
+ import org.bukkit.util.StringUtil;
+ import org.bukkit.util.permissions.DefaultPermissions;
++import org.galemc.gale.configuration.GaleGlobalConfiguration;
++import org.galemc.gale.util.CPUCoresEstimation;
+ import org.yaml.snakeyaml.Yaml;
+ import org.yaml.snakeyaml.constructor.SafeConstructor;
+ import org.yaml.snakeyaml.error.MarkedYAMLException;
+diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
+index 8a4d6082015a014b9377f2a14f483c5773c52571..232e52e8654b47cc163dd7a46504d45403008f85 100644
+--- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
++++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
+@@ -285,6 +285,7 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+         public boolean setBlockInFarChunk = true; // Gale - Purpur - do not log setBlock in far chunks
+         public boolean unrecognizedRecipes = false; // Gale - Purpur - do not log unrecognized recipes
+         public boolean legacyMaterialInitialization = false; // Gale - Purpur - do not log legacy Material initialization
++        public boolean cpuCoresEstimation = true; // Gale - CPU core estimation
+ 
+         public Chat chat;
+         public class Chat extends ConfigurationPart {
+diff --git a/src/main/java/org/galemc/gale/util/CPUCoresEstimation.java b/src/main/java/org/galemc/gale/util/CPUCoresEstimation.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..2095cef565af83869f30504a3609601365149726
+--- /dev/null
++++ b/src/main/java/org/galemc/gale/util/CPUCoresEstimation.java
+@@ -0,0 +1,99 @@
++// Gale - CPU core estimation
++
++package org.galemc.gale.util;
++
++import com.mojang.logging.LogUtils;
++import org.slf4j.Logger;
++import oshi.SystemInfo;
++import oshi.hardware.CentralProcessor;
++import oshi.hardware.HardwareAbstractionLayer;
++
++/**
++ * A utility class to estimate the number of physical CPU cores.
++ *
++ * @author Martijn Muijsers
++ */
++public final class CPUCoresEstimation {
++
++    private CPUCoresEstimation() {}
++
++    public static final String environmentVariableKey = "gale.cores";
++
++    /**
++     * @return The value of the {@link #environmentVariableKey} environment variable,
++     * or -1 if not set, or -1 if the environment variable is set to a nonpositive value.
++     */
++    public static int getByEnvironmentVariable() {
++        int value = Integer.getInteger(environmentVariableKey, -1);
++        return value > 0 ? value : -1;
++    }
++
++    /**
++     * @return The number of cores estimated by OSHI using {@link CentralProcessor#getPhysicalProcessorCount()},
++     * or -1 if OSHI throws an exception or returns a nonpositive value.
++     */
++    public static int getByOSHI() {
++        try {
++            SystemInfo systemInfo = new SystemInfo();
++            HardwareAbstractionLayer hardwareAbstractionLayer = systemInfo.getHardware();
++            CentralProcessor centralProcessor = hardwareAbstractionLayer.getProcessor();
++            int coresAccordingToOSHI = centralProcessor.getPhysicalProcessorCount();
++            if (coresAccordingToOSHI > 0) {
++                return coresAccordingToOSHI;
++            }
++        } catch (Throwable ignored) {}
++        return -1;
++    }
++
++    /**
++     * @return A naive estimation of the number of cores, by taking {@link Runtime#availableProcessors()} and applying
++     * floored division by 2, since most systems will have hyper-threading with 2 threads per core. If the result is
++     * nonpositive, this method returns 1.
++     */
++    public static int getByRuntimeProcessors() {
++        return Math.min(1, Runtime.getRuntime().availableProcessors() / 2);
++    }
++
++    public static int get() {
++        // Use the environment variable if set
++        int environmentCores = getByEnvironmentVariable();
++        if (environmentCores > 0) {
++            return environmentCores;
++        }
++        // Use the OSHI library to find the physical processor count
++        int oshiCores = getByOSHI();
++        if (oshiCores > 0) {
++            return oshiCores;
++        }
++        // Make a guess that the number of CPU cores is half the number of available runtime processor
++        // (i.e. guess that the CPU uses hyper-threading with 2 threads per core)
++        return getByRuntimeProcessors();
++    }
++
++    /**
++     * Logs the CPU core estimation to the given {@link Logger}.
++     */
++    public static void log(Logger logger) {
++        String explanation;
++        int assumedValue;
++        // Use the environment variable if set
++        int environmentCores = getByEnvironmentVariable();
++        // Use the OSHI library to find the physical processor count
++        int oshiCores = getByOSHI();
++        if (environmentCores >= 1) {
++            assumedValue = environmentCores;
++            explanation = "(based on the '" + environmentVariableKey + "' environment variable)" + (oshiCores >= 1 ? " (OSHI detected " + oshiCores + " cores)" : "");
++        } else {
++            explanation = "(because ";
++            if (oshiCores >= 1) {
++                assumedValue = oshiCores;
++                explanation += "OSHI detected " + oshiCores + " physical cores)";
++            } else {
++                assumedValue = getByRuntimeProcessors();
++                explanation += "the number of runtime processors is " + Runtime.getRuntime().availableProcessors() + ") (please set the '" + environmentVariableKey + "' environment variable if the number of physical CPU cores is incorrect)";
++            }
++        }
++        logger.info("The server will assume you have " + assumedValue + " physical CPU cores " + explanation + "");
++    }
++
++}

@@ -509,10 +509,10 @@ index 9368ec01e498f913bc5b7b3e77fe87659090d9b5..ee20bf57734bcd24f7c898cd52efea70
          return ret;
 diff --git a/src/main/java/org/galemc/gale/concurrent/AbstractBlockableEventLoop.java b/src/main/java/org/galemc/gale/concurrent/AbstractBlockableEventLoop.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..7371d738437c6e043f484ccac8891940830f399e
+index 0000000000000000000000000000000000000000..5c7f2159756a3de250b10b82922d69c6fab882ec
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/concurrent/AbstractBlockableEventLoop.java
-@@ -0,0 +1,18 @@
+@@ -0,0 +1,20 @@
 +// Gale - main thread tasks with variable delay
 +
 +package org.galemc.gale.concurrent;
@@ -523,6 +523,8 @@ index 0000000000000000000000000000000000000000..7371d738437c6e043f484ccac8891940
 +
 +/**
 + * An interface for the common functionality of {@link BlockableEventLoop} and {@link MinecraftServerBlockableEventLoop}.
++ *
++ * @author Martijn Muijsers
 + */
 +public interface AbstractBlockableEventLoop extends Executor {
 +
@@ -533,10 +535,10 @@ index 0000000000000000000000000000000000000000..7371d738437c6e043f484ccac8891940
 +}
 diff --git a/src/main/java/org/galemc/gale/concurrent/MinecraftServerBlockableEventLoop.java b/src/main/java/org/galemc/gale/concurrent/MinecraftServerBlockableEventLoop.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..8396a613b80ce1767cd9b1f078b9c72863e9bca6
+index 0000000000000000000000000000000000000000..4b82aea23b99180f13c71a1797c4d829045872f5
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/concurrent/MinecraftServerBlockableEventLoop.java
-@@ -0,0 +1,322 @@
+@@ -0,0 +1,324 @@
 +// Gale - main thread tasks with variable delay
 +
 +package org.galemc.gale.concurrent;
@@ -565,6 +567,8 @@ index 0000000000000000000000000000000000000000..8396a613b80ce1767cd9b1f078b9c728
 +/**
 + * This is a base class for {@link MinecraftServer}, as a replacement of {@link BlockableEventLoop}
 + * (and the intermediary class {@link ReentrantBlockableEventLoop}.
++ *
++ * @author Martijn Muijsers
 + */
 +public class MinecraftServerBlockableEventLoop implements ProcessorHandle<Runnable>, AbstractBlockableEventLoop {
 +
