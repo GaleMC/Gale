@@ -30,10 +30,10 @@ index aa3b6f085e370079883d9928962bff8e9b187246..f76a16b40c9d365a618797b7f7bf0993
  
          this.firstTick = false;
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index 345ce3a53e3e7ee5a4dd9a632231edfe161cd821..02d0697d7ead1383223ac16b5e45e7e6f035f542 100644
+index 158897f2500ee9231c0661d015f55e5216b07554..4c499898191b2017508b9550e5f769f2d0c97c59 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-@@ -245,6 +245,7 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+@@ -247,6 +247,7 @@ public class GaleWorldConfiguration extends ConfigurationPart {
      public class GameplayMechanics extends ConfigurationPart {
  
          public boolean arrowMovementResetsDespawnCounter = true; // Gale - Purpur - make arrow movement resetting despawn counter configurable

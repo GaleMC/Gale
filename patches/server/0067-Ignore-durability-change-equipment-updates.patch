@@ -1,0 +1,39 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MartijnMuijsers <martijnmuijsers@live.nl>
+Date: Wed, 30 Nov 2022 15:01:42 +0100
+Subject: [PATCH] Ignore durability change equipment updates
+
+License: MIT (https://opensource.org/licenses/MIT)
+
+This patch is based on the following patch:
+"Ignore durability change equipment updates"
+By: Cryptite <cryptite@gmail.com>
+As part of: Slice (https://github.com/Cryptite/Slice)
+Licensed under: MIT (https://opensource.org/licenses/MIT)
+
+diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
+index 5926ea4a5ad74cfaf8a33ad8d14e60e21bae606b..9e39f6098f7a19ffe83a487e2181f3e45396a02a 100644
+--- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
++++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
+@@ -3097,7 +3097,7 @@ public abstract class LivingEntity extends Entity {
+ 
+             ItemStack itemstack1 = this.getItemBySlot(enumitemslot);
+ 
+-            if (!ItemStack.matches(itemstack1, itemstack)) {
++            if (this.level.galeConfig().smallOptimizations.processFullEquipmentChangeIfOnlyDurabilityChanged ? !ItemStack.matches(itemstack1, itemstack) : !ItemStack.isSameIgnoreDurability(itemstack1, itemstack)) { // Gale - Slice - ignore durability change equipment updates
+                 // Paper start - PlayerArmorChangeEvent
+                 if (this instanceof ServerPlayer && enumitemslot.getType() == EquipmentSlot.Type.ARMOR) {
+                     final org.bukkit.inventory.ItemStack oldItem = CraftItemStack.asBukkitCopy(itemstack);
+diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
+index 345ce3a53e3e7ee5a4dd9a632231edfe161cd821..158897f2500ee9231c0661d015f55e5216b07554 100644
+--- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
++++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
+@@ -33,6 +33,8 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+     public SmallOptimizations smallOptimizations;
+     public class SmallOptimizations extends ConfigurationPart {
+ 
++        public boolean processFullEquipmentChangeIfOnlyDurabilityChanged = false; // Gale - Slice - ignore durability change equipment updates
++
+         // Gale start - Airplane - reduce projectile chunk loading
+         public MaxProjectileChunkLoads maxProjectileChunkLoads;
+         public class MaxProjectileChunkLoads extends ConfigurationPart {
