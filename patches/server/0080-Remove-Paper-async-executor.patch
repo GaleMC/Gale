@@ -42,7 +42,7 @@ index 1e812c4f5a8d54293084de29e8731e0b8ddcc0ae..06507695eb53067b0da9cb66e4d443f2
          1, 1, 0L, TimeUnit.SECONDS,
          new LinkedBlockingQueue<>(),
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index a30024ab934b81cd76e282fab4bbf6052bdaaaaf..2534aa4fa9a023ed23b2d710fcffecd5f2fca6b9 100644
+index 9045ae692d77f986542940334dd15edef6b2a9f4..b124ef503363e64774817f214d97660e331e5291 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -148,6 +148,7 @@ import net.minecraft.world.level.storage.loot.PredicateManager;

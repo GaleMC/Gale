@@ -1,0 +1,43 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MartijnMuijsers <martijnmuijsers@live.nl>
+Date: Wed, 30 Nov 2022 12:57:37 +0100
+Subject: [PATCH] Specific interval TPS API
+
+License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+
+diff --git a/src/main/java/org/bukkit/Server.java b/src/main/java/org/bukkit/Server.java
+index fc0f70f7af8e12347ea67d9985d06c8323b2a3c0..f502bf2d511df86bc3c0b6a28682484e07a14120 100644
+--- a/src/main/java/org/bukkit/Server.java
++++ b/src/main/java/org/bukkit/Server.java
+@@ -1749,6 +1749,31 @@ public interface Server extends PluginMessageRecipient, net.kyori.adventure.audi
+     @NotNull
+     public double[] getTPS();
+ 
++    // Gale start - specific interval TPS API
++
++    /**
++     * Gets the average server TPS over the last 1 minute
++     *
++     * @return the average server TPS over the last 1 minute
++     */
++    double get1MinuteTPSAverage();
++
++    /**
++     * Gets the average server TPS over the last 5 minutes
++     *
++     * @return the average server TPS over the last 5 minutes
++     */
++    double get5MinuteTPSAverage();
++
++    /**
++     * Gets the average server TPS over the last 15 minutes
++     *
++     * @return the average server TPS over the last 15 minutes
++     */
++    double get15MinuteTPSAverage();
++
++    // Gale end - specific interval TPS API
++
+     /**
+      * Get a sample of the servers last tick times (in nanos)
+      *

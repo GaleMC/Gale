@@ -31,7 +31,7 @@ index 024cf924592999726458976b4d73df4b71843a2e..eb1a5b20810cbad9f47505a8534a42b2
  
  }
 diff --git a/src/main/java/org/spigotmc/TicksPerSecondCommand.java b/src/main/java/org/spigotmc/TicksPerSecondCommand.java
-index 9bede6a26c08ede063c7a38f1149c811df14b258..da3b5e6653707220109b76e41b0bf0e88c365915 100644
+index 29e27dd3c8908956f2708a3562e69e4f35b26249..b42b31cd33232a99befd8334bc24b8ae8b021ccb 100644
 --- a/src/main/java/org/spigotmc/TicksPerSecondCommand.java
 +++ b/src/main/java/org/spigotmc/TicksPerSecondCommand.java
 @@ -1,9 +1,12 @@
@@ -50,7 +50,7 @@ index 9bede6a26c08ede063c7a38f1149c811df14b258..da3b5e6653707220109b76e41b0bf0e8
 @@ -32,6 +35,24 @@ public class TicksPerSecondCommand extends Command
              tpsAvg[i] = TicksPerSecondCommand.format( tps[i] );
          }
-         sender.sendMessage(ChatColor.GOLD + "TPS from last 1m, 5m, 15m: " + org.apache.commons.lang.StringUtils.join(tpsAvg, ", "));
+         sender.sendMessage(ChatColor.GOLD + "TPS from last 5s, 1m, 5m, 15m: " + org.apache.commons.lang.StringUtils.join(tpsAvg, ", ")); // Gale - Purpur - 5 second TPS average
 +        // Gale start - YAPFA - last tick time - in TPS command
 +        if (GaleGlobalConfiguration.get().misc.lastTickTimeInTpsCommand.enabled) {
 +            long lastTickProperTime = MinecraftServer.lastTickProperTime;

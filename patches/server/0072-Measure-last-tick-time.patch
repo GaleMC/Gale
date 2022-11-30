@@ -12,10 +12,10 @@ As part of: YAPFA (https://github.com/tr7zw/YAPFA)
 Licensed under: MIT (https://opensource.org/licenses/MIT)
 
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 4311a2e22704606f7f2f0928df6dcbe65e3fa8d6..9720e5360beabe7e15b0b964cb3b81d5af2b4bf8 100644
+index dccee7cb7075cba6877021ec0da1ba5603a00082..ec5e28a633abe6932fd8c1da47625309bee2ca03 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -1094,6 +1094,11 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1095,6 +1095,11 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
  
      public static volatile RuntimeException chunkSystemCrash; // Paper - rewrite chunk system
  
@@ -27,7 +27,7 @@ index 4311a2e22704606f7f2f0928df6dcbe65e3fa8d6..9720e5360beabe7e15b0b964cb3b81d5
      protected void runServer() {
          try {
              long serverStartTime = Util.getNanos(); // Paper
-@@ -1170,7 +1175,9 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1172,7 +1177,9 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
                  this.nextTickTime += 50L;
                  this.startMetricsRecordingTick();
                  this.profiler.push("tick");
@@ -37,7 +37,7 @@ index 4311a2e22704606f7f2f0928df6dcbe65e3fa8d6..9720e5360beabe7e15b0b964cb3b81d5
                  this.profiler.popPush("nextTickWait");
                  this.mayHaveDelayedTasks = true;
                  this.delayedTasksMaxNextTickTime = Math.max(Util.getMillis() + 50L, this.nextTickTime);
-@@ -1286,9 +1293,11 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1288,9 +1295,11 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
  
      protected void waitUntilNextTick() {
          //this.executeAll(); // Paper - move this into the tick method for timings

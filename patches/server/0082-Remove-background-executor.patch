@@ -35,7 +35,7 @@ index 6b7943e8348b0a41ca69fb56ccfd5f1c1484eb07..e14245a77b40fca4bacf82295ad39033
      }
  
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 2534aa4fa9a023ed23b2d710fcffecd5f2fca6b9..2537f2b35e2342c97892ac347d697d72f2d2d3d0 100644
+index b124ef503363e64774817f214d97660e331e5291..537ce3fc1cae549e3cf92e8822d00cc572c50ac6 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -981,11 +981,6 @@ public abstract class MinecraftServer extends MinecraftServerBlockableEventLoop

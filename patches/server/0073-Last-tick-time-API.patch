@@ -12,10 +12,10 @@ As part of: YAPFA (https://github.com/tr7zw/YAPFA)
 Licensed under: MIT (https://opensource.org/licenses/MIT)
 
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index 874f17fd7e3ff945eeccdf5e0b1991366240ea6b..7220920bf87a78224c63c017cc4a623f547c7b80 100644
+index cd685f4d0e5973b0c0a217c30235a4b88645694f..947ad1463a973546bdaf68654086291a3414aa9b 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-@@ -2927,4 +2927,22 @@ public final class CraftServer implements Server {
+@@ -2953,4 +2953,22 @@ public final class CraftServer implements Server {
      }
  
      // Paper end

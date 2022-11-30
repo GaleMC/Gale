@@ -12,10 +12,10 @@ As part of: YAPFA (https://github.com/tr7zw/YAPFA)
 Licensed under: MIT (https://opensource.org/licenses/MIT)
 
 diff --git a/src/main/java/org/bukkit/Server.java b/src/main/java/org/bukkit/Server.java
-index fc0f70f7af8e12347ea67d9985d06c8323b2a3c0..847d0e2097e47dc69c0bb54b892389542e318760 100644
+index ed787f736e36c08e10dfdca204011381123f1949..f3eaf734ee6414d8809f8da30de417da6677982c 100644
 --- a/src/main/java/org/bukkit/Server.java
 +++ b/src/main/java/org/bukkit/Server.java
-@@ -2146,4 +2146,30 @@ public interface Server extends PluginMessageRecipient, net.kyori.adventure.audi
+@@ -2180,4 +2180,30 @@ public interface Server extends PluginMessageRecipient, net.kyori.adventure.audi
       */
      @NotNull org.bukkit.potion.PotionBrewer getPotionBrewer();
      // Paper end

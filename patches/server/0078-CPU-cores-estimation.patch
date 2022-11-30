@@ -31,7 +31,7 @@ index 007fe6820e208c04e81acbd7bb7eaf0a22f6f64f..b48eddfa0cdd2c03f6dce974c71d72dd
          // Attempt to detect vectorization
          try {
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index 7220920bf87a78224c63c017cc4a623f547c7b80..bd77ede11311ebd156b3de5d7297b287203c35af 100644
+index 947ad1463a973546bdaf68654086291a3414aa9b..69bde99acff7bdae9af7cfe60e2221675a68b858 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 @@ -238,6 +238,8 @@ import org.bukkit.scoreboard.Criteria;
