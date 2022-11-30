@@ -6,8 +6,7 @@ Subject: [PATCH] Store mob counts in an array
 License: MIT (https://opensource.org/licenses/MIT)
 
 This patch is based on the following mixin:
-"general/spawn_density_cap/MixinSpawnDensityCapperDensityCap"
-Original commit: "Replace density cap implementation using arrays"
+"com/ishland/vmp/mixins/general/spawn_density_cap/MixinSpawnDensityCapperDensityCap.java"
 By: ishland <ishlandmc@yeah.net>
 As part of: VMP (https://github.com/RelativityMC/VMP-fabric)
 Licensed under: MIT (https://opensource.org/licenses/MIT)

@@ -6,8 +6,7 @@ Subject: [PATCH] Skip entity move if movement is zero
 License: MIT (https://opensource.org/licenses/MIT)
 
 This patch is based on the following mixin:
-"entity/move_zero_velocity/MixinEntity"
-Original commit: "Performance: Ignore zero velocity movement"
+"com/ishland/vmp/mixins/entity/move_zero_velocity/MixinEntity.java"
 By: ishland <ishlandmc@yeah.net>
 As part of: VMP (https://github.com/RelativityMC/VMP-fabric)
 Licensed under: MIT (https://opensource.org/licenses/MIT)
