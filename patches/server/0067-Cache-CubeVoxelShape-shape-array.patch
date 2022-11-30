@@ -1,0 +1,48 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MartijnMuijsers <martijnmuijsers@live.nl>
+Date: Wed, 30 Nov 2022 17:19:01 +0100
+Subject: [PATCH] Cache CubeVoxelShape shape array
+
+License: LGPL-3.0 (https://www.gnu.org/licenses/lgpl-3.0.html)
+
+This patch is based on the following mixin:
+"shapes/precompute_shape_arrays/SimpleVoxelShapeMixin"
+Original commit: "Initial commit"
+By: Angeline <jellysquid3@users.noreply.github.com>
+As part of: Lithium (https://github.com/CaffeineMC/lithium-fabric)
+Licensed under: LGPL-3.0 (https://www.gnu.org/licenses/lgpl-3.0.nl.html)
+
+diff --git a/src/main/java/net/minecraft/world/phys/shapes/CubeVoxelShape.java b/src/main/java/net/minecraft/world/phys/shapes/CubeVoxelShape.java
+index 68e89dbd79171627046e89699057964e44c40e7d..d5cd3b83503678d766bf9675633dce6d6d4f76f8 100644
+--- a/src/main/java/net/minecraft/world/phys/shapes/CubeVoxelShape.java
++++ b/src/main/java/net/minecraft/world/phys/shapes/CubeVoxelShape.java
+@@ -3,15 +3,28 @@ package net.minecraft.world.phys.shapes;
+ import it.unimi.dsi.fastutil.doubles.DoubleList;
+ import net.minecraft.core.Direction;
+ import net.minecraft.util.Mth;
++import org.jetbrains.annotations.NotNull;
++import org.jetbrains.annotations.Nullable;
+ 
+ public final class CubeVoxelShape extends VoxelShape {
++
++    private @NotNull DoubleList @Nullable [] list; // Gale - Lithium - cache CubeVoxelShape shape array
++
+     protected CubeVoxelShape(DiscreteVoxelShape voxels) {
+         super(voxels);
+     }
+ 
+     @Override
+     protected DoubleList getCoords(Direction.Axis axis) {
+-        return new CubePointRange(this.shape.getSize(axis));
++        // Gale start - Lithium - cache CubeVoxelShape shape array
++        if (this.list == null) {
++            this.list = new DoubleList[Direction.Axis.VALUES.length];
++            for (Direction.Axis existingAxis : Direction.Axis.VALUES) {
++                this.list[existingAxis.ordinal()] = new CubePointRange(this.shape.getSize(axis));
++            }
++        }
++        return this.list[axis.ordinal()];
++        // Gale end - Lithium - cache CubeVoxelShape shape array
+     }
+ 
+     @Override
