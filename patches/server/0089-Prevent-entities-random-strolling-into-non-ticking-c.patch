@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: MartijnMuijsers <martijnmuijsers@live.nl>
 Date: Wed, 30 Nov 2022 20:38:15 +0100
-Subject: [PATCH] Prevent random strolling into non-ticking chunks
+Subject: [PATCH] Prevent entities random strolling into non-ticking chunks
 
 License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 
@@ -12,7 +12,7 @@ As part of: MultiPaper (https://github.com/MultiPaper/MultiPaper)
 Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 
 diff --git a/src/main/java/net/minecraft/world/entity/ai/goal/RandomStrollGoal.java b/src/main/java/net/minecraft/world/entity/ai/goal/RandomStrollGoal.java
-index 216929c838446c3c14d9b9906ffa625ef35fcbc8..2c728037c561a834cb3ec485655c904d2e78430e 100644
+index 216929c838446c3c14d9b9906ffa625ef35fcbc8..29c7f53a4fa88a77c4076a6294e689e4dff9977b 100644
 --- a/src/main/java/net/minecraft/world/entity/ai/goal/RandomStrollGoal.java
 +++ b/src/main/java/net/minecraft/world/entity/ai/goal/RandomStrollGoal.java
 @@ -2,6 +2,9 @@ package net.minecraft.world.entity.ai.goal;
@@ -30,19 +30,19 @@ index 216929c838446c3c14d9b9906ffa625ef35fcbc8..2c728037c561a834cb3ec485655c904d
  
              Vec3 vec3 = this.getPosition();
 -            if (vec3 == null) {
-+            if (vec3 == null || (!this.mob.level.galeConfig().gameplayMechanics.entitiesCanRandomStrollIntoNonTickingChunks && !((ServerLevel) this.mob.level).isPositionEntityTicking(new BlockPos(vec3)))) { // Gale - MultiPaper - prevent random strolling into non-ticking chunks
++            if (vec3 == null || (!this.mob.level.galeConfig().gameplayMechanics.entitiesCanRandomStrollIntoNonTickingChunks && !((ServerLevel) this.mob.level).isPositionEntityTicking(new BlockPos(vec3)))) { // Gale - MultiPaper - prevent entities random strolling into non-ticking chunks
                  return false;
              } else {
                  this.wantedX = vec3.x;
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index 4c499898191b2017508b9550e5f769f2d0c97c59..9b4cebdfb75e1272417d207771807e9951badf70 100644
+index 3c8f498ed1f730cc53fd395839f58ac4bd916265..92c6883c86fcfae34a57feb15e3a401f2bddc36a 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-@@ -248,6 +248,7 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+@@ -247,6 +247,7 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+     public class GameplayMechanics extends ConfigurationPart {
  
+         public boolean entitiesCanEatBlocksInNonTickingChunks = false; // Gale - Purpur - prevent entities eating blocks in non-ticking chunks
++        public boolean entitiesCanRandomStrollIntoNonTickingChunks = true; // Gale - MultiPaper - prevent entities random strolling into non-ticking chunks
          public boolean arrowMovementResetsDespawnCounter = true; // Gale - Purpur - make arrow movement resetting despawn counter configurable
          public boolean hideFlamesOnEntitiesWithFireResistance = false; // Gale - Slice - hide flames on entities with fire resistance
-+        public boolean entitiesCanRandomStrollIntoNonTickingChunks = true; // Gale - MultiPaper - prevent random strolling into non-ticking chunks
  
-         public Fixes fixes;
-         public class Fixes extends ConfigurationPart {

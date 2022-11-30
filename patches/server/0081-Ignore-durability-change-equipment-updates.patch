@@ -25,7 +25,7 @@ index 05168f8b8f542e73e7296a0b3f892d35924394ba..093f8f7be0a6005321a45c42d70d0e8f
                  if (this instanceof ServerPlayer && enumitemslot.getType() == EquipmentSlot.Type.ARMOR) {
                      final org.bukkit.inventory.ItemStack oldItem = CraftItemStack.asBukkitCopy(itemstack);
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index 345ce3a53e3e7ee5a4dd9a632231edfe161cd821..158897f2500ee9231c0661d015f55e5216b07554 100644
+index 201f30774536966bda6f79b4db2fba6352829e10..dcbda08a6246b21b370a9005ed095d4413be6a81 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 @@ -33,6 +33,8 @@ public class GaleWorldConfiguration extends ConfigurationPart {
