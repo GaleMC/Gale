@@ -9,7 +9,7 @@ This patch is based on the following mixin:
 "me/jellysquid/mods/lithium/mixin/collections/entity_filtering/TypeFilterableListMixin.java"
 By: Angeline <jellysquid3@users.noreply.github.com>
 As part of: Lithium (https://github.com/CaffeineMC/lithium-fabric)
-Licensed under: LGPL-3.0 (https://www.gnu.org/licenses/lgpl-3.0.nl.html)
+Licensed under: LGPL-3.0 (https://www.gnu.org/licenses/lgpl-3.0.html)
 
 diff --git a/src/main/java/net/minecraft/util/ClassInstanceMultiMap.java b/src/main/java/net/minecraft/util/ClassInstanceMultiMap.java
 index f9a7617f4c6c19c798d7fe40491690c8f5de14a9..d5c8fc37ae53835290c8fa731fef974734182ebe 100644

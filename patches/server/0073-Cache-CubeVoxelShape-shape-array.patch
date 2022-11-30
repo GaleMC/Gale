@@ -9,7 +9,7 @@ This patch is based on the following mixin:
 "me/jellysquid/mods/lithium/mixin/shapes/precompute_shape_arrays/SimpleVoxelShapeMixin.java"
 By: Angeline <jellysquid3@users.noreply.github.com>
 As part of: Lithium (https://github.com/CaffeineMC/lithium-fabric)
-Licensed under: LGPL-3.0 (https://www.gnu.org/licenses/lgpl-3.0.nl.html)
+Licensed under: LGPL-3.0 (https://www.gnu.org/licenses/lgpl-3.0.html)
 
 diff --git a/src/main/java/net/minecraft/world/phys/shapes/CubeVoxelShape.java b/src/main/java/net/minecraft/world/phys/shapes/CubeVoxelShape.java
 index 68e89dbd79171627046e89699057964e44c40e7d..d5cd3b83503678d766bf9675633dce6d6d4f76f8 100644

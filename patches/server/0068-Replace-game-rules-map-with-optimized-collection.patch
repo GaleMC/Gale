@@ -9,7 +9,7 @@ This patch is based on the following mixin:
 "me/jellysquid/mods/lithium/mixin/collections/gamerules/GameRulesMixin.java"
 By: 2No2Name <2No2Name@web.de>
 As part of: Lithium (https://github.com/CaffeineMC/lithium-fabric)
-Licensed under: LGPL-3.0 (https://www.gnu.org/licenses/lgpl-3.0.nl.html)
+Licensed under: LGPL-3.0 (https://www.gnu.org/licenses/lgpl-3.0.html)
 
 diff --git a/src/main/java/net/minecraft/world/level/GameRules.java b/src/main/java/net/minecraft/world/level/GameRules.java
 index e660a84251bc67435e905aacf628a84156b5d689..dfdd70fccc135b7c1cf89b8e4c2fcdb7738caea7 100644

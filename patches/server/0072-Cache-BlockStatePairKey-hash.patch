@@ -9,7 +9,7 @@ This patch is based on the following mixin:
 "me/jellysquid/mods/lithium/mixin/cached_hashcode/BlockNeighborGroupMixin.java"
 By: Angeline <jellysquid3@users.noreply.github.com>
 As part of: Lithium (https://github.com/CaffeineMC/lithium-fabric)
-Licensed under: LGPL-3.0 (https://www.gnu.org/licenses/lgpl-3.0.nl.html)
+Licensed under: LGPL-3.0 (https://www.gnu.org/licenses/lgpl-3.0.html)
 
 diff --git a/src/main/java/net/minecraft/world/level/block/Block.java b/src/main/java/net/minecraft/world/level/block/Block.java
 index 2e65b44f10aeb44fd524a58e7eb815a566c1ad61..f8fe7b5ae8ef93902c7bb80dddacf790ee56a698 100644

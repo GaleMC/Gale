@@ -9,7 +9,7 @@ This patch is based on the following mixin:
 "me/jellysquid/mods/lithium/mixin/collections/attributes/AttributeContainerMixin.java"
 By: 2No2Name <2No2Name@web.de>
 As part of: Lithium (https://github.com/CaffeineMC/lithium-fabric)
-Licensed under: LGPL-3.0 (https://www.gnu.org/licenses/lgpl-3.0.nl.html)
+Licensed under: LGPL-3.0 (https://www.gnu.org/licenses/lgpl-3.0.html)
 
 diff --git a/src/main/java/net/minecraft/world/entity/ai/attributes/AttributeMap.java b/src/main/java/net/minecraft/world/entity/ai/attributes/AttributeMap.java
 index 81eb5e47715312afbedce0786e9a0d4264d32cbd..b0862a0126c642b12d3e17045d39fb704406e295 100644
