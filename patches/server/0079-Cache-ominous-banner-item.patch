@@ -1,0 +1,111 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MartijnMuijsers <martijnmuijsers@live.nl>
+Date: Thu, 1 Dec 2022 00:37:50 +0100
+Subject: [PATCH] Cache ominous banner item
+
+License: LGPL-3.0 (https://www.gnu.org/licenses/lgpl-3.0.html)
+
+This patch is based on the following mixin:
+"me/jellysquid/mods/lithium/mixin/ai/raid/RaiderEntityMixin.java"
+By: 2No2Name <2No2Name@web.de>
+As part of: Lithium (https://github.com/CaffeineMC/lithium-fabric)
+Licensed under: LGPL-3.0 (https://www.gnu.org/licenses/lgpl-3.0.html)
+
+diff --git a/src/main/java/net/minecraft/advancements/critereon/EntityEquipmentPredicate.java b/src/main/java/net/minecraft/advancements/critereon/EntityEquipmentPredicate.java
+index b8ef0f9c815799d54edcdb26dc0b4c1c281fc03e..9bec8e9e91676238b41d03d8044bfbb3a40a4d13 100644
+--- a/src/main/java/net/minecraft/advancements/critereon/EntityEquipmentPredicate.java
++++ b/src/main/java/net/minecraft/advancements/critereon/EntityEquipmentPredicate.java
+@@ -13,7 +13,7 @@ import net.minecraft.world.item.Items;
+ 
+ public class EntityEquipmentPredicate {
+     public static final EntityEquipmentPredicate ANY = new EntityEquipmentPredicate(ItemPredicate.ANY, ItemPredicate.ANY, ItemPredicate.ANY, ItemPredicate.ANY, ItemPredicate.ANY, ItemPredicate.ANY);
+-    public static final EntityEquipmentPredicate CAPTAIN = new EntityEquipmentPredicate(ItemPredicate.Builder.item().of(Items.WHITE_BANNER).hasNbt(Raid.getLeaderBannerInstance().getTag()).build(), ItemPredicate.ANY, ItemPredicate.ANY, ItemPredicate.ANY, ItemPredicate.ANY, ItemPredicate.ANY);
++    public static final EntityEquipmentPredicate CAPTAIN = new EntityEquipmentPredicate(ItemPredicate.Builder.item().of(Items.WHITE_BANNER).hasNbt(Raid.LEADER_BANNER.getTag()).build(), ItemPredicate.ANY, ItemPredicate.ANY, ItemPredicate.ANY, ItemPredicate.ANY, ItemPredicate.ANY); // Gale - Lithium - cache ominous banner item
+     private final ItemPredicate head;
+     private final ItemPredicate chest;
+     private final ItemPredicate legs;
+diff --git a/src/main/java/net/minecraft/data/advancements/AdventureAdvancements.java b/src/main/java/net/minecraft/data/advancements/AdventureAdvancements.java
+index 892d016152fc68edc197795cb7db46f5540221ce..e083d0705e6d923735b9b3eb4acbdf976ef3f19e 100644
+--- a/src/main/java/net/minecraft/data/advancements/AdventureAdvancements.java
++++ b/src/main/java/net/minecraft/data/advancements/AdventureAdvancements.java
+@@ -81,8 +81,10 @@ public class AdventureAdvancements implements Consumer<Consumer<Advancement>> {
+         Advancement.Builder.advancement().parent(advancement7).display(Items.CROSSBOW, Component.translatable("advancements.adventure.whos_the_pillager_now.title"), Component.translatable("advancements.adventure.whos_the_pillager_now.description"), (ResourceLocation)null, FrameType.TASK, true, true, false).addCriterion("kill_pillager", KilledByCrossbowTrigger.TriggerInstance.crossbowKilled(EntityPredicate.Builder.entity().of(EntityType.PILLAGER))).save(consumer, "adventure/whos_the_pillager_now");
+         Advancement.Builder.advancement().parent(advancement7).display(Items.CROSSBOW, Component.translatable("advancements.adventure.two_birds_one_arrow.title"), Component.translatable("advancements.adventure.two_birds_one_arrow.description"), (ResourceLocation)null, FrameType.CHALLENGE, true, true, false).rewards(AdvancementRewards.Builder.experience(65)).addCriterion("two_birds", KilledByCrossbowTrigger.TriggerInstance.crossbowKilled(EntityPredicate.Builder.entity().of(EntityType.PHANTOM), EntityPredicate.Builder.entity().of(EntityType.PHANTOM))).save(consumer, "adventure/two_birds_one_arrow");
+         Advancement.Builder.advancement().parent(advancement7).display(Items.CROSSBOW, Component.translatable("advancements.adventure.arbalistic.title"), Component.translatable("advancements.adventure.arbalistic.description"), (ResourceLocation)null, FrameType.CHALLENGE, true, true, true).rewards(AdvancementRewards.Builder.experience(85)).addCriterion("arbalistic", KilledByCrossbowTrigger.TriggerInstance.crossbowKilled(MinMaxBounds.Ints.exactly(5))).save(consumer, "adventure/arbalistic");
+-        Advancement advancement8 = Advancement.Builder.advancement().parent(advancement).display(Raid.getLeaderBannerInstance(), Component.translatable("advancements.adventure.voluntary_exile.title"), Component.translatable("advancements.adventure.voluntary_exile.description"), (ResourceLocation)null, FrameType.TASK, true, true, true).addCriterion("voluntary_exile", KilledTrigger.TriggerInstance.playerKilledEntity(EntityPredicate.Builder.entity().of(EntityTypeTags.RAIDERS).equipment(EntityEquipmentPredicate.CAPTAIN))).save(consumer, "adventure/voluntary_exile");
+-        Advancement.Builder.advancement().parent(advancement8).display(Raid.getLeaderBannerInstance(), Component.translatable("advancements.adventure.hero_of_the_village.title"), Component.translatable("advancements.adventure.hero_of_the_village.description"), (ResourceLocation)null, FrameType.CHALLENGE, true, true, true).rewards(AdvancementRewards.Builder.experience(100)).addCriterion("hero_of_the_village", PlayerTrigger.TriggerInstance.raidWon()).save(consumer, "adventure/hero_of_the_village");
++        // Gale start - Lithium - cache ominous banner item
++        Advancement advancement8 = Advancement.Builder.advancement().parent(advancement).display(Raid.LEADER_BANNER, Component.translatable("advancements.adventure.voluntary_exile.title"), Component.translatable("advancements.adventure.voluntary_exile.description"), (ResourceLocation)null, FrameType.TASK, true, true, true).addCriterion("voluntary_exile", KilledTrigger.TriggerInstance.playerKilledEntity(EntityPredicate.Builder.entity().of(EntityTypeTags.RAIDERS).equipment(EntityEquipmentPredicate.CAPTAIN))).save(consumer, "adventure/voluntary_exile");
++        Advancement.Builder.advancement().parent(advancement8).display(Raid.LEADER_BANNER, Component.translatable("advancements.adventure.hero_of_the_village.title"), Component.translatable("advancements.adventure.hero_of_the_village.description"), (ResourceLocation)null, FrameType.CHALLENGE, true, true, true).rewards(AdvancementRewards.Builder.experience(100)).addCriterion("hero_of_the_village", PlayerTrigger.TriggerInstance.raidWon()).save(consumer, "adventure/hero_of_the_village");
++        // Gale end - Lithium - cache ominous banner item
+         Advancement.Builder.advancement().parent(advancement).display(Blocks.HONEY_BLOCK.asItem(), Component.translatable("advancements.adventure.honey_block_slide.title"), Component.translatable("advancements.adventure.honey_block_slide.description"), (ResourceLocation)null, FrameType.TASK, true, true, false).addCriterion("honey_block_slide", SlideDownBlockTrigger.TriggerInstance.slidesDownBlock(Blocks.HONEY_BLOCK)).save(consumer, "adventure/honey_block_slide");
+         Advancement.Builder.advancement().parent(advancement5).display(Blocks.TARGET.asItem(), Component.translatable("advancements.adventure.bullseye.title"), Component.translatable("advancements.adventure.bullseye.description"), (ResourceLocation)null, FrameType.CHALLENGE, true, true, false).rewards(AdvancementRewards.Builder.experience(50)).addCriterion("bullseye", TargetBlockTrigger.TriggerInstance.targetHit(MinMaxBounds.Ints.exactly(15), EntityPredicate.Composite.wrap(EntityPredicate.Builder.entity().distance(DistancePredicate.horizontal(MinMaxBounds.Doubles.atLeast(30.0D))).build()))).save(consumer, "adventure/bullseye");
+         Advancement.Builder.advancement().parent(advancement2).display(Items.LEATHER_BOOTS, Component.translatable("advancements.adventure.walk_on_powder_snow_with_leather_boots.title"), Component.translatable("advancements.adventure.walk_on_powder_snow_with_leather_boots.description"), (ResourceLocation)null, FrameType.TASK, true, true, false).addCriterion("walk_on_powder_snow_with_leather_boots", PlayerTrigger.TriggerInstance.walkOnBlockWithEquipment(Blocks.POWDER_SNOW, Items.LEATHER_BOOTS)).save(consumer, "adventure/walk_on_powder_snow_with_leather_boots");
+diff --git a/src/main/java/net/minecraft/world/entity/raid/Raid.java b/src/main/java/net/minecraft/world/entity/raid/Raid.java
+index 5f2a168e3e282cdb1d2e9cd3fd956eedaf4b4688..d56e7e8cacdabb8f009eaba8164f65f4d824a282 100644
+--- a/src/main/java/net/minecraft/world/entity/raid/Raid.java
++++ b/src/main/java/net/minecraft/world/entity/raid/Raid.java
+@@ -690,7 +690,7 @@ public class Raid {
+         this.level.getRaids().setDirty();
+     }
+ 
+-    public static ItemStack getLeaderBannerInstance() {
++    private static ItemStack createLeaderBanner() { // Gale - Lithium - cache ominous banner item
+         ItemStack itemstack = new ItemStack(Items.WHITE_BANNER);
+         CompoundTag nbttagcompound = new CompoundTag();
+         ListTag nbttaglist = (new BannerPattern.Builder()).addPattern(BannerPatterns.RHOMBUS_MIDDLE, DyeColor.CYAN).addPattern(BannerPatterns.STRIPE_BOTTOM, DyeColor.LIGHT_GRAY).addPattern(BannerPatterns.STRIPE_CENTER, DyeColor.GRAY).addPattern(BannerPatterns.BORDER, DyeColor.LIGHT_GRAY).addPattern(BannerPatterns.STRIPE_MIDDLE, DyeColor.BLACK).addPattern(BannerPatterns.HALF_HORIZONTAL, DyeColor.LIGHT_GRAY).addPattern(BannerPatterns.CIRCLE_MIDDLE, DyeColor.LIGHT_GRAY).addPattern(BannerPatterns.BORDER, DyeColor.BLACK).toListTag();
+@@ -702,6 +702,14 @@ public class Raid {
+         return itemstack;
+     }
+ 
++    // Gale start - Lithium - cache ominous banner item
++    public static final ItemStack LEADER_BANNER = createLeaderBanner();
++
++    public static ItemStack getLeaderBannerInstance() {
++        return LEADER_BANNER.copy();
++    }
++    // Gale end - Lithium - cache ominous banner item
++
+     @Nullable
+     public Raider getLeader(int wave) {
+         return (Raider) this.groupToLeaderMap.get(wave);
+diff --git a/src/main/java/net/minecraft/world/entity/raid/Raider.java b/src/main/java/net/minecraft/world/entity/raid/Raider.java
+index e5ccbaf72f29731f1d1aa939b9297b644a408cd4..87f43eaebcada87d6f6ab58b0bc563c700cadc87 100644
+--- a/src/main/java/net/minecraft/world/entity/raid/Raider.java
++++ b/src/main/java/net/minecraft/world/entity/raid/Raider.java
+@@ -47,7 +47,7 @@ public abstract class Raider extends PatrollingMonster {
+ 
+     protected static final EntityDataAccessor<Boolean> IS_CELEBRATING = SynchedEntityData.defineId(Raider.class, EntityDataSerializers.BOOLEAN);
+     static final Predicate<ItemEntity> ALLOWED_ITEMS = (entityitem) -> {
+-        return !entityitem.hasPickUpDelay() && entityitem.isAlive() && ItemStack.matches(entityitem.getItem(), Raid.getLeaderBannerInstance());
++        return !entityitem.hasPickUpDelay() && entityitem.isAlive() && ItemStack.matches(entityitem.getItem(), Raid.LEADER_BANNER); // Gale - Lithium - cache ominous banner item
+     };
+     @Nullable
+     protected Raid raid;
+@@ -149,7 +149,7 @@ public abstract class Raider extends PatrollingMonster {
+                     }
+                 }
+ 
+-                if (!itemstack.isEmpty() && ItemStack.matches(itemstack, Raid.getLeaderBannerInstance()) && entityhuman != null) {
++                if (!itemstack.isEmpty() && ItemStack.matches(itemstack, Raid.LEADER_BANNER) && entityhuman != null) { // Gale - Lithium - cache ominous banner item
+                     MobEffectInstance mobeffect = entityhuman.getEffect(MobEffects.BAD_OMEN);
+                     byte b0 = 1;
+                     int i;
+@@ -244,7 +244,7 @@ public abstract class Raider extends PatrollingMonster {
+         ItemStack itemstack = item.getItem();
+         boolean flag = this.hasActiveRaid() && this.getCurrentRaid().getLeader(this.getWave()) != null;
+ 
+-        if (this.hasActiveRaid() && !flag && ItemStack.matches(itemstack, Raid.getLeaderBannerInstance())) {
++        if (this.hasActiveRaid() && !flag && ItemStack.matches(itemstack, Raid.LEADER_BANNER)) { // Gale - Lithium - cache ominous banner item
+             // Paper start
+             if (org.bukkit.craftbukkit.event.CraftEventFactory.callEntityPickupItemEvent(this, item, 0, false).isCancelled()) {
+                 return;
+@@ -322,7 +322,7 @@ public abstract class Raider extends PatrollingMonster {
+             if (!this.mob.level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) || !this.mob.canPickUpLoot()) return false; // Paper - respect game and entity rules for picking up items
+             Raid raid = this.mob.getCurrentRaid();
+ 
+-            if (this.mob.hasActiveRaid() && !this.mob.getCurrentRaid().isOver() && this.mob.canBeLeader() && !ItemStack.matches(this.mob.getItemBySlot(EquipmentSlot.HEAD), Raid.getLeaderBannerInstance())) {
++            if (this.mob.hasActiveRaid() && !this.mob.getCurrentRaid().isOver() && this.mob.canBeLeader() && !ItemStack.matches(this.mob.getItemBySlot(EquipmentSlot.HEAD), Raid.LEADER_BANNER))) { // Gale - Lithium - cache ominous banner item
+                 Raider entityraider = raid.getLeader(this.mob.getWave());
+ 
+                 if (entityraider == null || !entityraider.isAlive()) {
