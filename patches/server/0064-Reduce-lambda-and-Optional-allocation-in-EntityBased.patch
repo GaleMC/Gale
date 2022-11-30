@@ -4,7 +4,7 @@ Date: Sat, 26 Nov 2022 16:28:23 +0100
 Subject: [PATCH] Reduce lambda and Optional allocation in
  EntityBasedExplosionDamageCalculator
 
-License: LGPL-3.0 (https://www.gnu.org/licenses/lgpl-3.0.nl.html)
+License: LGPL-3.0 (https://www.gnu.org/licenses/lgpl-3.0.html)
 
 This patch is based on the following commit:
 "new: remove lambda allocation in EntityExplosionBehavior"

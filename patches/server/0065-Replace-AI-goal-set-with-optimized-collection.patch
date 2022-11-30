@@ -1,0 +1,35 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MartijnMuijsers <martijnmuijsers@live.nl>
+Date: Wed, 30 Nov 2022 13:49:11 +0100
+Subject: [PATCH] Replace AI goal set with optimized collection
+
+License: LGPL-3.0 (https://www.gnu.org/licenses/lgpl-3.0.html)
+
+This patch is based on the following commit:
+"new: replace AI goal set with optimized collection"
+By: 2No2Name <2No2Name@web.de>
+As part of: Lithium (https://github.com/CaffeineMC/lithium-fabric)
+Licensed under: LGPL-3.0 (https://www.gnu.org/licenses/lgpl-3.0.nl.html)
+
+diff --git a/src/main/java/net/minecraft/world/entity/ai/goal/GoalSelector.java b/src/main/java/net/minecraft/world/entity/ai/goal/GoalSelector.java
+index 1805aacd982dae8d971cfad0ead23c161badb095..ead2e1935e133e7729949dbd8fc48667ba6e088c 100644
+--- a/src/main/java/net/minecraft/world/entity/ai/goal/GoalSelector.java
++++ b/src/main/java/net/minecraft/world/entity/ai/goal/GoalSelector.java
+@@ -10,6 +10,8 @@ import java.util.Map;
+ import java.util.Set;
+ import java.util.function.Supplier;
+ import java.util.stream.Stream;
++
++import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
+ import net.minecraft.util.profiling.ProfilerFiller;
+ import org.slf4j.Logger;
+ 
+@@ -27,7 +29,7 @@ public class GoalSelector {
+         }
+     };
+     private final Map<Goal.Flag, WrappedGoal> lockedFlags = new EnumMap<>(Goal.Flag.class);
+-    private final Set<WrappedGoal> availableGoals = Sets.newLinkedHashSet();
++    private final Set<WrappedGoal> availableGoals = new ObjectLinkedOpenHashSet<>(); // Gale - Lithium - replace AI goal set with optimized collection
+     private final Supplier<ProfilerFiller> profiler;
+     private final EnumSet<Goal.Flag> disabledFlags = EnumSet.noneOf(Goal.Flag.class); // Paper unused, but dummy to prevent plugins from crashing as hard. Theyll need to support paper in a special case if this is super important, but really doesn't seem like it would be.
+     private final com.destroystokyo.paper.util.set.OptimizedSmallEnumSet<net.minecraft.world.entity.ai.goal.Goal.Flag> goalTypes = new com.destroystokyo.paper.util.set.OptimizedSmallEnumSet<>(Goal.Flag.class); // Paper - remove streams from pathfindergoalselector
