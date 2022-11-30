@@ -6,8 +6,9 @@ Subject: [PATCH] Reduce lambda and Optional allocation in
 
 License: LGPL-3.0 (https://www.gnu.org/licenses/lgpl-3.0.html)
 
-This patch is based on the following commit:
-"new: remove lambda allocation in EntityExplosionBehavior"
+This patch is based on the following mixin:
+"alloc/explosion_behavior/EntityExplosionBehaviorMixin"
+Original commit: "new: remove lambda allocation in EntityExplosionBehavior"
 By: 2No2Name <2No2Name@web.de>
 As part of: Lithium (https://github.com/CaffeineMC/lithium-fabric)
 Licensed under: LGPL-3.0 (https://www.gnu.org/licenses/lgpl-3.0.nl.html)
