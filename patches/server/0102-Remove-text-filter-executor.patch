@@ -6,7 +6,7 @@ Subject: [PATCH] Remove text filter executor
 License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
 
 diff --git a/src/main/java/net/minecraft/server/network/TextFilterClient.java b/src/main/java/net/minecraft/server/network/TextFilterClient.java
-index a6941c39802bd1b50e32a7ad00c65cfd59191bcf..4ad2827379ddcb7f3844cb17e39f3af56a6e2dd4 100644
+index 2393b6a5f3f12c2b17b172ee8ca42ead218e2a10..38f70925693bad437fee21438d702942a5db3ee1 100644
 --- a/src/main/java/net/minecraft/server/network/TextFilterClient.java
 +++ b/src/main/java/net/minecraft/server/network/TextFilterClient.java
 @@ -32,6 +32,7 @@ import net.minecraft.Util;
