@@ -1,0 +1,82 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MartijnMuijsers <martijnmuijsers@live.nl>
+Date: Wed, 30 Nov 2022 23:04:59 +0100
+Subject: [PATCH] Optimize sun burn tick
+
+License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+
+This patch is based on the following patch:
+"some entity micro opts"
+By: Simon Gardling <titaniumtown@gmail.com>
+As part of: JettPack (https://gitlab.com/Titaniumtown/JettPack)
+Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+
+diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
+index c73f2a697bcb4a670df37879dfc3e140290325bd..2a2e66449e816494a6c52cb771c63f60220e82fc 100644
+--- a/src/main/java/net/minecraft/world/entity/Entity.java
++++ b/src/main/java/net/minecraft/world/entity/Entity.java
+@@ -290,7 +290,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+     public double xo;
+     public double yo;
+     public double zo;
+-    private Vec3 position;
++    public Vec3 position; // Gale - JettPack - optimize sun burn tick - private -> public
+     public BlockPos blockPosition; // Gale - Pufferfish - optimize entity coordinate key - private -> public
+     private ChunkPos chunkPosition;
+     private Vec3 deltaMovement;
+@@ -1861,9 +1861,17 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+     /** @deprecated */
+     @Deprecated
+     public float getLightLevelDependentMagicValue() {
+-        return this.level.hasChunkAt(this.getBlockX(), this.getBlockZ()) ? this.level.getLightLevelDependentMagicValue(new BlockPos(this.getX(), this.getEyeY(), this.getZ())) : 0.0F;
++        return this.level.getLightLevelDependentMagicValue(new BlockPos(this.getX(), this.getEyeY(), this.getZ())); // Gale - JettPack - optimize sun burn tick - allow passing BlockPos to getLightLevelDependentMagicValue
+     }
+ 
++    // Gale start - JettPack - optimize sun burn tick - allow passing BlockPos to getLightLevelDependentMagicValue
++    /** @deprecated */
++    @Deprecated
++    public float getLightLevelDependentMagicValue(BlockPos pos) {
++        return this.level.hasChunkAt(this.getBlockX(), this.getBlockZ()) ? this.level.getLightLevelDependentMagicValue(pos) : 0.0F;
++    }
++    // Gale end - JettPack - optimize sun burn tick - allow passing BlockPos to getLightLevelDependentMagicValue
++
+     public void absMoveTo(double x, double y, double z, float yaw, float pitch) {
+         this.absMoveTo(x, y, z);
+         this.setYRot(yaw % 360.0F);
+diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
+index 6d9e63060ea43d8b19c723bb97c1c92ec3a63193..4b17ea0a27beb4c66d6915a3bd762f14a8548d92 100644
+--- a/src/main/java/net/minecraft/world/entity/Mob.java
++++ b/src/main/java/net/minecraft/world/entity/Mob.java
+@@ -1641,13 +1641,29 @@ public abstract class Mob extends LivingEntity {
+ 
+     }
+ 
++    // Gale start - JettPack - optimize sun burn tick - cache eye blockpos
++    private BlockPos cached_eye_blockpos;
++    private int cached_position_hashcode;
++    // Gale end - JettPack - optimize sun burn tick - cache eye blockpos
++
+     public boolean isSunBurnTick() {
+         if (this.level.isDay() && !this.level.isClientSide) {
+-            float f = this.getLightLevelDependentMagicValue();
+-            BlockPos blockposition = new BlockPos(this.getX(), this.getEyeY(), this.getZ());
++            // Gale start - JettPack - optimize sun burn tick - optimizations and cache eye blockpos
++            int positionHashCode = this.position.hashCode();
++            if (this.cached_position_hashcode != positionHashCode) {
++                this.cached_eye_blockpos = new BlockPos(this.getX(), this.getEyeY(), this.getZ());
++                this.cached_position_hashcode = positionHashCode;
++            }
++
++            float f = this.getLightLevelDependentMagicValue(cached_eye_blockpos); // Pass BlockPos to getBrightness
++
++            // Check brightness first
++            if (f <= 0.5F) return false;
++            if (this.random.nextFloat() * 30.0F >= (f - 0.4F) * 2.0F) return false;
++            // Gale end - JettPack - optimize sun burn tick - optimizations and cache eye blockpos
+             boolean flag = this.isInWaterRainOrBubble() || this.isInPowderSnow || this.wasInPowderSnow;
+ 
+-            if (f > 0.5F && this.random.nextFloat() * 30.0F < (f - 0.4F) * 2.0F && !flag && this.level.canSeeSky(blockposition)) {
++            if (!flag && this.level.canSeeSky(this.cached_eye_blockpos)) { // Gale - JettPack - optimize sun burn tick - optimizations and cache eye blockpos
+                 return true;
+             }
+         }
