@@ -864,7 +864,7 @@ index 0000000000000000000000000000000000000000..4b82aea23b99180f13c71a1797c4d829
 +
 +}
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index eb1a5b20810cbad9f47505a8534a42b20b8653d5..a3280d7e485289785ac0dec42561a2d357860264 100644
+index 44c69a6104f19d799510e349448b8a15805c38c0..02e9a61635078af3d31a112984f4c20dddc8ac7b 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 @@ -2,11 +2,14 @@
@@ -882,7 +882,7 @@ index eb1a5b20810cbad9f47505a8534a42b20b8653d5..a3280d7e485289785ac0dec42561a2d3
  import java.util.Locale;
  import java.util.function.Consumer;
  
-@@ -55,6 +58,223 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+@@ -74,6 +77,223 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
          }
          // Gale end - Pufferfish - SIMD support
  

@@ -1,0 +1,95 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MartijnMuijsers <martijnmuijsers@live.nl>
+Date: Wed, 30 Nov 2022 22:50:57 +0100
+Subject: [PATCH] Increase time statistics in intervals
+
+License: MIT (https://opensource.org/licenses/MIT)
+
+This patch is based on the following patch:
+"Smarter statistics ticking"
+By: Mykyta Komarnytskyy <nkomarn@hotmail.com>
+As part of: Hydrinity (https://github.com/duplexsystem/Hydrinity)
+Licensed under: MIT (https://opensource.org/licenses/MIT)
+
+* Hydrinity description *
+
+In vanilla, statistics that count time spent for an action (i.e. time played or sneak time) are incremented every tick. This is retarded. With this patch and a configured interval of 20, the statistics are only ticked every 20th tick and are incremented by 20 ticks at a time. This means a lot less ticking with the same accurate counting.
+
+With an interval of 20, this patch saves roughly 3ms per tick on a server w/ 80 players online.
+
+* Hydrinity copyright *
+
+This patch was created for the Hydrinity project <https://github.com/Hydrinity/Hydrinity> by Mykyta Komarnytskyy <nkomarn@hotmail.com> under the MIT license.
+
+diff --git a/src/main/java/net/minecraft/world/entity/player/Player.java b/src/main/java/net/minecraft/world/entity/player/Player.java
+index 8818ca46af000926ed9eacb47953f440bdac1342..2bf1663dc1e969ea9e192c9941155eb99efff715 100644
+--- a/src/main/java/net/minecraft/world/entity/player/Player.java
++++ b/src/main/java/net/minecraft/world/entity/player/Player.java
+@@ -116,6 +116,7 @@ import net.minecraft.world.phys.AABB;
+ import net.minecraft.world.phys.Vec3;
+ import net.minecraft.world.scores.PlayerTeam;
+ import net.minecraft.world.scores.Scoreboard;
++import org.galemc.gale.configuration.GaleGlobalConfiguration;
+ import org.slf4j.Logger;
+ import org.bukkit.craftbukkit.entity.CraftHumanEntity;
+ import org.bukkit.craftbukkit.event.CraftEventFactory;
+@@ -288,19 +289,24 @@ public abstract class Player extends LivingEntity {
+         if (!this.level.isClientSide) {
+             this.foodData.tick(this);
+             this.wardenSpawnTracker.tick();
+-            this.awardStat(Stats.PLAY_TIME);
+-            this.awardStat(Stats.TOTAL_WORLD_TIME);
++            // Gale start - Hydrinity - increase time statistics in intervals
++            int interval = Math.max(1, GaleGlobalConfiguration.get().smallOptimizations.reducedIntervals.increaseTimeStatistics);
++            if (interval == 1 || this.tickCount % interval == 0) {
++            this.awardStat(Stats.PLAY_TIME, interval);
++            this.awardStat(Stats.TOTAL_WORLD_TIME, interval);
++            // Gale end - Hydrinity - increase time statistics in intervals
+             if (this.isAlive()) {
+-                this.awardStat(Stats.TIME_SINCE_DEATH);
++                this.awardStat(Stats.TIME_SINCE_DEATH, interval); // Gale - Hydrinity - increase time statistics in intervals
+             }
+ 
+             if (this.isDiscrete()) {
+-                this.awardStat(Stats.CROUCH_TIME);
++                this.awardStat(Stats.CROUCH_TIME, interval); // Gale - Hydrinity - increase time statistics in intervals
+             }
+ 
+             if (!this.isSleeping()) {
+-                this.awardStat(Stats.TIME_SINCE_REST);
++                this.awardStat(Stats.TIME_SINCE_REST, interval); // Gale - Hydrinity - increase time statistics in intervals
+             }
++            } // Gale - Hydrinity - increase time statistics in intervals
+         }
+ 
+         int i = 29999999;
+diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
+index eb1a5b20810cbad9f47505a8534a42b20b8653d5..44c69a6104f19d799510e349448b8a15805c38c0 100644
+--- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
++++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
+@@ -43,6 +43,25 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+             public int checkSpookySeason = 20 * 60 * 60;
+             // Gale end - Airplane - reduced spooky season checks
+ 
++            // Gale start - Hydrinity - increase time statistics in intervals
++            /**
++             * The interval at which to increase the time-related statistics such as total playtime, time since
++             * the last death, etc.
++             * For example:
++             * <ul>
++             *     <li>If this value is set to 20, the total playtime in ticks will be increased by 20 every second.</li>
++             *     <li>If this value is set to 100, the total playtime in ticks will be increased by 100 every 5 seconds.</li>
++             * </ul>
++             * Given in ticks.
++             * Any value <= 0 behaves like 1.
++             * <ul>
++             *     <li><i>Default</i>: 20 (1 second)</li>
++             *     <li><i>Vanilla</i>: 1</li>
++             * </ul>
++             */
++            public int increaseTimeStatistics = 20;
++            // Gale end - Hydrinity - increase time statistics in intervals
++
+         }
+ 
+         public boolean disableVanillaProfiler = true; // Gale - Airplane - config to disable vanilla profiler
