@@ -132,7 +132,7 @@ index 507017c1ea03cd028be2149b18c8de7f8353e37e..d2e6a92a44416bfaa161c78dd4b9a7b3
          }
  
 diff --git a/src/main/java/net/minecraft/world/entity/player/Player.java b/src/main/java/net/minecraft/world/entity/player/Player.java
-index 0ea101f155936f7c340d9e1d1077c58b72551027..8818ca46af000926ed9eacb47953f440bdac1342 100644
+index 0ea101f155936f7c340d9e1d1077c58b72551027..5337c80dba191c51202f1d8cf8106c9aa5720782 100644
 --- a/src/main/java/net/minecraft/world/entity/player/Player.java
 +++ b/src/main/java/net/minecraft/world/entity/player/Player.java
 @@ -42,6 +42,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
@@ -155,7 +155,7 @@ index 0ea101f155936f7c340d9e1d1077c58b72551027..8818ca46af000926ed9eacb47953f440
          this.cooldowns = this.createItemCooldowns();
          this.lastDeathLocation = Optional.empty();
          this.setUUID(UUIDUtil.getOrCreatePlayerUUID(gameProfile));
-+        this.sendAllPlayerInfoBucketIndex = this.uuid.hashCode() % PlayerList.SEND_PLAYER_INFO_INTERVAL; // Gale - Purpur - spread out sending all player info
++        this.sendAllPlayerInfoBucketIndex = Math.floorMod(this.uuid.hashCode(), PlayerList.SEND_PLAYER_INFO_INTERVAL); // Gale - Purpur - spread out sending all player info
          this.gameProfile = gameProfile;
          this.profilePublicKey = publicKey;
          this.inventoryMenu = new InventoryMenu(this.inventory, !world.isClientSide, this);
