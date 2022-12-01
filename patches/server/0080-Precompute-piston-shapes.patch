@@ -1,0 +1,211 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MartijnMuijsers <martijnmuijsers@live.nl>
+Date: Thu, 1 Dec 2022 13:58:42 +0100
+Subject: [PATCH] Precompute piston shapes
+
+License: LGPL-3.0 (https://www.gnu.org/licenses/lgpl-3.0.html)
+
+This patch is based on the following mixins and classes:
+* "me/jellysquid/mods/lithium/common/shapes/OffsetVoxelShapeCache.java"
+* "me/jellysquid/mods/lithium/mixin/block/moving_block_shapes/PistonBlockEntityMixin.java"
+* "me/jellysquid/mods/lithium/mixin/block/moving_block_shapes/VoxelShapeMixin.java"
+By: 2No2Name <2No2Name@web.de>
+As part of: Lithium (https://github.com/CaffeineMC/lithium-fabric)
+Licensed under: LGPL-3.0 (https://www.gnu.org/licenses/lgpl-3.0.html)
+
+diff --git a/src/main/java/me/jellysquid/mods/lithium/common/shapes/OffsetVoxelShapeCache.java b/src/main/java/me/jellysquid/mods/lithium/common/shapes/OffsetVoxelShapeCache.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..451934fa8b97d4b0ce2bb994e18e8d47519ead7c
+--- /dev/null
++++ b/src/main/java/me/jellysquid/mods/lithium/common/shapes/OffsetVoxelShapeCache.java
+@@ -0,0 +1,14 @@
++// Gale - Lithium - precompute piston shapes - offset voxel shape cache utility
++
++package me.jellysquid.mods.lithium.common.shapes;
++
++import net.minecraft.core.Direction;
++import net.minecraft.world.phys.shapes.VoxelShape;
++
++public interface OffsetVoxelShapeCache {
++
++    VoxelShape getOffsetSimplifiedShape(float offset, Direction direction);
++
++    void setShape(float offset, Direction direction, VoxelShape offsetShape);
++
++}
+diff --git a/src/main/java/net/minecraft/world/level/block/piston/PistonMovingBlockEntity.java b/src/main/java/net/minecraft/world/level/block/piston/PistonMovingBlockEntity.java
+index 4b61602a1d2d6817272e02cfd282ac5dabbd976d..c0a71e1b311f8a37909a61f10d202ef8d3658a5a 100644
+--- a/src/main/java/net/minecraft/world/level/block/piston/PistonMovingBlockEntity.java
++++ b/src/main/java/net/minecraft/world/level/block/piston/PistonMovingBlockEntity.java
+@@ -52,6 +52,74 @@ public class PistonMovingBlockEntity extends BlockEntity {
+         this.extending = extending;
+         this.isSourcePiston = source;
+     }
++    // Gale start - Lithium - precompute piston shapes
++    private static final VoxelShape[] PISTON_BASE_WITH_MOVING_HEAD_SHAPES = precomputePistonBaseWithMovingHeadShapes();
++
++    /**
++     * We cache the offset and simplified VoxelShapes that are otherwise constructed on every call of getCollisionShape.
++     * For each offset direction and distance (6 directions, 2 distances each, and no direction with 0 distance) we
++     * store the offset and simplified VoxelShapes in the original VoxelShape when they are accessed the first time.
++     * We use safe publication, because both the Render and Server thread are using the cache.
++     *
++     * @param blockShape the original shape, must not be modified after passing it as an argument to this method
++     * @param offset     the offset distance
++     * @param direction  the offset direction
++     * @return blockShape offset and simplified
++     */
++    private static VoxelShape getOffsetAndSimplified(VoxelShape blockShape, float offset, Direction direction) {
++        VoxelShape offsetSimplifiedShape = blockShape.getOffsetSimplifiedShape(offset, direction);
++        if (offsetSimplifiedShape == null) {
++            //create the offset shape and store it for later use
++            offsetSimplifiedShape = blockShape.move(direction.getStepX() * offset, direction.getStepY() * offset, direction.getStepZ() * offset).optimize();
++            blockShape.setShape(offset, direction, offsetSimplifiedShape);
++        }
++        return offsetSimplifiedShape;
++    }
++
++    /**
++     * Precompute all 18 possible configurations for the merged piston base and head shape.
++     *
++     * @return The array of the merged VoxelShapes, indexed by {@link #getIndexForMergedShape(float, Direction)}
++     */
++    private static VoxelShape[] precomputePistonBaseWithMovingHeadShapes() {
++        float[] offsets = {0f, 0.5f, 1f};
++        Direction[] directions = Direction.values();
++
++        VoxelShape[] mergedShapes = new VoxelShape[offsets.length * directions.length];
++
++        for (Direction facing : directions) {
++            VoxelShape baseShape = Blocks.PISTON.defaultBlockState().setValue(PistonBaseBlock.EXTENDED, true)
++                    .setValue(PistonBaseBlock.FACING, facing).getCollisionShape(null, null);
++            for (float offset : offsets) {
++                //this cache is only required for the merged piston head + base shape.
++                //this shape is only used when !this.extending
++                //here: isShort = this.extending != 1.0F - this.progress < 0.25F can be simplified to:
++                //isShort = f < 0.25F , because f = getAmountExtended(this.progress) can be simplified to f == 1.0F - this.progress
++                //therefore isShort is dependent on the offset:
++                boolean isShort = offset < 0.25f;
++
++                VoxelShape headShape = (Blocks.PISTON_HEAD.defaultBlockState().setValue(PistonHeadBlock.FACING, facing))
++                        .setValue(PistonHeadBlock.SHORT, isShort).getCollisionShape(null, null);
++
++                VoxelShape offsetHead = headShape.move(facing.getStepX() * offset,
++                        facing.getStepY() * offset,
++                        facing.getStepZ() * offset);
++                mergedShapes[getIndexForMergedShape(offset, facing)] = Shapes.or(baseShape, offsetHead);
++            }
++
++        }
++
++        return mergedShapes;
++    }
++
++    private static int getIndexForMergedShape(float offset, Direction direction) {
++        if (offset != 0f && offset != 0.5f && offset != 1f) {
++            return -1;
++        }
++        //shape of offset 0 is still dependent on the direction, due to piston head and base being directional blocks
++        return (int) (2 * offset) + (3 * direction.get3DDataValue());
++    }
++    // Gale end - Lithium - precompute piston shapes
+ 
+     @Override
+     public CompoundTag getUpdateTag() {
+@@ -351,10 +419,27 @@ public class PistonMovingBlockEntity extends BlockEntity {
+             }
+ 
+             float f = this.getExtendedProgress(this.progress);
++            // Gale start - Lithium - precompute piston shapes
++            if (this.extending || !this.isSourcePiston || !(this.movedState.getBlock() instanceof PistonBaseBlock)) {
++                //here voxelShape2.isEmpty() is guaranteed, vanilla code would call union() which calls simplify()
++                VoxelShape blockShape = blockState.getCollisionShape(world, pos);
++
++                //we cache the simplified shapes, as the simplify() method costs a lot of CPU time and allocates several objects
++                VoxelShape offsetAndSimplified = getOffsetAndSimplified(blockShape, Math.abs(f), f < 0f ? this.direction.getOpposite() : this.direction);
++                return offsetAndSimplified;
++            } else {
++                //retracting piston heads have to act like their base as well, as the base block is replaced with the moving block
++                //f >= 0f is guaranteed (assuming no other mod interferes)
++                int index = getIndexForMergedShape(f, this.direction);
++                return PISTON_BASE_WITH_MOVING_HEAD_SHAPES[index];
++            }
++            /*
+             double d = (double)((float)this.direction.getStepX() * f);
+             double e = (double)((float)this.direction.getStepY() * f);
+             double g = (double)((float)this.direction.getStepZ() * f);
+             return Shapes.or(voxelShape, blockState.getCollisionShape(world, pos).move(d, e, g));
++            */
++            // Gale end - Lithium - precompute piston shapes
+         }
+     }
+ 
+diff --git a/src/main/java/net/minecraft/world/phys/shapes/VoxelShape.java b/src/main/java/net/minecraft/world/phys/shapes/VoxelShape.java
+index 2182afd1b95acf14c55bddfeec17dae0a63e1f00..b14bf7aadfe1e4b7f5d9a7912a39627aed4f9278 100644
+--- a/src/main/java/net/minecraft/world/phys/shapes/VoxelShape.java
++++ b/src/main/java/net/minecraft/world/phys/shapes/VoxelShape.java
+@@ -6,6 +6,8 @@ import it.unimi.dsi.fastutil.doubles.DoubleList;
+ import java.util.List;
+ import java.util.Optional;
+ import javax.annotation.Nullable;
++
++import me.jellysquid.mods.lithium.common.shapes.OffsetVoxelShapeCache;
+ import net.minecraft.Util;
+ import net.minecraft.core.AxisCycle;
+ import net.minecraft.core.BlockPos;
+@@ -15,7 +17,7 @@ import net.minecraft.world.phys.AABB;
+ import net.minecraft.world.phys.BlockHitResult;
+ import net.minecraft.world.phys.Vec3;
+ 
+-public abstract class VoxelShape {
++public abstract class VoxelShape implements OffsetVoxelShapeCache { // Gale - Lithium - precompute piston shapes - offset voxel shape cache utility
+     public final DiscreteVoxelShape shape; // Paper - public
+     @Nullable
+     private VoxelShape[] faces;
+@@ -26,6 +28,46 @@ public abstract class VoxelShape {
+     }
+     // Paper end
+ 
++    // Gale start - Lithium - precompute piston shapes - offset voxel shape cache utility
++    private volatile VoxelShape[] offsetAndSimplified;
++
++    @Override
++    public void setShape(float offset, Direction direction, VoxelShape offsetShape) {
++        if (offsetShape == null) {
++            throw new IllegalArgumentException("offsetShape must not be null!");
++        }
++        int index = getIndexForOffsetSimplifiedShapes(offset, direction);
++        VoxelShape[] offsetAndSimplifiedShapes = this.offsetAndSimplified;
++        if (offsetAndSimplifiedShapes == null) {
++            offsetAndSimplifiedShapes = new VoxelShape[1 + 2 * 6];
++        } else {
++            offsetAndSimplifiedShapes = offsetAndSimplifiedShapes.clone();
++        }
++        offsetAndSimplifiedShapes[index] = offsetShape;
++        this.offsetAndSimplified = offsetAndSimplifiedShapes;
++    }
++
++    @Override
++    public VoxelShape getOffsetSimplifiedShape(float offset, Direction direction) {
++        VoxelShape[] offsetAndSimplified = this.offsetAndSimplified;
++        if (offsetAndSimplified == null) {
++            return null;
++        }
++        int index = getIndexForOffsetSimplifiedShapes(offset, direction);
++        return offsetAndSimplified[index];
++    }
++
++    private static int getIndexForOffsetSimplifiedShapes(float offset, Direction direction) {
++        if (offset != 0f && offset != 0.5f && offset != 1f) {
++            throw new IllegalArgumentException("offset must be one of {0f, 0.5f, 1f}");
++        }
++        if (offset == 0f) {
++            return 0; //can treat offsetting by 0 in all directions the same
++        }
++        return (int) (2 * offset) + 2 * direction.get3DDataValue();
++    }
++    // Gale end - Lithium - precompute piston shapes - offset voxel shape cache utility
++
+     protected VoxelShape(DiscreteVoxelShape voxels) { // Paper - protected
+         this.shape = voxels;
+     }

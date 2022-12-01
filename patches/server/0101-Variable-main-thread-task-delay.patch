@@ -258,7 +258,7 @@ index ec5e28a633abe6932fd8c1da47625309bee2ca03..9045ae692d77f986542940334dd15ede
          return io.papermc.paper.util.TickThread.isTickThread(); // Paper - rewrite chunk system
      }
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 4b5e65ae2b57b7353ac0f26fda125e2d3661e9ed..f2d88654ab7b67ac8265dca2ba4d743a8da7a616 100644
+index c171c272d5fcf0900514e18eafaa1b5ee019c74d..a531bfe125f991bf372843f365640316c25e334a 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -186,6 +186,7 @@ import net.minecraft.world.phys.shapes.BooleanOp;
