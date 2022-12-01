@@ -12,15 +12,15 @@ As part of: Purpur (https://github.com/PurpurMC/Purpur)
 Licensed under: MIT (https://opensource.org/licenses/MIT)
 
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 9de597c11c3bd0f23e87c3a6187b2036987356e0..4b5e65ae2b57b7353ac0f26fda125e2d3661e9ed 100644
+index 9de597c11c3bd0f23e87c3a6187b2036987356e0..c171c272d5fcf0900514e18eafaa1b5ee019c74d 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -9,6 +9,8 @@ import com.mojang.datafixers.util.Pair;
  import com.mojang.logging.LogUtils;
  import it.unimi.dsi.fastutil.ints.Int2ObjectMap.Entry;
  import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
-+import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
-+import it.unimi.dsi.fastutil.longs.LongSet;
++import it.unimi.dsi.fastutil.longs.LongArrayList;
++import it.unimi.dsi.fastutil.longs.LongList;
  import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
  import it.unimi.dsi.fastutil.objects.ObjectIterator;
  import java.time.Instant;
@@ -28,7 +28,7 @@ index 9de597c11c3bd0f23e87c3a6187b2036987356e0..4b5e65ae2b57b7353ac0f26fda125e2d
      private long keepAliveTime = Util.getMillis();
      private boolean keepAlivePending;
      private long keepAliveChallenge;
-+    private LongSet keepAlives = new LongOpenHashSet(); // Gale - Purpur - send multiple keep-alive packets
++    private LongList keepAlives = new LongArrayList(); // Gale - Purpur - send multiple keep-alive packets
      // CraftBukkit start - multithreaded fields
      private final AtomicInteger chatSpamTickCount = new AtomicInteger();
      private final java.util.concurrent.atomic.AtomicInteger tabSpamLimiter = new java.util.concurrent.atomic.AtomicInteger(); // Paper - configurable tab spam limits
@@ -51,7 +51,7 @@ index 9de597c11c3bd0f23e87c3a6187b2036987356e0..4b5e65ae2b57b7353ac0f26fda125e2d
 +        // Gale start - Purpur - send multiple keep-alive packets
 +        if (GaleGlobalConfiguration.get().misc.keepalive.sendMultiple) {
 +            if (elapsedTime >= 1000L) { // 1 second
-+                if (!this.processedDisconnect && this.keepAlives.size() > KEEPALIVE_LIMIT_IN_SECONDS) {
++                if (!this.processedDisconnect && this.keepAlives.size() >= KEEPALIVE_LIMIT_IN_SECONDS) {
 +                    LOGGER.warn("{} was kicked due to keepalive timeout!", this.player.getName());
 +                    disconnect(Component.translatable("disconnect.timeout"), org.bukkit.event.player.PlayerKickEvent.Cause.TIMEOUT);
 +                } else {

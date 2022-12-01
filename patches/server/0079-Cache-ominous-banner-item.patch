@@ -70,7 +70,7 @@ index 5f2a168e3e282cdb1d2e9cd3fd956eedaf4b4688..d56e7e8cacdabb8f009eaba8164f65f4
      public Raider getLeader(int wave) {
          return (Raider) this.groupToLeaderMap.get(wave);
 diff --git a/src/main/java/net/minecraft/world/entity/raid/Raider.java b/src/main/java/net/minecraft/world/entity/raid/Raider.java
-index e5ccbaf72f29731f1d1aa939b9297b644a408cd4..87f43eaebcada87d6f6ab58b0bc563c700cadc87 100644
+index e5ccbaf72f29731f1d1aa939b9297b644a408cd4..83a5cb093f0a2aaab78a130e1df230018623cf5c 100644
 --- a/src/main/java/net/minecraft/world/entity/raid/Raider.java
 +++ b/src/main/java/net/minecraft/world/entity/raid/Raider.java
 @@ -47,7 +47,7 @@ public abstract class Raider extends PatrollingMonster {
@@ -105,7 +105,7 @@ index e5ccbaf72f29731f1d1aa939b9297b644a408cd4..87f43eaebcada87d6f6ab58b0bc563c7
              Raid raid = this.mob.getCurrentRaid();
  
 -            if (this.mob.hasActiveRaid() && !this.mob.getCurrentRaid().isOver() && this.mob.canBeLeader() && !ItemStack.matches(this.mob.getItemBySlot(EquipmentSlot.HEAD), Raid.getLeaderBannerInstance())) {
-+            if (this.mob.hasActiveRaid() && !this.mob.getCurrentRaid().isOver() && this.mob.canBeLeader() && !ItemStack.matches(this.mob.getItemBySlot(EquipmentSlot.HEAD), Raid.LEADER_BANNER))) { // Gale - Lithium - cache ominous banner item
++            if (this.mob.hasActiveRaid() && !this.mob.getCurrentRaid().isOver() && this.mob.canBeLeader() && !ItemStack.matches(this.mob.getItemBySlot(EquipmentSlot.HEAD), Raid.LEADER_BANNER)) { // Gale - Lithium - cache ominous banner item
                  Raider entityraider = raid.getLeader(this.mob.getWave());
  
                  if (entityraider == null || !entityraider.isAlive()) {
