@@ -12,10 +12,10 @@ As part of: YAPFA (https://github.com/tr7zw/YAPFA)
 Licensed under: MIT (https://opensource.org/licenses/MIT)
 
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index 5c0eaad8dd65917802dcd714f1af77bbd91d1651..e92a4fc4a503a420b09e5373a6c1f5d2d71d32d6 100644
+index 024cf924592999726458976b4d73df4b71843a2e..eb1a5b20810cbad9f47505a8534a42b20b8653d5 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-@@ -103,6 +103,14 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+@@ -101,6 +101,14 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
              
          }
  

@@ -16,7 +16,7 @@ Licensed under: MIT (https://opensource.org/licenses/MIT)
 Let users decide if we should warn while running in offline mode
 
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index 95a33f2e9c91831f1fdf903558a088594dcf41c4..61ab44d572b3ef4b6837aafa7e184de7bc0a7327 100644
+index 8c7adc9edf941d5cc9aa2e427267eb035d4627d6..8e45f712968303b7864d61adbf7325142c83f582 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 @@ -298,7 +298,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
@@ -24,19 +24,7 @@ index 95a33f2e9c91831f1fdf903558a088594dcf41c4..61ab44d572b3ef4b6837aafa7e184de7
          // CraftBukkit end
  
 -        if (!this.usesAuthentication()) {
-+        if (GaleGlobalConfiguration.get().logToConsole.offlineModeWarning && !this.usesAuthentication()) { // Gale - KeYi - do not log offline mode warning
++        if (!"false".equalsIgnoreCase(System.getProperty("gale.log.warning.offline.mode")) && !this.usesAuthentication()) { // Gale - KeYi - do not log offline mode warning
              DedicatedServer.LOGGER.warn("**** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!");
              DedicatedServer.LOGGER.warn("The server will make no attempt to authenticate usernames. Beware.");
              // Spigot start
-diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index f4e20ea5f59e0709cf2dd485a0e5798822e5301d..cf4a354fd3a68f8a0639ed98c7c2e842c6459389 100644
---- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-+++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-@@ -62,6 +62,7 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
-         public boolean unrecognizedRecipes = false; // Gale - Purpur - do not log unrecognized recipes
-         public boolean legacyMaterialInitialization = false; // Gale - Purpur - do not log legacy Material initialization
-         public boolean runningAsRootOrAdminWarning = true; // Gale - KeYi - do not log run as root warning
-+        public boolean offlineModeWarning = true; // Gale - KeYi - do not log offline mode warning
- 
-         public Chat chat;
-         public class Chat extends ConfigurationPart {
