@@ -1,0 +1,42 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MartijnMuijsers <martijnmuijsers@live.nl>
+Date: Thu, 1 Dec 2022 16:52:27 +0100
+Subject: [PATCH] Do not log offline mode warning
+
+License: MIT (https://opensource.org/licenses/MIT)
+
+This patch is based on the following patch:
+"Options of warnings"
+By: nostalgic853 <yuu8583@proton.me>
+As part of: KeYi (https://github.com/KeYiMC/KeYi)
+Licensed under: MIT (https://opensource.org/licenses/MIT)
+
+* KeYi description *
+
+Let users decide if we should warn while running in offline mode
+
+diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
+index 95a33f2e9c91831f1fdf903558a088594dcf41c4..61ab44d572b3ef4b6837aafa7e184de7bc0a7327 100644
+--- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
++++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
+@@ -298,7 +298,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
+         server.enablePlugins(org.bukkit.plugin.PluginLoadOrder.STARTUP);
+         // CraftBukkit end
+ 
+-        if (!this.usesAuthentication()) {
++        if (GaleGlobalConfiguration.get().logToConsole.offlineModeWarning && !this.usesAuthentication()) { // Gale - KeYi - do not log offline mode warning
+             DedicatedServer.LOGGER.warn("**** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!");
+             DedicatedServer.LOGGER.warn("The server will make no attempt to authenticate usernames. Beware.");
+             // Spigot start
+diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
+index f4e20ea5f59e0709cf2dd485a0e5798822e5301d..cf4a354fd3a68f8a0639ed98c7c2e842c6459389 100644
+--- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
++++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
+@@ -62,6 +62,7 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+         public boolean unrecognizedRecipes = false; // Gale - Purpur - do not log unrecognized recipes
+         public boolean legacyMaterialInitialization = false; // Gale - Purpur - do not log legacy Material initialization
+         public boolean runningAsRootOrAdminWarning = true; // Gale - KeYi - do not log run as root warning
++        public boolean offlineModeWarning = true; // Gale - KeYi - do not log offline mode warning
+ 
+         public Chat chat;
+         public class Chat extends ConfigurationPart {

@@ -1,0 +1,42 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MartijnMuijsers <martijnmuijsers@live.nl>
+Date: Thu, 1 Dec 2022 16:43:50 +0100
+Subject: [PATCH] Do not log run as root warning
+
+License: MIT (https://opensource.org/licenses/MIT)
+
+This patch is based on the following patch:
+"Options of warnings"
+By: nostalgic853 <yuu8583@proton.me>
+As part of: KeYi (https://github.com/KeYiMC/KeYi)
+Licensed under: MIT (https://opensource.org/licenses/MIT)
+
+* KeYi description *
+
+Let users decide if we should warn while running in a root user
+
+diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
+index 007fe6820e208c04e81acbd7bb7eaf0a22f6f64f..95a33f2e9c91831f1fdf903558a088594dcf41c4 100644
+--- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
++++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
+@@ -184,7 +184,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
+         }
+ 
+         // Paper start - detect running as root
+-        if (io.papermc.paper.util.ServerEnvironment.userIsRootOrAdmin()) {
++        if (GaleGlobalConfiguration.get().logToConsole.runningAsRootOrAdminWarning && io.papermc.paper.util.ServerEnvironment.userIsRootOrAdmin()) { // Gale - KeYi - do not log run as root warning
+             DedicatedServer.LOGGER.warn("****************************");
+             DedicatedServer.LOGGER.warn("YOU ARE RUNNING THIS SERVER AS AN ADMINISTRATIVE OR ROOT USER. THIS IS NOT ADVISED.");
+             DedicatedServer.LOGGER.warn("YOU ARE OPENING YOURSELF UP TO POTENTIAL RISKS WHEN DOING THIS.");
+diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
+index ce8c7032dff4e119d018d42fa579f9231cf41961..f4e20ea5f59e0709cf2dd485a0e5798822e5301d 100644
+--- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
++++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
+@@ -61,6 +61,7 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+         public boolean setBlockInFarChunk = true; // Gale - Purpur - do not log setBlock in far chunks
+         public boolean unrecognizedRecipes = false; // Gale - Purpur - do not log unrecognized recipes
+         public boolean legacyMaterialInitialization = false; // Gale - Purpur - do not log legacy Material initialization
++        public boolean runningAsRootOrAdminWarning = true; // Gale - KeYi - do not log run as root warning
+ 
+         public Chat chat;
+         public class Chat extends ConfigurationPart {

@@ -6,7 +6,7 @@ Subject: [PATCH] CPU cores estimation
 License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
 
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index 007fe6820e208c04e81acbd7bb7eaf0a22f6f64f..b48eddfa0cdd2c03f6dce974c71d72dd9935448c 100644
+index 61ab44d572b3ef4b6837aafa7e184de7bc0a7327..62fba9eb2d4a8a0e6e77f463ee67add446099a5a 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 @@ -54,6 +54,7 @@ import net.minecraft.world.level.block.entity.SkullBlockEntity;
@@ -44,13 +44,13 @@ index 947ad1463a973546bdaf68654086291a3414aa9b..69bde99acff7bdae9af7cfe60e222167
  import org.yaml.snakeyaml.constructor.SafeConstructor;
  import org.yaml.snakeyaml.error.MarkedYAMLException;
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index 02e9a61635078af3d31a112984f4c20dddc8ac7b..ea85ba6b26a71479571f994b09808b210275fc02 100644
+index 9bf34c19b41058108af5bc7be4f8d9fa89f3d8bd..871f8866982b4b1dd1990e522dc9c9447df7652f 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-@@ -305,6 +305,7 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
-         public boolean setBlockInFarChunk = true; // Gale - Purpur - do not log setBlock in far chunks
-         public boolean unrecognizedRecipes = false; // Gale - Purpur - do not log unrecognized recipes
+@@ -307,6 +307,7 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
          public boolean legacyMaterialInitialization = false; // Gale - Purpur - do not log legacy Material initialization
+         public boolean runningAsRootOrAdminWarning = true; // Gale - KeYi - do not log run as root warning
+         public boolean offlineModeWarning = true; // Gale - KeYi - do not log offline mode warning
 +        public boolean cpuCoresEstimation = true; // Gale - CPU core estimation
  
          public Chat chat;

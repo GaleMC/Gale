@@ -864,7 +864,7 @@ index 0000000000000000000000000000000000000000..4b82aea23b99180f13c71a1797c4d829
 +
 +}
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index 44c69a6104f19d799510e349448b8a15805c38c0..02e9a61635078af3d31a112984f4c20dddc8ac7b 100644
+index 1a8e57b9891a8f54da6024284ba0ed0cb4562a23..9bf34c19b41058108af5bc7be4f8d9fa89f3d8bd 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 @@ -2,11 +2,14 @@
