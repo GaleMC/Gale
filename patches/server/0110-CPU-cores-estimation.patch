@@ -44,7 +44,7 @@ index 947ad1463a973546bdaf68654086291a3414aa9b..69bde99acff7bdae9af7cfe60e222167
  import org.yaml.snakeyaml.constructor.SafeConstructor;
  import org.yaml.snakeyaml.error.MarkedYAMLException;
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index 9bf34c19b41058108af5bc7be4f8d9fa89f3d8bd..871f8866982b4b1dd1990e522dc9c9447df7652f 100644
+index 6717384db82ac8615b8e9c8490fd6f3f3eae1ec9..f2a9c2a3a0ba42f94182421dcaf7287da3fb09be 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 @@ -307,6 +307,7 @@ public class GaleGlobalConfiguration extends ConfigurationPart {

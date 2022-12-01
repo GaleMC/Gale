@@ -64,7 +64,7 @@ index 8818ca46af000926ed9eacb47953f440bdac1342..2bf1663dc1e969ea9e192c9941155eb9
  
          int i = 29999999;
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index e92a4fc4a503a420b09e5373a6c1f5d2d71d32d6..1a8e57b9891a8f54da6024284ba0ed0cb4562a23 100644
+index e92a4fc4a503a420b09e5373a6c1f5d2d71d32d6..ef430bc8b0527b919c91361aa9ddefc8eb2386d8 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 @@ -43,6 +43,25 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
@@ -83,11 +83,11 @@ index e92a4fc4a503a420b09e5373a6c1f5d2d71d32d6..1a8e57b9891a8f54da6024284ba0ed0c
 +             * Given in ticks.
 +             * Any value <= 0 behaves like 1.
 +             * <ul>
-+             *     <li><i>Default</i>: 20 (1 second)</li>
++             *     <li><i>Default</i>: 100 (5 seconds)</li>
 +             *     <li><i>Vanilla</i>: 1</li>
 +             * </ul>
 +             */
-+            public int increaseTimeStatistics = 20;
++            public int increaseTimeStatistics = 100;
 +            // Gale end - Hydrinity - increase time statistics in intervals
 +
          }

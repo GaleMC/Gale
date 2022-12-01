@@ -30,7 +30,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-index 63ec2ebb71aa0e0dbb64bbce7cd3c9494e9ce2e7..068ff7593dcf0ca1cd2b01a112dd15a7a43d9613 100644
+index 20bbb6473f7e8574bc52842e72c12ffb29c68d23..81a7e10a0cb30e6c51c985afdc6a11e023b3e3d2 100644
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 @@ -7,6 +7,7 @@ import net.kyori.adventure.text.Component;
@@ -59,7 +59,7 @@ index 63ec2ebb71aa0e0dbb64bbce7cd3c9494e9ce2e7..068ff7593dcf0ca1cd2b01a112dd15a7
 +        public boolean warnIfEnabled = true;
 +        // Gale end - recommend disabling timings on startup
          public boolean verbose = true;
-         public String url = "https://timings.aikar.co/";
+         public String url = "https://timin.gs/"; // Gale - use timin.gs by default
          public boolean serverNamePrivacy = false;
 @@ -64,6 +69,13 @@ public class GlobalConfiguration extends ConfigurationPart {
  

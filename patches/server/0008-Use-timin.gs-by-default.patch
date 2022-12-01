@@ -1,0 +1,19 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: MartijnMuijsers <martijnmuijsers@live.nl>
+Date: Thu, 1 Dec 2022 17:26:18 +0100
+Subject: [PATCH] Use timin.gs by default
+
+
+diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
+index 63ec2ebb71aa0e0dbb64bbce7cd3c9494e9ce2e7..20bbb6473f7e8574bc52842e72c12ffb29c68d23 100644
+--- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
++++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
+@@ -52,7 +52,7 @@ public class GlobalConfiguration extends ConfigurationPart {
+     public class Timings extends ConfigurationPart.Post {
+         public boolean enabled = true;
+         public boolean verbose = true;
+-        public String url = "https://timings.aikar.co/";
++        public String url = "https://timin.gs/"; // Gale - use timin.gs by default
+         public boolean serverNamePrivacy = false;
+         public List<String> hiddenConfigEntries = List.of(
+             "database",
