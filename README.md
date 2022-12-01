@@ -2,14 +2,14 @@
 <div align="center">
   <h1>Gale</h1>
   <h3>A Minecraft server fork of <a href="https://github.com/PaperMC/Paper">Paper</a></h3>
-  <h5><b>Master</b> branch: no known issues! ✅</h5>
+  <h5>✅ <b>Master</b> branch: no known issues!</h5>
 
 [![Discord](https://img.shields.io/discord/1045402468416233592?color=5865F2&label=discord&style=for-the-badge)](https://discord.com/invite/pbsPkpUjG4)
 </div>
 
 ## About
 
-Gale is a [Paper](https://github.com/PaperMC/Paper) fork. It is intended to provide high performance, but we do not make any specific claims. You can see a comparison with other forks [here](https://github.com/GaleMC/Gale/wiki/Comparison-with-other-forks).
+Gale is a fork of [Paper](https://github.com/PaperMC/Paper). It is intended to provide high performance, but we do not make any specific claims. You can see a comparison with other forks [here](https://github.com/GaleMC/Gale/wiki/Comparison-with-other-forks).
 
 ## Building
 
