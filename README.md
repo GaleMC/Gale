@@ -4,7 +4,7 @@
   <h3>A Minecraft server fork of <a href="https://github.com/PaperMC/Paper">Paper</a></h3>
   <h5>✅ <b>Master</b> branch: no known issues!</h5>
 
-[![Discord](https://img.shields.io/discord/1045402468416233592?color=5865F2&label=discord&style=for-the-badge)](https://discord.com/invite/pbsPkpUjG4)
+[![Discord](https://img.shields.io/discord/1045402468416233592?color=5865F2&label=discord&style=for-the-badge)](https://discord.com/invite/dKp4wTDNrw)
 </div>
 
 ## About
