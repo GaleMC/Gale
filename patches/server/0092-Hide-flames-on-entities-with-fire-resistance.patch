@@ -1,9 +1,10 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: MartijnMuijsers <martijnmuijsers@live.nl>
+From: Martijn Muijsers <martijnmuijsers@live.nl>
 Date: Wed, 30 Nov 2022 14:39:27 +0100
 Subject: [PATCH] Hide flames on entities with fire resistance
 
 License: MIT (https://opensource.org/licenses/MIT)
+Gale - https://galemc.org
 
 This patch is based on the following patch:
 "Don't send fire packets if player has Fire Resistance"

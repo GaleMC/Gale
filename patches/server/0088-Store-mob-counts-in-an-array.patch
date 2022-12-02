@@ -1,9 +1,10 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: MartijnMuijsers <martijnmuijsers@live.nl>
+From: Martijn Muijsers <martijnmuijsers@live.nl>
 Date: Wed, 30 Nov 2022 17:46:23 +0100
 Subject: [PATCH] Store mob counts in an array
 
 License: MIT (https://opensource.org/licenses/MIT)
+Gale - https://galemc.org
 
 This patch is based on the following mixin:
 "com/ishland/vmp/mixins/general/spawn_density_cap/MixinSpawnDensityCapperDensityCap.java"

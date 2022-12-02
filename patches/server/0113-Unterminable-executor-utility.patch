@@ -1,0 +1,64 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Martijn Muijsers <martijnmuijsers@live.nl>
+Date: Mon, 5 Dec 2022 11:21:05 +0100
+Subject: [PATCH] Unterminable executor utility
+
+License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
+Gale - https://galemc.org
+
+diff --git a/src/main/java/org/galemc/gale/concurrent/UnterminableExecutorService.java b/src/main/java/org/galemc/gale/concurrent/UnterminableExecutorService.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..0a8fe0a883d2d7f5fd9a454006ded849ceaa9c0a
+--- /dev/null
++++ b/src/main/java/org/galemc/gale/concurrent/UnterminableExecutorService.java
+@@ -0,0 +1,50 @@
++// Gale - unterminable executor utility
++
++package org.galemc.gale.concurrent;
++
++import org.galemc.gale.executor.annotation.AnyThreadSafe;
++import org.jetbrains.annotations.NotNull;
++
++import java.util.List;
++import java.util.concurrent.AbstractExecutorService;
++import java.util.concurrent.ExecutorService;
++import java.util.concurrent.TimeUnit;
++
++/**
++ * An {@link ExecutorService} that directly extends {@link AbstractExecutorService}, and cannot be shut down.
++ * This type of executor is useful for an executor that merely exists to implement the {@link ExecutorService}
++ * interface and forward tasks to another executor or executor's queue, and therefore creates no threads that need
++ * to stop either.
++ *
++ * @author Martijn Muijsers under AGPL-3.0
++ */
++@AnyThreadSafe
++public abstract class UnterminableExecutorService extends AbstractExecutorService {
++
++    @Override
++    public void shutdown() {
++        throw new UnsupportedOperationException();
++    }
++
++    @NotNull
++    @Override
++    public List<Runnable> shutdownNow() {
++        throw new UnsupportedOperationException();
++    }
++
++    @Override
++    public boolean isShutdown() {
++        return false;
++    }
++
++    @Override
++    public boolean isTerminated() {
++        return false;
++    }
++
++    @Override
++    public boolean awaitTermination(long l, @NotNull TimeUnit timeUnit) throws InterruptedException {
++        throw new UnsupportedOperationException();
++    }
++
++}

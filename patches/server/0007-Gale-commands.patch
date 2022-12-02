@@ -1,8 +1,16 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: MartijnMuijsers <martijnmuijsers@live.nl>
+From: Martijn Muijsers <martijnmuijsers@live.nl>
 Date: Sat, 26 Nov 2022 10:47:56 +0100
 Subject: [PATCH] Gale commands
 
+License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+Gale - https://galemc.org
+
+This patch is based on the following patch:
+"Paper command"
+By: Zach Brown <zach.brown@destroystokyo.com>
+As part of: Paper (https://github.com/PaperMC/Paper)
+Licensed under: MIT (https://opensource.org/licenses/MIT)
 
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 index 661794310eb10d4b9fe29c9445abd57826214d41..d2b14c65e6a925ba4a29d48bcedc0d9504092052 100644

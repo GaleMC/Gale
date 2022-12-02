@@ -1,9 +1,10 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: MartijnMuijsers <martijnmuijsers@live.nl>
+From: Martijn Muijsers <martijnmuijsers@live.nl>
 Date: Tue, 29 Nov 2022 01:15:55 +0100
 Subject: [PATCH] Hide irrelevant compilation warnings
 
 License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+Gale - https://galemc.org
 
 diff --git a/build.gradle.kts b/build.gradle.kts
 index 9f5694204091e23c4771657127a06f98e27ad8f1..fdb495c0e0f1ce702a590e6a7bcdcf40fd418d1c 100644

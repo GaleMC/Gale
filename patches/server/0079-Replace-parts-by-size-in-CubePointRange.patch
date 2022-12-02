@@ -1,9 +1,10 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: MartijnMuijsers <martijnmuijsers@live.nl>
+From: Martijn Muijsers <martijnmuijsers@live.nl>
 Date: Wed, 30 Nov 2022 17:28:37 +0100
 Subject: [PATCH] Replace parts by size in CubePointRange
 
 License: LGPL-3.0 (https://www.gnu.org/licenses/lgpl-3.0.html)
+Gale - https://galemc.org
 
 diff --git a/src/main/java/net/minecraft/world/phys/shapes/CubePointRange.java b/src/main/java/net/minecraft/world/phys/shapes/CubePointRange.java
 index e7bffb7f757dbeac255676823de6464329f2f535..55d4160b6bf9718d475e4bc7cecf048d62e00b82 100644

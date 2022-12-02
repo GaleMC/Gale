@@ -1,9 +1,10 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: MartijnMuijsers <martijnmuijsers@live.nl>
+From: Martijn Muijsers <martijnmuijsers@live.nl>
 Date: Thu, 24 Nov 2022 10:31:38 +0100
 Subject: [PATCH] Reduce in wall checks
 
 License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+Gale - https://galemc.org
 
 This patch is based on the following patch:
 "Optimize suffocation"

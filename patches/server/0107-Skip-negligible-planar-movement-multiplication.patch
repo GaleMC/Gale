@@ -1,9 +1,10 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: MartijnMuijsers <martijnmuijsers@live.nl>
+From: Martijn Muijsers <martijnmuijsers@live.nl>
 Date: Wed, 30 Nov 2022 23:44:41 +0100
 Subject: [PATCH] Skip negligible planar movement multiplication
 
 License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+Gale - https://galemc.org
 
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
 index f6b9c9c55effdc169d8226308b3163bc5c54b3ed..dbba8559117287932e7e400f03cd80ac7418c004 100644

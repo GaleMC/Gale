@@ -1,8 +1,16 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: MartijnMuijsers <martijnmuijsers@live.nl>
+From: Martijn Muijsers <martijnmuijsers@live.nl>
 Date: Thu, 1 Dec 2022 17:26:18 +0100
 Subject: [PATCH] Use timin.gs by default
 
+License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+Gale - https://galemc.org
+
+This patch is based on the following patch:
+"Optimize default values for configs"
+By: etil2jz <81570777+etil2jz@users.noreply.github.com>
+As part of: Mirai (https://github.com/etil2jz/Mirai)
+Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 
 diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 index 63ec2ebb71aa0e0dbb64bbce7cd3c9494e9ce2e7..20bbb6473f7e8574bc52842e72c12ffb29c68d23 100644

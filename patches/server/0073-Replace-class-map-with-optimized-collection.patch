@@ -1,9 +1,10 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: MartijnMuijsers <martijnmuijsers@live.nl>
+From: Martijn Muijsers <martijnmuijsers@live.nl>
 Date: Wed, 30 Nov 2022 21:02:43 +0100
 Subject: [PATCH] Replace class map with optimized collection
 
 License: LGPL-3.0 (https://www.gnu.org/licenses/lgpl-3.0.html)
+Gale - https://galemc.org
 
 This patch is based on the following mixin:
 "me/jellysquid/mods/lithium/mixin/collections/entity_by_type/TypeFilterableListMixin.java"

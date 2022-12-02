@@ -1,9 +1,10 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: MartijnMuijsers <martijnmuijsers@live.nl>
+From: Martijn Muijsers <martijnmuijsers@live.nl>
 Date: Wed, 30 Nov 2022 20:38:15 +0100
 Subject: [PATCH] Prevent entities random strolling into non-ticking chunks
 
 License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+Gale - https://galemc.org
 
 This patch is based on the following patch:
 "Don't wander into non-ticking chunks"

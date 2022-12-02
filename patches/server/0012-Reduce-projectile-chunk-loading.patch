@@ -1,9 +1,10 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: MartijnMuijsers <martijnmuijsers@live.nl>
+From: Martijn Muijsers <martijnmuijsers@live.nl>
 Date: Thu, 24 Nov 2022 12:00:55 +0100
 Subject: [PATCH] Reduce projectile chunk loading
 
 License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+Gale - https://galemc.org
 
 This patch is based on the following patch:
 "Reduce projectile chunk loading"
@@ -30,7 +31,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 diff --git a/src/main/java/net/minecraft/world/entity/projectile/Projectile.java b/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
-index 713c11d6547cb02ac4b6a02aec07a8ba68019f3f..420ea4cca5a26c1da96585a215eb3ed1d3c5a10c 100644
+index 713c11d6547cb02ac4b6a02aec07a8ba68019f3f..ea23e771ab2b77e8001d0eaaf834423353ef70c2 100644
 --- a/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
 +++ b/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
 @@ -42,6 +42,44 @@ public abstract class Projectile extends Entity {
@@ -52,7 +53,7 @@ index 713c11d6547cb02ac4b6a02aec07a8ba68019f3f..420ea4cca5a26c1da96585a215eb3ed1
 +        int previousX = Mth.floor(this.getX()) >> 4, previousZ = Mth.floor(this.getZ()) >> 4;
 +        int newX = Mth.floor(x) >> 4, newZ = Mth.floor(z) >> 4;
 +        if (previousX != newX || previousZ != newZ) {
-+            boolean isLoaded = ((net.minecraft.server.level.ServerChunkCache) this.level.getChunkSource()).getChunkAtIfLoadedImmediately(newX, newZ) != null;
++            boolean isLoaded = ((net.minecraft.server.level.ServerChunkCache) this.level.getChunkSource()).getChunkAtIfLoadedMainThread(newX, newZ) != null;
 +            if (!isLoaded) {
 +                int maxChunkLoadsPerTick = this.level.galeConfig().smallOptimizations.maxProjectileChunkLoads.perTick;
 +                if (maxChunkLoadsPerTick >= 0 && chunksLoadedThisTick > maxChunkLoadsPerTick) {

@@ -1,9 +1,10 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: MartijnMuijsers <martijnmuijsers@live.nl>
+From: Martijn Muijsers <martijnmuijsers@live.nl>
 Date: Thu, 1 Dec 2022 14:40:03 +0100
 Subject: [PATCH] Use linked map for entity trackers
 
 License: MIT (https://opensource.org/licenses/MIT)
+Gale - https://galemc.org
 
 This patch is based on the following mixin:
 "com/ishland/vmp/mixins/entitytracker/MixinThreadedAnvilChunkStorage.java"

@@ -1,15 +1,16 @@
-<img src="logo.png" alt="Gale logo" align="right" width="26%" style="margin: 4%;">
+<img src="logo.png" alt="Gale logo" align="right" width="26%">
 <div align="center">
   <h1>Gale</h1>
   <h3>A Minecraft server fork of <a href="https://github.com/PaperMC/Paper">Paper</a></h3>
-  <h5>✅ <b>Master</b> branch: no known issues!</h5>
+  <h5><i>In active testing - reporting any issues you encounter is highly appreciated!</i></h5>
 
-[![Discord](https://img.shields.io/discord/1045402468416233592?color=5865F2&label=discord&style=for-the-badge)](https://discord.com/invite/dKp4wTDNrw)
+[![Discord](https://img.shields.io/discord/1045402468416233592?color=5865F2&label=discord&style=for-the-badge)](https://discord.com/invite/gwezNT8c24)
 </div>
 
 ## About
 
-Gale is a fork of [Paper](https://github.com/PaperMC/Paper). It is intended to provide high performance, but we do not make any specific claims. You can see a comparison with other forks [here](https://github.com/GaleMC/Gale/wiki/Comparison-with-other-forks).
+Gale is a fork of [Paper](https://github.com/PaperMC/Paper). It is intended to provide strong performance, but we do not make any specific claims.
+The project is in open alpha. We do not recommend running it on your production server.
 
 ## Building
 

@@ -1,9 +1,10 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: MartijnMuijsers <martijnmuijsers@live.nl>
+From: Martijn Muijsers <martijnmuijsers@live.nl>
 Date: Tue, 29 Nov 2022 12:27:47 +0100
 Subject: [PATCH] CPU cores estimation
 
 License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
+Gale - https://galemc.org
 
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 index 8e45f712968303b7864d61adbf7325142c83f582..b374f41b20b3ffa2ec2874a06715661f4fec83db 100644
@@ -44,28 +45,29 @@ index 947ad1463a973546bdaf68654086291a3414aa9b..69bde99acff7bdae9af7cfe60e222167
  import org.yaml.snakeyaml.constructor.SafeConstructor;
  import org.yaml.snakeyaml.error.MarkedYAMLException;
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index a6de617fa261aa1916afc412ac85edb0c2630cab..9ad030004a3ca79be3f8ffdaa5aa4d95ffe4cab7 100644
+index 8aaa6e3a6c475258bea5f026a7e07efde825f112..6f6b96fe499f1b1888a141b60bd3773ba45e75f6 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-@@ -305,6 +305,7 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+@@ -85,6 +85,7 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
          public boolean setBlockInFarChunk = true; // Gale - Purpur - do not log setBlock in far chunks
          public boolean unrecognizedRecipes = false; // Gale - Purpur - do not log unrecognized recipes
          public boolean legacyMaterialInitialization = false; // Gale - Purpur - do not log legacy Material initialization
-+        public boolean cpuCoresEstimation = true; // Gale - CPU core estimation
++        public boolean cpuCoresEstimation = true; // Gale - CPU cores estimation
  
          public Chat chat;
          public class Chat extends ConfigurationPart {
 diff --git a/src/main/java/org/galemc/gale/util/CPUCoresEstimation.java b/src/main/java/org/galemc/gale/util/CPUCoresEstimation.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..2095cef565af83869f30504a3609601365149726
+index 0000000000000000000000000000000000000000..aa93b9f8015b98123411c56c148e5b61e34a912d
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/util/CPUCoresEstimation.java
-@@ -0,0 +1,99 @@
-+// Gale - CPU core estimation
+@@ -0,0 +1,102 @@
++// Gale - CPU cores estimation
 +
 +package org.galemc.gale.util;
 +
-+import com.mojang.logging.LogUtils;
++import org.galemc.gale.executor.annotation.AnyThreadSafe;
++import org.galemc.gale.executor.annotation.YieldFree;
 +import org.slf4j.Logger;
 +import oshi.SystemInfo;
 +import oshi.hardware.CentralProcessor;
@@ -74,8 +76,10 @@ index 0000000000000000000000000000000000000000..2095cef565af83869f30504a36096013
 +/**
 + * A utility class to estimate the number of physical CPU cores.
 + *
-+ * @author Martijn Muijsers
++ * @author Martijn Muijsers under AGPL-3.0
 + */
++@AnyThreadSafe
++@YieldFree
 +public final class CPUCoresEstimation {
 +
 +    private CPUCoresEstimation() {}

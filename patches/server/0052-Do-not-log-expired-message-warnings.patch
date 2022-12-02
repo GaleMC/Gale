@@ -1,9 +1,10 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: MartijnMuijsers <martijnmuijsers@live.nl>
+From: Martijn Muijsers <martijnmuijsers@live.nl>
 Date: Fri, 25 Nov 2022 15:07:55 +0100
 Subject: [PATCH] Do not log expired message warnings
 
 License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
+Gale - https://galemc.org
 
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 index dd9d52552cc61729cdcd37caa87079e5026964d7..3c63449a36c6882b6e47f69f3cdf83e874a9a694 100644

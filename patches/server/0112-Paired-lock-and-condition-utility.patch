@@ -1,0 +1,42 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Martijn Muijsers <martijnmuijsers@live.nl>
+Date: Fri, 2 Dec 2022 20:31:06 +0100
+Subject: [PATCH] Paired lock and condition utility
+
+License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
+Gale - https://galemc.org
+
+diff --git a/src/main/java/org/galemc/gale/concurrent/LockAndCondition.java b/src/main/java/org/galemc/gale/concurrent/LockAndCondition.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..73fd8ca0bd1168862a03d9bdcae93d62895e8c1f
+--- /dev/null
++++ b/src/main/java/org/galemc/gale/concurrent/LockAndCondition.java
+@@ -0,0 +1,28 @@
++// Gale - paired lock and condition utility
++
++package org.galemc.gale.concurrent;
++
++import java.util.concurrent.locks.Condition;
++import java.util.concurrent.locks.Lock;
++
++/**
++ * A utility class that stores a {@link Condition} with its {@link Lock}, that can be passed around and used instead
++ * of using an {@link Object} monitor, which does not support speculative locking.
++ *
++ * @author Martijn Muijsers
++ */
++public class LockAndCondition {
++
++    public final Lock lock;
++    public final Condition condition;
++
++    public LockAndCondition(Lock lock) {
++        this(lock, lock.newCondition());
++    }
++
++    public LockAndCondition(Lock lock, Condition condition) {
++        this.lock = lock;
++        this.condition = condition;
++    }
++
++}

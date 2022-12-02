@@ -1,9 +1,10 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: MartijnMuijsers <martijnmuijsers@live.nl>
+From: Martijn Muijsers <martijnmuijsers@live.nl>
 Date: Sat, 26 Nov 2022 16:54:05 +0100
 Subject: [PATCH] Measure last tick time
 
 License: MIT (https://opensource.org/licenses/MIT)
+Gale - https://galemc.org
 
 This patch is based on the following patch:
 "Add getLastTickMs api"
@@ -11,8 +12,18 @@ By: tr7zw <tr7zw@live.de>
 As part of: YAPFA (https://github.com/tr7zw/YAPFA)
 Licensed under: MIT (https://opensource.org/licenses/MIT)
 
+* YAPFA copyright *
+
+Copyright 2020 tr7zw
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index dccee7cb7075cba6877021ec0da1ba5603a00082..ec5e28a633abe6932fd8c1da47625309bee2ca03 100644
+index dccee7cb7075cba6877021ec0da1ba5603a00082..0b3b1400e9546060b4ee35236741670aaa226820 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -1095,6 +1095,11 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
@@ -33,7 +44,7 @@ index dccee7cb7075cba6877021ec0da1ba5603a00082..ec5e28a633abe6932fd8c1da47625309
                  this.profiler.push("tick");
 +                long tickProperStart = System.nanoTime(); // Gale - YAPFA - last tick time
                  this.tickServer(this::haveTime);
-+                this.lastTickProperTime = (System.nanoTime() - tickProperStart) / 1000000L; // Gale - YAPFA - last tick time
++                lastTickProperTime = (System.nanoTime() - tickProperStart) / 1000000L; // Gale - YAPFA - last tick time
                  this.profiler.popPush("nextTickWait");
                  this.mayHaveDelayedTasks = true;
                  this.delayedTasksMaxNextTickTime = Math.max(Util.getMillis() + 50L, this.nextTickTime);
@@ -45,7 +56,7 @@ index dccee7cb7075cba6877021ec0da1ba5603a00082..ec5e28a633abe6932fd8c1da47625309
          this.managedBlock(() -> {
              return !this.canSleepForTickNoOversleep(); // Paper - move oversleep into full server tick
          });
-+        this.lastTickOversleepTime = (System.nanoTime() - tickOversleepStart) / 1000000L; // Gale - YAPFA - last tick time
++        lastTickOversleepTime = (System.nanoTime() - tickOversleepStart) / 1000000L; // Gale - YAPFA - last tick time
      }
  
      @Override

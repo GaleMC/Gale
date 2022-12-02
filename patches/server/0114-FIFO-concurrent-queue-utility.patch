@@ -1,0 +1,147 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Martijn Muijsers <martijnmuijsers@live.nl>
+Date: Sun, 11 Dec 2022 16:24:15 +0100
+Subject: [PATCH] FIFO concurrent queue utility
+
+License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
+Gale - https://galemc.org
+
+diff --git a/src/main/java/org/galemc/gale/collection/FIFOConcurrentLinkedQueue.java b/src/main/java/org/galemc/gale/collection/FIFOConcurrentLinkedQueue.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..010035d51ceba9ec59821a95386c54a324e715b5
+--- /dev/null
++++ b/src/main/java/org/galemc/gale/collection/FIFOConcurrentLinkedQueue.java
+@@ -0,0 +1,133 @@
++// Gale - FIFO concurrent queue utility
++
++package org.galemc.gale.collection;
++
++import org.galemc.gale.executor.annotation.AnyThreadSafe;
++import org.galemc.gale.executor.annotation.YieldFree;
++import org.jetbrains.annotations.NotNull;
++
++import java.util.Collection;
++import java.util.Iterator;
++import java.util.Queue;
++import java.util.concurrent.ConcurrentLinkedDeque;
++import java.util.concurrent.ConcurrentLinkedQueue;
++
++/**
++ * A utility class that implements the {@link Queue} interface, and provides an identical implementation to
++ * {@link ConcurrentLinkedQueue}, except for adding elements, which appends the given element to the front (head)
++ * instead of the back (tail) of this queue.
++ *
++ * @author Martijn Muijsers under AGPL-3.0
++ */
++@AnyThreadSafe @YieldFree
++public class FIFOConcurrentLinkedQueue<E> implements Queue<E> {
++
++    private final ConcurrentLinkedDeque<E> deque;
++
++    public FIFOConcurrentLinkedQueue() {
++        this.deque = new ConcurrentLinkedDeque<>();
++    }
++
++    public FIFOConcurrentLinkedQueue(Collection<? extends E> c) {
++        this.deque = new ConcurrentLinkedDeque<>(c);
++    }
++
++    @Override
++    public int size() {
++        return this.deque.size();
++    }
++
++    @Override
++    public boolean isEmpty() {
++        return this.deque.isEmpty();
++    }
++
++    @Override
++    public boolean contains(Object o) {
++        return this.deque.contains(o);
++    }
++
++    @NotNull
++    @Override
++    public Iterator<E> iterator() {
++        return this.deque.iterator();
++    }
++
++    @NotNull
++    @Override
++    public Object[] toArray() {
++        return this.deque.toArray();
++    }
++
++    @NotNull
++    @Override
++    public <T> T[] toArray(@NotNull T[] ts) {
++        return this.deque.toArray(ts);
++    }
++
++    @Override
++    public boolean add(E e) {
++        this.deque.addFirst(e);
++        return true;
++    }
++
++    @Override
++    public boolean remove(Object o) {
++        return this.deque.remove(o);
++    }
++
++    @Override
++    public boolean containsAll(@NotNull Collection<?> collection) {
++        return this.deque.containsAll(collection);
++    }
++
++    @Override
++    public boolean addAll(@NotNull Collection<? extends E> collection) {
++        boolean changed = false;
++        for (E element : collection) {
++            changed |= this.add(element);
++        }
++        return changed;
++    }
++
++    @Override
++    public boolean removeAll(@NotNull Collection<?> collection) {
++        return this.deque.removeAll(collection);
++    }
++
++    @Override
++    public boolean retainAll(@NotNull Collection<?> collection) {
++        return this.deque.retainAll(collection);
++    }
++
++    @Override
++    public void clear() {
++        this.deque.clear();
++    }
++
++    @Override
++    public boolean offer(E e) {
++        return this.deque.offer(e);
++    }
++
++    @Override
++    public E remove() {
++        return this.deque.remove();
++    }
++
++    @Override
++    public E poll() {
++        return this.deque.poll();
++    }
++
++    @Override
++    public E element() {
++        return this.deque.element();
++    }
++
++    @Override
++    public E peek() {
++        return this.deque.peek();
++    }
++
++}

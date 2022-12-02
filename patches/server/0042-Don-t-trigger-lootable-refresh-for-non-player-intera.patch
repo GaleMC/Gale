@@ -1,9 +1,10 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: MartijnMuijsers <martijnmuijsers@live.nl>
+From: Martijn Muijsers <martijnmuijsers@live.nl>
 Date: Thu, 24 Nov 2022 22:07:56 +0100
 Subject: [PATCH] Don't trigger lootable refresh for non-player interaction
 
 License: MIT (https://opensource.org/licenses/MIT)
+Gale - https://galemc.org
 
 This patch is based on the following patch:
 "Don't trigger Lootable Refresh for non player interaction"

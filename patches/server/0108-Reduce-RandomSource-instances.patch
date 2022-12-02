@@ -1,9 +1,10 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: MartijnMuijsers <martijnmuijsers@live.nl>
+From: Martijn Muijsers <martijnmuijsers@live.nl>
 Date: Tue, 29 Nov 2022 00:45:45 +0100
 Subject: [PATCH] Reduce RandomSource instances
 
 License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+Gale - https://galemc.org
 
 This patch is based on the following patch:
 "don't create new random instance"
@@ -95,7 +96,7 @@ index d56e7e8cacdabb8f009eaba8164f65f4d824a282..c2dca83fb43244313c4ddaf93c5ded5f
          this.level = world;
          this.id = nbt.getInt("Id");
 diff --git a/src/main/java/net/minecraft/world/level/Explosion.java b/src/main/java/net/minecraft/world/level/Explosion.java
-index 31708d1e94b557896d42199aa0bc6ed26a4c6d8a..b47593d35ff55d40feee4e8b06deaa81da934f2b 100644
+index 31708d1e94b557896d42199aa0bc6ed26a4c6d8a..22ded3f273ea0c198a8caa33472fee11fc1a97cb 100644
 --- a/src/main/java/net/minecraft/world/level/Explosion.java
 +++ b/src/main/java/net/minecraft/world/level/Explosion.java
 @@ -85,7 +85,7 @@ public class Explosion {
@@ -103,7 +104,7 @@ index 31708d1e94b557896d42199aa0bc6ed26a4c6d8a..b47593d35ff55d40feee4e8b06deaa81
  
      public Explosion(Level world, @Nullable Entity entity, @Nullable DamageSource damageSource, @Nullable ExplosionDamageCalculator behavior, double x, double y, double z, float power, boolean createFire, Explosion.BlockInteraction destructionType) {
 -        this.random = RandomSource.create();
-+        this.random = world.random; // Gale - Patina - reduce RandomSource instances
++        this.random = world == null || world.random == null ? RandomSource.create() : world.random; // Gale - Patina - reduce RandomSource instances
          this.toBlow = new ObjectArrayList();
          this.hitPlayers = Maps.newHashMap();
          this.level = world;

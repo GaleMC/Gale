@@ -1,0 +1,129 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Martijn Muijsers <martijnmuijsers@live.nl>
+Date: Fri, 2 Dec 2022 10:31:49 +0100
+Subject: [PATCH] Mutex utility
+
+License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
+Gale - https://galemc.org
+
+diff --git a/src/main/java/org/galemc/gale/concurrent/Mutex.java b/src/main/java/org/galemc/gale/concurrent/Mutex.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..76e4d7b2f242218df7e853b416a69d62707357e8
+--- /dev/null
++++ b/src/main/java/org/galemc/gale/concurrent/Mutex.java
+@@ -0,0 +1,76 @@
++// Gale - mutex utility
++
++package org.galemc.gale.concurrent;
++
++import org.galemc.gale.executor.annotation.AnyThreadSafe;
++import org.jetbrains.annotations.NotNull;
++
++import java.util.concurrent.TimeUnit;
++import java.util.concurrent.locks.Lock;
++
++/**
++ * A mutex, intended to be a more performant alternative to {@link java.util.concurrent.locks.ReentrantLock}
++ * when the reentrant property is not needed.
++ * <br>
++ * This interface extends {@link Lock}, of which the {@link Lock#lock}, {@link Lock#lockInterruptibly},
++ * {@link Lock#tryLock} and {@link Lock#unlock} methods are simply deferred to their usual mutex versions,
++ * respectively {@link #acquireUninterruptibly}, {@link #acquire}, {@link #tryAcquire} and
++ * {@link #release}. The {@link Lock#newCondition} method does not have a default implementation.
++ *
++ * @author Martijn Muijsers
++ */
++@AnyThreadSafe
++public interface Mutex extends Lock {
++
++    void acquireUninterruptibly();
++
++    void acquire() throws InterruptedException;
++
++    void release();
++
++    boolean tryAcquire();
++
++    boolean tryAcquire(long timeout, TimeUnit unit) throws InterruptedException;
++
++    @Override
++    default void lock() {
++        this.acquireUninterruptibly();
++    }
++
++    @Override
++    default void lockInterruptibly() throws InterruptedException {
++        this.acquire();
++    }
++
++    @Override
++    default boolean tryLock() {
++        return this.tryAcquire();
++    }
++
++    @Override
++    default boolean tryLock(long l, @NotNull TimeUnit timeUnit) throws InterruptedException {
++        return this.tryAcquire(l, timeUnit);
++    }
++
++    @Override
++    default void unlock() {
++        this.release();
++    }
++
++    /**
++     * Instantiates a new {@link Mutex}, with the default implementation
++     * that should be geared towards performance.
++     */
++    static @NotNull Mutex create() {
++        return new SemaphoreMutex();
++    }
++
++    /**
++     * Instantiates a new {@link Mutex} that we intend to use as a {@link Lock}, with a default implementation
++     * that should be geared towards performance of the {@link Lock} methods.
++     */
++    static @NotNull Lock createLock() {
++        return create();
++    }
++
++}
+diff --git a/src/main/java/org/galemc/gale/concurrent/SemaphoreMutex.java b/src/main/java/org/galemc/gale/concurrent/SemaphoreMutex.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..f8e3151e6ba1ef0850f50c836962b33f088de375
+--- /dev/null
++++ b/src/main/java/org/galemc/gale/concurrent/SemaphoreMutex.java
+@@ -0,0 +1,33 @@
++// Gale - mutex utility
++
++package org.galemc.gale.concurrent;
++
++import org.galemc.gale.executor.annotation.AnyThreadSafe;
++import org.galemc.gale.executor.annotation.YieldFree;
++import org.jetbrains.annotations.NotNull;
++
++import java.util.concurrent.Semaphore;
++import java.util.concurrent.locks.Condition;
++import java.util.concurrent.locks.Lock;
++
++/**
++ * A {@link Mutex}, with implements the required methods by extending {@link Semaphore},
++ * and throws {@link UnsupportedOperationException} for all {@link Lock} methods that do not have a default
++ * implementation in {@link Mutex}.
++ *
++ * @author Martijn Muijsers
++ */
++@AnyThreadSafe @YieldFree
++public class SemaphoreMutex extends Semaphore implements Mutex {
++
++    public SemaphoreMutex() {
++        super(1);
++    }
++
++    @NotNull
++    @Override
++    public Condition newCondition() {
++        throw new UnsupportedOperationException("newCondition() is not implemented for SemaphoreMutex");
++    }
++
++}

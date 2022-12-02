@@ -1,8 +1,10 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: MartijnMuijsers <martijnmuijsers@live.nl>
+From: Martijn Muijsers <martijnmuijsers@live.nl>
 Date: Thu, 24 Nov 2022 21:26:57 +0100
 Subject: [PATCH] Gale project setup
 
+License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+Gale - https://galemc.org
 
 diff --git a/build.gradle.kts b/build.gradle.kts
 index b0e4f11e8af4b909a56bb5576d05ef0537fb25f7..3103e811e1f41b782a5b95537b921c59cac2054f 100644
