@@ -383,7 +383,7 @@ index 40812e6518b8aacfbd2d8cd65a407d00bb19e991..f3489a1e01f8b53045fbee9d99943b85
                          this.addEntities(list, worldserver1, vec3d, predicate);
                      }
 diff --git a/src/main/java/net/minecraft/network/protocol/PacketUtils.java b/src/main/java/net/minecraft/network/protocol/PacketUtils.java
-index 8bc0cb9ad5bb4e76d962ff54305e2c08e279a17b..8042ac663a3c91ece03986d37c8e2efe9688280f 100644
+index 27d4aa45e585842c04491839826d405d6f447f0e..f36a0e29f2ba464eee3fabba0b98a714a3b8a49d 100644
 --- a/src/main/java/net/minecraft/network/protocol/PacketUtils.java
 +++ b/src/main/java/net/minecraft/network/protocol/PacketUtils.java
 @@ -2,6 +2,7 @@ package net.minecraft.network.protocol;
@@ -413,7 +413,7 @@ index 8bc0cb9ad5bb4e76d962ff54305e2c08e279a17b..8042ac663a3c91ece03986d37c8e2efe
 -    public static <T extends PacketListener> void ensureRunningOnSameThread(Packet<T> packet, T listener, BlockableEventLoop<?> engine) throws RunningOnDifferentThreadException {
 +    public static <T extends PacketListener> void ensureRunningOnSameThread(Packet<T> packet, T listener, AbstractBlockableEventLoop engine) throws RunningOnDifferentThreadException { // Gale - base thread pools
          if (!engine.isSameThread()) {
-             engine.executeIfPossible(() -> {
+             engine.execute(() -> { // Paper - Fix preemptive player kick on a server shutdown.
                  packetProcessing.push(listener); // Paper - detailed watchdog information
 diff --git a/src/main/java/net/minecraft/server/Main.java b/src/main/java/net/minecraft/server/Main.java
 index d8f8d2495c1e2e3f194485d16ea587d26cc3a23d..263c0be0d81f841cbbec474b48de151e6ab437d9 100644
@@ -1290,7 +1290,7 @@ index 4654995f9982e77abe4b825b32312c2913671cd4..ea23009b8f5a02429db514a374edb5db
          // CraftBukkit start - process pending Chunk loadCallback() and unloadCallback() after each run task
          public boolean pollTask() {
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index 023cd8d948ff7360ac8348b980473ef119b41225..35b38e05b439f656a4f282e4bf91b4f97d2ef49a 100644
+index c94b850aa33928c0d834b1897b3e0ace3486c3da..784a05d3df96b4d24d9f262ee09f48947ada8353 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
 @@ -22,6 +22,7 @@ import java.io.Writer;
@@ -1321,7 +1321,7 @@ index 023cd8d948ff7360ac8348b980473ef119b41225..35b38e05b439f656a4f282e4bf91b4f9
      private final MinecraftServer server;
      public final PrimaryLevelData serverLevelData; // CraftBukkit - type
      final EntityTickList entityTickList;
-@@ -2609,7 +2616,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -2610,7 +2617,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
              // Spigot start
              if ( entity instanceof Player )
              {
@@ -1730,7 +1730,7 @@ index 55d83a9a691d11c9408d2c3260c3e77dfb51b97e..367503092090c1ade673f865cd19956c
  
          return ret;
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
-index 9368ec01e498f913bc5b7b3e77fe87659090d9b5..312c3deddd5c3b30839177cdb43a7c73fb44bfc8 100644
+index 01132b10799034232e7e5cbb460d848601e04012..85ecf1530e26fd908b804b853edb6a50d27b1b69 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
 @@ -189,6 +189,7 @@ import org.bukkit.plugin.Plugin;
@@ -1741,7 +1741,7 @@ index 9368ec01e498f913bc5b7b3e77fe87659090d9b5..312c3deddd5c3b30839177cdb43a7c73
  
  public abstract class CraftEntity implements org.bukkit.entity.Entity {
      private static PermissibleBase perm;
-@@ -1260,7 +1261,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
+@@ -1266,7 +1267,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
              for (net.minecraft.world.level.chunk.ChunkAccess chunk : list) {
                  chunkProviderServer.addTicketAtLevel(net.minecraft.server.level.TicketType.POST_TELEPORT, chunk.getPos(), 33, CraftEntity.this.getEntityId());
              }
@@ -1750,7 +1750,7 @@ index 9368ec01e498f913bc5b7b3e77fe87659090d9b5..312c3deddd5c3b30839177cdb43a7c73
                  try {
                      ret.complete(CraftEntity.this.teleport(locationClone, cause) ? Boolean.TRUE : Boolean.FALSE);
                  } catch (Throwable throwable) {
-@@ -1270,7 +1271,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
+@@ -1276,7 +1277,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
                      net.minecraft.server.MinecraftServer.LOGGER.error("Failed to teleport entity " + CraftEntity.this, throwable);
                      ret.completeExceptionally(throwable);
                  }

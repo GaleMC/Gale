@@ -343,7 +343,7 @@ index a2920b8a9eff77d9c5d1d7f70ad3abdacba8f0fa..43f402d9032e4570a81a80e412215598
      protected CipherBase(Cipher cipher) {
          this.cipher = cipher;
 diff --git a/src/main/java/net/minecraft/network/Connection.java b/src/main/java/net/minecraft/network/Connection.java
-index 69b8d1276045cd6742770dcedd6246bb1713fd3b..d05a2bc31f9caa83b8be2d860a34f6e2fb12992e 100644
+index f1e1a4a48349c0e431b31327fdf217989db027b3..40b3ca86faeb7374a2f67ed60769b7440e8dbbd7 100644
 --- a/src/main/java/net/minecraft/network/Connection.java
 +++ b/src/main/java/net/minecraft/network/Connection.java
 @@ -20,7 +20,6 @@ import io.netty.channel.epoll.EpollSocketChannel;
@@ -448,7 +448,7 @@ index 1392c2e7487a2317496c48a013a745b02c8123d3..cceaf1a5a146998896cba0bbdc88f19d
  
              for (int j = 0; j < i; ++j) {
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index e7505144eba068e687f1ce7617f09d838bceab85..023cd8d948ff7360ac8348b980473ef119b41225 100644
+index 4ce7445b81ce4fe8c6a9395c719d483cc002c08b..c94b850aa33928c0d834b1897b3e0ace3486c3da 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
 @@ -39,6 +39,8 @@ import java.util.stream.Collectors;
@@ -460,7 +460,7 @@ index e7505144eba068e687f1ce7617f09d838bceab85..023cd8d948ff7360ac8348b980473ef1
  import net.minecraft.CrashReport;
  import net.minecraft.Util;
  import net.minecraft.core.BlockPos;
-@@ -906,7 +908,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -907,7 +909,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
                      BlockPos blockposition2 = blockposition.set(j + randomX, randomY, k + randomZ);
                      BlockState iblockdata = com.destroystokyo.paper.util.maplist.IBlockDataList.getBlockDataFromRaw(raw);
  
@@ -469,7 +469,7 @@ index e7505144eba068e687f1ce7617f09d838bceab85..023cd8d948ff7360ac8348b980473ef1
                      // We drop the fluid tick since LAVA is ALREADY TICKED by the above method (See LiquidBlock).
                      // TODO CHECK ON UPDATE
                  }
-@@ -1161,7 +1163,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -1162,7 +1164,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
  
      public static List<Entity> getCurrentlyTickingEntities() {
          Entity ticking = currentlyTickingEntity.get();
@@ -705,10 +705,10 @@ index c82bb38b5b1c9204daef21455723d21509ad1c44..7ebb622c3e5961c730fbfe9e6113696d
      private EquipmentSlot(EquipmentSlot.Type type, int entityId, int armorStandId, String name) {
          this.type = type;
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index d8ee1536244ab780bc0c5d4e1a72dad4a12328f1..5926ea4a5ad74cfaf8a33ad8d14e60e21bae606b 100644
+index 5add41e429b176195a10115744305a2358b5fb7f..214106611e449b0ab279fd256122f64b070fd34e 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-@@ -3077,7 +3077,7 @@ public abstract class LivingEntity extends Entity {
+@@ -3092,7 +3092,7 @@ public abstract class LivingEntity extends Entity {
      @Nullable
      private Map<EquipmentSlot, ItemStack> collectEquipmentChanges() {
          Map<EquipmentSlot, ItemStack> map = null;
@@ -758,7 +758,7 @@ index cf40ebd06c52a7a00e6f704a29ae9d2b5186d35a..6d9e63060ea43d8b19c723bb97c1c92e
  
                  for (int j = 0; j < i; ++j) {
 diff --git a/src/main/java/net/minecraft/world/entity/monster/ZombieVillager.java b/src/main/java/net/minecraft/world/entity/monster/ZombieVillager.java
-index fb0a77b4cf1ba47c73c00993bd9b7454240fe5d6..b02f3282a00663f68653aab5561932717137c05f 100644
+index d1f7d912ad274cf90a912e44d63b39f9387a694b..966a9b173b2a89b8726a6cf0c3cc94969f7930a2 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/ZombieVillager.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/ZombieVillager.java
 @@ -233,7 +233,7 @@ public class ZombieVillager extends Zombie implements VillagerDataHolder {

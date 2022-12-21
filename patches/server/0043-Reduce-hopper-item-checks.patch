@@ -17,7 +17,7 @@ Licensed under: MIT (https://opensource.org/licenses/MIT)
 Only do an item "suck in" action once per second
 
 diff --git a/src/main/java/net/minecraft/world/entity/item/ItemEntity.java b/src/main/java/net/minecraft/world/entity/item/ItemEntity.java
-index cab6cc8255704f89cca909f16c9c182d95700e4a..3c4cffddc08f6a24f49ae58a89bc5e70e3ac153c 100644
+index 298b7b2d2e306a22a511a56934fd985cb5d9f7de..0b04f5342966d53dfef5441dd9f1acf62e5623d0 100644
 --- a/src/main/java/net/minecraft/world/entity/item/ItemEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/item/ItemEntity.java
 @@ -19,11 +19,13 @@ import net.minecraft.world.entity.Entity;
@@ -34,7 +34,7 @@ index cab6cc8255704f89cca909f16c9c182d95700e4a..3c4cffddc08f6a24f49ae58a89bc5e70
  import net.minecraft.world.phys.Vec3;
  // CraftBukkit start
  import net.minecraft.server.MinecraftServer;
-@@ -196,11 +198,31 @@ public class ItemEntity extends Entity {
+@@ -201,11 +203,31 @@ public class ItemEntity extends Entity {
                  }
                  // CraftBukkit end
                  this.discard();
@@ -66,7 +66,7 @@ index cab6cc8255704f89cca909f16c9c182d95700e4a..3c4cffddc08f6a24f49ae58a89bc5e70
      // Spigot start - copied from above
      @Override
      public void inactiveTick() {
-@@ -220,7 +242,13 @@ public class ItemEntity extends Entity {
+@@ -225,7 +247,13 @@ public class ItemEntity extends Entity {
              }
              // CraftBukkit end
              this.discard();

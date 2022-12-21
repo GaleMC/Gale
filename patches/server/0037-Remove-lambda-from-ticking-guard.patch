@@ -31,10 +31,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index a336ab0e88001fc1846b9172c16ca6f6043f98d5..e7505144eba068e687f1ce7617f09d838bceab85 100644
+index ff83ad8f61fc6ae251501b7764373b7745b69d33..4ce7445b81ce4fe8c6a9395c719d483cc002c08b 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
-@@ -725,7 +725,20 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -726,7 +726,20 @@ public class ServerLevel extends Level implements WorldGenLevel {
                              }
  
                              gameprofilerfiller.push("tick");

@@ -64,10 +64,10 @@ index 4ff563d903633f181e1268daa77f250cfec204a0..4654995f9982e77abe4b825b32312c29
              boolean flag1 = level.ticksPerSpawnCategory.getLong(org.bukkit.entity.SpawnCategory.ANIMAL) != 0L && worlddata.getGameTime() % level.ticksPerSpawnCategory.getLong(org.bukkit.entity.SpawnCategory.ANIMAL) == 0L; // CraftBukkit
  
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index f7214b2a9bc8e8514477f1434a829a82da1e50d6..a336ab0e88001fc1846b9172c16ca6f6043f98d5 100644
+index 5b4f34f255747048393cbb84b607090b9907c0ad..ff83ad8f61fc6ae251501b7764373b7745b69d33 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
-@@ -794,6 +794,8 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -795,6 +795,8 @@ public class ServerLevel extends Level implements WorldGenLevel {
      private final BlockPos.MutableBlockPos chunkTickMutablePosition = new BlockPos.MutableBlockPos();
      // Paper end
  
@@ -76,7 +76,7 @@ index f7214b2a9bc8e8514477f1434a829a82da1e50d6..a336ab0e88001fc1846b9172c16ca6f6
      public void tickChunk(LevelChunk chunk, int randomTickSpeed) {
          ChunkPos chunkcoordintpair = chunk.getPos();
          boolean flag = this.isRaining();
-@@ -804,7 +806,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -805,7 +807,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
          gameprofilerfiller.push("thunder");
          final BlockPos.MutableBlockPos blockposition = this.chunkTickMutablePosition; // Paper - use mutable to reduce allocation rate, final to force compile fail on change
  
@@ -85,7 +85,7 @@ index f7214b2a9bc8e8514477f1434a829a82da1e50d6..a336ab0e88001fc1846b9172c16ca6f6
              blockposition.set(this.findLightningTargetAround(this.getBlockRandomPos(j, 0, k, 15))); // Paper
              if (this.isRainingAt(blockposition)) {
                  DifficultyInstance difficultydamagescaler = this.getCurrentDifficultyAt(blockposition);
-@@ -828,7 +830,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -829,7 +831,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
          }
  
          gameprofilerfiller.popPush("iceandsnow");

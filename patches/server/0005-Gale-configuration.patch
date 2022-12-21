@@ -374,7 +374,7 @@ index ff3eced0e20c39b825586897ee2fed01dd471d88..661794310eb10d4b9fe29c9445abd578
          if (this.convertOldUsers()) {
              this.getProfileCache().save(false); // Paper
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index feb0a6d6a90850977b393440881c472c317a9323..4b7058dc684d15a782455dd52a4d57e21ba18592 100644
+index 79aa3374fd47cd57d2e0810bb5afebbdb38a1892..6674c1bc0c6df3ad372975432ffac0143def9441 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
 @@ -125,12 +125,10 @@ import net.minecraft.world.level.chunk.storage.EntityStorage;
@@ -390,7 +390,7 @@ index feb0a6d6a90850977b393440881c472c317a9323..4b7058dc684d15a782455dd52a4d57e2
  import net.minecraft.world.level.gameevent.DynamicGameEventListener;
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.level.gameevent.GameEventListener;
-@@ -525,7 +523,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -526,7 +524,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
      public ServerLevel(MinecraftServer minecraftserver, Executor executor, LevelStorageSource.LevelStorageAccess convertable_conversionsession, PrimaryLevelData iworlddataserver, ResourceKey<Level> resourcekey, LevelStem worlddimension, ChunkProgressListener worldloadlistener, boolean flag, long i, List<CustomSpawner> list, boolean flag1, org.bukkit.World.Environment env, org.bukkit.generator.ChunkGenerator gen, org.bukkit.generator.BiomeProvider biomeProvider) {
          // Holder holder = worlddimension.typeHolder(); // CraftBukkit - decompile error
          // Objects.requireNonNull(minecraftserver); // CraftBukkit - decompile error

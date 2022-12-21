@@ -37,7 +37,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 diff --git a/src/main/java/net/minecraft/server/level/WorldGenRegion.java b/src/main/java/net/minecraft/server/level/WorldGenRegion.java
-index 80c1e0e47818486a68e0114b063395290365346b..c9e719e676ea26ee94673538db2dfd9ce5c957ae 100644
+index 0d3587e2d454fb0994ecff930b5e496a3999746a..0cc830d2c964727325501ef1b61126022430206c 100644
 --- a/src/main/java/net/minecraft/server/level/WorldGenRegion.java
 +++ b/src/main/java/net/minecraft/server/level/WorldGenRegion.java
 @@ -53,6 +53,7 @@ import net.minecraft.world.phys.AABB;
@@ -48,7 +48,7 @@ index 80c1e0e47818486a68e0114b063395290365346b..c9e719e676ea26ee94673538db2dfd9c
  import org.slf4j.Logger;
  
  public class WorldGenRegion implements WorldGenLevel {
-@@ -295,6 +296,7 @@ public class WorldGenRegion implements WorldGenLevel {
+@@ -296,6 +297,7 @@ public class WorldGenRegion implements WorldGenLevel {
              return true;
          } else {
              // Paper start

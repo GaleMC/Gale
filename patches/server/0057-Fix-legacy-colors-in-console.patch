@@ -37,7 +37,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 diff --git a/src/main/java/io/papermc/paper/console/HexFormattingConverter.java b/src/main/java/io/papermc/paper/console/HexFormattingConverter.java
-index b4d0b7ecd56ab952319946854168c1299cb0b1be..beea5c17f07f85825ed1ba5a016f6edc93112115 100644
+index b9922b07cb105618390187d98acdf89e728e1f5a..a66d202749f243f6752df5027cb7c82f6132992a 100644
 --- a/src/main/java/io/papermc/paper/console/HexFormattingConverter.java
 +++ b/src/main/java/io/papermc/paper/console/HexFormattingConverter.java
 @@ -17,6 +17,7 @@ import org.apache.logging.log4j.core.pattern.PatternFormatter;
@@ -56,8 +56,8 @@ index b4d0b7ecd56ab952319946854168c1299cb0b1be..beea5c17f07f85825ed1ba5a016f6edc
      public static final LegacyComponentSerializer SERIALIZER = LegacyComponentSerializer.builder()
          .hexColors()
          .flattener(PaperAdventure.FLATTENER)
-@@ -48,6 +50,10 @@ public final class HexFormattingConverter extends LogEventPatternConverter {
-     private static final String RGB_ANSI = "\u001B[38;2;%d;%d;%dm";
+@@ -49,6 +51,10 @@ public final class HexFormattingConverter extends LogEventPatternConverter {
+     private static final String RESET_RGB_ANSI = ANSI_RESET + RGB_ANSI;
      private static final Pattern NAMED_PATTERN = Pattern.compile(COLOR_CHAR + "[0-9a-fk-orA-FK-OR]");
      private static final Pattern RGB_PATTERN = Pattern.compile(COLOR_CHAR + "#([0-9a-fA-F]){6}");
 +    // Gale start - Purpur - fix legacy colors in console
@@ -67,7 +67,7 @@ index b4d0b7ecd56ab952319946854168c1299cb0b1be..beea5c17f07f85825ed1ba5a016f6edc
  
      private static final String[] RGB_ANSI_CODES = new String[]{
          formatHexAnsi(NamedTextColor.BLACK),         // Black §0
-@@ -133,7 +139,27 @@ public final class HexFormattingConverter extends LogEventPatternConverter {
+@@ -134,7 +140,27 @@ public final class HexFormattingConverter extends LogEventPatternConverter {
      }
  
      private static String convertRGBColors(final String input) {
@@ -96,7 +96,7 @@ index b4d0b7ecd56ab952319946854168c1299cb0b1be..beea5c17f07f85825ed1ba5a016f6edc
              final int hex = Integer.decode(result.group().substring(1));
              return formatHexAnsi(hex);
          });
-@@ -151,10 +177,18 @@ public final class HexFormattingConverter extends LogEventPatternConverter {
+@@ -152,10 +178,18 @@ public final class HexFormattingConverter extends LogEventPatternConverter {
      }
  
      private static String stripRGBColors(final String input) {
@@ -116,7 +116,7 @@ index b4d0b7ecd56ab952319946854168c1299cb0b1be..beea5c17f07f85825ed1ba5a016f6edc
          int next = content.indexOf(COLOR_CHAR);
          int last = content.length() - 1;
          if (next == -1 || next == last) {
-@@ -209,4 +243,13 @@ public final class HexFormattingConverter extends LogEventPatternConverter {
+@@ -210,4 +244,13 @@ public final class HexFormattingConverter extends LogEventPatternConverter {
          return new HexFormattingConverter(formatters, strip);
      }
  
@@ -131,7 +131,7 @@ index b4d0b7ecd56ab952319946854168c1299cb0b1be..beea5c17f07f85825ed1ba5a016f6edc
 +
  }
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index bc44c8537ea69a7682584db57ec566ecb4e76b3b..0217977e15ae30918ce6e1dbddb5bdb5d4365c1c 100644
+index 24ed4fb7ddacba24873755edfa88912ffdf81cc8..0965f43068d12a85090906568e2c1b731730f015 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 @@ -60,6 +60,7 @@ public class GaleGlobalConfiguration extends ConfigurationPart {

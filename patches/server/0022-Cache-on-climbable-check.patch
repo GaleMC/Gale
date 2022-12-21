@@ -31,10 +31,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index 8c5b2eed391aabccdc720ab253d1b13c6c1fdfff..e1614462ba2f186db2b9febcc86afc270754199c 100644
+index 60f27cff9d03b5d09621b9daf428a00a916a4579..6fa0f38aff0c5f4ea4961cabf070b8c6463a4a22 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-@@ -1906,6 +1906,20 @@ public abstract class LivingEntity extends Entity {
+@@ -1921,6 +1921,20 @@ public abstract class LivingEntity extends Entity {
          return this.lastClimbablePos;
      }
  
