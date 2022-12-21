@@ -8,7 +8,7 @@ Gale - https://galemc.org
 
 diff --git a/src/main/java/org/galemc/gale/concurrent/Mutex.java b/src/main/java/org/galemc/gale/concurrent/Mutex.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..76e4d7b2f242218df7e853b416a69d62707357e8
+index 0000000000000000000000000000000000000000..65ec8cf910575dfa4c5024ec69b3be1ef2634722
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/concurrent/Mutex.java
 @@ -0,0 +1,76 @@
@@ -16,7 +16,7 @@ index 0000000000000000000000000000000000000000..76e4d7b2f242218df7e853b416a69d62
 +
 +package org.galemc.gale.concurrent;
 +
-+import org.galemc.gale.executor.annotation.AnyThreadSafe;
++import org.galemc.gale.executor.annotation.thread.AnyThreadSafe;
 +import org.jetbrains.annotations.NotNull;
 +
 +import java.util.concurrent.TimeUnit;
@@ -90,7 +90,7 @@ index 0000000000000000000000000000000000000000..76e4d7b2f242218df7e853b416a69d62
 +}
 diff --git a/src/main/java/org/galemc/gale/concurrent/SemaphoreMutex.java b/src/main/java/org/galemc/gale/concurrent/SemaphoreMutex.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..f8e3151e6ba1ef0850f50c836962b33f088de375
+index 0000000000000000000000000000000000000000..b4d6e136b9d8f41f070c4f720c1f64e2c729a445
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/concurrent/SemaphoreMutex.java
 @@ -0,0 +1,33 @@
@@ -98,7 +98,7 @@ index 0000000000000000000000000000000000000000..f8e3151e6ba1ef0850f50c836962b33f
 +
 +package org.galemc.gale.concurrent;
 +
-+import org.galemc.gale.executor.annotation.AnyThreadSafe;
++import org.galemc.gale.executor.annotation.thread.AnyThreadSafe;
 +import org.galemc.gale.executor.annotation.YieldFree;
 +import org.jetbrains.annotations.NotNull;
 +

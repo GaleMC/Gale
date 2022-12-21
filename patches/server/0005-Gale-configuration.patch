@@ -504,7 +504,7 @@ index f394324450ec17c8df5a40d27eb0297b091e912f..f63cadbecb126e58ededb61e87e600b7
              org.spigotmc.RestartCommand.restart();
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleConfigurations.java b/src/main/java/org/galemc/gale/configuration/GaleConfigurations.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..c7a4186bb93992733f393ac58fb4d65bbc8db861
+index 0000000000000000000000000000000000000000..51d37d9f9f0901b3f6dc702ad17158039ee96ebe
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/configuration/GaleConfigurations.java
 @@ -0,0 +1,291 @@
@@ -590,7 +590,7 @@ index 0000000000000000000000000000000000000000..c7a4186bb93992733f393ac58fb4d65b
 +            their respective world folder. The files are named %s
 +
 +            Wiki: https://github.com/GaleMC/Gale/wiki
-+            Discord: https://discord.gg/dKp4wTDNrw""", WORLD_CONFIG_FILE_NAME);
++            Discord: https://discord.gg/gwezNT8c24""", WORLD_CONFIG_FILE_NAME);
 +
 +    private static final String WORLD_DEFAULTS_HEADER = """
 +            This is the world defaults configuration file for Gale.
@@ -604,7 +604,7 @@ index 0000000000000000000000000000000000000000..c7a4186bb93992733f393ac58fb4d65b
 +            the world-specific config file inside each world folder.
 +
 +            Wiki: https://github.com/GaleMC/Gale/wiki
-+            Discord: https://discord.gg/dKp4wTDNrw""";
++            Discord: https://discord.gg/gwezNT8c24""";
 +
 +    private static final Function<ContextMap, String> WORLD_HEADER = map -> String.format("""
 +        This is a world configuration file for Gale.

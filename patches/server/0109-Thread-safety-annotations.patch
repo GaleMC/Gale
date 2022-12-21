@@ -51,152 +51,17 @@ index 0000000000000000000000000000000000000000..d07f68ff73a368c8f0da56152021a954
 +    READ_WRITE;
 +
 +}
-diff --git a/src/main/java/org/galemc/gale/executor/annotation/AnyThreadSafe.java b/src/main/java/org/galemc/gale/executor/annotation/AnyThreadSafe.java
-new file mode 100644
-index 0000000000000000000000000000000000000000..01d9d667b86c8e42444ca73d6ee089f9570b5651
---- /dev/null
-+++ b/src/main/java/org/galemc/gale/executor/annotation/AnyThreadSafe.java
-@@ -0,0 +1,40 @@
-+// Gale - thread-safety annotations
-+
-+package org.galemc.gale.executor.annotation;
-+
-+import org.galemc.gale.executor.thread.BaseThread;
-+
-+import java.lang.annotation.Documented;
-+import java.lang.annotation.ElementType;
-+import java.lang.annotation.Target;
-+
-+/**
-+ * An annotation primarily for methods, identifying methods that can safely called from any thread,
-+ * including but not limited to threads that are an instance of {@link BaseThread}.
-+ * <br>
-+ * When applied to a field, this annotation indicates that the field can be safely arbitrarily accessed and/or modified
-+ * from any thread.
-+ * <br>
-+ * When applied to a class, this annotation indicates it holds for all methods and fields, both instance and static,
-+ * belonging to the class, or any superclass thereof, or any inner or statically nested class of the class or
-+ * any superclass thereof, except for any cases where a conflicting annotation with a smaller scope is also present.
-+ * <br>
-+ * In a method annotated with {@link AnyThreadSafe}, the only fields and methods that can be used are those
-+ * annotated with {@link AnyThreadSafe}, unless extra safety guarantees are checked or explicitly provided.
-+ * Use of methods that are potentially yielding (at least those annotated with {@link PotentiallyYielding}, but also
-+ * those annotated with {@link PotentiallyBlocking} that potentially yield) is discouraged, because threads that are not
-+ * instances of {@link BaseThread} cannot yield, and must block instead, leading to context switches where none
-+ * may be expected.
-+ *
-+ * @author Martijn Muijsers under AGPL-3.0
-+ */
-+@Documented
-+@Target({ElementType.METHOD, ElementType.TYPE, ElementType.FIELD})
-+public @interface AnyThreadSafe {
-+
-+    /**
-+     * @see ThreadRestricted#fieldAccess()
-+     */
-+    Access value() default Access.READ_WRITE;
-+
-+}
-diff --git a/src/main/java/org/galemc/gale/executor/annotation/BaseThreadOnly.java b/src/main/java/org/galemc/gale/executor/annotation/BaseThreadOnly.java
-new file mode 100644
-index 0000000000000000000000000000000000000000..ebca19c8934722f9a60a4e26f893c630a3b088f9
---- /dev/null
-+++ b/src/main/java/org/galemc/gale/executor/annotation/BaseThreadOnly.java
-@@ -0,0 +1,39 @@
-+// Gale - thread-safety annotations
-+
-+package org.galemc.gale.executor.annotation;
-+
-+import org.galemc.gale.executor.thread.BaseThread;
-+
-+import java.lang.annotation.Documented;
-+import java.lang.annotation.ElementType;
-+import java.lang.annotation.Target;
-+
-+/**
-+ * An annotation primarily for methods, identifying methods that can only be called on a thread that is an instance
-+ * of {@link BaseThread}.
-+ * <br>
-+ * When applied to a field, this annotation indicates that the field can only be accessed and/or modified
-+ * on a thread that is an instance of {@link BaseThread}.
-+ * <br>
-+ * When applied to a class, this annotation indicates it holds for all methods and fields, both instance and static,
-+ * belonging to the class, or any superclass thereof, or any inner or statically nested class of the class or
-+ * any superclass thereof, except for any cases where a conflicting annotation with a smaller scope is also present.
-+ * <br>
-+ * In a method annotated with {@link BaseThreadOnly}, fields and methods annotated with {@link BaseThreadOnly},
-+ * {@link BaseThreadSafe} or {@link AnyThreadSafe} may all be used.
-+ * <br>
-+ * Methods that are potentially blocking, e.g. those annotated with {@link PotentiallyBlocking}, must never
-+ * be called from a method annotated with {@link BaseThreadOnly}.
-+ *
-+ * @author Martijn Muijsers under AGPL-3.0
-+ */
-+@Documented
-+@Target({ElementType.METHOD, ElementType.TYPE, ElementType.FIELD})
-+public @interface BaseThreadOnly {
-+
-+    /**
-+     * @see ThreadRestricted#fieldAccess()
-+     */
-+    Access value() default Access.READ_WRITE;
-+
-+}
-diff --git a/src/main/java/org/galemc/gale/executor/annotation/BaseThreadSafe.java b/src/main/java/org/galemc/gale/executor/annotation/BaseThreadSafe.java
-new file mode 100644
-index 0000000000000000000000000000000000000000..a3b0469cbfc8c7d369595359704b86cba222a451
---- /dev/null
-+++ b/src/main/java/org/galemc/gale/executor/annotation/BaseThreadSafe.java
-@@ -0,0 +1,40 @@
-+// Gale - thread-safety annotations
-+
-+package org.galemc.gale.executor.annotation;
-+
-+import org.galemc.gale.executor.thread.BaseThread;
-+
-+import java.lang.annotation.Documented;
-+import java.lang.annotation.ElementType;
-+import java.lang.annotation.Target;
-+
-+/**
-+ * An annotation primarily for methods, identifying methods that can safely called from any thread
-+ * that is an instance of {@link BaseThread}.
-+ * <br>
-+ * When applied to a field, this annotation indicates that the field can be safely arbitrarily accessed and/or modified
-+ * from any thread that is an instance of {@link BaseThread}.
-+ * <br>
-+ * When applied to a class, this annotation indicates it holds for all methods and fields, both instance and static,
-+ * belonging to the class, or any superclass thereof, or any inner or statically nested class of the class or
-+ * any superclass thereof, except for any cases where a conflicting annotation with a smaller scope is also present.
-+ * <br>
-+ * In a method annotated with {@link BaseThreadSafe}, the only fields and methods that can be used are those
-+ * annotated with {@link BaseThreadSafe} or {@link AnyThreadSafe},
-+ * unless extra safety guarantees are checked or explicitly provided.
-+ * <br>
-+ * Methods that are potentially blocking, e.g. those annotated with {@link PotentiallyBlocking}, must never
-+ * be called from a method annotated with {@link BaseThreadSafe}.
-+ *
-+ * @author Martijn Muijsers under AGPL-3.0
-+ */
-+@Documented
-+@Target({ElementType.METHOD, ElementType.TYPE, ElementType.FIELD})
-+public @interface BaseThreadSafe {
-+
-+    /**
-+     * @see ThreadRestricted#fieldAccess()
-+     */
-+    Access value() default Access.READ_WRITE;
-+
-+}
 diff --git a/src/main/java/org/galemc/gale/executor/annotation/Guarded.java b/src/main/java/org/galemc/gale/executor/annotation/Guarded.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..059eef051c2033ef70fb0e651ecb16e46961ba80
+index 0000000000000000000000000000000000000000..37365e1fd6042dc721d875021b4092410f095ca5
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/annotation/Guarded.java
-@@ -0,0 +1,43 @@
+@@ -0,0 +1,45 @@
 +// Gale - thread-safety annotations
 +
 +package org.galemc.gale.executor.annotation;
++
++import org.galemc.gale.executor.annotation.thread.ThreadRestricted;
 +
 +import java.lang.annotation.Documented;
 +import java.lang.annotation.ElementType;
@@ -235,90 +100,6 @@ index 0000000000000000000000000000000000000000..059eef051c2033ef70fb0e651ecb16e4
 +     * @return A description of in what scenario the lock described by this annotation is not needed to be acquired.
 +     */
 +    String except() default "";
-+
-+}
-diff --git a/src/main/java/org/galemc/gale/executor/annotation/MainThreadOnly.java b/src/main/java/org/galemc/gale/executor/annotation/MainThreadOnly.java
-new file mode 100644
-index 0000000000000000000000000000000000000000..c22c3bd52caa8a50bce27c6fd90c26153965424d
---- /dev/null
-+++ b/src/main/java/org/galemc/gale/executor/annotation/MainThreadOnly.java
-@@ -0,0 +1,42 @@
-+// Gale - thread-safety annotations
-+
-+package org.galemc.gale.executor.annotation;
-+
-+import org.galemc.gale.executor.thread.MainThreadClaim;
-+
-+import java.lang.annotation.Documented;
-+import java.lang.annotation.ElementType;
-+import java.lang.annotation.Target;
-+
-+/**
-+ * An annotation primarily for methods, identifying methods that can only be called on the main thread,
-+ * as defined by {@link MainThreadClaim}.
-+ * <br>
-+ * When applied to a field, this annotation indicates that the field can only be accessed and/or modified
-+ * on the main thread.
-+ * <br>
-+ * When applied to a class, this annotation indicates it holds for all methods and fields, both instance and static,
-+ * belonging to the class, or any superclass thereof, or any inner or statically nested class of the class or
-+ * any superclass thereof, except for any cases where a conflicting annotation with a smaller scope is also present.
-+ * <br>
-+ * In a method annotated with {@link MainThreadOnly}, fields and methods annotated with {@link MainThreadOnly},
-+ * {@link BaseThreadOnly}, {@link BaseThreadSafe} or {@link AnyThreadSafe} may all be used. Use of methods annotated
-+ * with {@link PotentiallyYielding} is inevitable, but discouraged, because it may lower the number of main-thread-only
-+ * tasks that can be processed in the same amount of time (if some of that time is not spent on the task itself
-+ * but on waiting for something - whether by blocking or yielding).
-+ * <br>
-+ * Methods that are potentially blocking, e.g. those annotated with {@link PotentiallyBlocking}, must never
-+ * be called from a method annotated with {@link BaseThreadSafe}.
-+ *
-+ * @author Martijn Muijsers under AGPL-3.0
-+ */
-+@Documented
-+@Target({ElementType.METHOD, ElementType.TYPE, ElementType.FIELD})
-+public @interface MainThreadOnly {
-+
-+    /**
-+     * @see ThreadRestricted#fieldAccess()
-+     */
-+    Access value() default Access.READ_WRITE;
-+
-+}
-diff --git a/src/main/java/org/galemc/gale/executor/annotation/OriginalServerThreadOnly.java b/src/main/java/org/galemc/gale/executor/annotation/OriginalServerThreadOnly.java
-new file mode 100644
-index 0000000000000000000000000000000000000000..67f62207febb7348dcbf121f1d0154dfb3472945
---- /dev/null
-+++ b/src/main/java/org/galemc/gale/executor/annotation/OriginalServerThreadOnly.java
-@@ -0,0 +1,30 @@
-+// Gale - thread-safety annotations
-+
-+package org.galemc.gale.executor.annotation;
-+
-+import net.minecraft.server.MinecraftServer;
-+
-+import java.lang.annotation.Documented;
-+import java.lang.annotation.ElementType;
-+import java.lang.annotation.Target;
-+
-+/**
-+ * An annotation primarily for methods, identifying methods that can only be called from the
-+ * {@link MinecraftServer#originalServerThread}.
-+ * <br>
-+ * This annotation can also be used on fields, similar to {@link ThreadRestricted}.
-+ *
-+ * @author Martijn Muijsers under AGPL-3.0
-+ *
-+ * @see ThreadRestricted
-+ */
-+@Documented
-+@Target({ElementType.METHOD, ElementType.FIELD})
-+public @interface OriginalServerThreadOnly {
-+
-+    /**
-+     * @see ThreadRestricted#fieldAccess()
-+     */
-+    Access value() default Access.READ_WRITE;
 +
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/annotation/PotentiallyBlocking.java b/src/main/java/org/galemc/gale/executor/annotation/PotentiallyBlocking.java
@@ -407,99 +188,6 @@ index 0000000000000000000000000000000000000000..e87ee2612348fc559b21256cc7cadfc6
 +    String value() default "";
 +
 +}
-diff --git a/src/main/java/org/galemc/gale/executor/annotation/ThisBaseThreadOnly.java b/src/main/java/org/galemc/gale/executor/annotation/ThisBaseThreadOnly.java
-new file mode 100644
-index 0000000000000000000000000000000000000000..a88eff774d0e289b210ef5b9a5ffd16c913dac33
---- /dev/null
-+++ b/src/main/java/org/galemc/gale/executor/annotation/ThisBaseThreadOnly.java
-@@ -0,0 +1,32 @@
-+// Gale - thread-safety annotations
-+
-+package org.galemc.gale.executor.annotation;
-+
-+import org.galemc.gale.executor.thread.BaseThread;
-+
-+import java.lang.annotation.Documented;
-+import java.lang.annotation.ElementType;
-+import java.lang.annotation.Target;
-+
-+/**
-+ * An annotation primarily for methods, identifying methods that can only be called from the
-+ * enclosing {@link BaseThread} instance.
-+ * <br>
-+ * This annotation can also be used on fields, similar to {@link ThreadRestricted}.
-+ * <br>
-+ * This annotation can only be used within {@link BaseThread} or subclasses thereof.
-+ *
-+ * @author Martijn Muijsers under AGPL-3.0
-+ *
-+ * @see ThreadRestricted
-+ */
-+@Documented
-+@Target({ElementType.METHOD, ElementType.FIELD})
-+public @interface ThisBaseThreadOnly {
-+
-+    /**
-+     * @see ThreadRestricted#fieldAccess()
-+     */
-+    Access value() default Access.READ_WRITE;
-+
-+}
-diff --git a/src/main/java/org/galemc/gale/executor/annotation/ThreadRestricted.java b/src/main/java/org/galemc/gale/executor/annotation/ThreadRestricted.java
-new file mode 100644
-index 0000000000000000000000000000000000000000..773dcc2dc2a72b99d415c2e52b363ae24e9bb018
---- /dev/null
-+++ b/src/main/java/org/galemc/gale/executor/annotation/ThreadRestricted.java
-@@ -0,0 +1,49 @@
-+// Gale - thread-safety annotations
-+
-+package org.galemc.gale.executor.annotation;
-+
-+import org.galemc.gale.executor.thread.BaseThread;
-+
-+import java.lang.annotation.Documented;
-+import java.lang.annotation.ElementType;
-+import java.lang.annotation.Target;
-+
-+/**
-+ * An annotation primarily for methods, identifying methods that can only be called on a specific thread or
-+ * set of threads, as described by the given description.
-+ * <br>
-+ * When applied to a field, this annotation indicates that the field can only be accessed and/or modified from the
-+ * described specific thread or set of threads.
-+ * <br>
-+ * When applied to a class, this annotation indicates it holds for all methods and fields, both instance and static,
-+ * belonging to the class, or any superclass thereof, or any inner or statically nested class of the class or
-+ * any superclass thereof, except for any cases where a conflicting annotation with a smaller scope is also present.
-+ * <br>
-+ * In a method annotated with {@link ThreadRestricted}, the only fields and methods that can be used are those
-+ * annotated with {@link ThreadRestricted} that have a similar or stricter condition,
-+ * unless extra safety guarantees are checked or explicitly provided.
-+ * Use of methods that are potentially yielding (at least those annotated with {@link PotentiallyYielding}, but also
-+ * those annotated with {@link PotentiallyBlocking} that potentially yield), when the restriction allows for threads
-+ * that are not instances of {@link BaseThread}, is discouraged, because threads that are not instances of
-+ * {@link BaseThread} cannot yield, and must block instead, leading to context switches where none may be expected.
-+ *
-+ * @author Martijn Muijsers under AGPL-3.0
-+ */
-+@Documented
-+@Target({ElementType.METHOD, ElementType.TYPE, ElementType.FIELD})
-+public @interface ThreadRestricted {
-+
-+    /**
-+     * @return A description of the thread or set of threads that this annotation describes a method or field
-+     * being restricted to.
-+     */
-+    String value();
-+
-+    /**
-+     * @return What type of access this annotation describes, when it is applied to a field.
-+     * <br>
-+     * This annotation describes all types of access ({@link Access#READ_WRITE}) by default.
-+     */
-+    Access fieldAccess() default Access.READ_WRITE;
-+
-+}
 diff --git a/src/main/java/org/galemc/gale/executor/annotation/YieldFree.java b/src/main/java/org/galemc/gale/executor/annotation/YieldFree.java
 new file mode 100644
 index 0000000000000000000000000000000000000000..dc660a3fb401fc3cb713a4556468fd6686e29c51
@@ -533,3 +221,146 @@ index 0000000000000000000000000000000000000000..dc660a3fb401fc3cb713a4556468fd66
 +@Documented
 +@Target({ElementType.METHOD, ElementType.TYPE})
 +public @interface YieldFree {}
+diff --git a/src/main/java/org/galemc/gale/executor/annotation/thread/AnyThreadSafe.java b/src/main/java/org/galemc/gale/executor/annotation/thread/AnyThreadSafe.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..f9f4deeb3edce30a8052172c0b2be905bbd90844
+--- /dev/null
++++ b/src/main/java/org/galemc/gale/executor/annotation/thread/AnyThreadSafe.java
+@@ -0,0 +1,42 @@
++// Gale - thread-safety annotations
++
++package org.galemc.gale.executor.annotation.thread;
++
++import org.galemc.gale.executor.annotation.Access;
++import org.galemc.gale.executor.annotation.PotentiallyBlocking;
++import org.galemc.gale.executor.annotation.PotentiallyYielding;
++
++import java.lang.annotation.Documented;
++import java.lang.annotation.ElementType;
++import java.lang.annotation.Target;
++
++/**
++ * An annotation primarily for methods, identifying methods that can safely called from any thread,
++ * including but not limited to threads that are yielding.
++ * <br>
++ * When applied to a field, this annotation indicates that the field can be safely arbitrarily accessed and/or modified
++ * from any thread.
++ * <br>
++ * When applied to a class, this annotation indicates it holds for all methods and fields, both instance and static,
++ * belonging to the class, or any superclass thereof, or any inner or statically nested class of the class or
++ * any superclass thereof, except for any cases where a conflicting annotation with a smaller scope is also present.
++ * <br>
++ * In a method annotated with {@link AnyThreadSafe}, the only fields and methods that can be used are those
++ * annotated with {@link AnyThreadSafe}, unless extra safety guarantees are checked or explicitly provided.
++ * Use of methods that are potentially yielding (at least those annotated with {@link PotentiallyYielding}, but also
++ * those annotated with {@link PotentiallyBlocking} that potentially yield) is discouraged,
++ * because some threads cannot yield, and must block instead,
++ * leading to context switches where none may be expected.
++ *
++ * @author Martijn Muijsers under AGPL-3.0
++ */
++@Documented
++@Target({ElementType.METHOD, ElementType.TYPE, ElementType.FIELD})
++public @interface AnyThreadSafe {
++
++    /**
++     * @see ThreadRestricted#fieldAccess()
++     */
++    Access value() default Access.READ_WRITE;
++
++}
+diff --git a/src/main/java/org/galemc/gale/executor/annotation/thread/ThisThreadOnly.java b/src/main/java/org/galemc/gale/executor/annotation/thread/ThisThreadOnly.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..2544ec2ef1d401696d61c6c75b72f79ffbb21e87
+--- /dev/null
++++ b/src/main/java/org/galemc/gale/executor/annotation/thread/ThisThreadOnly.java
+@@ -0,0 +1,32 @@
++// Gale - thread-safety annotations
++
++package org.galemc.gale.executor.annotation.thread;
++
++import org.galemc.gale.executor.annotation.Access;
++
++import java.lang.annotation.Documented;
++import java.lang.annotation.ElementType;
++import java.lang.annotation.Target;
++
++/**
++ * An annotation primarily for methods, identifying methods that can only be called from the
++ * enclosing {@link Thread} instance.
++ * <br>
++ * This annotation can also be used on fields, similar to {@link ThreadRestricted}.
++ * <br>
++ * This annotation can only be used within {@link Thread} or subclasses thereof.
++ *
++ * @see ThreadRestricted
++ *
++ * @author Martijn Muijsers under AGPL-3.0
++ */
++@Documented
++@Target({ElementType.METHOD, ElementType.FIELD})
++public @interface ThisThreadOnly {
++
++    /**
++     * @see ThreadRestricted#fieldAccess()
++     */
++    Access value() default Access.READ_WRITE;
++
++}
+diff --git a/src/main/java/org/galemc/gale/executor/annotation/thread/ThreadRestricted.java b/src/main/java/org/galemc/gale/executor/annotation/thread/ThreadRestricted.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..4a9df03bfa4d683ad32496a20b19ab53015e8d8f
+--- /dev/null
++++ b/src/main/java/org/galemc/gale/executor/annotation/thread/ThreadRestricted.java
+@@ -0,0 +1,51 @@
++// Gale - thread-safety annotations
++
++package org.galemc.gale.executor.annotation.thread;
++
++import org.galemc.gale.executor.annotation.Access;
++import org.galemc.gale.executor.annotation.PotentiallyBlocking;
++import org.galemc.gale.executor.annotation.PotentiallyYielding;
++
++import java.lang.annotation.Documented;
++import java.lang.annotation.ElementType;
++import java.lang.annotation.Target;
++
++/**
++ * An annotation primarily for methods, identifying methods that can only be called on a specific thread or
++ * set of threads, as described by the given description.
++ * <br>
++ * When applied to a field, this annotation indicates that the field can only be accessed and/or modified from the
++ * described specific thread or set of threads.
++ * <br>
++ * When applied to a class, this annotation indicates it holds for all methods and fields, both instance and static,
++ * belonging to the class, or any superclass thereof, or any inner or statically nested class of the class or
++ * any superclass thereof, except for any cases where a conflicting annotation with a smaller scope is also present.
++ * <br>
++ * In a method annotated with {@link ThreadRestricted}, the only fields and methods that can be used are those
++ * annotated with {@link ThreadRestricted} that have a similar or stricter condition,
++ * unless extra safety guarantees are checked or explicitly provided.
++ * Use of methods that are potentially yielding (at least those annotated with {@link PotentiallyYielding}, but also
++ * those annotated with {@link PotentiallyBlocking} that potentially yield), when the restriction allows for threads
++ * that are not yielding, is discouraged, because some threads cannot yield, and must block instead,
++ * leading to context switches where none may be expected.
++ *
++ * @author Martijn Muijsers under AGPL-3.0
++ */
++@Documented
++@Target({ElementType.METHOD, ElementType.TYPE, ElementType.FIELD})
++public @interface ThreadRestricted {
++
++    /**
++     * @return A description of the thread or set of threads that this annotation describes a method or field
++     * being restricted to.
++     */
++    String value();
++
++    /**
++     * @return What type of access this annotation describes, when it is applied to a field.
++     * <br>
++     * This annotation describes all types of access ({@link Access#READ_WRITE}) by default.
++     */
++    Access fieldAccess() default Access.READ_WRITE;
++
++}

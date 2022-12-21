@@ -8,7 +8,7 @@ Gale - https://galemc.org
 
 diff --git a/src/main/java/org/galemc/gale/collection/FIFOConcurrentLinkedQueue.java b/src/main/java/org/galemc/gale/collection/FIFOConcurrentLinkedQueue.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..010035d51ceba9ec59821a95386c54a324e715b5
+index 0000000000000000000000000000000000000000..f8463820ac0b712d82ec05adb387525ae85ef97c
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/collection/FIFOConcurrentLinkedQueue.java
 @@ -0,0 +1,133 @@
@@ -16,7 +16,7 @@ index 0000000000000000000000000000000000000000..010035d51ceba9ec59821a95386c54a3
 +
 +package org.galemc.gale.collection;
 +
-+import org.galemc.gale.executor.annotation.AnyThreadSafe;
++import org.galemc.gale.executor.annotation.thread.AnyThreadSafe;
 +import org.galemc.gale.executor.annotation.YieldFree;
 +import org.jetbrains.annotations.NotNull;
 +
