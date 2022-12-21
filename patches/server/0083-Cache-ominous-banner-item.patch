@@ -25,28 +25,11 @@ index b8ef0f9c815799d54edcdb26dc0b4c1c281fc03e..9bec8e9e91676238b41d03d8044bfbb3
      private final ItemPredicate head;
      private final ItemPredicate chest;
      private final ItemPredicate legs;
-diff --git a/src/main/java/net/minecraft/data/advancements/AdventureAdvancements.java b/src/main/java/net/minecraft/data/advancements/AdventureAdvancements.java
-index 892d016152fc68edc197795cb7db46f5540221ce..e083d0705e6d923735b9b3eb4acbdf976ef3f19e 100644
---- a/src/main/java/net/minecraft/data/advancements/AdventureAdvancements.java
-+++ b/src/main/java/net/minecraft/data/advancements/AdventureAdvancements.java
-@@ -81,8 +81,10 @@ public class AdventureAdvancements implements Consumer<Consumer<Advancement>> {
-         Advancement.Builder.advancement().parent(advancement7).display(Items.CROSSBOW, Component.translatable("advancements.adventure.whos_the_pillager_now.title"), Component.translatable("advancements.adventure.whos_the_pillager_now.description"), (ResourceLocation)null, FrameType.TASK, true, true, false).addCriterion("kill_pillager", KilledByCrossbowTrigger.TriggerInstance.crossbowKilled(EntityPredicate.Builder.entity().of(EntityType.PILLAGER))).save(consumer, "adventure/whos_the_pillager_now");
-         Advancement.Builder.advancement().parent(advancement7).display(Items.CROSSBOW, Component.translatable("advancements.adventure.two_birds_one_arrow.title"), Component.translatable("advancements.adventure.two_birds_one_arrow.description"), (ResourceLocation)null, FrameType.CHALLENGE, true, true, false).rewards(AdvancementRewards.Builder.experience(65)).addCriterion("two_birds", KilledByCrossbowTrigger.TriggerInstance.crossbowKilled(EntityPredicate.Builder.entity().of(EntityType.PHANTOM), EntityPredicate.Builder.entity().of(EntityType.PHANTOM))).save(consumer, "adventure/two_birds_one_arrow");
-         Advancement.Builder.advancement().parent(advancement7).display(Items.CROSSBOW, Component.translatable("advancements.adventure.arbalistic.title"), Component.translatable("advancements.adventure.arbalistic.description"), (ResourceLocation)null, FrameType.CHALLENGE, true, true, true).rewards(AdvancementRewards.Builder.experience(85)).addCriterion("arbalistic", KilledByCrossbowTrigger.TriggerInstance.crossbowKilled(MinMaxBounds.Ints.exactly(5))).save(consumer, "adventure/arbalistic");
--        Advancement advancement8 = Advancement.Builder.advancement().parent(advancement).display(Raid.getLeaderBannerInstance(), Component.translatable("advancements.adventure.voluntary_exile.title"), Component.translatable("advancements.adventure.voluntary_exile.description"), (ResourceLocation)null, FrameType.TASK, true, true, true).addCriterion("voluntary_exile", KilledTrigger.TriggerInstance.playerKilledEntity(EntityPredicate.Builder.entity().of(EntityTypeTags.RAIDERS).equipment(EntityEquipmentPredicate.CAPTAIN))).save(consumer, "adventure/voluntary_exile");
--        Advancement.Builder.advancement().parent(advancement8).display(Raid.getLeaderBannerInstance(), Component.translatable("advancements.adventure.hero_of_the_village.title"), Component.translatable("advancements.adventure.hero_of_the_village.description"), (ResourceLocation)null, FrameType.CHALLENGE, true, true, true).rewards(AdvancementRewards.Builder.experience(100)).addCriterion("hero_of_the_village", PlayerTrigger.TriggerInstance.raidWon()).save(consumer, "adventure/hero_of_the_village");
-+        // Gale start - Lithium - cache ominous banner item
-+        Advancement advancement8 = Advancement.Builder.advancement().parent(advancement).display(Raid.LEADER_BANNER, Component.translatable("advancements.adventure.voluntary_exile.title"), Component.translatable("advancements.adventure.voluntary_exile.description"), (ResourceLocation)null, FrameType.TASK, true, true, true).addCriterion("voluntary_exile", KilledTrigger.TriggerInstance.playerKilledEntity(EntityPredicate.Builder.entity().of(EntityTypeTags.RAIDERS).equipment(EntityEquipmentPredicate.CAPTAIN))).save(consumer, "adventure/voluntary_exile");
-+        Advancement.Builder.advancement().parent(advancement8).display(Raid.LEADER_BANNER, Component.translatable("advancements.adventure.hero_of_the_village.title"), Component.translatable("advancements.adventure.hero_of_the_village.description"), (ResourceLocation)null, FrameType.CHALLENGE, true, true, true).rewards(AdvancementRewards.Builder.experience(100)).addCriterion("hero_of_the_village", PlayerTrigger.TriggerInstance.raidWon()).save(consumer, "adventure/hero_of_the_village");
-+        // Gale end - Lithium - cache ominous banner item
-         Advancement.Builder.advancement().parent(advancement).display(Blocks.HONEY_BLOCK.asItem(), Component.translatable("advancements.adventure.honey_block_slide.title"), Component.translatable("advancements.adventure.honey_block_slide.description"), (ResourceLocation)null, FrameType.TASK, true, true, false).addCriterion("honey_block_slide", SlideDownBlockTrigger.TriggerInstance.slidesDownBlock(Blocks.HONEY_BLOCK)).save(consumer, "adventure/honey_block_slide");
-         Advancement.Builder.advancement().parent(advancement5).display(Blocks.TARGET.asItem(), Component.translatable("advancements.adventure.bullseye.title"), Component.translatable("advancements.adventure.bullseye.description"), (ResourceLocation)null, FrameType.CHALLENGE, true, true, false).rewards(AdvancementRewards.Builder.experience(50)).addCriterion("bullseye", TargetBlockTrigger.TriggerInstance.targetHit(MinMaxBounds.Ints.exactly(15), EntityPredicate.Composite.wrap(EntityPredicate.Builder.entity().distance(DistancePredicate.horizontal(MinMaxBounds.Doubles.atLeast(30.0D))).build()))).save(consumer, "adventure/bullseye");
-         Advancement.Builder.advancement().parent(advancement2).display(Items.LEATHER_BOOTS, Component.translatable("advancements.adventure.walk_on_powder_snow_with_leather_boots.title"), Component.translatable("advancements.adventure.walk_on_powder_snow_with_leather_boots.description"), (ResourceLocation)null, FrameType.TASK, true, true, false).addCriterion("walk_on_powder_snow_with_leather_boots", PlayerTrigger.TriggerInstance.walkOnBlockWithEquipment(Blocks.POWDER_SNOW, Items.LEATHER_BOOTS)).save(consumer, "adventure/walk_on_powder_snow_with_leather_boots");
 diff --git a/src/main/java/net/minecraft/world/entity/raid/Raid.java b/src/main/java/net/minecraft/world/entity/raid/Raid.java
-index 5f2a168e3e282cdb1d2e9cd3fd956eedaf4b4688..d56e7e8cacdabb8f009eaba8164f65f4d824a282 100644
+index ef142a54f4b7277c3952e0730bdeaedfe218c78f..b13ef853419d2783d09b3e685b9b506a4ff5676e 100644
 --- a/src/main/java/net/minecraft/world/entity/raid/Raid.java
 +++ b/src/main/java/net/minecraft/world/entity/raid/Raid.java
-@@ -690,7 +690,7 @@ public class Raid {
+@@ -702,7 +702,7 @@ public class Raid {
          this.level.getRaids().setDirty();
      }
  
@@ -55,7 +38,7 @@ index 5f2a168e3e282cdb1d2e9cd3fd956eedaf4b4688..d56e7e8cacdabb8f009eaba8164f65f4
          ItemStack itemstack = new ItemStack(Items.WHITE_BANNER);
          CompoundTag nbttagcompound = new CompoundTag();
          ListTag nbttaglist = (new BannerPattern.Builder()).addPattern(BannerPatterns.RHOMBUS_MIDDLE, DyeColor.CYAN).addPattern(BannerPatterns.STRIPE_BOTTOM, DyeColor.LIGHT_GRAY).addPattern(BannerPatterns.STRIPE_CENTER, DyeColor.GRAY).addPattern(BannerPatterns.BORDER, DyeColor.LIGHT_GRAY).addPattern(BannerPatterns.STRIPE_MIDDLE, DyeColor.BLACK).addPattern(BannerPatterns.HALF_HORIZONTAL, DyeColor.LIGHT_GRAY).addPattern(BannerPatterns.CIRCLE_MIDDLE, DyeColor.LIGHT_GRAY).addPattern(BannerPatterns.BORDER, DyeColor.BLACK).toListTag();
-@@ -702,6 +702,14 @@ public class Raid {
+@@ -714,6 +714,14 @@ public class Raid {
          return itemstack;
      }
  

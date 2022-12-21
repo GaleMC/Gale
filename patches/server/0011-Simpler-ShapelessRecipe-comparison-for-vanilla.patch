@@ -37,25 +37,26 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 diff --git a/src/main/java/net/minecraft/world/item/crafting/ShapelessRecipe.java b/src/main/java/net/minecraft/world/item/crafting/ShapelessRecipe.java
-index ffe5476d8ed15ee4384b679c341688787205ce59..283aa4fe50c25ea272de2d7ec3826cd913b4c661 100644
+index e7c06d98532160499f2610f69de27e30a326b16f..548f960a4cb3f0f023534c6ba22cbd5e48d863c4 100644
 --- a/src/main/java/net/minecraft/world/item/crafting/ShapelessRecipe.java
 +++ b/src/main/java/net/minecraft/world/item/crafting/ShapelessRecipe.java
-@@ -25,8 +25,14 @@ public class ShapelessRecipe implements CraftingRecipe {
-     final String group;
+@@ -26,8 +26,15 @@ public class ShapelessRecipe implements CraftingRecipe {
+     final CraftingBookCategory category;
      final ItemStack result;
      final NonNullList<Ingredient> ingredients;
 +    private final boolean isBukkit; // Gale - Airplane - simpler ShapelessRecipe comparison for vanilla
  
-     public ShapelessRecipe(ResourceLocation id, String group, ItemStack output, NonNullList<Ingredient> input) {
+     public ShapelessRecipe(ResourceLocation id, String group, CraftingBookCategory category, ItemStack output, NonNullList<Ingredient> input) {
 +        // Gale start - Airplane - simpler ShapelessRecipe comparison for vanilla
-+        this(id, group, output, input, false);
++        this(id, group, category, output, input, false);
 +    }
-+    public ShapelessRecipe(ResourceLocation id, String group, ItemStack output, NonNullList<Ingredient> input, boolean isBukkit) { this.isBukkit = isBukkit;
++    public ShapelessRecipe(ResourceLocation id, String group, CraftingBookCategory category, ItemStack output, NonNullList<Ingredient> input, boolean isBukkit) {
++        this.isBukkit = isBukkit;
 +        // Gale end - Airplane - simpler ShapelessRecipe comparison for vanilla
          this.id = id;
          this.group = group;
-         this.result = output;
-@@ -73,6 +79,28 @@ public class ShapelessRecipe implements CraftingRecipe {
+         this.category = category;
+@@ -81,6 +88,28 @@ public class ShapelessRecipe implements CraftingRecipe {
      }
  
      public boolean matches(CraftingContainer inventory, Level world) {
@@ -85,14 +86,15 @@ index ffe5476d8ed15ee4384b679c341688787205ce59..283aa4fe50c25ea272de2d7ec3826cd9
          int i = 0;
  
 diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftShapelessRecipe.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftShapelessRecipe.java
-index 0b3b46348ac9195bff1492ffc11fcbff7d3f5c6f..a7ecaae493b937d764fcecb78b182cf36ea92afa 100644
+index f7ea77dd82d978ad307f99c743efacfb34478b3d..965c38b2539258f12b06ab21d248ee09e266bb1d 100644
 --- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftShapelessRecipe.java
 +++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftShapelessRecipe.java
-@@ -43,6 +43,6 @@ public class CraftShapelessRecipe extends ShapelessRecipe implements CraftRecipe
+@@ -44,6 +44,7 @@ public class CraftShapelessRecipe extends ShapelessRecipe implements CraftRecipe
              data.set(i, toNMS(ingred.get(i), true));
          }
  
--        MinecraftServer.getServer().getRecipeManager().addRecipe(new net.minecraft.world.item.crafting.ShapelessRecipe(CraftNamespacedKey.toMinecraft(this.getKey()), this.getGroup(), CraftItemStack.asNMSCopy(this.getResult()), data));
-+        MinecraftServer.getServer().getRecipeManager().addRecipe(new net.minecraft.world.item.crafting.ShapelessRecipe(CraftNamespacedKey.toMinecraft(this.getKey()), this.getGroup(), CraftItemStack.asNMSCopy(this.getResult()), data, true)); // Gale - Airplane - simpler ShapelessRecipe comparison for vanilla
+-        MinecraftServer.getServer().getRecipeManager().addRecipe(new net.minecraft.world.item.crafting.ShapelessRecipe(CraftNamespacedKey.toMinecraft(this.getKey()), this.getGroup(), CraftRecipe.getCategory(this.getCategory()), CraftItemStack.asNMSCopy(this.getResult()), data));
++        MinecraftServer.getServer().getRecipeManager().addRecipe(new net.minecraft.world.item.crafting.ShapelessRecipe(CraftNamespacedKey.toMinecraft(this.getKey()), this.getGroup(), CraftRecipe.getCategory(this.getCategory()), CraftItemStack.asNMSCopy(this.getResult()), data, true)); // Gale - Airplane - simpler ShapelessRecipe comparison for vanilla
++
      }
  }

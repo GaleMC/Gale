@@ -45,10 +45,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 diff --git a/src/main/java/net/minecraft/world/entity/player/Player.java b/src/main/java/net/minecraft/world/entity/player/Player.java
-index 8818ca46af000926ed9eacb47953f440bdac1342..2bf1663dc1e969ea9e192c9941155eb99efff715 100644
+index 6f071601266dff833270bbde9863cc0c4dcfa97d..529df114eb0ca3020bf8c699889b9a543905a1f2 100644
 --- a/src/main/java/net/minecraft/world/entity/player/Player.java
 +++ b/src/main/java/net/minecraft/world/entity/player/Player.java
-@@ -116,6 +116,7 @@ import net.minecraft.world.phys.AABB;
+@@ -114,6 +114,7 @@ import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Scoreboard;
@@ -56,10 +56,10 @@ index 8818ca46af000926ed9eacb47953f440bdac1342..2bf1663dc1e969ea9e192c9941155eb9
  import org.slf4j.Logger;
  import org.bukkit.craftbukkit.entity.CraftHumanEntity;
  import org.bukkit.craftbukkit.event.CraftEventFactory;
-@@ -288,19 +289,24 @@ public abstract class Player extends LivingEntity {
+@@ -281,19 +282,24 @@ public abstract class Player extends LivingEntity {
+         this.moveCloak();
          if (!this.level.isClientSide) {
              this.foodData.tick(this);
-             this.wardenSpawnTracker.tick();
 -            this.awardStat(Stats.PLAY_TIME);
 -            this.awardStat(Stats.TOTAL_WORLD_TIME);
 +            // Gale start - Hydrinity - increase time statistics in intervals
@@ -87,7 +87,7 @@ index 8818ca46af000926ed9eacb47953f440bdac1342..2bf1663dc1e969ea9e192c9941155eb9
  
          int i = 29999999;
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index e92a4fc4a503a420b09e5373a6c1f5d2d71d32d6..ef430bc8b0527b919c91361aa9ddefc8eb2386d8 100644
+index eb1a5b20810cbad9f47505a8534a42b20b8653d5..8aaa6e3a6c475258bea5f026a7e07efde825f112 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 @@ -43,6 +43,25 @@ public class GaleGlobalConfiguration extends ConfigurationPart {

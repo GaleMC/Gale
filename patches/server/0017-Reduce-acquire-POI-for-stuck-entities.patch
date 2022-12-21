@@ -31,21 +31,45 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 diff --git a/src/main/java/net/minecraft/world/entity/ai/behavior/AcquirePoi.java b/src/main/java/net/minecraft/world/entity/ai/behavior/AcquirePoi.java
-index 43243537b765a2d270be6de3f053fea77ff67d18..ea6424d5e70470ffdcff689b58688cf665c940b2 100644
+index d4c91e0a0c64fcb7f1145de3f30134cb1f1f8ee6..aed7e9affaae1e0d1e3324a41e5818435f76fd0f 100644
 --- a/src/main/java/net/minecraft/world/entity/ai/behavior/AcquirePoi.java
 +++ b/src/main/java/net/minecraft/world/entity/ai/behavior/AcquirePoi.java
-@@ -65,7 +65,10 @@ public class AcquirePoi extends Behavior<PathfinderMob> {
-             this.nextScheduledStart = entity.level.getGameTime() + (long)world.random.nextInt(20);
-             return false;
-         } else {
--            return world.getGameTime() >= this.nextScheduledStart;
-+            // Gale start - Airplane - reduce acquire POI for stuck entities
-+            long stuckEntityAdditionalWaitTime = world.galeConfig().smallOptimizations.reducedIntervals.acquirePoiForStuckEntity;
-+            return world.getGameTime() >= this.nextScheduledStart + (stuckEntityAdditionalWaitTime <= 0L ? 0L : entity.getNavigation().isStuck() ? stuckEntityAdditionalWaitTime : 0L);
-+            // Gale end - Airplane - reduce acquire POI for stuck entities
-         }
-     }
+@@ -13,6 +13,7 @@ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.GlobalPos;
+ import net.minecraft.core.Holder;
+ import net.minecraft.network.protocol.game.DebugPackets;
++import net.minecraft.server.level.ServerLevel;
+ import net.minecraft.util.RandomSource;
+ import net.minecraft.world.entity.Mob;
+ import net.minecraft.world.entity.PathfinderMob;
+@@ -26,6 +27,13 @@ import org.apache.commons.lang3.mutable.MutableLong;
+ public class AcquirePoi {
+     public static final int SCAN_RANGE = 48;
  
++    // Gale start - Airplane - reduce acquire POI for stuck entities
++    public static void addAdditionalTimeToMutableLongIfEntityIsStuck(MutableLong mutableLong, ServerLevel world, PathfinderMob entity) {
++        long stuckEntityAdditionalWaitTime = world.galeConfig().smallOptimizations.reducedIntervals.acquirePoiForStuckEntity;
++        mutableLong.add(stuckEntityAdditionalWaitTime <= 0L ? 0L : entity.getNavigation().isStuck() ? stuckEntityAdditionalWaitTime : 0L);
++    }
++    // Gale end - Airplane - reduce acquire POI for stuck entities
++
+     public static BehaviorControl<PathfinderMob> create(Predicate<Holder<PoiType>> poiPredicate, MemoryModuleType<GlobalPos> poiPosModule, boolean onlyRunIfChild, Optional<Byte> entityStatus) {
+         return create(poiPredicate, poiPosModule, poiPosModule, onlyRunIfChild, entityStatus);
+     }
+@@ -42,11 +50,13 @@ public class AcquirePoi {
+                         return false;
+                     } else if (mutableLong.getValue() == 0L) {
+                         mutableLong.setValue(world.getGameTime() + (long)world.random.nextInt(20));
++                        addAdditionalTimeToMutableLongIfEntityIsStuck(mutableLong, world, entity); // Gale - Airplane - reduce acquire POI for stuck entities
+                         return false;
+                     } else if (world.getGameTime() < mutableLong.getValue()) {
+                         return false;
+                     } else {
+                         mutableLong.setValue(time + 20L + (long)world.getRandom().nextInt(20));
++                        addAdditionalTimeToMutableLongIfEntityIsStuck(mutableLong, world, entity); // Gale - Airplane - reduce acquire POI for stuck entities
+                         PoiManager poiManager = world.getPoiManager();
+                         long2ObjectMap.long2ObjectEntrySet().removeIf((entry) -> {
+                             return !entry.getValue().isStillValid(time);
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 index a83675d8d2f94a8e73cc2c7fa11d0aaf6f78be2c..b993c2276d14c0a384898e9705a1af6fa6d585cf 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java

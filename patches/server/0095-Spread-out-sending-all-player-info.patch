@@ -37,7 +37,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index 507017c1ea03cd028be2149b18c8de7f8353e37e..d2e6a92a44416bfaa161c78dd4b9a7b3ad78792a 100644
+index c0226f0445e2554000f2fc0a3906f9b3ed404097..5d21b033ac5ee10efe77ae1fbff0585414bd2d74 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
 @@ -15,6 +15,8 @@ import java.net.SocketAddress;
@@ -47,9 +47,9 @@ index 507017c1ea03cd028be2149b18c8de7f8353e37e..d2e6a92a44416bfaa161c78dd4b9a7b3
 +import java.util.ArrayList;
 +import java.util.Arrays;
  import java.util.Collection;
+ import java.util.EnumSet;
  import java.util.Iterator;
- import java.util.List;
-@@ -132,10 +134,11 @@ public abstract class PlayerList {
+@@ -136,10 +138,11 @@ public abstract class PlayerList {
      public static final File WHITELIST_FILE = new File("whitelist.json");
      public static final Component CHAT_FILTERED_FULL = Component.translatable("chat.filtered_full");
      private static final Logger LOGGER = LogUtils.getLogger();
@@ -62,15 +62,15 @@ index 507017c1ea03cd028be2149b18c8de7f8353e37e..d2e6a92a44416bfaa161c78dd4b9a7b3
      private final Map<UUID, ServerPlayer> playersByUUID = Maps.newHashMap();
      private final UserBanList bans;
      private final IpBanList ipBans;
-@@ -354,6 +357,7 @@ public abstract class PlayerList {
- 
-         playerconnection.teleport(player.getX(), player.getY(), player.getZ(), player.getYRot(), player.getXRot());
+@@ -363,6 +366,7 @@ public abstract class PlayerList {
+         player.sendServerStatus(this.server.getStatus());
+         player.connection.send(ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(this.players));
          this.players.add(player);
 +        this.addToSendAllPlayerInfoBuckets(player); // Gale - Purpur - spread out sending all player info
          this.playersByName.put(player.getScoreboardName().toLowerCase(java.util.Locale.ROOT), player); // Spigot
          this.playersByUUID.put(player.getUUID(), player);
-         // this.broadcastAll(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, new EntityPlayer[]{entityplayer})); // CraftBukkit - replaced with loop below
-@@ -675,6 +679,7 @@ public abstract class PlayerList {
+         // this.broadcastAll(ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(List.of(entityplayer))); // CraftBukkit - replaced with loop below
+@@ -683,6 +687,7 @@ public abstract class PlayerList {
          worldserver.removePlayerImmediately(entityplayer, Entity.RemovalReason.UNLOADED_WITH_PLAYER);
          entityplayer.getAdvancements().stopListening();
          this.players.remove(entityplayer);
@@ -78,7 +78,7 @@ index 507017c1ea03cd028be2149b18c8de7f8353e37e..d2e6a92a44416bfaa161c78dd4b9a7b3
          this.playersByName.remove(entityplayer.getScoreboardName().toLowerCase(java.util.Locale.ROOT)); // Spigot
          this.server.getCustomBossEvents().onPlayerDisconnect(entityplayer);
          UUID uuid = entityplayer.getUUID();
-@@ -842,6 +847,7 @@ public abstract class PlayerList {
+@@ -850,6 +855,7 @@ public abstract class PlayerList {
          // Paper end
          entityplayer.stopRiding(); // CraftBukkit
          this.players.remove(entityplayer);
@@ -86,7 +86,7 @@ index 507017c1ea03cd028be2149b18c8de7f8353e37e..d2e6a92a44416bfaa161c78dd4b9a7b3
          this.playersByName.remove(entityplayer.getScoreboardName().toLowerCase(java.util.Locale.ROOT)); // Spigot
          entityplayer.getLevel().removePlayerImmediately(entityplayer, Entity.RemovalReason.DISCARDED);
          BlockPos blockposition = entityplayer.getRespawnPosition();
-@@ -977,6 +983,7 @@ public abstract class PlayerList {
+@@ -987,6 +993,7 @@ public abstract class PlayerList {
          if (!entityplayer.connection.isDisconnected()) {
              worldserver1.addRespawnedPlayer(entityplayer1);
              this.players.add(entityplayer1);
@@ -94,7 +94,7 @@ index 507017c1ea03cd028be2149b18c8de7f8353e37e..d2e6a92a44416bfaa161c78dd4b9a7b3
              this.playersByName.put(entityplayer1.getScoreboardName().toLowerCase(java.util.Locale.ROOT), entityplayer1); // Spigot
              this.playersByUUID.put(entityplayer1.getUUID(), entityplayer1);
          }
-@@ -1027,20 +1034,55 @@ public abstract class PlayerList {
+@@ -1037,20 +1044,55 @@ public abstract class PlayerList {
          this.sendPlayerPermissionLevel(player, i);
      }
  
@@ -141,7 +141,7 @@ index 507017c1ea03cd028be2149b18c8de7f8353e37e..d2e6a92a44416bfaa161c78dd4b9a7b3
 +        if (sendAllPlayerInfoBucket != null) {
 +            for (ServerPlayer target : sendAllPlayerInfoBucket) {
 +                // Gale end - Purpur - spread out sending all player info
-                 target.connection.send(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.UPDATE_LATENCY, this.players.stream().filter(new Predicate<ServerPlayer>() {
+                 target.connection.send(new ClientboundPlayerInfoUpdatePacket(EnumSet.of(ClientboundPlayerInfoUpdatePacket.Action.UPDATE_LATENCY), this.players.stream().filter(new Predicate<ServerPlayer>() {
                      @Override
                      public boolean test(ServerPlayer input) {
                          return target.getBukkitEntity().canSee(input.getBukkitEntity());
@@ -157,10 +157,10 @@ index 507017c1ea03cd028be2149b18c8de7f8353e37e..d2e6a92a44416bfaa161c78dd4b9a7b3
          }
  
 diff --git a/src/main/java/net/minecraft/world/entity/player/Player.java b/src/main/java/net/minecraft/world/entity/player/Player.java
-index 0ea101f155936f7c340d9e1d1077c58b72551027..5337c80dba191c51202f1d8cf8106c9aa5720782 100644
+index 2e6557a19523d18aecff709de30cb4466b46a9fa..6f071601266dff833270bbde9863cc0c4dcfa97d 100644
 --- a/src/main/java/net/minecraft/world/entity/player/Player.java
 +++ b/src/main/java/net/minecraft/world/entity/player/Player.java
-@@ -42,6 +42,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
+@@ -40,6 +40,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
  import net.minecraft.resources.ResourceLocation;
  import net.minecraft.server.level.ServerLevel;
  import net.minecraft.server.level.ServerPlayer;
@@ -168,13 +168,13 @@ index 0ea101f155936f7c340d9e1d1077c58b72551027..5337c80dba191c51202f1d8cf8106c9a
  import net.minecraft.sounds.SoundEvent;
  import net.minecraft.sounds.SoundEvents;
  import net.minecraft.sounds.SoundSource;
-@@ -198,12 +199,15 @@ public abstract class Player extends LivingEntity {
+@@ -193,12 +194,15 @@ public abstract class Player extends LivingEntity {
      }
      // CraftBukkit end
  
 +    public final int sendAllPlayerInfoBucketIndex; // Gale - Purpur - spread out sending all player info
 +
-     public Player(Level world, BlockPos pos, float yaw, GameProfile gameProfile, @Nullable ProfilePublicKey publicKey) {
+     public Player(Level world, BlockPos pos, float yaw, GameProfile gameProfile) {
          super(EntityType.PLAYER, world);
          this.lastItemInMainHand = ItemStack.EMPTY;
          this.cooldowns = this.createItemCooldowns();
@@ -182,5 +182,5 @@ index 0ea101f155936f7c340d9e1d1077c58b72551027..5337c80dba191c51202f1d8cf8106c9a
          this.setUUID(UUIDUtil.getOrCreatePlayerUUID(gameProfile));
 +        this.sendAllPlayerInfoBucketIndex = Math.floorMod(this.uuid.hashCode(), PlayerList.SEND_PLAYER_INFO_INTERVAL); // Gale - Purpur - spread out sending all player info
          this.gameProfile = gameProfile;
-         this.profilePublicKey = publicKey;
          this.inventoryMenu = new InventoryMenu(this.inventory, !world.isClientSide, this);
+         this.containerMenu = this.inventoryMenu;

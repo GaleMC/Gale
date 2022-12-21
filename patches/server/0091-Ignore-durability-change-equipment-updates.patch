@@ -13,18 +13,45 @@ As part of: Slice (https://github.com/Cryptite/Slice)
 Licensed under: MIT (https://opensource.org/licenses/MIT)
 
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index 7a2229f64a67530760b02ff1ac82495ec5f91b37..03edc4274f0119b6c9134a7683541f6e126d4c43 100644
+index f2814df6d715910a3c8101a0af5f3190355bcc52..91e5707efe39180811fbe78c7569baa5264dba2c 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-@@ -3110,7 +3110,7 @@ public abstract class LivingEntity extends Entity {
+@@ -3154,7 +3154,7 @@ public abstract class LivingEntity extends Entity {
+     }
  
-             ItemStack itemstack1 = this.getItemBySlot(enumitemslot);
+     public boolean equipmentHasChanged(ItemStack stack, ItemStack stack2) {
+-        return !ItemStack.matches(stack2, stack);
++        return this.level.galeConfig().smallOptimizations.processFullEquipmentChangeIfOnlyDurabilityChanged ? !ItemStack.matches(stack2, stack) : !ItemStack.isSameIgnoreDurability(stack2, stack); // Gale - Slice - ignore durability change equipment updates
+     }
  
--            if (!ItemStack.matches(itemstack1, itemstack)) {
-+            if (this.level.galeConfig().smallOptimizations.processFullEquipmentChangeIfOnlyDurabilityChanged ? !ItemStack.matches(itemstack1, itemstack) : !ItemStack.isSameIgnoreDurability(itemstack1, itemstack)) { // Gale - Slice - ignore durability change equipment updates
-                 // Paper start - PlayerArmorChangeEvent
-                 if (this instanceof ServerPlayer && enumitemslot.getType() == EquipmentSlot.Type.ARMOR) {
-                     final org.bukkit.inventory.ItemStack oldItem = CraftItemStack.asBukkitCopy(itemstack);
+     private void handleHandSwap(Map<EquipmentSlot, ItemStack> equipmentChanges) {
+diff --git a/src/main/java/net/minecraft/world/item/ItemStack.java b/src/main/java/net/minecraft/world/item/ItemStack.java
+index 8fd080110ed4efaf6cb3a2561b32ed66ff8c78f0..b1a01ef0090718923aff4365d8e93c776a5ebae4 100644
+--- a/src/main/java/net/minecraft/world/item/ItemStack.java
++++ b/src/main/java/net/minecraft/world/item/ItemStack.java
+@@ -720,10 +720,22 @@ public final class ItemStack {
+         return left == right ? true : (!left.isEmpty() && !right.isEmpty() ? left.sameItem(right) : false);
+     }
+ 
++    // Gale start - Slice - ignore durability change equipment updates
++    public static boolean isSameIgnoreDurability(ItemStack left, ItemStack right) {
++        return left == right ? true : (!left.isEmpty() && !right.isEmpty() ? left.sameItemStackIgnoreDurability(right) : false);
++    }
++    // Gale end - Slice - ignore durability change equipment updates
++
+     public boolean sameItem(ItemStack stack) {
+         return !stack.isEmpty() && this.is(stack.getItem());
+     }
+ 
++    // Gale start - Slice - ignore durability change equipment updates
++    public boolean sameItemStackIgnoreDurability(ItemStack stack) {
++        return !this.isDamageableItem() ? this.sameItem(stack) : !stack.isEmpty() && this.is(stack.getItem());
++    }
++    // Gale end - Slice - ignore durability change equipment updates
++
+     public static boolean isSameItemSameTags(ItemStack stack, ItemStack otherStack) {
+         return stack.is(otherStack.getItem()) && ItemStack.tagMatches(stack, otherStack);
+     }
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 index 201f30774536966bda6f79b4db2fba6352829e10..dcbda08a6246b21b370a9005ed095d4413be6a81 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java

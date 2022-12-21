@@ -13,7 +13,7 @@ As part of: JettPack (https://gitlab.com/Titaniumtown/JettPack)
 Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index c73f2a697bcb4a670df37879dfc3e140290325bd..2a2e66449e816494a6c52cb771c63f60220e82fc 100644
+index b1bb14fc038df5631acf4c905876636230897077..23e4851fc7806820581b79931f10491fe9ceeec3 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -290,7 +290,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
@@ -25,7 +25,7 @@ index c73f2a697bcb4a670df37879dfc3e140290325bd..2a2e66449e816494a6c52cb771c63f60
      public BlockPos blockPosition; // Gale - Pufferfish - optimize entity coordinate key - private -> public
      private ChunkPos chunkPosition;
      private Vec3 deltaMovement;
-@@ -1861,9 +1861,17 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -1876,9 +1876,17 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
      /** @deprecated */
      @Deprecated
      public float getLightLevelDependentMagicValue() {
@@ -45,10 +45,10 @@ index c73f2a697bcb4a670df37879dfc3e140290325bd..2a2e66449e816494a6c52cb771c63f60
          this.absMoveTo(x, y, z);
          this.setYRot(yaw % 360.0F);
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index 6d9e63060ea43d8b19c723bb97c1c92ec3a63193..4b17ea0a27beb4c66d6915a3bd762f14a8548d92 100644
+index aa58adbd6dde51e6902ca9af1ae1a63e8a11bb34..e601b50935fc7212050e01fd31235149a33daf3b 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
-@@ -1641,13 +1641,29 @@ public abstract class Mob extends LivingEntity {
+@@ -1667,13 +1667,29 @@ public abstract class Mob extends LivingEntity {
  
      }
  

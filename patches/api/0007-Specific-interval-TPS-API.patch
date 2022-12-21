@@ -7,10 +7,10 @@ License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/org/bukkit/Server.java b/src/main/java/org/bukkit/Server.java
-index fc0f70f7af8e12347ea67d9985d06c8323b2a3c0..f502bf2d511df86bc3c0b6a28682484e07a14120 100644
+index aec6ef7197ed8caec451954727c1f7149491d3f9..7d0baa4306fecb79d069a7f5aed81e12a80a1f0e 100644
 --- a/src/main/java/org/bukkit/Server.java
 +++ b/src/main/java/org/bukkit/Server.java
-@@ -1749,6 +1749,31 @@ public interface Server extends PluginMessageRecipient, net.kyori.adventure.audi
+@@ -1751,6 +1751,31 @@ public interface Server extends PluginMessageRecipient, net.kyori.adventure.audi
      @NotNull
      public double[] getTPS();
  

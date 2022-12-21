@@ -18,10 +18,18 @@ Helps 1.8 Farms let hoppers pick it up before Villager
 due to our hopper changes
 
 diff --git a/src/main/java/net/minecraft/world/entity/ai/behavior/BehaviorUtils.java b/src/main/java/net/minecraft/world/entity/ai/behavior/BehaviorUtils.java
-index 098253e92bd95159de93fbbdf95daee341fc5752..edac2bbc9c1f7a7e2bdde012eb15e45430e09a94 100644
+index b9fcff8862e624644fdb73afcb3ef2106b0a76fc..49f2c1ca0e175667202ba0d02175a61f50f9250f 100644
 --- a/src/main/java/net/minecraft/world/entity/ai/behavior/BehaviorUtils.java
 +++ b/src/main/java/net/minecraft/world/entity/ai/behavior/BehaviorUtils.java
-@@ -102,7 +102,16 @@ public class BehaviorUtils {
+@@ -21,6 +21,7 @@ import net.minecraft.world.entity.ai.memory.NearestVisibleLivingEntities;
+ import net.minecraft.world.entity.ai.memory.WalkTarget;
+ import net.minecraft.world.entity.ai.util.DefaultRandomPos;
+ import net.minecraft.world.entity.item.ItemEntity;
++import net.minecraft.world.entity.npc.Villager;
+ import net.minecraft.world.item.Item;
+ import net.minecraft.world.item.ItemStack;
+ import net.minecraft.world.item.ProjectileWeaponItem;
+@@ -101,7 +102,16 @@ public class BehaviorUtils {
  
          vec3d2 = vec3d2.normalize().multiply(velocityFactor.x, velocityFactor.y, velocityFactor.z);
          entityitem.setDeltaMovement(vec3d2);

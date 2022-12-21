@@ -7,10 +7,10 @@ License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index 8e45f712968303b7864d61adbf7325142c83f582..b374f41b20b3ffa2ec2874a06715661f4fec83db 100644
+index f5ed3fa20097bdd43a25c76b38353a23743bc9e5..eed9f125df46b616b7234a2d669971bc51bc231b 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -54,6 +54,7 @@ import net.minecraft.world.level.block.entity.SkullBlockEntity;
+@@ -49,6 +49,7 @@ import net.minecraft.world.level.block.entity.SkullBlockEntity;
  import net.minecraft.world.level.storage.LevelStorageSource;
  import org.galemc.gale.command.GaleCommands;
  import org.galemc.gale.configuration.GaleGlobalConfiguration;
@@ -18,7 +18,7 @@ index 8e45f712968303b7864d61adbf7325142c83f582..b374f41b20b3ffa2ec2874a06715661f
  import org.slf4j.Logger;
  
  // CraftBukkit start
-@@ -231,6 +232,12 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
+@@ -226,6 +227,12 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
          io.papermc.paper.brigadier.PaperBrigadierProviderImpl.INSTANCE.getClass(); // init PaperBrigadierProvider
          // Paper end
  
@@ -32,10 +32,10 @@ index 8e45f712968303b7864d61adbf7325142c83f582..b374f41b20b3ffa2ec2874a06715661f
          // Attempt to detect vectorization
          try {
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index 947ad1463a973546bdaf68654086291a3414aa9b..69bde99acff7bdae9af7cfe60e2221675a68b858 100644
+index 41013054b6046a17a94d3e181b3ffbc7a3824cd2..c2ad33e5fbce8a16498dde2bfd555012660af969 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-@@ -238,6 +238,8 @@ import org.bukkit.scoreboard.Criteria;
+@@ -251,6 +251,8 @@ import org.bukkit.scoreboard.Criteria;
  import org.bukkit.structure.StructureManager;
  import org.bukkit.util.StringUtil;
  import org.bukkit.util.permissions.DefaultPermissions;

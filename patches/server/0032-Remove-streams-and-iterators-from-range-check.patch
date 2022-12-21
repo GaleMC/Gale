@@ -31,10 +31,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 diff --git a/src/main/java/net/minecraft/server/level/ChunkMap.java b/src/main/java/net/minecraft/server/level/ChunkMap.java
-index 55d8ced734a408c990c6c4fbc81707bcb1f27daa..de844a1fefa9d4d0da6db105565cbb37f52de8c4 100644
+index 2212f9f48636357265d8e44aba415ea4f09f1fe7..eea6753afdd7e9d52746d0decb5cde63044012b5 100644
 --- a/src/main/java/net/minecraft/server/level/ChunkMap.java
 +++ b/src/main/java/net/minecraft/server/level/ChunkMap.java
-@@ -1589,8 +1589,30 @@ public class ChunkMap extends ChunkStorage implements ChunkHolder.PlayerProvider
+@@ -1624,8 +1624,30 @@ public class ChunkMap extends ChunkStorage implements ChunkHolder.PlayerProvider
              return ChunkMap.this.level.getServer().getScaledTrackingDistance(initialDistance);
          }
  
@@ -65,7 +65,7 @@ index 55d8ced734a408c990c6c4fbc81707bcb1f27daa..de844a1fefa9d4d0da6db105565cbb37
              Iterator iterator = this.entity.getIndirectPassengers().iterator();
  
              while (iterator.hasNext()) {
-@@ -1602,6 +1624,9 @@ public class ChunkMap extends ChunkStorage implements ChunkHolder.PlayerProvider
+@@ -1637,6 +1659,9 @@ public class ChunkMap extends ChunkStorage implements ChunkHolder.PlayerProvider
                      i = j;
                  }
              }

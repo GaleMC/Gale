@@ -13,7 +13,7 @@ As part of: Lithium (https://github.com/CaffeineMC/lithium-fabric)
 Licensed under: LGPL-3.0 (https://www.gnu.org/licenses/lgpl-3.0.html)
 
 diff --git a/src/main/java/net/minecraft/world/entity/raid/Raid.java b/src/main/java/net/minecraft/world/entity/raid/Raid.java
-index 6a0a1731fd6804eb69d3641213712d31bce085b2..5f2a168e3e282cdb1d2e9cd3fd956eedaf4b4688 100644
+index 08b18428e867baf14f551beb72e3875b0c420639..ef142a54f4b7277c3952e0730bdeaedfe218c78f 100644
 --- a/src/main/java/net/minecraft/world/entity/raid/Raid.java
 +++ b/src/main/java/net/minecraft/world/entity/raid/Raid.java
 @@ -107,6 +107,7 @@ public class Raid {
@@ -37,7 +37,7 @@ index 6a0a1731fd6804eb69d3641213712d31bce085b2..5f2a168e3e282cdb1d2e9cd3fd956eed
          if (!this.isStopped()) {
              if (this.status == Raid.RaidStatus.ONGOING) {
                  boolean flag = this.active;
-@@ -626,6 +633,12 @@ public class Raid {
+@@ -638,6 +645,12 @@ public class Raid {
      }
  
      public void updateBossbar() {

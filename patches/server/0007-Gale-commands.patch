@@ -13,10 +13,10 @@ As part of: Paper (https://github.com/PaperMC/Paper)
 Licensed under: MIT (https://opensource.org/licenses/MIT)
 
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index 661794310eb10d4b9fe29c9445abd57826214d41..d2b14c65e6a925ba4a29d48bcedc0d9504092052 100644
+index 98f00bdc85ade95ccbfaa1999c70ac650192345d..9c3ccbbd657d1605b8fabb6e01c11ff31f39a17e 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -50,6 +50,7 @@ import net.minecraft.world.level.GameRules;
+@@ -45,6 +45,7 @@ import net.minecraft.world.level.GameRules;
  import net.minecraft.world.level.GameType;
  import net.minecraft.world.level.block.entity.SkullBlockEntity;
  import net.minecraft.world.level.storage.LevelStorageSource;
@@ -24,7 +24,7 @@ index 661794310eb10d4b9fe29c9445abd57826214d41..d2b14c65e6a925ba4a29d48bcedc0d95
  import org.slf4j.Logger;
  
  // CraftBukkit start
-@@ -221,6 +222,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
+@@ -216,6 +217,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
          org.spigotmc.WatchdogThread.doStart(org.spigotmc.SpigotConfig.timeoutTime, org.spigotmc.SpigotConfig.restartOnCrash);
          thread.start(); // Paper - start console thread after MinecraftServer.console & PaperConfig are initialized
          io.papermc.paper.command.PaperCommands.registerCommands(this);

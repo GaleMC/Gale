@@ -37,10 +37,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 diff --git a/src/main/java/net/minecraft/world/entity/item/FallingBlockEntity.java b/src/main/java/net/minecraft/world/entity/item/FallingBlockEntity.java
-index b2d1a17867cdbaad0c6e5c2376c716f9461af124..9d8a8dd2e6ec76beb6552266da7ae7c1229516fd 100644
+index 72f1866226269396ba0f0c1be269e237925d9322..ea099989d633764489396a48d52db9f6023a20af 100644
 --- a/src/main/java/net/minecraft/world/entity/item/FallingBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/item/FallingBlockEntity.java
-@@ -128,7 +128,7 @@ public class FallingBlockEntity extends Entity {
+@@ -130,7 +130,7 @@ public class FallingBlockEntity extends Entity {
      @Override
      public void tick() {
          // Paper start - fix sand duping
@@ -49,7 +49,7 @@ index b2d1a17867cdbaad0c6e5c2376c716f9461af124..9d8a8dd2e6ec76beb6552266da7ae7c1
              return;
          }
          // Paper end - fix sand duping
-@@ -145,7 +145,7 @@ public class FallingBlockEntity extends Entity {
+@@ -147,7 +147,7 @@ public class FallingBlockEntity extends Entity {
              this.move(MoverType.SELF, this.getDeltaMovement());
  
              // Paper start - fix sand duping

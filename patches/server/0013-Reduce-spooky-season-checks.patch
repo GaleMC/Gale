@@ -31,7 +31,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 diff --git a/src/main/java/net/minecraft/world/entity/ambient/Bat.java b/src/main/java/net/minecraft/world/entity/ambient/Bat.java
-index def01d221f36d71640bf4ef982a984909aacc6da..2180277e77311a0bf087186d3fca8f67052af121 100644
+index 320c558bbe80d4bbc641e895ec43cfa2b45e8d70..c4c048fffd3fb6bcce99cb46c09435b17ed075af 100644
 --- a/src/main/java/net/minecraft/world/entity/ambient/Bat.java
 +++ b/src/main/java/net/minecraft/world/entity/ambient/Bat.java
 @@ -28,6 +28,7 @@ import net.minecraft.world.level.LevelAccessor;
@@ -42,7 +42,7 @@ index def01d221f36d71640bf4ef982a984909aacc6da..2180277e77311a0bf087186d3fca8f67
  
  public class Bat extends AmbientCreature {
  
-@@ -253,12 +254,25 @@ public class Bat extends AmbientCreature {
+@@ -256,12 +257,25 @@ public class Bat extends AmbientCreature {
          }
      }
  

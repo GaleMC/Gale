@@ -37,10 +37,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 9de597c11c3bd0f23e87c3a6187b2036987356e0..c171c272d5fcf0900514e18eafaa1b5ee019c74d 100644
+index 8f23c46faf83c945516632824ba4e07c4597ad67..406c71f84201bff5e46d49aaec10ae7efc419ebc 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -9,6 +9,8 @@ import com.mojang.datafixers.util.Pair;
+@@ -7,6 +7,8 @@ import com.mojang.brigadier.StringReader;
  import com.mojang.logging.LogUtils;
  import it.unimi.dsi.fastutil.ints.Int2ObjectMap.Entry;
  import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
@@ -48,8 +48,8 @@ index 9de597c11c3bd0f23e87c3a6187b2036987356e0..c171c272d5fcf0900514e18eafaa1b5e
 +import it.unimi.dsi.fastutil.longs.LongList;
  import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
  import it.unimi.dsi.fastutil.objects.ObjectIterator;
- import java.time.Instant;
-@@ -258,6 +260,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+ import java.time.Duration;
+@@ -259,6 +261,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
      private long keepAliveTime = Util.getMillis();
      private boolean keepAlivePending;
      private long keepAliveChallenge;
@@ -57,9 +57,9 @@ index 9de597c11c3bd0f23e87c3a6187b2036987356e0..c171c272d5fcf0900514e18eafaa1b5e
      // CraftBukkit start - multithreaded fields
      private final AtomicInteger chatSpamTickCount = new AtomicInteger();
      private final java.util.concurrent.atomic.AtomicInteger tabSpamLimiter = new java.util.concurrent.atomic.AtomicInteger(); // Paper - configurable tab spam limits
-@@ -294,7 +297,10 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
-     private final SignedMessageChain.Decoder signedMessageDecoder;
-     private final LastSeenMessagesValidator lastSeenMessagesValidator;
+@@ -296,7 +299,10 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+     private final LastSeenMessagesValidator lastSeenMessages;
+     private final MessageSignatureCache messageSignatureCache;
      private final FutureChain chatMessageChain;
 -    private static final long KEEPALIVE_LIMIT = Long.getLong("paper.playerconnection.keepalive", 30) * 1000; // Paper - provide property to set keepalive limit
 +    // Gale start - Purpur - send multiple keep-alive packets
@@ -69,7 +69,7 @@ index 9de597c11c3bd0f23e87c3a6187b2036987356e0..c171c272d5fcf0900514e18eafaa1b5e
      private static final int MAX_SIGN_LINE_LENGTH = Integer.getInteger("Paper.maxSignLength", 80); // Paper
  
      private String clientBrandName = null; // Paper - Brand name
-@@ -405,6 +411,21 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -400,6 +406,21 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
          long currentTime = Util.getMillis();
          long elapsedTime = currentTime - this.keepAliveTime;
  
@@ -91,7 +91,7 @@ index 9de597c11c3bd0f23e87c3a6187b2036987356e0..c171c272d5fcf0900514e18eafaa1b5e
          if (this.keepAlivePending) {
              if (!this.processedDisconnect && elapsedTime >= KEEPALIVE_LIMIT) { // check keepalive limit, don't fire if already disconnected
                  ServerGamePacketListenerImpl.LOGGER.warn("{} was kicked due to keepalive timeout!", this.player.getScoreboardName()); // more info
-@@ -3598,6 +3619,16 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -3459,6 +3480,16 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
  
      @Override
      public void handleKeepAlive(ServerboundKeepAlivePacket packet) {

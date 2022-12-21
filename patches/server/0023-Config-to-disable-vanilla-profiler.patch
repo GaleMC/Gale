@@ -31,10 +31,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 121495135676a7de4d1e6b06cb6c77e5523a2b0d..134c8b2acfaa2a8d7cd9a26a85ee4d0227f1a2cd 100644
+index 3898e8a92edca52bc7d4e9ac061e24baceaec608..4e2cb2923d1d2a337ffda5b1990d5c9caf47b779 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -149,6 +149,7 @@ import net.minecraft.world.phys.Vec2;
+@@ -160,6 +160,7 @@ import net.minecraft.world.phys.Vec2;
  import net.minecraft.world.phys.Vec3;
  import org.apache.commons.lang3.Validate;
  import org.galemc.gale.configuration.GaleConfigurations;
@@ -42,7 +42,7 @@ index 121495135676a7de4d1e6b06cb6c77e5523a2b0d..134c8b2acfaa2a8d7cd9a26a85ee4d02
  import org.slf4j.Logger;
  
  // CraftBukkit start
-@@ -2230,6 +2231,11 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -2243,6 +2244,11 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
      }
  
      public ProfilerFiller getProfiler() {
@@ -55,10 +55,10 @@ index 121495135676a7de4d1e6b06cb6c77e5523a2b0d..134c8b2acfaa2a8d7cd9a26a85ee4d02
      }
  
 diff --git a/src/main/java/net/minecraft/world/level/Level.java b/src/main/java/net/minecraft/world/level/Level.java
-index 76a6e5d1230e2f68f7ff9c0e3f54762050f24f03..3e4f2b6a5c269df2bb64f879dd75731c2af227e7 100644
+index 89f0914a2cc4e06363a0fb63774efc484ebcdab0..3adad35d0e63091a53e639c7027ec784d18bc4e7 100644
 --- a/src/main/java/net/minecraft/world/level/Level.java
 +++ b/src/main/java/net/minecraft/world/level/Level.java
-@@ -92,6 +92,7 @@ import org.bukkit.craftbukkit.block.data.CraftBlockData;
+@@ -91,6 +91,7 @@ import org.bukkit.craftbukkit.block.data.CraftBlockData;
  import org.bukkit.craftbukkit.util.CraftSpawnCategory;
  import org.bukkit.entity.SpawnCategory;
  import org.bukkit.event.block.BlockPhysicsEvent;
@@ -66,7 +66,7 @@ index 76a6e5d1230e2f68f7ff9c0e3f54762050f24f03..3e4f2b6a5c269df2bb64f879dd75731c
  import org.galemc.gale.configuration.GaleWorldConfiguration;
  // CraftBukkit end
  
-@@ -1474,6 +1475,11 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
+@@ -1536,6 +1537,11 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
      }
  
      public ProfilerFiller getProfiler() {

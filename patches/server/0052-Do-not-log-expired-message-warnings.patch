@@ -6,19 +6,27 @@ Subject: [PATCH] Do not log expired message warnings
 License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
 Gale - https://galemc.org
 
-diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index dd9d52552cc61729cdcd37caa87079e5026964d7..3c63449a36c6882b6e47f69f3cdf83e874a9a694 100644
---- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-+++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -2614,7 +2614,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
-         }
+diff --git a/src/main/java/net/minecraft/network/chat/SignedMessageChain.java b/src/main/java/net/minecraft/network/chat/SignedMessageChain.java
+index c0a80824a0307ea673805015119cc834b268f0dc..d7c6e90ccf3a8ce58e5533c5158ce62668cbcb78 100644
+--- a/src/main/java/net/minecraft/network/chat/SignedMessageChain.java
++++ b/src/main/java/net/minecraft/network/chat/SignedMessageChain.java
+@@ -8,6 +8,7 @@ import net.minecraft.util.SignatureUpdater;
+ import net.minecraft.util.SignatureValidator;
+ import net.minecraft.util.Signer;
+ import net.minecraft.world.entity.player.ProfilePublicKey;
++import org.galemc.gale.configuration.GaleGlobalConfiguration;
+ import org.slf4j.Logger;
  
-         if (message.hasExpiredServer(Instant.now())) {
--            ServerGamePacketListenerImpl.LOGGER.warn("{} sent expired chat: '{}'. Is the client/server system time unsynchronized? c: {} s: {}", this.player.getName().getString(), message.signedContent().plain(), message.timeStamp().getEpochSecond(), Instant.now().getEpochSecond()); // Paper
-+            if (GaleGlobalConfiguration.get().logToConsole.chat.expiredMessageWarning) ServerGamePacketListenerImpl.LOGGER.warn("{} sent expired chat: '{}'. Is the client/server system time unsynchronized? c: {} s: {}", this.player.getName().getString(), message.signedContent().plain(), message.timeStamp().getEpochSecond(), Instant.now().getEpochSecond()); // Paper // Gale - do not log expired message warnings
-         }
+ public class SignedMessageChain {
+@@ -42,7 +43,7 @@ public class SignedMessageChain {
+                     throw new SignedMessageChain.DecodeException(Component.translatable("multiplayer.disconnect.unsigned_chat"), true, org.bukkit.event.player.PlayerKickEvent.Cause.UNSIGNED_CHAT); // Paper - kick event causes
+                 } else {
+                     if (playerChatMessage.hasExpiredServer(Instant.now())) {
+-                        LOGGER.warn("Received expired chat: '{}'. Is the client/server system time unsynchronized?", (Object)body.content());
++                        if (GaleGlobalConfiguration.get().logToConsole.chat.expiredMessageWarning) LOGGER.warn("Received expired chat: '{}'. Is the client/server system time unsynchronized?", (Object)body.content()); // Gale - do not log expired message warnings
+                     }
  
-         return true;
+                     return playerChatMessage;
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 index 0f276a6a3521e97afbb20ea5421a16180f626d45..6c6f9fabb208baf5419c5dd6290b83a7d983c6d7 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java

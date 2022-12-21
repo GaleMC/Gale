@@ -37,10 +37,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 diff --git a/src/main/java/org/bukkit/Server.java b/src/main/java/org/bukkit/Server.java
-index f502bf2d511df86bc3c0b6a28682484e07a14120..ed787f736e36c08e10dfdca204011381123f1949 100644
+index 7d0baa4306fecb79d069a7f5aed81e12a80a1f0e..bf387ffaca8e245af1b06adcb73b8a118aeb0263 100644
 --- a/src/main/java/org/bukkit/Server.java
 +++ b/src/main/java/org/bukkit/Server.java
-@@ -1751,6 +1751,15 @@ public interface Server extends PluginMessageRecipient, net.kyori.adventure.audi
+@@ -1753,6 +1753,15 @@ public interface Server extends PluginMessageRecipient, net.kyori.adventure.audi
  
      // Gale start - specific interval TPS API
  

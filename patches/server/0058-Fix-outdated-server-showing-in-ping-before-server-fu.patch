@@ -38,10 +38,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 diff --git a/src/main/java/net/minecraft/server/network/ServerStatusPacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerStatusPacketListenerImpl.java
-index f90eb6c50208879c4a2d5ad7e4181c06d38076f8..c374f2baff54b5ab1c8fdc1cedcecf2126da1783 100644
+index 0725c39d9cbec3282f93975a0ae76f060f70d86d..c222fc336c997fea2204a7960055aa706605dc22 100644
 --- a/src/main/java/net/minecraft/server/network/ServerStatusPacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerStatusPacketListenerImpl.java
-@@ -153,6 +153,7 @@ public class ServerStatusPacketListenerImpl implements ServerStatusPacketListene
+@@ -152,6 +152,7 @@ public class ServerStatusPacketListenerImpl implements ServerStatusPacketListene
              this.connection.send(new ClientboundStatusResponsePacket(ping));
              // CraftBukkit end
              */

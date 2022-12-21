@@ -13,7 +13,7 @@ As part of: Lithium (https://github.com/CaffeineMC/lithium-fabric)
 Licensed under: LGPL-3.0 (https://www.gnu.org/licenses/lgpl-3.0.html)
 
 diff --git a/src/main/java/net/minecraft/world/entity/ai/attributes/AttributeMap.java b/src/main/java/net/minecraft/world/entity/ai/attributes/AttributeMap.java
-index 81eb5e47715312afbedce0786e9a0d4264d32cbd..b0862a0126c642b12d3e17045d39fb704406e295 100644
+index d1602af2d6e5d4dd8d8b44ab66bca39c60195093..c6f4e9e465e24a37b773b348feb24feb0ac3adf7 100644
 --- a/src/main/java/net/minecraft/world/entity/ai/attributes/AttributeMap.java
 +++ b/src/main/java/net/minecraft/world/entity/ai/attributes/AttributeMap.java
 @@ -1,8 +1,6 @@
@@ -33,9 +33,9 @@ index 81eb5e47715312afbedce0786e9a0d4264d32cbd..b0862a0126c642b12d3e17045d39fb70
 +import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
 +import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
  import net.minecraft.Util;
- import net.minecraft.core.Registry;
- import net.minecraft.nbt.CompoundTag;
-@@ -19,8 +20,10 @@ import org.slf4j.Logger;
+ import net.minecraft.core.Holder;
+ import net.minecraft.core.registries.BuiltInRegistries;
+@@ -20,8 +21,10 @@ import org.slf4j.Logger;
  
  public class AttributeMap {
      private static final Logger LOGGER = LogUtils.getLogger();

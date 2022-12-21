@@ -28,22 +28,22 @@ but is so much cheaper than the suffocation check that it's worth
 keeping it.
 
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index 6fa0f38aff0c5f4ea4961cabf070b8c6463a4a22..5add41e429b176195a10115744305a2358b5fb7f 100644
+index 1ef947f46f63589ce0e11c8db357cb817eecbbd2..b109c55a31a9e5a0813e360d8a3c1b13d1bfd416 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-@@ -400,7 +400,10 @@ public abstract class LivingEntity extends Entity {
-         if (this.isAlive()) {
+@@ -402,7 +402,10 @@ public abstract class LivingEntity extends Entity {
              boolean flag = this instanceof net.minecraft.world.entity.player.Player;
  
--            if (this.isInWall()) {
-+            // Gale start - Pufferfish - reduce in wall checks
-+            long checkStuckInWallInterval = this.level.galeConfig().smallOptimizations.reducedIntervals.checkStuckInWall;
-+            if ((checkStuckInWallInterval <= 1 || (tickCount % checkStuckInWallInterval == 0 && couldPossiblyBeHurt(1.0F))) && this.isInWall()) {
-+                // Gale end - Pufferfish - reduce in wall checks
-                 this.hurt(DamageSource.IN_WALL, 1.0F);
-             } else if (flag && !this.level.getWorldBorder().isWithinBounds(this.getBoundingBox())) {
-                 double d0 = this.level.getWorldBorder().getDistanceToBorder(this) + this.level.getWorldBorder().getDamageSafeZone();
-@@ -1328,6 +1331,15 @@ public abstract class LivingEntity extends Entity {
+             if (!this.level.isClientSide) {
+-                if (this.isInWall()) {
++                // Gale start - Pufferfish - reduce in wall checks
++                long checkStuckInWallInterval = this.level.galeConfig().smallOptimizations.reducedIntervals.checkStuckInWall;
++                if ((checkStuckInWallInterval <= 1 || (tickCount % checkStuckInWallInterval == 0 && couldPossiblyBeHurt(1.0F))) && this.isInWall()) {
++                    // Gale end - Pufferfish - reduce in wall checks
+                     this.hurt(DamageSource.IN_WALL, 1.0F);
+                 } else if (flag && !this.level.getWorldBorder().isWithinBounds(this.getBoundingBox())) {
+                     double d0 = this.level.getWorldBorder().getDistanceToBorder(this) + this.level.getWorldBorder().getDamageSafeZone();
+@@ -1327,6 +1330,15 @@ public abstract class LivingEntity extends Entity {
          return this.getHealth() <= 0.0F;
      }
  

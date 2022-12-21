@@ -42,10 +42,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 diff --git a/src/main/java/net/minecraft/world/entity/projectile/AbstractArrow.java b/src/main/java/net/minecraft/world/entity/projectile/AbstractArrow.java
-index def3b3f8dac4b28eaaafdd9bc2e7f4b9ec9d6855..ca28f41a5a0405adf07cc2898d53a77f5c7b3e8c 100644
+index e7ef36dac559d03d127cf45373a7e0dc935b80a8..80b3f0a4ab3e57674a709ee9765df9710aa40bce 100644
 --- a/src/main/java/net/minecraft/world/entity/projectile/AbstractArrow.java
 +++ b/src/main/java/net/minecraft/world/entity/projectile/AbstractArrow.java
-@@ -322,7 +322,7 @@ public abstract class AbstractArrow extends Projectile {
+@@ -323,7 +323,7 @@ public abstract class AbstractArrow extends Projectile {
          Vec3 vec3d = this.getDeltaMovement();
  
          this.setDeltaMovement(vec3d.multiply((double) (this.random.nextFloat() * 0.2F), (double) (this.random.nextFloat() * 0.2F), (double) (this.random.nextFloat() * 0.2F)));

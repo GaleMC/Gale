@@ -13,26 +13,29 @@ As part of: Lithium (https://github.com/CaffeineMC/lithium-fabric)
 Licensed under: LGPL-3.0 (https://www.gnu.org/licenses/lgpl-3.0.html)
 
 diff --git a/src/main/java/net/minecraft/world/level/levelgen/NoiseBasedChunkGenerator.java b/src/main/java/net/minecraft/world/level/levelgen/NoiseBasedChunkGenerator.java
-index cf87490a446285132daaf9d90154ac6d477a62fe..0d1f6ba9d337d2b4efe4e0b58b687d7b7cacae7a 100644
+index 6b84633bf6956406d2e2c5dd32fa358f41ccc890..6c93e621d584927076b886c719e93039019e32be 100644
 --- a/src/main/java/net/minecraft/world/level/levelgen/NoiseBasedChunkGenerator.java
 +++ b/src/main/java/net/minecraft/world/level/levelgen/NoiseBasedChunkGenerator.java
-@@ -67,6 +67,7 @@ public final class NoiseBasedChunkGenerator extends ChunkGenerator {
-     public final Registry<NormalNoise.NoiseParameters> noises;
+@@ -62,12 +62,17 @@ public final class NoiseBasedChunkGenerator extends ChunkGenerator {
+     private static final BlockState AIR = Blocks.AIR.defaultBlockState();
      public final Holder<NoiseGeneratorSettings> settings;
-     private final Aquifer.FluidPicker globalFluidPicker;
+     private final Supplier<Aquifer.FluidPicker> globalFluidPicker;
 +    private int cachedSeaLevel; // Gale - Lithium - cache world generator sea level
  
-     public NoiseBasedChunkGenerator(Registry<StructureSet> structureSetRegistry, Registry<NormalNoise.NoiseParameters> noiseRegistry, BiomeSource populationSource, Holder<NoiseGeneratorSettings> settings) {
-         super(structureSetRegistry, Optional.empty(), populationSource);
-@@ -83,6 +84,7 @@ public final class NoiseBasedChunkGenerator extends ChunkGenerator {
-         this.globalFluidPicker = (j, k, l) -> {
-             return k < Math.min(-54, i) ? aquifer_b : aquifer_b1;
-         };
-+        this.cachedSeaLevel = this.settings.value().seaLevel(); // Gale - Lithium - cache world generator sea level
+     public NoiseBasedChunkGenerator(BiomeSource biomeSource, Holder<NoiseGeneratorSettings> settings) {
+         super(biomeSource);
+         this.settings = settings;
+         this.globalFluidPicker = Suppliers.memoize(() -> {
+-            return NoiseBasedChunkGenerator.createFluidPicker((NoiseGeneratorSettings) settings.value());
++            // Gale start - Lithium - cache world generator sea level
++            var fluidPicker = NoiseBasedChunkGenerator.createFluidPicker((NoiseGeneratorSettings) settings.value());
++            this.cachedSeaLevel = settings.value().seaLevel();
++            return fluidPicker;
++            // Gale end - Lithium - cache world generator sea level
+         });
      }
  
-     @Override
-@@ -400,7 +402,7 @@ public final class NoiseBasedChunkGenerator extends ChunkGenerator {
+@@ -397,7 +402,7 @@ public final class NoiseBasedChunkGenerator extends ChunkGenerator {
  
      @Override
      public int getSeaLevel() {

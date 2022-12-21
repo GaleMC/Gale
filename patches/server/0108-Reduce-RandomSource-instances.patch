@@ -26,10 +26,10 @@ index 23dcdc71a8a6fd5472cdc1c22331b56c6bb3ded9..c3f88980f1ea2f7b04ad110494962725
              double d1 = (double) (center.y - maxRange);
              double d2 = (double) (center.x + maxRange);
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 9c9b4d7e0637348a94befce9377fdb69c1239694..88d1659f9ada662ada2d4c0c540fc8a0d3b0005a 100644
+index c0b0a7fdb75266a7064d54bda6441953184ecc64..1a272d716a23ddf6bd7b8c2733199c5729f333c5 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-@@ -387,7 +387,7 @@ public class ServerPlayer extends Player {
+@@ -392,7 +392,7 @@ public class ServerPlayer extends Player {
              long l = k * k;
              int i1 = l > 2147483647L ? Integer.MAX_VALUE : (int) l;
              int j1 = this.getCoprime(i1);
@@ -38,7 +38,7 @@ index 9c9b4d7e0637348a94befce9377fdb69c1239694..88d1659f9ada662ada2d4c0c540fc8a0
  
              for (int l1 = 0; l1 < i1; ++l1) {
                  int i2 = (k1 + j1 * l1) % i1;
-@@ -424,7 +424,7 @@ public class ServerPlayer extends Player {
+@@ -429,7 +429,7 @@ public class ServerPlayer extends Player {
              long l = k * k;
              int i1 = l > 2147483647L ? Integer.MAX_VALUE : (int) l;
              int j1 = this.getCoprime(i1);
@@ -61,10 +61,10 @@ index 1ef089dbf83de35d875c00efdf468c397be56978..b9f5dc95f859acb8f8fd4739537485af
          }
  
 diff --git a/src/main/java/net/minecraft/world/entity/projectile/FishingHook.java b/src/main/java/net/minecraft/world/entity/projectile/FishingHook.java
-index f5886a88fd98ede5e85a91eccccb05ac33eb40e2..cf6499a232d57ffc5337a483086f13920cf95189 100644
+index 7f3a7a769afec8449547c26453112064b9bcb04a..3da68454b8114cd52554670280107d5b5b156eab 100644
 --- a/src/main/java/net/minecraft/world/entity/projectile/FishingHook.java
 +++ b/src/main/java/net/minecraft/world/entity/projectile/FishingHook.java
-@@ -79,7 +79,7 @@ public class FishingHook extends Projectile {
+@@ -80,7 +80,7 @@ public class FishingHook extends Projectile {
  
      private FishingHook(EntityType<? extends FishingHook> type, Level world, int luckOfTheSeaLevel, int lureLevel) {
          super(type, world);
@@ -74,7 +74,7 @@ index f5886a88fd98ede5e85a91eccccb05ac33eb40e2..cf6499a232d57ffc5337a483086f1392
          this.currentState = FishingHook.FishHookState.FLYING;
          this.noCulling = true;
 diff --git a/src/main/java/net/minecraft/world/entity/raid/Raid.java b/src/main/java/net/minecraft/world/entity/raid/Raid.java
-index d56e7e8cacdabb8f009eaba8164f65f4d824a282..c2dca83fb43244313c4ddaf93c5ded5f47b06ae0 100644
+index b13ef853419d2783d09b3e685b9b506a4ff5676e..7a7e87954868c3eb267d3255652d67d34f7b04d2 100644
 --- a/src/main/java/net/minecraft/world/entity/raid/Raid.java
 +++ b/src/main/java/net/minecraft/world/entity/raid/Raid.java
 @@ -111,7 +111,7 @@ public class Raid {
@@ -96,10 +96,10 @@ index d56e7e8cacdabb8f009eaba8164f65f4d824a282..c2dca83fb43244313c4ddaf93c5ded5f
          this.level = world;
          this.id = nbt.getInt("Id");
 diff --git a/src/main/java/net/minecraft/world/level/Explosion.java b/src/main/java/net/minecraft/world/level/Explosion.java
-index 31708d1e94b557896d42199aa0bc6ed26a4c6d8a..22ded3f273ea0c198a8caa33472fee11fc1a97cb 100644
+index e7ce14ab0732034107e735787354a6fb0ec90f54..d300629f99332b00c06264ab09a1dbac175d93b8 100644
 --- a/src/main/java/net/minecraft/world/level/Explosion.java
 +++ b/src/main/java/net/minecraft/world/level/Explosion.java
-@@ -85,7 +85,7 @@ public class Explosion {
+@@ -81,7 +81,7 @@ public class Explosion {
      }
  
      public Explosion(Level world, @Nullable Entity entity, @Nullable DamageSource damageSource, @Nullable ExplosionDamageCalculator behavior, double x, double y, double z, float power, boolean createFire, Explosion.BlockInteraction destructionType) {
@@ -109,10 +109,10 @@ index 31708d1e94b557896d42199aa0bc6ed26a4c6d8a..22ded3f273ea0c198a8caa33472fee11
          this.hitPlayers = Maps.newHashMap();
          this.level = world;
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/TheEndGatewayBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/TheEndGatewayBlockEntity.java
-index 8f3fb24afd3df8e9e4caa2917f598fcf74289726..6ed3ed91671c151d8517cd4e208112324ca45006 100644
+index 2a596cc374206a85bb692f5e09ee2dd83cf6d1b1..74686aa52113fcd0cbd5531e4161f6a1993dba60 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/TheEndGatewayBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/TheEndGatewayBlockEntity.java
-@@ -355,7 +355,7 @@ public class TheEndGatewayBlockEntity extends TheEndPortalBlockEntity {
+@@ -361,7 +361,7 @@ public class TheEndGatewayBlockEntity extends TheEndPortalBlockEntity {
      }
  
      private static void spawnGatewayPortal(ServerLevel world, BlockPos pos, EndGatewayConfiguration config) {
@@ -122,19 +122,19 @@ index 8f3fb24afd3df8e9e4caa2917f598fcf74289726..6ed3ed91671c151d8517cd4e20811232
  
      @Override
 diff --git a/src/main/java/net/minecraft/world/level/dimension/end/EndDragonFight.java b/src/main/java/net/minecraft/world/level/dimension/end/EndDragonFight.java
-index a9052dd27005d244a96511fc5dbfa92f20a21f46..4d858d23feaee902bb0b04146d81919388f84457 100644
+index e9eb32469a5c03f7a3677ef50fd4541c1ed662ad..dc0eb8eb2bf39e33bdee4daa3647510d24535091 100644
 --- a/src/main/java/net/minecraft/world/level/dimension/end/EndDragonFight.java
 +++ b/src/main/java/net/minecraft/world/level/dimension/end/EndDragonFight.java
-@@ -406,7 +406,7 @@ public class EndDragonFight {
- 
-     private void spawnNewGateway(BlockPos pos) {
-         this.level.levelEvent(3000, pos, 0);
--        EndFeatures.END_GATEWAY_DELAYED.value().place(this.level, this.level.getChunkSource().getGenerator(), RandomSource.create(), pos);
-+        EndFeatures.END_GATEWAY_DELAYED.value().place(this.level, this.level.getChunkSource().getGenerator(), this.level.random, pos); // Gale - Patina - reduce RandomSource instances
+@@ -411,7 +411,7 @@ public class EndDragonFight {
+         this.level.registryAccess().registry(Registries.CONFIGURED_FEATURE).flatMap((registry) -> {
+             return registry.getHolder(EndFeatures.END_GATEWAY_DELAYED);
+         }).ifPresent((reference) -> {
+-            reference.value().place(this.level, this.level.getChunkSource().getGenerator(), RandomSource.create(), pos);
++            reference.value().place(this.level, this.level.getChunkSource().getGenerator(), this.level.random, pos); // Gale - Patina - reduce RandomSource instances
+         });
      }
  
-     public void spawnExitPortal(boolean previouslyKilled) {
-@@ -421,7 +421,7 @@ public class EndDragonFight {
+@@ -427,7 +427,7 @@ public class EndDragonFight {
              this.portalLocation = this.portalLocation.atY(this.level.getMinBuildHeight() + 1);
          }
          // Paper end
@@ -142,7 +142,7 @@ index a9052dd27005d244a96511fc5dbfa92f20a21f46..4d858d23feaee902bb0b04146d819193
 +        endPodiumFeature.place(FeatureConfiguration.NONE, this.level, this.level.getChunkSource().getGenerator(), this.level.random, this.portalLocation); // Gale - Patina - reduce RandomSource instances
      }
  
-     private EnderDragon createNewDragon() {
+     @Nullable
 diff --git a/src/main/java/net/minecraft/world/level/storage/loot/LootContext.java b/src/main/java/net/minecraft/world/level/storage/loot/LootContext.java
 index eb399244af70c8fe735657d429d883c48215af0a..e78a8d68c4af056af9e1452f76651fea545189ba 100644
 --- a/src/main/java/net/minecraft/world/level/storage/loot/LootContext.java

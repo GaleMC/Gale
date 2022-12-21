@@ -35,10 +35,10 @@ index 0000000000000000000000000000000000000000..451934fa8b97d4b0ce2bb994e18e8d47
 +
 +}
 diff --git a/src/main/java/net/minecraft/world/level/block/piston/PistonMovingBlockEntity.java b/src/main/java/net/minecraft/world/level/block/piston/PistonMovingBlockEntity.java
-index 4b61602a1d2d6817272e02cfd282ac5dabbd976d..c0a71e1b311f8a37909a61f10d202ef8d3658a5a 100644
+index 221c5d080d55326e458c1182823d6b49224ef498..329adee82a5cafbb0a9b2d1b6c7fed660135db97 100644
 --- a/src/main/java/net/minecraft/world/level/block/piston/PistonMovingBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/piston/PistonMovingBlockEntity.java
-@@ -52,6 +52,74 @@ public class PistonMovingBlockEntity extends BlockEntity {
+@@ -55,6 +55,74 @@ public class PistonMovingBlockEntity extends BlockEntity {
          this.extending = extending;
          this.isSourcePiston = source;
      }
@@ -113,7 +113,7 @@ index 4b61602a1d2d6817272e02cfd282ac5dabbd976d..c0a71e1b311f8a37909a61f10d202ef8
  
      @Override
      public CompoundTag getUpdateTag() {
-@@ -351,10 +419,27 @@ public class PistonMovingBlockEntity extends BlockEntity {
+@@ -355,10 +423,27 @@ public class PistonMovingBlockEntity extends BlockEntity {
              }
  
              float f = this.getExtendedProgress(this.progress);

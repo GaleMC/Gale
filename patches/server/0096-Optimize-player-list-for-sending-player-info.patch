@@ -37,10 +37,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index d2e6a92a44416bfaa161c78dd4b9a7b3ad78792a..a60db92d8c6afab40e12b3ac28241beac06bcf63 100644
+index 5d21b033ac5ee10efe77ae1fbff0585414bd2d74..42a79988c14770cb3b19d31f6df41a3d5cf14f9b 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
-@@ -1070,14 +1070,18 @@ public abstract class PlayerList {
+@@ -1080,14 +1080,18 @@ public abstract class PlayerList {
          // Gale start - Purpur - spread out sending all player info
          ServerPlayer[] sendAllPlayerInfoBucket = this.sendAllPlayerInfoBuckets[this.sendAllPlayerInfoIn];
          if (sendAllPlayerInfoBucket != null) {
@@ -48,7 +48,7 @@ index d2e6a92a44416bfaa161c78dd4b9a7b3ad78792a..a60db92d8c6afab40e12b3ac28241bea
 +            // Gale start - Purpur - optimize player list for sending player info
 +            for (ServerPlayer targetPlayer : sendAllPlayerInfoBucket) {
                  // Gale end - Purpur - spread out sending all player info
--                target.connection.send(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.UPDATE_LATENCY, this.players.stream().filter(new Predicate<ServerPlayer>() {
+-                target.connection.send(new ClientboundPlayerInfoUpdatePacket(EnumSet.of(ClientboundPlayerInfoUpdatePacket.Action.UPDATE_LATENCY), this.players.stream().filter(new Predicate<ServerPlayer>() {
 -                    @Override
 -                    public boolean test(ServerPlayer input) {
 -                        return target.getBukkitEntity().canSee(input.getBukkitEntity());
@@ -60,7 +60,7 @@ index d2e6a92a44416bfaa161c78dd4b9a7b3ad78792a..a60db92d8c6afab40e12b3ac28241bea
                      }
 -                }).collect(Collectors.toList())));
 +                }
-+                target.getHandle().connection.send(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.UPDATE_LATENCY, list));
++                target.getHandle().connection.send(new ClientboundPlayerInfoUpdatePacket(EnumSet.of(ClientboundPlayerInfoUpdatePacket.Action.UPDATE_LATENCY), list));
 +                // Gale end - Purpur - optimize player list for sending player info
                  // Gale start - Purpur - spread out sending all player info
              }

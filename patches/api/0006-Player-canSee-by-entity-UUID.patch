@@ -37,10 +37,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 diff --git a/src/main/java/org/bukkit/entity/Player.java b/src/main/java/org/bukkit/entity/Player.java
-index 1e27b9de47f111b9c000243214e22890e323f7fc..9ce603a0c905017f512260de110cf7d8d2097028 100644
+index 19995314b01f19c312efa2a4584ccfba2d700c52..0a5b8bd9726fd77ad0b8dd3412d2ef3b6231d46d 100644
 --- a/src/main/java/org/bukkit/entity/Player.java
 +++ b/src/main/java/org/bukkit/entity/Player.java
-@@ -1466,6 +1466,16 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
+@@ -1464,6 +1464,16 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      @org.jetbrains.annotations.ApiStatus.Experimental // Paper
      public boolean canSee(@NotNull Entity entity);
  

@@ -59,10 +59,10 @@ index fa56cd09102a89692b42f1d14257990508c5c720..fac07dda413002c12276131efbe4ee38
          setListData(vector);
      }
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 4311a2e22704606f7f2f0928df6dcbe65e3fa8d6..dccee7cb7075cba6877021ec0da1ba5603a00082 100644
+index 1307801779caa69bdf967134ecbfcb42764243ac..481522ecd677c12e09121aa1eb54531e6d1fda3d 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -1045,6 +1045,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1053,6 +1053,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
      private static final long MAX_CATCHUP_BUFFER = TICK_TIME * TPS * 60L;
      private long lastTick = 0;
      private long catchupTime = 0;
@@ -70,7 +70,7 @@ index 4311a2e22704606f7f2f0928df6dcbe65e3fa8d6..dccee7cb7075cba6877021ec0da1ba56
      public final RollingAverage tps1 = new RollingAverage(60);
      public final RollingAverage tps5 = new RollingAverage(60 * 5);
      public final RollingAverage tps15 = new RollingAverage(60 * 15);
-@@ -1148,6 +1149,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1155,6 +1156,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
                  {
                      final long diff = curTime - tickSection;
                      java.math.BigDecimal currentTps = TPS_BASE.divide(new java.math.BigDecimal(diff), 30, java.math.RoundingMode.HALF_UP);
@@ -79,10 +79,10 @@ index 4311a2e22704606f7f2f0928df6dcbe65e3fa8d6..dccee7cb7075cba6877021ec0da1ba56
                      tps5.add(currentTps, diff);
                      tps15.add(currentTps, diff);
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index 1aa9a73aed2851cc640945101623f6f448079234..cd685f4d0e5973b0c0a217c30235a4b88645694f 100644
+index 13871dcc503e50ed75e22ac015d97fb8f04385f5..506936f78081a73be3cce676c1a24f56b65ccd8f 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-@@ -2706,6 +2706,13 @@ public final class CraftServer implements Server {
+@@ -2730,6 +2730,13 @@ public final class CraftServer implements Server {
  
      // Gale start - specific interval TPS API
  

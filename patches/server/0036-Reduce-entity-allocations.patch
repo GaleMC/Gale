@@ -31,7 +31,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 81ebee2362550c9193b70b4d2c3454f7b01c0e3e..5a8d3cd8e3c1a4e901d321aab11698aed328b8bb 100644
+index 23ce63b70605fb672b56da55cf33b8e5a7566a94..e00c6d14d33b0b32ee77f68d5fc4b6fbc15e024a 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -413,6 +413,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
@@ -43,10 +43,10 @@ index 81ebee2362550c9193b70b4d2c3454f7b01c0e3e..5a8d3cd8e3c1a4e901d321aab11698ae
          return this.yRot;
      }
 diff --git a/src/main/java/net/minecraft/world/entity/ai/attributes/AttributeMap.java b/src/main/java/net/minecraft/world/entity/ai/attributes/AttributeMap.java
-index 692524a69d43dcf52ae1b0f7f593fc53f3878137..81eb5e47715312afbedce0786e9a0d4264d32cbd 100644
+index dd1102d5291ef6f18e82400a6d8a0a376cc071e9..d1602af2d6e5d4dd8d8b44ab66bca39c60195093 100644
 --- a/src/main/java/net/minecraft/world/entity/ai/attributes/AttributeMap.java
 +++ b/src/main/java/net/minecraft/world/entity/ai/attributes/AttributeMap.java
-@@ -22,9 +22,11 @@ public class AttributeMap {
+@@ -23,9 +23,11 @@ public class AttributeMap {
      private final Map<Attribute, AttributeInstance> attributes = Maps.newHashMap();
      private final Set<AttributeInstance> dirtyAttributes = Sets.newHashSet();
      private final AttributeSupplier supplier;
@@ -58,7 +58,7 @@ index 692524a69d43dcf52ae1b0f7f593fc53f3878137..81eb5e47715312afbedce0786e9a0d42
      }
  
      private void onAttributeModified(AttributeInstance instance) {
-@@ -44,11 +46,10 @@ public class AttributeMap {
+@@ -45,11 +47,10 @@ public class AttributeMap {
          }).collect(Collectors.toList());
      }
  
@@ -71,4 +71,4 @@ index 692524a69d43dcf52ae1b0f7f593fc53f3878137..81eb5e47715312afbedce0786e9a0d42
 +        return this.attributes.computeIfAbsent(attribute, this.createInstance); // Gale - Airplane - reduce entity allocations - cache lambda, as for some reason java allocates it anyways
      }
  
-     public boolean hasAttribute(Attribute attribute) {
+     @Nullable

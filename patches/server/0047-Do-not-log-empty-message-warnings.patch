@@ -7,26 +7,27 @@ License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 0d72941a124a6fddad70362b25647743e601aafd..dd9d52552cc61729cdcd37caa87079e5026964d7 100644
+index 4f828048114172c399c6ce7bfa4bead007473269..e09c18580ca31644112bae38a4c52a9a51896aec 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -185,6 +185,7 @@ import net.minecraft.world.phys.shapes.BooleanOp;
+@@ -182,6 +182,8 @@ import net.minecraft.world.phys.Vec3;
+ import net.minecraft.world.phys.shapes.BooleanOp;
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
- import org.apache.commons.lang3.StringUtils;
++import org.apache.commons.lang3.StringUtils;
 +import org.galemc.gale.configuration.GaleGlobalConfiguration;
  import org.slf4j.Logger;
  
  // CraftBukkit start
-@@ -2573,7 +2574,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -2538,7 +2540,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
          // CraftBukkit start
-         String s = message.signedContent().plain();
+         String s = message.signedContent();
          if (s.isEmpty()) {
 -            ServerGamePacketListenerImpl.LOGGER.warn(this.player.getScoreboardName() + " tried to send an empty message");
 +            if (GaleGlobalConfiguration.get().logToConsole.chat.emptyMessageWarning) ServerGamePacketListenerImpl.LOGGER.warn(this.player.getScoreboardName() + " tried to send an empty message"); // Gale - do not log empty message warnings
          } else if (this.getCraftPlayer().isConversing()) {
-             OutgoingPlayerChatMessage outgoing = OutgoingPlayerChatMessage.create(message);
-             outgoing.sendHeadersToRemainingPlayers(this.server.getPlayerList());
+             final String conversationInput = s;
+             this.server.processQueue.add(new Runnable() {
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 index c67adaa664bfe2b371f14efa83ea200b0e1006f0..f292156b411b4c0f5db8fa15c92df395acb6e901 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java

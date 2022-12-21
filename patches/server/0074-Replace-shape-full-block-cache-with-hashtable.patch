@@ -82,7 +82,7 @@ index 0000000000000000000000000000000000000000..48c32b224095f606669a38f0e200505a
 +
 +}
 diff --git a/src/main/java/net/minecraft/world/level/block/Block.java b/src/main/java/net/minecraft/world/level/block/Block.java
-index 2e65b44f10aeb44fd524a58e7eb815a566c1ad61..ee13a217a72a41d103789b66eef70bf351d1e624 100644
+index 7b71073027f4cf79736546500ededdfbb83d968e..0a3fff9fc22f76dcef9f108bceea4da39145745c 100644
 --- a/src/main/java/net/minecraft/world/level/block/Block.java
 +++ b/src/main/java/net/minecraft/world/level/block/Block.java
 @@ -11,6 +11,8 @@ import java.util.List;
@@ -94,7 +94,7 @@ index 2e65b44f10aeb44fd524a58e7eb815a566c1ad61..ee13a217a72a41d103789b66eef70bf3
  import net.minecraft.SharedConstants;
  import net.minecraft.Util;
  import net.minecraft.core.BlockPos;
-@@ -70,11 +72,12 @@ public class Block extends BlockBehaviour implements ItemLike {
+@@ -68,11 +70,12 @@ public class Block extends BlockBehaviour implements ItemLike {
      private static final Logger LOGGER = LogUtils.getLogger();
      private final Holder.Reference<Block> builtInRegistryHolder;
      public static final IdMapper<BlockState> BLOCK_STATE_REGISTRY = new IdMapper<>();
@@ -112,7 +112,7 @@ index 2e65b44f10aeb44fd524a58e7eb815a566c1ad61..ee13a217a72a41d103789b66eef70bf3
      public static final int UPDATE_NEIGHBORS = 1;
      public static final int UPDATE_CLIENTS = 2;
      public static final int UPDATE_INVISIBLE = 4;
-@@ -281,7 +284,7 @@ public class Block extends BlockBehaviour implements ItemLike {
+@@ -279,7 +282,7 @@ public class Block extends BlockBehaviour implements ItemLike {
      }
  
      public static boolean isShapeFullBlock(VoxelShape shape) {

@@ -190,10 +190,10 @@ index c5d5648f4ca603ef2b1df723b58f9caf4dd3c722..e45e6b44b2a8f2cdae6e0048a812b921
                  .completer(new ConsoleCommandCompleter(this.server))
                  .option(LineReader.Option.COMPLETE_IN_WORD, true);
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 6dc6c3bccb4ba34268a87b0754c87eb1e0df4135..18df8eab2e33a7cde7d12f111d3dbfcaeab3abd5 100644
+index 710ca7d3a5659953f64bc6dccdd93b43300961cc..83e161c50f12e10afa481a85001c1d223cba6d89 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -921,7 +921,13 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -922,7 +922,13 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          shutdownThread = Thread.currentThread();
          org.spigotmc.WatchdogThread.doStop(); // Paper
          if (!isSameThread()) {
@@ -218,10 +218,10 @@ index 6dc6c3bccb4ba34268a87b0754c87eb1e0df4135..18df8eab2e33a7cde7d12f111d3dbfca
  
      public SystemReport fillSystemReport(SystemReport details) {
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index 07eac5439164a7345476c55277538a152359630a..f394324450ec17c8df5a40d27eb0297b091e912f 100644
+index 47df6f4268a63118da8187f4102c876bd37d1680..454721406d596f65512eadf0e4b901990490f0c6 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-@@ -248,7 +248,7 @@ import javax.annotation.Nullable; // Paper
+@@ -261,7 +261,7 @@ import javax.annotation.Nullable; // Paper
  import javax.annotation.Nonnull; // Paper
  
  public final class CraftServer implements Server {
@@ -244,10 +244,10 @@ index cdefb2025eedea7e204d70d568adaf1c1ec4c03c..3997a7fec43e05b455644b4d58c68995
                  // (async tasks must live with race-conditions if they attempt to cancel between these few lines of code)
              }
 diff --git a/src/main/java/org/bukkit/craftbukkit/util/CraftMagicNumbers.java b/src/main/java/org/bukkit/craftbukkit/util/CraftMagicNumbers.java
-index 103ab25119bfcdd21eac7e1deeac025108e3c138..f39c6f0a837c1a8f6477b8be2f6f9f007a15d566 100644
+index 17336102d37a5ab05c3b3c93fcf46961d0ffa7e2..f5a7bbf467ce765ecf8ccc9e157bd51bbed72452 100644
 --- a/src/main/java/org/bukkit/craftbukkit/util/CraftMagicNumbers.java
 +++ b/src/main/java/org/bukkit/craftbukkit/util/CraftMagicNumbers.java
-@@ -435,7 +435,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
+@@ -433,7 +433,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
  
      @Override
      public com.destroystokyo.paper.util.VersionFetcher getVersionFetcher() {

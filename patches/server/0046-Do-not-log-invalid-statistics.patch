@@ -13,10 +13,10 @@ As part of: EmpireCraft (https://github.com/starlis/empirecraft)
 Licensed under: MIT (https://opensource.org/licenses/MIT)
 
 diff --git a/src/main/java/net/minecraft/stats/ServerStatsCounter.java b/src/main/java/net/minecraft/stats/ServerStatsCounter.java
-index c59f98ca3adfdd90cdc5999aeadbb0834efedc0f..efdea88c7d7de90330c2606435b52b60e204b56c 100644
+index 72946e324c575ef39f3939225b96b68f724da460..75e2a7d19a7056b73c1524902e44cca05b03d622 100644
 --- a/src/main/java/net/minecraft/stats/ServerStatsCounter.java
 +++ b/src/main/java/net/minecraft/stats/ServerStatsCounter.java
-@@ -35,6 +35,7 @@ import net.minecraft.server.level.ServerPlayer;
+@@ -36,6 +36,7 @@ import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.util.datafix.DataFixTypes;
  import net.minecraft.world.entity.player.Player;
  import org.apache.commons.io.FileUtils;
@@ -24,7 +24,7 @@ index c59f98ca3adfdd90cdc5999aeadbb0834efedc0f..efdea88c7d7de90330c2606435b52b60
  import org.slf4j.Logger;
  
  public class ServerStatsCounter extends StatsCounter {
-@@ -134,15 +135,15 @@ public class ServerStatsCounter extends StatsCounter {
+@@ -135,15 +136,15 @@ public class ServerStatsCounter extends StatsCounter {
                                              Util.ifElse(this.getStat(statisticwrapper, s2), (statistic) -> {
                                                  this.stats.put(statistic, nbttagcompound2.getInt(s2));
                                              }, () -> {

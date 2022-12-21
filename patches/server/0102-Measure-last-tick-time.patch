@@ -23,10 +23,10 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index dccee7cb7075cba6877021ec0da1ba5603a00082..0b3b1400e9546060b4ee35236741670aaa226820 100644
+index 481522ecd677c12e09121aa1eb54531e6d1fda3d..609d57dd7373531d35295152e543261e3b0fbe09 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -1095,6 +1095,11 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1103,6 +1103,11 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
  
      public static volatile RuntimeException chunkSystemCrash; // Paper - rewrite chunk system
  
@@ -38,7 +38,7 @@ index dccee7cb7075cba6877021ec0da1ba5603a00082..0b3b1400e9546060b4ee35236741670a
      protected void runServer() {
          try {
              long serverStartTime = Util.getNanos(); // Paper
-@@ -1172,7 +1177,9 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1179,7 +1184,9 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
                  this.nextTickTime += 50L;
                  this.startMetricsRecordingTick();
                  this.profiler.push("tick");
@@ -48,7 +48,7 @@ index dccee7cb7075cba6877021ec0da1ba5603a00082..0b3b1400e9546060b4ee35236741670a
                  this.profiler.popPush("nextTickWait");
                  this.mayHaveDelayedTasks = true;
                  this.delayedTasksMaxNextTickTime = Math.max(Util.getMillis() + 50L, this.nextTickTime);
-@@ -1288,9 +1295,11 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1295,9 +1302,11 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
  
      protected void waitUntilNextTick() {
          //this.executeAll(); // Paper - move this into the tick method for timings

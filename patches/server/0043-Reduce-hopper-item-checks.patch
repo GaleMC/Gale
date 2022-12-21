@@ -17,10 +17,10 @@ Licensed under: MIT (https://opensource.org/licenses/MIT)
 Only do an item "suck in" action once per second
 
 diff --git a/src/main/java/net/minecraft/world/entity/item/ItemEntity.java b/src/main/java/net/minecraft/world/entity/item/ItemEntity.java
-index 298b7b2d2e306a22a511a56934fd985cb5d9f7de..0b04f5342966d53dfef5441dd9f1acf62e5623d0 100644
+index 893eb4904df79a5fc629a0fc7a0c018548eeffb1..7b0374b6e22105e59b29995983a6ac50268c722e 100644
 --- a/src/main/java/net/minecraft/world/entity/item/ItemEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/item/ItemEntity.java
-@@ -19,11 +19,13 @@ import net.minecraft.world.entity.Entity;
+@@ -10,11 +10,13 @@ import net.minecraft.world.entity.Entity;
  import net.minecraft.world.entity.EntityType;
  import net.minecraft.world.entity.MoverType;
  import net.minecraft.world.entity.player.Player;
@@ -32,9 +32,9 @@ index 298b7b2d2e306a22a511a56934fd985cb5d9f7de..0b04f5342966d53dfef5441dd9f1acf6
  import net.minecraft.world.level.gameevent.GameEvent;
 +import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
- // CraftBukkit start
- import net.minecraft.server.MinecraftServer;
-@@ -201,11 +203,31 @@ public class ItemEntity extends Entity {
+ import net.minecraft.Util;
+ import net.minecraft.core.BlockPos;
+@@ -199,11 +201,31 @@ public class ItemEntity extends Entity {
                  }
                  // CraftBukkit end
                  this.discard();
@@ -66,7 +66,7 @@ index 298b7b2d2e306a22a511a56934fd985cb5d9f7de..0b04f5342966d53dfef5441dd9f1acf6
      // Spigot start - copied from above
      @Override
      public void inactiveTick() {
-@@ -225,7 +247,13 @@ public class ItemEntity extends Entity {
+@@ -223,7 +245,13 @@ public class ItemEntity extends Entity {
              }
              // CraftBukkit end
              this.discard();
