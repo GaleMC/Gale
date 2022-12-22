@@ -1,0 +1,32 @@
+name: Build Gale
+on: [ push, pull_request ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    # Always run on PRs if the source branch is on someone else's repo, and otherwise, only run if the last commit does not start with [ci-skip]
+    if: ${{ (github.event_name != 'pull_request' && !contains(github.event.commits[0].message, '[ci-skip]')) || github.repository != github.event.pull_request.head.repo.full_name }}
+    steps:
+      - name: Checkout Git repository
+        uses: actions/checkout@v3
+      - name: Validate Gradle wrapper
+        uses: gradle/wrapper-validation-action@v1
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 17
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      - name: Configure Git user details
+        run: git config --global user.email "no-reply@github.com" && git config --global user.name "Github Actions"
+      - name: Apply patches
+        run: ./gradlew applyPatches
+      - name: Create Paperclip jar
+        run: ./gradlew createReobfPaperclipJar
+      - name: Upload Paperclip jar
+        uses: actions/upload-artifact@v3
+        with:
+          name: Gale
+          path: build/libs/gale-paperclip-*-reobf.jar
