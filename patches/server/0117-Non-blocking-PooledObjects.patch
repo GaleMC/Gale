@@ -1,0 +1,77 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Martijn Muijsers <martijnmuijsers@live.nl>
+Date: Thu, 22 Dec 2022 16:14:50 +0100
+Subject: [PATCH] Non-blocking PooledObjects
+
+License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
+Gale - https://galemc.org
+
+diff --git a/src/main/java/com/destroystokyo/paper/util/pooled/PooledObjects.java b/src/main/java/com/destroystokyo/paper/util/pooled/PooledObjects.java
+index a743703502cea333bd4231b6557de50e8eaf81eb..0566757ed94cb2c41ace660ef71c8f99b0335032 100644
+--- a/src/main/java/com/destroystokyo/paper/util/pooled/PooledObjects.java
++++ b/src/main/java/com/destroystokyo/paper/util/pooled/PooledObjects.java
+@@ -2,11 +2,18 @@ package com.destroystokyo.paper.util.pooled;
+ 
+ import io.papermc.paper.util.MCUtil;
+ import org.apache.commons.lang3.mutable.MutableInt;
++import org.galemc.gale.concurrent.Mutex;
++import org.galemc.gale.executor.annotation.YieldFree;
++import org.galemc.gale.executor.annotation.thread.AnyThreadSafe;
+ 
+ import java.util.ArrayDeque;
+ import java.util.function.Consumer;
+ import java.util.function.Supplier;
+ 
++// Gale start - non-blocking PooledObjects
++@AnyThreadSafe
++@YieldFree
++// Gale end - non-blocking PooledObjects
+ public final class PooledObjects<E> {
+ 
+     /**
+@@ -36,6 +43,7 @@ public final class PooledObjects<E> {
+     private final Consumer<E> releaser;
+     private final int maxPoolSize;
+     private final ArrayDeque<E> queue;
++    private final Mutex queueLock = Mutex.create(); // Gale - non-blocking PooledObjects
+ 
+     public PooledObjects(final Supplier<E> creator, int maxPoolSize) {
+         this(creator, maxPoolSize, null);
+@@ -66,8 +74,16 @@ public final class PooledObjects<E> {
+ 
+     public final E acquire() {
+         E value;
+-        synchronized (queue) {
++        // Gale start - non-blocking PooledObjects
++        //noinspection StatementWithEmptyBody
++        while (!this.queueLock.tryAcquire());
++        try {
++            // Gale end - non-blocking PooledObjects
+             value = this.queue.pollLast();
++            // Gale start - non-blocking PooledObjects
++        } finally {
++            this.queueLock.release();
++            // Gale end - non-blocking PooledObjects
+         }
+         return value != null ? value : this.creator.get();
+     }
+@@ -76,10 +92,18 @@ public final class PooledObjects<E> {
+         if (this.releaser != null) {
+             this.releaser.accept(value);
+         }
+-        synchronized (this.queue) {
++        // Gale start - non-blocking PooledObjects
++        //noinspection StatementWithEmptyBody
++        while (!this.queueLock.tryAcquire());
++        try {
++            // Gale end - non-blocking PooledObjects
+             if (queue.size() < this.maxPoolSize) {
+                 this.queue.addLast(value);
+             }
++            // Gale start - non-blocking PooledObjects
++        } finally {
++            this.queueLock.release();
++            // Gale end - non-blocking PooledObjects
+         }
+     }
+ }

@@ -130,7 +130,7 @@ index 3088d5f008a8cb5a75f1e11bd80a2614a4c1b75d..0c771f024cec0b3fbb68e4eeeeb77818
              }
          } catch (Exception ex) {
 diff --git a/src/main/java/io/papermc/paper/util/MCUtil.java b/src/main/java/io/papermc/paper/util/MCUtil.java
-index 1e812c4f5a8d54293084de29e8731e0b8ddcc0ae..31699c5b9f186ff91ee2c0da092212e85ef35c79 100644
+index 1e812c4f5a8d54293084de29e8731e0b8ddcc0ae..ab870c98210d6654230335db5c8ff6739bb2357f 100644
 --- a/src/main/java/io/papermc/paper/util/MCUtil.java
 +++ b/src/main/java/io/papermc/paper/util/MCUtil.java
 @@ -2,12 +2,10 @@ package io.papermc.paper.util;
@@ -206,7 +206,7 @@ index 1e812c4f5a8d54293084de29e8731e0b8ddcc0ae..31699c5b9f186ff91ee2c0da092212e8
 -            .build()
 -    );
 +    public static final Executor asyncExecutor = BaseTaskQueues.scheduledAsync.yieldingExecutor; // Gale - base thread pools - remove Paper async executor
-+    public static final Executor cleanerExecutor = BaseTaskQueues.scheduledAsync.yieldingExecutor; // Gale - base thread pools - remove Paper cleaner executor
++    public static final Executor cleanerExecutor = BaseTaskQueues.cleaner.executor; // Gale - base thread pools - remove Paper cleaner executor
  
      public static final long INVALID_CHUNK_KEY = getCoordinateKey(Integer.MAX_VALUE, Integer.MAX_VALUE);
  
@@ -3175,14 +3175,15 @@ index 0000000000000000000000000000000000000000..a4117d2e677617bd8fcbb15f59fdec9a
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueues.java b/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueues.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..1b91ba1e7fef0516638dd952f3ec74dff533cc44
+index 0000000000000000000000000000000000000000..286b893749db38afc49fd03a0ac006598268d26e
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueues.java
-@@ -0,0 +1,109 @@
+@@ -0,0 +1,115 @@
 +// Gale - base thread pools
 +
 +package org.galemc.gale.executor.queue;
 +
++import io.papermc.paper.util.MCUtil;
 +import io.papermc.paper.util.TickThread;
 +import org.galemc.gale.executor.thread.pooled.TickAssistThread;
 +import org.galemc.gale.executor.thread.deferral.TickThreadDeferral;
@@ -3278,6 +3279,11 @@ index 0000000000000000000000000000000000000000..1b91ba1e7fef0516638dd952f3ec74df
 +     * @see AllLevelsScheduledTickThreadChunkTaskQueue
 +     */
 +    public static final AllLevelsScheduledTickThreadChunkTaskQueue allLevelsScheduledTickThreadChunk = new AllLevelsScheduledTickThreadChunkTaskQueue();
++
++    /**
++     * This queue stores the tasks posted to {@link MCUtil#cleanerExecutor}.
++     */
++    public static final FreeSimpleTaskQueue cleaner = new FreeSimpleTaskQueue("Cleaner");
 +
 +    /**
 +     * This queue stores the tasks scheduled to be executed on any thread, which would usually be stored in various
@@ -5236,10 +5242,10 @@ index 0000000000000000000000000000000000000000..0c625b09df52e3dcd61773af53ccfaf3
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/thread/pooled/AsyncThreadPool.java b/src/main/java/org/galemc/gale/executor/thread/pooled/AsyncThreadPool.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..e222b367053da90323ded78b2939a7bd2af1da2a
+index 0000000000000000000000000000000000000000..b86516e034c920f1c551764cd5cc2cc338ce5535
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/thread/pooled/AsyncThreadPool.java
-@@ -0,0 +1,64 @@
+@@ -0,0 +1,66 @@
 +// Gale - base thread pools
 +
 +package org.galemc.gale.executor.thread.pooled;
@@ -5284,6 +5290,8 @@ index 0000000000000000000000000000000000000000..e222b367053da90323ded78b2939a7bd
 +
 +    private AsyncThreadPool() {
 +        super(new AsyncThread[0], "Base Async Thread", new AbstractTaskQueue[] {
++            // The cleaner queue has high priority because it releases resources back to a pool, thereby saving memory
++            BaseTaskQueues.cleaner,
 +            BaseTaskQueues.scheduledAsync
 +        }, MAXIMUM_YIELD_DEPTH);
 +    }
