@@ -7,7 +7,7 @@ License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/net/minecraft/server/network/TextFilterClient.java b/src/main/java/net/minecraft/server/network/TextFilterClient.java
-index 92a60fc35145b7dd5fe17ea9b6823a919f483945..2393b6a5f3f12c2b17b172ee8ca42ead218e2a10 100644
+index e0c6783071b1a6ff841842f8a88a990d0fe83180..4b3d2280326c7eeda4952c36edff141cbff90e16 100644
 --- a/src/main/java/net/minecraft/server/network/TextFilterClient.java
 +++ b/src/main/java/net/minecraft/server/network/TextFilterClient.java
 @@ -98,38 +98,44 @@ public class TextFilterClient implements AutoCloseable {
@@ -92,3 +92,29 @@ index 50a9f33aa31e9273c7c52d4bb2b02f0f884f7ba5..19779298b2b2ecbe30f9308dad1d8037
                  return this.allInstances.stream().filter(typeClass::isInstance).collect(Collectors.toList());
              });
              return Collections.unmodifiableCollection(list);
+diff --git a/src/main/java/net/minecraft/world/entity/monster/Zoglin.java b/src/main/java/net/minecraft/world/entity/monster/Zoglin.java
+index 5956a7759964f5e4939f062e93714fba64f53141..51ad507a3b625201ecca50bd92f8f089f3b4d60a 100644
+--- a/src/main/java/net/minecraft/world/entity/monster/Zoglin.java
++++ b/src/main/java/net/minecraft/world/entity/monster/Zoglin.java
+@@ -182,7 +182,7 @@ public class Zoglin extends Monster implements Enemy, HoglinBase {
+ 
+     @Override
+     public Brain<Zoglin> getBrain() {
+-        return super.getBrain();
++        return (Brain<Zoglin>) super.getBrain(); // Gale - dev import deobfuscation fixes
+     }
+ 
+     protected void updateActivity() {
+diff --git a/src/main/java/net/minecraft/world/entity/monster/piglin/PiglinBrute.java b/src/main/java/net/minecraft/world/entity/monster/piglin/PiglinBrute.java
+index ac75c54e897565e340b66823caeed92ba1d1641a..e44eec821eaa1cd77569814000d4aa36253fb13d 100644
+--- a/src/main/java/net/minecraft/world/entity/monster/piglin/PiglinBrute.java
++++ b/src/main/java/net/minecraft/world/entity/monster/piglin/PiglinBrute.java
+@@ -70,7 +70,7 @@ public class PiglinBrute extends AbstractPiglin {
+ 
+     @Override
+     public Brain<PiglinBrute> getBrain() {
+-        return super.getBrain();
++        return (Brain<PiglinBrute>) super.getBrain(); // Gale - dev import deobfuscation fixes
+     }
+ 
+     @Override

@@ -13,10 +13,10 @@ As part of: Slice (https://github.com/Cryptite/Slice)
 Licensed under: MIT (https://opensource.org/licenses/MIT)
 
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index d6526c075bc82ae2d79e3e786bc469966f4cf92d..552198bd1a08d0967dba90104777105fafc67e35 100644
+index 7841fd24b2f4e4310a6d34660e7c7cd265af835e..a5e2b9862358362f0c67683b0266ab846cab1fcf 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -869,7 +869,13 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -868,7 +868,13 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
  
          this.checkOutOfWorld();
          if (!this.level.isClientSide) {

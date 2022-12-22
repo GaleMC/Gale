@@ -186,7 +186,7 @@ index 0000000000000000000000000000000000000000..bf6a36c933b686f0e34591dff3d43b37
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/world/level/material/FlowingFluid.java b/src/main/java/net/minecraft/world/level/material/FlowingFluid.java
-index ff40fe323964f173561a6838fb443e79abf9df38..91ba64113f8fba4e0ada8b10d379243ae8c03327 100644
+index 0ffc131baf5c0edc4f2ca0f466fcdb20be4a47b8..eafd6fa6c5eec1e3c164cbdc235be2681b7df04a 100644
 --- a/src/main/java/net/minecraft/world/level/material/FlowingFluid.java
 +++ b/src/main/java/net/minecraft/world/level/material/FlowingFluid.java
 @@ -43,6 +43,8 @@ public abstract class FlowingFluid extends Fluid {

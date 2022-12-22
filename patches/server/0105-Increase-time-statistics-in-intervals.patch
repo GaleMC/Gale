@@ -87,7 +87,7 @@ index 6f071601266dff833270bbde9863cc0c4dcfa97d..529df114eb0ca3020bf8c699889b9a54
  
          int i = 29999999;
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index eb1a5b20810cbad9f47505a8534a42b20b8653d5..8aaa6e3a6c475258bea5f026a7e07efde825f112 100644
+index 8fc0095ec5bbb8245a528731741bad87da3bd937..3d0c6e754264fc864485eb01deec63f1b80c7044 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 @@ -43,6 +43,25 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
@@ -115,4 +115,4 @@ index eb1a5b20810cbad9f47505a8534a42b20b8653d5..8aaa6e3a6c475258bea5f026a7e07efd
 +
          }
  
-         public boolean disableVanillaProfiler = true; // Gale - Airplane - config to disable vanilla profiler
+         // Gale start - Pufferfish - SIMD support

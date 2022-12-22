@@ -13,7 +13,7 @@ As part of: Lithium (https://github.com/CaffeineMC/lithium-fabric)
 Licensed under: LGPL-3.0 (https://www.gnu.org/licenses/lgpl-3.0.html)
 
 diff --git a/src/main/java/net/minecraft/world/entity/ai/goal/GoalSelector.java b/src/main/java/net/minecraft/world/entity/ai/goal/GoalSelector.java
-index b738ee2d3801fadfd09313f05ae24593e56b0ec6..b4bbd34d983e559dc2716520561cac61108c6d5c 100644
+index ce2804271bb67803c60c9121aec6c8dc0e99a1d9..86fc528551c2c90c78783d4d46a4a2c52e4efe41 100644
 --- a/src/main/java/net/minecraft/world/entity/ai/goal/GoalSelector.java
 +++ b/src/main/java/net/minecraft/world/entity/ai/goal/GoalSelector.java
 @@ -11,6 +11,8 @@ import java.util.Set;
@@ -22,15 +22,15 @@ index b738ee2d3801fadfd09313f05ae24593e56b0ec6..b4bbd34d983e559dc2716520561cac61
  import java.util.stream.Stream;
 +
 +import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
- import net.minecraft.util.profiling.ProfilerFiller;
  import org.slf4j.Logger;
  
-@@ -28,7 +30,7 @@ public class GoalSelector {
+ public class GoalSelector {
+@@ -27,7 +29,7 @@ public class GoalSelector {
          }
      };
      private final Map<Goal.Flag, WrappedGoal> lockedFlags = new EnumMap<>(Goal.Flag.class);
 -    private final Set<WrappedGoal> availableGoals = Sets.newLinkedHashSet();
 +    private final Set<WrappedGoal> availableGoals = new ObjectLinkedOpenHashSet<>(); // Gale - Lithium - replace AI goal set with optimized collection
-     private final Supplier<ProfilerFiller> profiler;
      private final EnumSet<Goal.Flag> disabledFlags = EnumSet.noneOf(Goal.Flag.class); // Paper unused, but dummy to prevent plugins from crashing as hard. Theyll need to support paper in a special case if this is super important, but really doesn't seem like it would be.
      private final com.destroystokyo.paper.util.set.OptimizedSmallEnumSet<net.minecraft.world.entity.ai.goal.Goal.Flag> goalTypes = new com.destroystokyo.paper.util.set.OptimizedSmallEnumSet<>(Goal.Flag.class); // Paper - remove streams from pathfindergoalselector
+     private int tickCount;

@@ -28,10 +28,10 @@ but is so much cheaper than the suffocation check that it's worth
 keeping it.
 
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index 1ef947f46f63589ce0e11c8db357cb817eecbbd2..b109c55a31a9e5a0813e360d8a3c1b13d1bfd416 100644
+index 1ca43696e693c49279a2dd5f5bba557e0a2704fb..197c99b23584ef1aed1be821d9673bacabb561e5 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-@@ -402,7 +402,10 @@ public abstract class LivingEntity extends Entity {
+@@ -401,7 +401,10 @@ public abstract class LivingEntity extends Entity {
              boolean flag = this instanceof net.minecraft.world.entity.player.Player;
  
              if (!this.level.isClientSide) {
@@ -43,7 +43,7 @@ index 1ef947f46f63589ce0e11c8db357cb817eecbbd2..b109c55a31a9e5a0813e360d8a3c1b13
                      this.hurt(DamageSource.IN_WALL, 1.0F);
                  } else if (flag && !this.level.getWorldBorder().isWithinBounds(this.getBoundingBox())) {
                      double d0 = this.level.getWorldBorder().getDistanceToBorder(this) + this.level.getWorldBorder().getDamageSafeZone();
-@@ -1327,6 +1330,15 @@ public abstract class LivingEntity extends Entity {
+@@ -1325,6 +1328,15 @@ public abstract class LivingEntity extends Entity {
          return this.getHealth() <= 0.0F;
      }
  

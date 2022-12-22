@@ -37,7 +37,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 8f23c46faf83c945516632824ba4e07c4597ad67..406c71f84201bff5e46d49aaec10ae7efc419ebc 100644
+index 51a336fa29e92669ce48b7724de0134480ac6adb..f0648c94029796653c8c8a5bdd191cf99de7b58a 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -7,6 +7,8 @@ import com.mojang.brigadier.StringReader;
@@ -69,7 +69,7 @@ index 8f23c46faf83c945516632824ba4e07c4597ad67..406c71f84201bff5e46d49aaec10ae7e
      private static final int MAX_SIGN_LINE_LENGTH = Integer.getInteger("Paper.maxSignLength", 80); // Paper
  
      private String clientBrandName = null; // Paper - Brand name
-@@ -400,6 +406,21 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -399,6 +405,21 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
          long currentTime = Util.getMillis();
          long elapsedTime = currentTime - this.keepAliveTime;
  
@@ -91,7 +91,7 @@ index 8f23c46faf83c945516632824ba4e07c4597ad67..406c71f84201bff5e46d49aaec10ae7e
          if (this.keepAlivePending) {
              if (!this.processedDisconnect && elapsedTime >= KEEPALIVE_LIMIT) { // check keepalive limit, don't fire if already disconnected
                  ServerGamePacketListenerImpl.LOGGER.warn("{} was kicked due to keepalive timeout!", this.player.getScoreboardName()); // more info
-@@ -3459,6 +3480,16 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -3457,6 +3478,16 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
  
      @Override
      public void handleKeepAlive(ServerboundKeepAlivePacket packet) {
@@ -109,10 +109,10 @@ index 8f23c46faf83c945516632824ba4e07c4597ad67..406c71f84201bff5e46d49aaec10ae7e
          if (this.keepAlivePending && packet.getId() == this.keepAliveChallenge) {
              int i = (int) (Util.getMillis() - this.keepAliveTime);
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index 0965f43068d12a85090906568e2c1b731730f015..024cf924592999726458976b4d73df4b71843a2e 100644
+index ef0a77ed85bf35f5d388cf28ac5d84e553ad1144..cf56844eb2292ff6add463689ee10b873d2ca664 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-@@ -91,4 +91,16 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+@@ -89,4 +89,16 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
  
      }
  

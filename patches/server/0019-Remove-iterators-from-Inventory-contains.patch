@@ -31,7 +31,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 diff --git a/src/main/java/net/minecraft/world/entity/player/Inventory.java b/src/main/java/net/minecraft/world/entity/player/Inventory.java
-index a1a625a8dacf4d2bbf75ddd90dce1b1be663c919..1147eab33e1570f53ecc8e59218e96598535f501 100644
+index 5bc033bf59d49eda1f8f2574165bbcbeab7faa0f..b59185cff16528b2e5a0c52807db9f21e2a68dda 100644
 --- a/src/main/java/net/minecraft/world/entity/player/Inventory.java
 +++ b/src/main/java/net/minecraft/world/entity/player/Inventory.java
 @@ -681,6 +681,8 @@ public class Inventory implements Container, Nameable {

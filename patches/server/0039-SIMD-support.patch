@@ -13,7 +13,7 @@ As part of: Pufferfish (https://github.com/pufferfish-gg/Pufferfish)
 Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 977edc4adb5414e83d289cca295baa6bfbadaa52..a63dce4a46a9df755a6dce8c959f3a0f1e151f67 100644
+index ebe3f85542004002713dd327e8a423f2570695ed..f3287cea49ee7352a1065dc65927ab9922d0a9c4 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -62,6 +62,7 @@ tasks.withType<JavaCompile> {
@@ -68,12 +68,12 @@ index 9c3ccbbd657d1605b8fabb6e01c11ff31f39a17e..1d1db89362b78ac34d46cdd71b9ab274
          this.setFlightAllowed(dedicatedserverproperties.allowFlight);
          this.setMotd(dedicatedserverproperties.motd);
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index 5bf0c4d9cf136cd19d87ee04a834413240eec339..a1d5197a5e7a00fad1025741ef8adcea45d42533 100644
+index af4883f8939d017866a9b057491a8400b11fe009..9bdbd921acdbfdc8da49ce113d009b58749c1d5d 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-@@ -43,6 +43,14 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+@@ -41,6 +41,14 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
  
-         public boolean disableVanillaProfiler = true; // Gale - Airplane - config to disable vanilla profiler
+         }
  
 +        // Gale start - Pufferfish - SIMD support
 +        public Simd simd;

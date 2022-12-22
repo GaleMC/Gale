@@ -13,10 +13,10 @@ As part of: Slice (https://github.com/Cryptite/Slice)
 Licensed under: MIT (https://opensource.org/licenses/MIT)
 
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index f2814df6d715910a3c8101a0af5f3190355bcc52..91e5707efe39180811fbe78c7569baa5264dba2c 100644
+index 75ae119719cf566f66371606e70f19b6b36dc7cb..88bfda2090a1f8c9368f5d6f98374d045c045150 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-@@ -3154,7 +3154,7 @@ public abstract class LivingEntity extends Entity {
+@@ -3148,7 +3148,7 @@ public abstract class LivingEntity extends Entity {
      }
  
      public boolean equipmentHasChanged(ItemStack stack, ItemStack stack2) {

@@ -31,13 +31,13 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index aeaa5c08e8694b353b33f95e2973e6c38bc280a0..8924630ca5049f14e5e69323a2d4f7218e06a2aa 100644
+index b589aeb3af47437a657bda806c99ef3fa95f22f8..5f3e3383f20b850720835fab948bb610978e4fe9 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
-@@ -728,7 +728,20 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -711,7 +711,20 @@ public class ServerLevel extends Level implements WorldGenLevel {
+                                 entity.stopRiding();
                              }
  
-                             gameprofilerfiller.push("tick");
 -                            this.guardEntityTick(this::tickNonPassenger, entity);
 +                        // Gale start - Airplane - remove lambda from ticking guard - copied from guardEntityTick
 +                        try {
@@ -53,14 +53,14 @@ index aeaa5c08e8694b353b33f95e2973e6c38bc280a0..8924630ca5049f14e5e69323a2d4f721
 +                            // Paper end
 +                        }
 +                        // Gale end - Airplane - remove lambda from ticking guard - copied from guardEntityTick
-                             gameprofilerfiller.pop();
                          }
                      }
+                 }
 diff --git a/src/main/java/net/minecraft/world/level/Level.java b/src/main/java/net/minecraft/world/level/Level.java
-index 0ba38fddff7b3751d652d1148f993453164e2034..14c2e816e6bc5801846c296318afe223abf95c5d 100644
+index 70a4cabf3cc5a1d2fb4db462374f8d3aaf17487e..95d8883fabc6a7ea6f9e6dfcff9e2f2fce917dfe 100644
 --- a/src/main/java/net/minecraft/world/level/Level.java
 +++ b/src/main/java/net/minecraft/world/level/Level.java
-@@ -1020,13 +1020,13 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
+@@ -1010,13 +1010,13 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
          try {
              tickConsumer.accept(entity);
              MinecraftServer.getServer().executeMidTickTasks(); // Paper - execute chunk tasks mid tick

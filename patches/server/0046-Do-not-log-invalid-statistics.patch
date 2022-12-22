@@ -44,10 +44,10 @@ index 72946e324c575ef39f3939225b96b68f724da460..75e2a7d19a7056b73c1524902e44cca0
                              }
                          }
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index a1d5197a5e7a00fad1025741ef8adcea45d42533..c67adaa664bfe2b371f14efa83ea200b0e1006f0 100644
+index 9bdbd921acdbfdc8da49ce113d009b58749c1d5d..d407916de006a68318de63b81773e0dfe0d9c119 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-@@ -53,4 +53,11 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+@@ -51,4 +51,11 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
  
      }
  
