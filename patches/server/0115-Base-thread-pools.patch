@@ -485,7 +485,7 @@ index 0c4c62674b4c7e8e3921c7eb3ef726759ac75075..31b488a3c1b81b99bf5bda9f90c3cf69
                  WorldLoader.InitConfig worldloader_c = Main.loadOrCreateConfig(dedicatedserversettings.getProperties(), convertable_conversionsession, flag, resourcepackrepository);
  
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 609d57dd7373531d35295152e543261e3b0fbe09..79c56e1aeb12ecaed2a17e01a4f9ec905b936b9a 100644
+index 609d57dd7373531d35295152e543261e3b0fbe09..ea3516cbc28fac0620bcb71d3872c50d197362f3 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -40,7 +40,6 @@ import java.util.Optional;
@@ -552,7 +552,7 @@ index 609d57dd7373531d35295152e543261e3b0fbe09..79c56e1aeb12ecaed2a17e01a4f9ec90
      private PlayerList playerList;
      private volatile boolean running;
      private volatile boolean isRestarting = false; // Paper - flag to signify we're attempting to restart
-@@ -262,10 +280,66 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -262,10 +280,115 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
      private long lastOverloadWarning;
      protected final Services services;
      private long lastServerStatus;
@@ -569,6 +569,7 @@ index 609d57dd7373531d35295152e543261e3b0fbe09..79c56e1aeb12ecaed2a17e01a4f9ec90
 +    // Gale start - base thread pools
 +
 +    public static volatile long nextTickStartNanoTime;
++    public static volatile long delayedTasksMaxNextTickNanoTime;
 +
 +    /**
 +     * Sets {@link #nextTickTime}, and sets {@link #nextTickStartNanoTime} accordingly.
@@ -576,11 +577,21 @@ index 609d57dd7373531d35295152e543261e3b0fbe09..79c56e1aeb12ecaed2a17e01a4f9ec90
 +    private void setNextTickTime(long nextTickTime) {
 +        this.nextTickTime = nextTickTime;
 +        /*
-+        Add 1000 nanoseconds, to make sure the currentTime() >= nextTickTime check will be true after this moment
++        Add 10000 nanoseconds, to make sure the currentTime() >= nextTickTime check will be true after this moment
 +        regardless of the nanosecond granularity of the Condition#await function, which is probably somewhere around
-+        26 ns.
++        26 nanoseconds.
 +         */
-+        nextTickStartNanoTime = 1_000_000L * nextTickTime + 1000L;
++        nextTickStartNanoTime = 1_000_000L * this.nextTickTime + 10_000L;
++    }
++
++    /**
++     * Sets {@link #delayedTasksMaxNextTickTime}, and sets {@link #delayedTasksMaxNextTickNanoTime} accordingly.
++     *
++     * @see #setNextTickTime
++     */
++    private void setDelayedTasksMaxNextTickTime(long delayedTasksMaxNextTickTime) {
++        this.delayedTasksMaxNextTickTime = delayedTasksMaxNextTickTime;
++        delayedTasksMaxNextTickNanoTime = 1_000_000L * this.delayedTasksMaxNextTickTime + 10_000L;
 +    }
 +
 +    /**
@@ -612,18 +623,56 @@ index 609d57dd7373531d35295152e543261e3b0fbe09..79c56e1aeb12ecaed2a17e01a4f9ec90
 +    public static volatile boolean isInSpareTime = false;
 +
 +    /**
++     * Whether the server is currently waiting for the next tick, which is one of the cases where
++     * {@link #isInSpareTime} is true. Specifically, the other case where {@link #isInSpareTime} is true is
++     * while {@link #isOversleep} is true.
++     */
++    public static volatile boolean isWaitingUntilNextTick = false;
++
++    /**
 +     * A potentially out-of-date value indicating whether {@link #isInSpareTime} is true
 +     * and {@link #haveTime()} is false and {@link #blockingCount} is 0.
 +     * This should be updated just in time before it is potentially needed.
 +     */
 +    public static volatile boolean isInSpareTimeAndHaveNoMoreTimeAndNotAlreadyBlocking = false;
 +
++    /**
++     * The stop condition provided to the current call of {@link #managedBlock}, or null if no {@link #managedBlock}
++     * call is ongoing.
++     */
++    public static volatile @Nullable BooleanSupplier currentManagedBlockStopCondition;
++
++    /**
++     * Whether the {@link #currentManagedBlockStopCondition} has become true
++     * during the last {@link #managedBlock} call.
++     */
++    public static volatile boolean currentManagedBlockStopConditionHasBecomeTrue = false;
++
++    public static final SignalReason managedBlockStopConditionBecameTrueSignalReason = SignalReason.createNonRetrying();
++
++    public static void signalServerThreadIfCurrentManagedBlockStopConditionBecameTrue() {
++        if (currentManagedBlockStopConditionHasBecomeTrue) {
++            // We already signalled the thread
++            return;
++        }
++        if (currentManagedBlockStopCondition == null) {
++            // There is no ongoing managedBlock cal
++            return;
++        }
++        if (!currentManagedBlockStopCondition.getAsBoolean()) {
++            // The stop condition is not true
++            return;
++        }
++        currentManagedBlockStopConditionHasBecomeTrue = true;
++        serverThread.signal(managedBlockStopConditionBecameTrueSignalReason);
++    }
++
 +    // Gale start - base thread pools
 +
      private final PackRepository packRepository;
      private final ServerScoreboard scoreboard;
      @Nullable
-@@ -294,7 +368,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -294,7 +417,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
      public java.util.Queue<Runnable> processQueue = new java.util.concurrent.ConcurrentLinkedQueue<Runnable>();
      public int autosavePeriod;
      public Commands vanillaCommandDispatcher;
@@ -632,7 +681,7 @@ index 609d57dd7373531d35295152e543261e3b0fbe09..79c56e1aeb12ecaed2a17e01a4f9ec90
      // CraftBukkit end
      // Spigot start
      public static final int TPS = 20;
-@@ -310,9 +384,9 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -310,9 +433,9 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
      public volatile boolean abnormalExit = false; // Paper
      public boolean isIteratingOverLevels = false; // Paper
  
@@ -644,7 +693,7 @@ index 609d57dd7373531d35295152e543261e3b0fbe09..79c56e1aeb12ecaed2a17e01a4f9ec90
              ((MinecraftServer) atomicreference.get()).runServer();
          }, "Server thread");
  
-@@ -331,9 +405,12 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -331,9 +454,12 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          return s0;
      }
  
@@ -659,7 +708,7 @@ index 609d57dd7373531d35295152e543261e3b0fbe09..79c56e1aeb12ecaed2a17e01a4f9ec90
          this.metricsRecorder = InactiveMetricsRecorder.INSTANCE;
          this.profiler = this.metricsRecorder.getProfiler();
          this.onMetricsRecordingStopped = (methodprofilerresults) -> {
-@@ -347,7 +424,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -347,7 +473,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          this.levels = Maps.newLinkedHashMap();
          this.running = true;
          this.tickTimes = new long[100];
@@ -668,7 +717,7 @@ index 609d57dd7373531d35295152e543261e3b0fbe09..79c56e1aeb12ecaed2a17e01a4f9ec90
          this.scoreboard = new ServerScoreboard(this);
          this.customBossEvents = new CustomBossEvents();
          this.frameTimer = new FrameTimer();
-@@ -373,7 +450,10 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -373,7 +499,10 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
              HolderGetter<Block> holdergetter = this.registries.compositeAccess().registryOrThrow(Registries.BLOCK).asLookup().filterFeatures(this.worldData.enabledFeatures());
  
              this.structureTemplateManager = new StructureTemplateManager(worldstem.resourceManager(), convertable_conversionsession, datafixer, holdergetter);
@@ -680,7 +729,7 @@ index 609d57dd7373531d35295152e543261e3b0fbe09..79c56e1aeb12ecaed2a17e01a4f9ec90
              this.executor = Util.backgroundExecutor();
          }
          // CraftBukkit start
-@@ -613,7 +693,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -613,7 +742,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
              }
          }
          this.forceDifficulty();
@@ -689,7 +738,7 @@ index 609d57dd7373531d35295152e543261e3b0fbe09..79c56e1aeb12ecaed2a17e01a4f9ec90
              this.prepareLevels(worldserver.getChunkSource().chunkMap.progressListener, worldserver);
              //worldserver.entityManager.tick(); // SPIGOT-6526: Load pending entities so they are available to the API // Paper - rewrite chunk system, not required to "tick" anything
              this.server.getPluginManager().callEvent(new org.bukkit.event.world.WorldLoadEvent(worldserver.getWorld()));
-@@ -772,7 +852,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -772,7 +901,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          //ChunkProviderServer chunkproviderserver = worldserver.getChunkProvider(); // Paper - move up
  
          chunkproviderserver.getLightEngine().setTaskPerBatch(500);
@@ -698,7 +747,19 @@ index 609d57dd7373531d35295152e543261e3b0fbe09..79c56e1aeb12ecaed2a17e01a4f9ec90
          // Paper start - configurable spawn reason
          int radiusBlocks = worldserver.paperConfig().spawn.keepSpawnLoadedRange * 16;
          int radiusChunks = radiusBlocks / 16 + ((radiusBlocks & 15) != 0 ? 1 : 0);
-@@ -842,8 +922,12 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -816,6 +945,11 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+         worldserver.setSpawnSettings(worldserver.serverLevelData.getDifficulty() != Difficulty.PEACEFUL && ((DedicatedServer) this).settings.getProperties().spawnMonsters, this.isSpawningAnimals()); // Paper - per level difficulty (from setDifficulty(ServerLevel, Difficulty, boolean))
+ 
+         this.forceTicks = false;
++        // Gale start - base thread pools
++        if (isWaitingUntilNextTick) {
++            signalServerThreadIfCurrentManagedBlockStopConditionBecameTrue();
++        }
++        // Gale end - base thread pools
+         // CraftBukkit end
+     }
+ 
+@@ -842,8 +976,12 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          // Paper end - rewrite chunk system - add close param
          boolean flag3 = false;
  
@@ -713,7 +774,7 @@ index 609d57dd7373531d35295152e543261e3b0fbe09..79c56e1aeb12ecaed2a17e01a4f9ec90
  
              if (!suppressLogs) {
                  MinecraftServer.LOGGER.info("Saving chunks for level '{}'/{}", worldserver, worldserver.dimension().location());
-@@ -867,14 +951,6 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -867,14 +1005,6 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          */
          // CraftBukkit end
          if (flush) {
@@ -728,7 +789,7 @@ index 609d57dd7373531d35295152e543261e3b0fbe09..79c56e1aeb12ecaed2a17e01a4f9ec90
              MinecraftServer.LOGGER.info("ThreadedAnvilChunkStorage: All dimensions are saved");
          }
  
-@@ -901,7 +977,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -901,7 +1031,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
      }
  
      // CraftBukkit start
@@ -737,7 +798,7 @@ index 609d57dd7373531d35295152e543261e3b0fbe09..79c56e1aeb12ecaed2a17e01a4f9ec90
      public volatile boolean hasFullyShutdown = false; // Paper
      private boolean hasLoggedStop = false; // Paper
      private final Object stopLock = new Object();
-@@ -930,8 +1006,10 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -930,8 +1060,10 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
               */
              MinecraftServer.LOGGER.info("Stopping main thread (Ignore any thread death message you see! - DO NOT REPORT THREAD DEATH TO PAPER - If you think this is a Gale bug, please report it at https://github.com/GaleMC/Gale/issues )");
              // Gale end - branding changes
@@ -750,7 +811,7 @@ index 609d57dd7373531d35295152e543261e3b0fbe09..79c56e1aeb12ecaed2a17e01a4f9ec90
                  try {
                      Thread.sleep(1);
                  } catch (InterruptedException e) {}
-@@ -965,12 +1043,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -965,12 +1097,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          }
  
          MinecraftServer.LOGGER.info("Saving worlds");
@@ -764,7 +825,7 @@ index 609d57dd7373531d35295152e543261e3b0fbe09..79c56e1aeb12ecaed2a17e01a4f9ec90
              if (worldserver != null) {
                  worldserver.noSave = false;
              }
-@@ -987,9 +1060,6 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -987,9 +1114,6 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
              MinecraftServer.LOGGER.error("Failed to unlock level {}", this.storageSource.getLevelId(), ioexception1);
          }
          // Spigot start
@@ -774,7 +835,7 @@ index 609d57dd7373531d35295152e543261e3b0fbe09..79c56e1aeb12ecaed2a17e01a4f9ec90
          if (org.spigotmc.SpigotConfig.saveUserCacheOnStopOnly) {
              MinecraftServer.LOGGER.info("Saving usercache.json");
              this.getProfileCache().save(false); // Paper
-@@ -999,6 +1069,13 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -999,6 +1123,13 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          LOGGER.info("Flushing Chunk IO");
          io.papermc.paper.chunk.system.io.RegionFileIOThread.close(true); // Paper // Paper - rewrite chunk system
          LOGGER.info("Closing Thread Pool");
@@ -788,7 +849,7 @@ index 609d57dd7373531d35295152e543261e3b0fbe09..79c56e1aeb12ecaed2a17e01a4f9ec90
          Util.shutdownExecutors(); // Paper
          LOGGER.info("Closing Server");
          try {
-@@ -1034,7 +1111,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1034,7 +1165,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          this.running = false;
          if (waitForShutdown) {
              try {
@@ -797,7 +858,7 @@ index 609d57dd7373531d35295152e543261e3b0fbe09..79c56e1aeb12ecaed2a17e01a4f9ec90
              } catch (InterruptedException interruptedexception) {
                  MinecraftServer.LOGGER.error("Error while shutting down", interruptedexception);
              }
-@@ -1108,6 +1185,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1108,6 +1239,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
      public static long lastTickOversleepTime;
      // Gale end - YAPFA - last tick time
  
@@ -805,7 +866,7 @@ index 609d57dd7373531d35295152e543261e3b0fbe09..79c56e1aeb12ecaed2a17e01a4f9ec90
      protected void runServer() {
          try {
              long serverStartTime = Util.getNanos(); // Paper
-@@ -1115,7 +1193,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1115,7 +1247,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
                  throw new IllegalStateException("Failed to initialize server");
              }
  
@@ -814,7 +875,7 @@ index 609d57dd7373531d35295152e543261e3b0fbe09..79c56e1aeb12ecaed2a17e01a4f9ec90
              this.status.setDescription(Component.literal(this.motd));
              this.status.setVersion(new ServerStatus.Version(SharedConstants.getCurrentVersion().getName(), SharedConstants.getCurrentVersion().getProtocolVersion()));
              this.status.setEnforcesSecureChat(this.enforceSecureProfile());
-@@ -1152,7 +1230,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1152,7 +1284,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
  
                      if (this.server.getWarnOnOverload()) // CraftBukkit
                      MinecraftServer.LOGGER.warn("Can't keep up! Is the server overloaded? Running {}ms or {} ticks behind", i, j);
@@ -823,7 +884,7 @@ index 609d57dd7373531d35295152e543261e3b0fbe09..79c56e1aeb12ecaed2a17e01a4f9ec90
                      this.lastOverloadWarning = this.nextTickTime;
                  }
  
-@@ -1181,14 +1259,13 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1181,15 +1313,14 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
  
                  //MinecraftServer.currentTick = (int) (System.currentTimeMillis() / 50); // CraftBukkit // Paper - don't overwrite current tick time
                  lastTick = curTime;
@@ -836,10 +897,12 @@ index 609d57dd7373531d35295152e543261e3b0fbe09..79c56e1aeb12ecaed2a17e01a4f9ec90
                  lastTickProperTime = (System.nanoTime() - tickProperStart) / 1000000L; // Gale - YAPFA - last tick time
                  this.profiler.popPush("nextTickWait");
 -                this.mayHaveDelayedTasks = true;
-                 this.delayedTasksMaxNextTickTime = Math.max(Util.getMillis() + 50L, this.nextTickTime);
+-                this.delayedTasksMaxNextTickTime = Math.max(Util.getMillis() + 50L, this.nextTickTime);
++                this.setDelayedTasksMaxNextTickTime(Math.max(Util.getMillis() + 50L, this.nextTickTime)); // Gale - base thread pools
                  this.waitUntilNextTick();
                  this.profiler.pop();
-@@ -1272,7 +1349,47 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+                 this.endMetricsRecordingTick();
+@@ -1272,7 +1403,47 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          return crashreport;
      }
  
@@ -888,7 +951,7 @@ index 609d57dd7373531d35295152e543261e3b0fbe09..79c56e1aeb12ecaed2a17e01a4f9ec90
          // Paper start
          if (this.forceTicks) {
              return true;
-@@ -1280,13 +1397,13 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1280,13 +1451,13 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          // Paper end
          // CraftBukkit start
          if (isOversleep) return canOversleep();// Paper - because of our changes, this logic is broken
@@ -898,14 +961,14 @@ index 609d57dd7373531d35295152e543261e3b0fbe09..79c56e1aeb12ecaed2a17e01a4f9ec90
  
      // Paper start
 -    boolean isOversleep = false;
-+    volatile boolean isOversleep = false; // Gale - base thread pools - make fields volatile
++    public volatile boolean isOversleep = false; // Gale - base thread pools - make fields volatile, package -> public
      private boolean canOversleep() {
 -        return this.mayHaveDelayedTasks && Util.getMillis() < this.delayedTasksMaxNextTickTime;
 +        return Util.getMillis() < this.delayedTasksMaxNextTickTime && mayHaveDelayedTasks(); // Gale - base thread pools
      }
  
      private boolean canSleepForTickNoOversleep() {
-@@ -1295,7 +1412,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1295,7 +1466,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
      // Paper end
  
      private void executeModerately() {
@@ -914,16 +977,20 @@ index 609d57dd7373531d35295152e543261e3b0fbe09..79c56e1aeb12ecaed2a17e01a4f9ec90
          java.util.concurrent.locks.LockSupport.parkNanos("executing tasks", 1000L);
      }
      // CraftBukkit end
-@@ -1303,62 +1420,16 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1303,62 +1474,20 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
      protected void waitUntilNextTick() {
          //this.executeAll(); // Paper - move this into the tick method for timings
          long tickOversleepStart = System.nanoTime(); // Gale - YAPFA - last tick time
-+        isInSpareTime = true; // Gale - base thread pools
++        // Gale start - base thread pools
++        isWaitingUntilNextTick = true;
++        isInSpareTime = true;
++        // Gale end - base thread pools
          this.managedBlock(() -> {
              return !this.canSleepForTickNoOversleep(); // Paper - move oversleep into full server tick
 +            // Gale start - base thread pools
          });
 +        isInSpareTime = false;
++        isWaitingUntilNextTick = false;
 +        // Gale end - base thread pools
          lastTickOversleepTime = (System.nanoTime() - tickOversleepStart) / 1000000L; // Gale - YAPFA - last tick time
      }
@@ -981,7 +1048,7 @@ index 609d57dd7373531d35295152e543261e3b0fbe09..79c56e1aeb12ecaed2a17e01a4f9ec90
      private void updateStatusIcon(ServerStatus metadata) {
          Optional<File> optional = Optional.of(this.getFile("server-icon.png")).filter(File::isFile);
  
-@@ -1406,14 +1477,19 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1406,14 +1535,19 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
  
          // Paper start - move oversleep into full server tick
          isOversleep = true;MinecraftTimings.serverOversleep.startTiming();
@@ -1001,7 +1068,7 @@ index 609d57dd7373531d35295152e543261e3b0fbe09..79c56e1aeb12ecaed2a17e01a4f9ec90
          this.tickChildren(shouldKeepTicking);
          if (i - this.lastServerStatus >= 5000000000L) {
              this.lastServerStatus = i;
-@@ -1449,7 +1525,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1449,7 +1583,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
              if (playerSaveInterval > 0) {
                  this.playerList.saveAll(playerSaveInterval);
              }
@@ -1010,7 +1077,7 @@ index 609d57dd7373531d35295152e543261e3b0fbe09..79c56e1aeb12ecaed2a17e01a4f9ec90
                  if (level.paperConfig().chunks.autoSaveInterval.value() > 0) {
                      level.saveIncrementally(fullSave);
                  }
-@@ -1462,7 +1538,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1462,7 +1596,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          io.papermc.paper.util.CachedLists.reset(); // Paper
          // Paper start - move executeAll() into full server tick timing
          try (co.aikar.timings.Timing ignored = MinecraftTimings.processTasksTimer.startTiming()) {
@@ -1019,7 +1086,7 @@ index 609d57dd7373531d35295152e543261e3b0fbe09..79c56e1aeb12ecaed2a17e01a4f9ec90
          }
          // Paper end
          // Paper start
-@@ -1510,7 +1586,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1510,7 +1644,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          MinecraftTimings.timeUpdateTimer.startTiming(); // Spigot // Paper
          // Send time updates to everyone, it will get the right time from the world the player is in.
          // Paper start - optimize time updates
@@ -1028,7 +1095,7 @@ index 609d57dd7373531d35295152e543261e3b0fbe09..79c56e1aeb12ecaed2a17e01a4f9ec90
              final boolean doDaylight = world.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT);
              final long dayTime = world.getDayTime();
              long worldTime = world.getGameTime();
-@@ -1530,9 +1606,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1530,9 +1664,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          MinecraftTimings.timeUpdateTimer.stopTiming(); // Spigot // Paper
  
          this.isIteratingOverLevels = true; // Paper
@@ -1039,7 +1106,7 @@ index 609d57dd7373531d35295152e543261e3b0fbe09..79c56e1aeb12ecaed2a17e01a4f9ec90
              worldserver.hasPhysicsEvent =  org.bukkit.event.block.BlockPhysicsEvent.getHandlerList().getRegisteredListeners().length > 0; // Paper
              worldserver.hasEntityMoveEvent =  io.papermc.paper.event.entity.EntityMoveEvent.getHandlerList().getRegisteredListeners().length > 0; // Paper
              net.minecraft.world.level.block.entity.HopperBlockEntity.skipHopperEvents = worldserver.paperConfig().hopper.disableMoveEvent || org.bukkit.event.inventory.InventoryMoveItemEvent.getHandlerList().getRegisteredListeners().length == 0; // Paper
-@@ -1616,7 +1690,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1616,7 +1748,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
      }
  
      public boolean isShutdown() {
@@ -1048,7 +1115,7 @@ index 609d57dd7373531d35295152e543261e3b0fbe09..79c56e1aeb12ecaed2a17e01a4f9ec90
      }
  
      public File getFile(String path) {
-@@ -1624,7 +1698,12 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1624,7 +1756,12 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
      }
  
      public final ServerLevel overworld() {
@@ -1062,7 +1129,7 @@ index 609d57dd7373531d35295152e543261e3b0fbe09..79c56e1aeb12ecaed2a17e01a4f9ec90
      }
  
      @Nullable
-@@ -1638,6 +1717,13 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1638,6 +1775,13 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          Map<ResourceKey<Level>, ServerLevel> newLevels = Maps.newLinkedHashMap(oldLevels);
          newLevels.put(level.dimension(), level);
          this.levels = Collections.unmodifiableMap(newLevels);
@@ -1076,7 +1143,7 @@ index 609d57dd7373531d35295152e543261e3b0fbe09..79c56e1aeb12ecaed2a17e01a4f9ec90
      }
  
      public void removeLevel(ServerLevel level) {
-@@ -1645,6 +1731,14 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1645,6 +1789,14 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          Map<ResourceKey<Level>, ServerLevel> newLevels = Maps.newLinkedHashMap(oldLevels);
          newLevels.remove(level.dimension());
          this.levels = Collections.unmodifiableMap(newLevels);
@@ -1091,7 +1158,7 @@ index 609d57dd7373531d35295152e543261e3b0fbe09..79c56e1aeb12ecaed2a17e01a4f9ec90
      }
      // CraftBukkit end
  
-@@ -1652,8 +1746,14 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1652,8 +1804,14 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          return this.levels.keySet();
      }
  
@@ -1107,7 +1174,7 @@ index 609d57dd7373531d35295152e543261e3b0fbe09..79c56e1aeb12ecaed2a17e01a4f9ec90
      }
  
      public String getServerVersion() {
-@@ -1773,10 +1873,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1773,10 +1931,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
      }
  
      private void updateMobSpawningFlags() {
@@ -1119,7 +1186,7 @@ index 609d57dd7373531d35295152e543261e3b0fbe09..79c56e1aeb12ecaed2a17e01a4f9ec90
  
              worldserver.setSpawnSettings(worldserver.serverLevelData.getDifficulty() != Difficulty.PEACEFUL && ((DedicatedServer) this).settings.getProperties().spawnMonsters, this.isSpawningAnimals()); // Paper - per level difficulty (from setDifficulty(ServerLevel, Difficulty, boolean))
          }
-@@ -1975,25 +2072,6 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1975,25 +2130,6 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          return 29999984;
      }
  
@@ -1145,7 +1212,7 @@ index 609d57dd7373531d35295152e543261e3b0fbe09..79c56e1aeb12ecaed2a17e01a4f9ec90
      public int getCompressionThreshold() {
          return 256;
      }
-@@ -2060,7 +2138,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -2060,7 +2196,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
              net.minecraft.world.item.alchemy.PotionBrewing.reload(); // Paper
              new io.papermc.paper.event.server.ServerResourcesReloadedEvent(cause).callEvent(); // Paper
              // Paper start
@@ -1154,7 +1221,7 @@ index 609d57dd7373531d35295152e543261e3b0fbe09..79c56e1aeb12ecaed2a17e01a4f9ec90
                  return;
              }
              // this.getPlayerList().saveAll(); // Paper - we don't need to save everything, just advancements
-@@ -2302,7 +2380,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -2302,7 +2438,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          BufferedWriter bufferedwriter = Files.newBufferedWriter(path);
  
          try {
@@ -1163,7 +1230,7 @@ index 609d57dd7373531d35295152e543261e3b0fbe09..79c56e1aeb12ecaed2a17e01a4f9ec90
              bufferedwriter.write(String.format(Locale.ROOT, "average_tick_time: %f\n", this.getAverageTickTime()));
              bufferedwriter.write(String.format(Locale.ROOT, "tick_times: %s\n", Arrays.toString(this.tickTimes)));
              bufferedwriter.write(String.format(Locale.ROOT, "queue: %s\n", Util.backgroundExecutor()));
-@@ -2488,7 +2566,6 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -2488,7 +2624,6 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
      }
  
      // CraftBukkit start
@@ -1171,7 +1238,7 @@ index 609d57dd7373531d35295152e543261e3b0fbe09..79c56e1aeb12ecaed2a17e01a4f9ec90
      public boolean isSameThread() {
          return io.papermc.paper.util.TickThread.isTickThread(); // Paper - rewrite chunk system
      }
-@@ -2742,7 +2819,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -2742,7 +2877,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          // give all worlds a fair chance at by targetting them all.
          // if we execute too many tasks, that's fine - we have logic to correctly handle overuse of allocated time.
          boolean executed = false;
@@ -2065,10 +2132,10 @@ index 0000000000000000000000000000000000000000..e73bf57a9777488dc00efe671cee955e
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/MinecraftServerBlockableEventLoop.java b/src/main/java/org/galemc/gale/executor/MinecraftServerBlockableEventLoop.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..0d2316efab3124602dd5593c80c55aeb102904d9
+index 0000000000000000000000000000000000000000..cf7254e2610cd0c04e7ea236a949160cfeeed6a8
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/MinecraftServerBlockableEventLoop.java
-@@ -0,0 +1,181 @@
+@@ -0,0 +1,191 @@
 +// Gale - base thread pools
 +
 +package org.galemc.gale.executor;
@@ -2162,6 +2229,9 @@ index 0000000000000000000000000000000000000000..0d2316efab3124602dd5593c80c55aeb
 +            } finally {
 +                //noinspection NonAtomicOperationOnVolatileField
 +                --reentrantCount;
++                if (MinecraftServer.isWaitingUntilNextTick) {
++                    MinecraftServer.signalServerThreadIfCurrentManagedBlockStopConditionBecameTrue();
++                }
 +            }
 +            MinecraftServer.SERVER.executeMidTickTasks(); // Paper - execute chunk tasks mid tick
 +        });
@@ -2230,17 +2300,24 @@ index 0000000000000000000000000000000000000000..0d2316efab3124602dd5593c80c55aeb
 +
 +    @ServerThreadOnly
 +    public void managedBlock(@NotNull BooleanSupplier stopCondition) {
-+        // Check stop condition beforehand to prevent unnecessarily releasing main thread
-+        if (stopCondition.getAsBoolean()) {
-+            return;
-+        }
-+        //noinspection NonAtomicOperationOnVolatileField
-+        ++blockingCount;
++        MinecraftServer.currentManagedBlockStopCondition = stopCondition;
 +        try {
-+            MinecraftServer.serverThread.runTasksUntil(stopCondition, null);
-+        } finally {
++            // Check stop condition beforehand to prevent unnecessarily releasing main thread
++            MinecraftServer.currentManagedBlockStopConditionHasBecomeTrue = false;
++            if (stopCondition.getAsBoolean()) {
++                MinecraftServer.currentManagedBlockStopConditionHasBecomeTrue = true;
++                return;
++            }
 +            //noinspection NonAtomicOperationOnVolatileField
-+            --blockingCount;
++            ++blockingCount;
++            try {
++                MinecraftServer.serverThread.runTasksUntil(stopCondition, null);
++            } finally {
++                //noinspection NonAtomicOperationOnVolatileField
++                --blockingCount;
++            }
++        } finally {
++            MinecraftServer.currentManagedBlockStopCondition = null;
 +        }
 +    }
 +
@@ -4041,10 +4118,10 @@ index 0000000000000000000000000000000000000000..8ed07e9e7f0a1f986cd56fe72e74ada9
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/thread/BaseYieldingThread.java b/src/main/java/org/galemc/gale/executor/thread/BaseYieldingThread.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..89ddb0c27af78063601e6d6664389ca6f2a73029
+index 0000000000000000000000000000000000000000..fcf233e60e3d16f3cba26a338dbf1fe501bda9d3
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/thread/BaseYieldingThread.java
-@@ -0,0 +1,619 @@
+@@ -0,0 +1,675 @@
 +// Gale - base thread pools
 +
 +package org.galemc.gale.executor.thread;
@@ -4081,6 +4158,20 @@ index 0000000000000000000000000000000000000000..89ddb0c27af78063601e6d6664389ca6
 + * @author Martijn Muijsers under AGPL-3.0
 + */
 +public abstract class BaseYieldingThread extends Thread implements AbstractYieldingThread {
++
++    /**
++     * The minimum time to wait as the {@link MinecraftServer#serverThread} when performing a timed wait.
++     * Given in nanoseconds.
++     * If a timed wait with a lower time is attempted, the wait is not performed at all.
++     */
++    public static final long SERVER_THREAD_WAIT_NANOS_MINIMUM = 10_000;
++
++    /**
++     * The time to wait as the {@link MinecraftServer#serverThread} during the oversleep phase, if
++     * there may be delayed tasks.
++     * Given in nanoseconds.
++     */
++    public static final long SERVER_THREAD_WAIT_NANOS_DURING_OVERSLEEP_WITH_DELAYED_TASKS = 50_000;
 +
 +    /**
 +     * The {@link SignalReason} to pass to {@link #signal(SignalReason)} when this thread becomes allowed
@@ -4250,8 +4341,23 @@ index 0000000000000000000000000000000000000000..89ddb0c27af78063601e6d6664389ca6
 +        but if none is found, starts awaiting such a task to become available, or for the given yielding lock
 +        to be released.
 +         */
-+        //noinspection ConstantConditions
-+        while (stopCondition != null ? !stopCondition.getAsBoolean() : !yieldingLock.tryLock()) {
++        while (true) {
++            if (stopCondition != null) {
++                if (this == MinecraftServer.serverThread) {
++                    MinecraftServer.currentManagedBlockStopConditionHasBecomeTrue = false;
++                }
++                if (stopCondition.getAsBoolean()) {
++                    if (this == MinecraftServer.serverThread) {
++                        MinecraftServer.currentManagedBlockStopConditionHasBecomeTrue = true;
++                    }
++                    break;
++                }
++            } else {
++                //noinspection ConstantConditions
++                if (yieldingLock.tryLock()) {
++                    break;
++                }
++            }
 +
 +            // Check if this thread is allowed to poll
 +            if (!wantsToPoll()) {
@@ -4391,17 +4497,44 @@ index 0000000000000000000000000000000000000000..89ddb0c27af78063601e6d6664389ca6
 +                    which case we do not want to wait past the start of the next tick.
 +                     */
 +                    boolean waitedWithTimeout = false;
-+                    if (this == MinecraftServer.serverThread && MinecraftServer.nextTickStartNanoTime != 0) {
-+                        long nanosUntilNextTickStart = MinecraftServer.nextTickStartNanoTime - System.nanoTime();
-+                        if (nanosUntilNextTickStart > 0) {
++                    if (this == MinecraftServer.serverThread) {
++                        // -1 indicates to not use a timeout (this value is not later set to any other negative value)
++                        long waitForNanos = -1;
++                        if (MinecraftServer.isWaitingUntilNextTick) {
++                            /*
++                            During waiting until the next tick, we wait until the next tick start.
++                            If it already passed, we do not have to use a timeout, because we will be notified
++                            when the stop condition becomes true.
++                             */
++                            waitForNanos = MinecraftServer.nextTickStartNanoTime - System.nanoTime();
++                            if (waitForNanos < 0) {
++                                waitForNanos = -1;
++                            }
++                        } else if (MinecraftServer.SERVER.isOversleep) {
++                            /*
++                            During this phase, MinecraftServer#mayHaveDelayedTasks() is checked, and we may not
++                            be notified when it changes. Therefore, if the next tick start has not passed, we will
++                            wait until then, but if it has, we wait for a short interval to make sure we keep
++                            checking the stop condition (but not for longer than until the last time we can be
++                            executing extra delayed tasks).
++                             */
++                            waitForNanos = MinecraftServer.nextTickStartNanoTime - System.nanoTime();
++                            if (waitForNanos < 0) {
++                                waitForNanos = Math.min(Math.max(0, MinecraftServer.delayedTasksMaxNextTickNanoTime - System.nanoTime()), SERVER_THREAD_WAIT_NANOS_DURING_OVERSLEEP_WITH_DELAYED_TASKS);
++                            }
++                        }
++                        if (waitForNanos >= 0) {
 +                            // Set the last signal reason to null in case the timeout elapses without a signal
 +                            this.lastSignalReason = null;
-+                            // Wait, but at most until the start of the next tick
++                            // Wait, but at most for the determined time
 +                            waitedWithTimeout = true;
-+                            this.preBlockThread();
-+                            //noinspection ResultOfMethodCallIgnored
-+                            this.waitCondition.await(nanosUntilNextTickStart, TimeUnit.NANOSECONDS);
-+                            this.postBlockThread();
++                            // Skip if the time is too short
++                            if (waitForNanos >= SERVER_THREAD_WAIT_NANOS_MINIMUM) {
++                                this.preBlockThread();
++                                //noinspection ResultOfMethodCallIgnored
++                                this.waitCondition.await(waitForNanos, TimeUnit.NANOSECONDS);
++                                this.postBlockThread();
++                            }
 +                        }
 +                    }
 +
