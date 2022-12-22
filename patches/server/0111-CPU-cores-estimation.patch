@@ -58,10 +58,10 @@ index 8aaa6e3a6c475258bea5f026a7e07efde825f112..6f6b96fe499f1b1888a141b60bd3773b
          public class Chat extends ConfigurationPart {
 diff --git a/src/main/java/org/galemc/gale/util/CPUCoresEstimation.java b/src/main/java/org/galemc/gale/util/CPUCoresEstimation.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..82357bf46a7da3112644c0e68daec333802bf7a4
+index 0000000000000000000000000000000000000000..07020fd1255fade812f4a9af1c76bdd5b7909436
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/util/CPUCoresEstimation.java
-@@ -0,0 +1,101 @@
+@@ -0,0 +1,102 @@
 +// Gale - CPU cores estimation
 +
 +package org.galemc.gale.util;
@@ -78,7 +78,8 @@ index 0000000000000000000000000000000000000000..82357bf46a7da3112644c0e68daec333
 + *
 + * @author Martijn Muijsers under AGPL-3.0
 + */
-+@AnyThreadSafe @YieldFree
++@AnyThreadSafe
++@YieldFree
 +public final class CPUCoresEstimation {
 +
 +    private CPUCoresEstimation() {}

@@ -1838,7 +1838,7 @@ index 65ec8cf910575dfa4c5024ec69b3be1ef2634722..174c248aa706f6b5f3e248cb7604b44a
  @AnyThreadSafe
  public interface Mutex extends Lock {
 diff --git a/src/main/java/org/galemc/gale/concurrent/SemaphoreMutex.java b/src/main/java/org/galemc/gale/concurrent/SemaphoreMutex.java
-index b4d6e136b9d8f41f070c4f720c1f64e2c729a445..a38f6a8b409ece8307a1cbe17e9d9ee2e6d11526 100644
+index 2e31501d26b141729c80975e97a23b09653ba3bf..5a454236073dd75ed36d058c0f033c4aada403e3 100644
 --- a/src/main/java/org/galemc/gale/concurrent/SemaphoreMutex.java
 +++ b/src/main/java/org/galemc/gale/concurrent/SemaphoreMutex.java
 @@ -15,7 +15,7 @@ import java.util.concurrent.locks.Lock;
@@ -1848,8 +1848,8 @@ index b4d6e136b9d8f41f070c4f720c1f64e2c729a445..a38f6a8b409ece8307a1cbe17e9d9ee2
 - * @author Martijn Muijsers
 + * @author Martijn Muijsers under AGPL-3.0
   */
- @AnyThreadSafe @YieldFree
- public class SemaphoreMutex extends Semaphore implements Mutex {
+ @AnyThreadSafe
+ @YieldFree
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleConfigurations.java b/src/main/java/org/galemc/gale/configuration/GaleConfigurations.java
 index 69acbab61a79c24312359a63086f9353d740113f..49ace73d901b6f55545bb21a93d026a04c5757ad 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleConfigurations.java
@@ -2807,10 +2807,10 @@ index 0000000000000000000000000000000000000000..1977fb5fb3403a8ecd8e1396bcd1244e
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/queue/AbstractTaskQueue.java b/src/main/java/org/galemc/gale/executor/queue/AbstractTaskQueue.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..9168e0c8ebfe1ebac5a54c172baf62e4145d725b
+index 0000000000000000000000000000000000000000..b38bf6c1da417f00a3c8e2ebb0d2a6df13696921
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/queue/AbstractTaskQueue.java
-@@ -0,0 +1,103 @@
+@@ -0,0 +1,104 @@
 +// Gale - base thread pools
 +
 +package org.galemc.gale.executor.queue;
@@ -2827,7 +2827,8 @@ index 0000000000000000000000000000000000000000..9168e0c8ebfe1ebac5a54c172baf62e4
 + *
 + * @author Martijn Muijsers under AGPL-3.0
 + */
-+@AnyThreadSafe @YieldFree
++@AnyThreadSafe
++@YieldFree
 +public interface AbstractTaskQueue {
 +
 +    /**
@@ -2916,10 +2917,10 @@ index 0000000000000000000000000000000000000000..9168e0c8ebfe1ebac5a54c172baf62e4
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/queue/AllLevelsScheduledChunkCacheTaskQueue.java b/src/main/java/org/galemc/gale/executor/queue/AllLevelsScheduledChunkCacheTaskQueue.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..a0b192c614688689409b7d290a8bb705b3a37830
+index 0000000000000000000000000000000000000000..c6672e91706cdeded2f5f43c1b0c4d8dbe2df75e
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/queue/AllLevelsScheduledChunkCacheTaskQueue.java
-@@ -0,0 +1,53 @@
+@@ -0,0 +1,54 @@
 +// Gale - base thread pools
 +
 +package org.galemc.gale.executor.queue;
@@ -2946,7 +2947,8 @@ index 0000000000000000000000000000000000000000..a0b192c614688689409b7d290a8bb705
 + *
 + * @author Martijn Muijsers under AGPL-3.0
 + */
-+@AnyThreadSafe @YieldFree
++@AnyThreadSafe
++@YieldFree
 +public final class AllLevelsScheduledChunkCacheTaskQueue extends AllLevelsScheduledTaskQueue {
 +
 +    AllLevelsScheduledChunkCacheTaskQueue() {
@@ -2975,10 +2977,10 @@ index 0000000000000000000000000000000000000000..a0b192c614688689409b7d290a8bb705
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/queue/AllLevelsScheduledTaskQueue.java b/src/main/java/org/galemc/gale/executor/queue/AllLevelsScheduledTaskQueue.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..2a33cf71e802538228db4ed4d778bf0e4352aa0a
+index 0000000000000000000000000000000000000000..158aa20f2840260306ecd4c48358544384fbf285
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/queue/AllLevelsScheduledTaskQueue.java
-@@ -0,0 +1,102 @@
+@@ -0,0 +1,103 @@
 +// Gale - base thread pools
 +
 +package org.galemc.gale.executor.queue;
@@ -3000,7 +3002,8 @@ index 0000000000000000000000000000000000000000..2a33cf71e802538228db4ed4d778bf0e
 + *
 + * @author Martijn Muijsers under AGPL-3.0
 + */
-+@AnyThreadSafe @YieldFree
++@AnyThreadSafe
++@YieldFree
 +public abstract class AllLevelsScheduledTaskQueue implements AbstractTaskQueue {
 +
 +    /**
@@ -3083,10 +3086,10 @@ index 0000000000000000000000000000000000000000..2a33cf71e802538228db4ed4d778bf0e
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/queue/AllLevelsScheduledTickThreadChunkTaskQueue.java b/src/main/java/org/galemc/gale/executor/queue/AllLevelsScheduledTickThreadChunkTaskQueue.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..50135660156426b5a6c301f1c5f120706eb67ea4
+index 0000000000000000000000000000000000000000..dd9f10bbcdfe9b2e5279fb34a913c967d7069fa7
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/queue/AllLevelsScheduledTickThreadChunkTaskQueue.java
-@@ -0,0 +1,52 @@
+@@ -0,0 +1,53 @@
 +// Gale - base thread pools
 +
 +package org.galemc.gale.executor.queue;
@@ -3112,7 +3115,8 @@ index 0000000000000000000000000000000000000000..50135660156426b5a6c301f1c5f12070
 + *
 + * @author Martijn Muijsers under AGPL-3.0
 + */
-+@AnyThreadSafe @YieldFree
++@AnyThreadSafe
++@YieldFree
 +public final class AllLevelsScheduledTickThreadChunkTaskQueue extends AllLevelsScheduledTaskQueue {
 +
 +    AllLevelsScheduledTickThreadChunkTaskQueue() {
@@ -3141,10 +3145,10 @@ index 0000000000000000000000000000000000000000..50135660156426b5a6c301f1c5f12070
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/queue/AnyTickScheduledServerThreadTaskQueue.java b/src/main/java/org/galemc/gale/executor/queue/AnyTickScheduledServerThreadTaskQueue.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..a4117d2e677617bd8fcbb15f59fdec9a532636f2
+index 0000000000000000000000000000000000000000..82f3ae8eea503fb51f5c7b0547e71234cc169a07
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/queue/AnyTickScheduledServerThreadTaskQueue.java
-@@ -0,0 +1,28 @@
+@@ -0,0 +1,29 @@
 +// Gale - base thread pools
 +
 +package org.galemc.gale.executor.queue;
@@ -3160,7 +3164,8 @@ index 0000000000000000000000000000000000000000..a4117d2e677617bd8fcbb15f59fdec9a
 + *
 + * @author Martijn Muijsers under AGPL-3.0
 + */
-+@AnyThreadSafe @YieldFree
++@AnyThreadSafe
++@YieldFree
 +public final class AnyTickScheduledServerThreadTaskQueue extends TickRequiredScheduledServerThreadTaskQueue {
 +
 +    AnyTickScheduledServerThreadTaskQueue() {
@@ -3296,10 +3301,10 @@ index 0000000000000000000000000000000000000000..286b893749db38afc49fd03a0ac00659
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/queue/FreeSimpleTaskQueue.java b/src/main/java/org/galemc/gale/executor/queue/FreeSimpleTaskQueue.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..e118442b345096796a17b6fbdcaded98398e6167
+index 0000000000000000000000000000000000000000..7bffa7b358c058edbe33bbd2f31438c804c786ef
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/queue/FreeSimpleTaskQueue.java
-@@ -0,0 +1,52 @@
+@@ -0,0 +1,53 @@
 +// Gale - base thread pools
 +
 +package org.galemc.gale.executor.queue;
@@ -3333,7 +3338,8 @@ index 0000000000000000000000000000000000000000..e118442b345096796a17b6fbdcaded98
 +     *
 +     * @param task The task to schedule.
 +     */
-+    @AnyThreadSafe @YieldFree
++    @AnyThreadSafe
++    @YieldFree
 +    public void add(Runnable task) {
 +        this.add(task, false);
 +    }
@@ -3354,10 +3360,10 @@ index 0000000000000000000000000000000000000000..e118442b345096796a17b6fbdcaded98
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/queue/ScheduledServerThreadTaskQueues.java b/src/main/java/org/galemc/gale/executor/queue/ScheduledServerThreadTaskQueues.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..8e916e0e9d20010c6a26b0729909cef826c9491e
+index 0000000000000000000000000000000000000000..12f676a679f4331b39e2c17273f0759a9ce1f5f0
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/queue/ScheduledServerThreadTaskQueues.java
-@@ -0,0 +1,297 @@
+@@ -0,0 +1,298 @@
 +// Gale - base thread pools
 +
 +package org.galemc.gale.executor.queue;
@@ -3399,7 +3405,8 @@ index 0000000000000000000000000000000000000000..8e916e0e9d20010c6a26b0729909cef8
 + *
 + * @author Martijn Muijsers under AGPL-3.0
 + */
-+@AnyThreadSafe @YieldFree
++@AnyThreadSafe
++@YieldFree
 +public final class ScheduledServerThreadTaskQueues {
 +
 +    ScheduledServerThreadTaskQueues() {}
@@ -3657,10 +3664,10 @@ index 0000000000000000000000000000000000000000..8e916e0e9d20010c6a26b0729909cef8
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/queue/SimpleTaskQueue.java b/src/main/java/org/galemc/gale/executor/queue/SimpleTaskQueue.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..e8e549024209a90d16eef961fe902f26c3ce17fc
+index 0000000000000000000000000000000000000000..7b0de8f921eb8431fa00f1e6a82769165a0efc00
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/queue/SimpleTaskQueue.java
-@@ -0,0 +1,172 @@
+@@ -0,0 +1,173 @@
 +// Gale - base thread pools
 +
 +package org.galemc.gale.executor.queue;
@@ -3682,7 +3689,8 @@ index 0000000000000000000000000000000000000000..e8e549024209a90d16eef961fe902f26
 + *
 + * @author Martijn Muijsers under AGPL-3.0
 + */
-+@AnyThreadSafe @YieldFree
++@AnyThreadSafe
++@YieldFree
 +public abstract class SimpleTaskQueue implements AbstractTaskQueue {
 +
 +    /**
@@ -3835,10 +3843,10 @@ index 0000000000000000000000000000000000000000..e8e549024209a90d16eef961fe902f26
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/queue/ThisTickScheduledServerThreadTaskQueue.java b/src/main/java/org/galemc/gale/executor/queue/ThisTickScheduledServerThreadTaskQueue.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..ad300c10fc5c750c971d1e2c46c77f4b815da8c4
+index 0000000000000000000000000000000000000000..a6bb58410d0bb741b44cf40a43269c848fdc5b51
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/queue/ThisTickScheduledServerThreadTaskQueue.java
-@@ -0,0 +1,28 @@
+@@ -0,0 +1,29 @@
 +// Gale - base thread pools
 +
 +package org.galemc.gale.executor.queue;
@@ -3854,7 +3862,8 @@ index 0000000000000000000000000000000000000000..ad300c10fc5c750c971d1e2c46c77f4b
 + *
 + * @author Martijn Muijsers under AGPL-3.0
 + */
-+@AnyThreadSafe @YieldFree
++@AnyThreadSafe
++@YieldFree
 +public final class ThisTickScheduledServerThreadTaskQueue extends TickRequiredScheduledServerThreadTaskQueue {
 +
 +    ThisTickScheduledServerThreadTaskQueue() {
@@ -3869,10 +3878,10 @@ index 0000000000000000000000000000000000000000..ad300c10fc5c750c971d1e2c46c77f4b
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/queue/TickRequiredScheduledServerThreadTaskQueue.java b/src/main/java/org/galemc/gale/executor/queue/TickRequiredScheduledServerThreadTaskQueue.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..6ca4ade53ff587b4d62237aa52fc5aa0209c1d86
+index 0000000000000000000000000000000000000000..421ed98e13bfab6348e5f054e6aedeba89180de6
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/queue/TickRequiredScheduledServerThreadTaskQueue.java
-@@ -0,0 +1,60 @@
+@@ -0,0 +1,61 @@
 +// Gale - base thread pools
 +
 +package org.galemc.gale.executor.queue;
@@ -3891,7 +3900,8 @@ index 0000000000000000000000000000000000000000..6ca4ade53ff587b4d62237aa52fc5aa0
 + *
 + * @author Martijn Muijsers under AGPL-3.0
 + */
-+@AnyThreadSafe @YieldFree
++@AnyThreadSafe
++@YieldFree
 +public abstract class TickRequiredScheduledServerThreadTaskQueue implements AbstractTaskQueue {
 +
 +    private final boolean tryNonCurrentTickQueuesAtAll;
@@ -3996,10 +4006,10 @@ index 0000000000000000000000000000000000000000..95f8f83abd1a252cd1dbf805f7def97b
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/queue/YieldingSimpleTaskQueue.java b/src/main/java/org/galemc/gale/executor/queue/YieldingSimpleTaskQueue.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..75311d133c0e136189ee43e2800345541f4acf33
+index 0000000000000000000000000000000000000000..015652cb18405fe44b4f8a5fe4b37549998ca795
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/queue/YieldingSimpleTaskQueue.java
-@@ -0,0 +1,52 @@
+@@ -0,0 +1,53 @@
 +// Gale - base thread pools
 +
 +package org.galemc.gale.executor.queue;
@@ -4033,7 +4043,8 @@ index 0000000000000000000000000000000000000000..75311d133c0e136189ee43e280034554
 +     *
 +     * @param task The task to schedule.
 +     */
-+    @AnyThreadSafe @YieldFree
++    @AnyThreadSafe
++    @YieldFree
 +    public void add(Runnable task) {
 +        this.add(task, true);
 +    }
@@ -4054,10 +4065,10 @@ index 0000000000000000000000000000000000000000..75311d133c0e136189ee43e280034554
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/thread/AbstractYieldingThread.java b/src/main/java/org/galemc/gale/executor/thread/AbstractYieldingThread.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..8ed07e9e7f0a1f986cd56fe72e74ada97e07abb3
+index 0000000000000000000000000000000000000000..b7c51a6dc54f6879aa662c1431da1d684b348d2a
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/thread/AbstractYieldingThread.java
-@@ -0,0 +1,66 @@
+@@ -0,0 +1,69 @@
 +// Gale - base thread pools
 +
 +package org.galemc.gale.executor.thread;
@@ -4104,13 +4115,15 @@ index 0000000000000000000000000000000000000000..8ed07e9e7f0a1f986cd56fe72e74ada9
 +     *
 +     * @see #yieldUntil
 +     */
-+    @ThisThreadOnly @PotentiallyYielding("may yield further if an executed task is potentially yielding")
++    @ThisThreadOnly
++    @PotentiallyYielding("may yield further if an executed task is potentially yielding")
 +    void runTasksUntil(@Nullable BooleanSupplier stopCondition, @Nullable YieldingLock yieldingLock);
 +
 +    /**
 +     * @return The current thread if it is a {@link AbstractYieldingThread}, or null otherwise.
 +     */
-+    @AnyThreadSafe @YieldFree
++    @AnyThreadSafe
++    @YieldFree
 +    static @Nullable AbstractYieldingThread currentYieldingThread() {
 +        return Thread.currentThread() instanceof AbstractYieldingThread yieldingThread ? yieldingThread : null;
 +    }
@@ -4118,7 +4131,8 @@ index 0000000000000000000000000000000000000000..8ed07e9e7f0a1f986cd56fe72e74ada9
 +    /**
 +     * @return Whether the current thread is a {@link AbstractYieldingThread}.
 +     */
-+    @AnyThreadSafe @YieldFree
++    @AnyThreadSafe
++    @YieldFree
 +    static boolean isYieldingThread() {
 +        return Thread.currentThread() instanceof AbstractYieldingThread;
 +    }
@@ -4126,10 +4140,10 @@ index 0000000000000000000000000000000000000000..8ed07e9e7f0a1f986cd56fe72e74ada9
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/thread/BaseYieldingThread.java b/src/main/java/org/galemc/gale/executor/thread/BaseYieldingThread.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..fcf233e60e3d16f3cba26a338dbf1fe501bda9d3
+index 0000000000000000000000000000000000000000..4502683211202b56bfc0988a74ba63ea8e45e15f
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/thread/BaseYieldingThread.java
-@@ -0,0 +1,675 @@
+@@ -0,0 +1,680 @@
 +// Gale - base thread pools
 +
 +package org.galemc.gale.executor.thread;
@@ -4431,7 +4445,8 @@ index 0000000000000000000000000000000000000000..fcf233e60e3d16f3cba26a338dbf1fe5
 +     *
 +     * @return The task that was polled, or null if no task was found.
 +     */
-+    @ThisThreadOnly @YieldFree
++    @ThisThreadOnly
++    @YieldFree
 +    protected @Nullable Runnable pollTask() {
 +        for (var queue : this.taskQueues) {
 +            Runnable task = queue.poll(this);
@@ -4695,7 +4710,8 @@ index 0000000000000000000000000000000000000000..fcf233e60e3d16f3cba26a338dbf1fe5
 +     * @return Whether this thread was sleeping before, and has woken up now,
 +     * or whether {@link #skipNextWait} was set to true.
 +     */
-+    @AnyThreadSafe @YieldFree
++    @AnyThreadSafe
++    @YieldFree
 +    public boolean signal(@Nullable SignalReason reason) {
 +        //noinspection StatementWithEmptyBody
 +        while (!this.waitLock.tryLock());
@@ -4723,7 +4739,8 @@ index 0000000000000000000000000000000000000000..fcf233e60e3d16f3cba26a338dbf1fe5
 +     *               to happen).
 +     * @return Whether this thread was sleeping before, and has woken up now.
 +     */
-+    @AnyThreadSafe @YieldFree
++    @AnyThreadSafe
++    @YieldFree
 +    public boolean signalIfWaiting(@Nullable SignalReason reason) {
 +        //noinspection StatementWithEmptyBody
 +        while (!this.waitLock.tryLock());
@@ -4745,7 +4762,8 @@ index 0000000000000000000000000000000000000000..fcf233e60e3d16f3cba26a338dbf1fe5
 +     *
 +     * @return Whether this thread was not active before, and is active now.
 +     */
-+    @AnyThreadSafe @YieldFree
++    @AnyThreadSafe
++    @YieldFree
 +    public boolean activateIfNotListeningForTasksAndNotRestricted() {
 +        //noinspection StatementWithEmptyBody
 +        while (!this.waitLock.tryLock());
@@ -4771,7 +4789,8 @@ index 0000000000000000000000000000000000000000..fcf233e60e3d16f3cba26a338dbf1fe5
 +     * @return Whether this thread was sleeping and registered to listen for tasks before,
 +     * and was unregistered to listen for tasks.
 +     */
-+    @AnyThreadSafe @YieldFree
++    @AnyThreadSafe
++    @YieldFree
 +    public boolean deactivateIfListeningForTasks() {
 +        //noinspection StatementWithEmptyBody
 +        while (!this.waitLock.tryLock());
@@ -4834,10 +4853,10 @@ index 0000000000000000000000000000000000000000..c44607129a79884b1e4f3d9fb8b57cdf
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/thread/SignallableThread.java b/src/main/java/org/galemc/gale/executor/thread/SignallableThread.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..2c7cb3a4e32d83a713b8754ce9203741c33efb53
+index 0000000000000000000000000000000000000000..0d6cf71da1100c51e3b8aaf8e28765bc82e7eeb5
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/thread/SignallableThread.java
-@@ -0,0 +1,31 @@
+@@ -0,0 +1,32 @@
 +// Gale - base thread pools
 +
 +package org.galemc.gale.executor.thread;
@@ -4865,7 +4884,8 @@ index 0000000000000000000000000000000000000000..2c7cb3a4e32d83a713b8754ce9203741
 +     * @return Whether this thread was sleeping before, and had not been signalled to wake up before,
 +     * but has or will be woken up due to this signal.
 +     */
-+    @AnyThreadSafe @YieldFree
++    @AnyThreadSafe
++    @YieldFree
 +    boolean signal(@Nullable SignalReason reason);
 +
 +}
@@ -5199,10 +5219,10 @@ index 0000000000000000000000000000000000000000..b939e9d227650dc2d321cfe3abfaaff3
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/thread/pooled/AsyncThread.java b/src/main/java/org/galemc/gale/executor/thread/pooled/AsyncThread.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..0c625b09df52e3dcd61773af53ccfaf341a4f37e
+index 0000000000000000000000000000000000000000..7fff5afd87ab9d4aeb0c80d0fced6098569ad1bb
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/thread/pooled/AsyncThread.java
-@@ -0,0 +1,37 @@
+@@ -0,0 +1,39 @@
 +// Gale - base thread pools
 +
 +package org.galemc.gale.executor.thread.pooled;
@@ -5226,7 +5246,8 @@ index 0000000000000000000000000000000000000000..0c625b09df52e3dcd61773af53ccfaf3
 +    /**
 +     * @return The current thread if it is a {@link AsyncThread}, or null otherwise.
 +     */
-+    @AnyThreadSafe @YieldFree
++    @AnyThreadSafe
++    @YieldFree
 +    public static @Nullable AsyncThread currentAsyncThread() {
 +        return Thread.currentThread() instanceof AsyncThread asyncThread ? asyncThread : null;
 +    }
@@ -5234,7 +5255,8 @@ index 0000000000000000000000000000000000000000..0c625b09df52e3dcd61773af53ccfaf3
 +    /**
 +     * @return Whether the current thread is a {@link AsyncThread}.
 +     */
-+    @AnyThreadSafe @YieldFree
++    @AnyThreadSafe
++    @YieldFree
 +    public static boolean isAsyncThread() {
 +        return Thread.currentThread() instanceof AsyncThread;
 +    }
@@ -5314,10 +5336,10 @@ index 0000000000000000000000000000000000000000..b86516e034c920f1c551764cd5cc2cc3
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/thread/pooled/ConditionalSurplusThread.java b/src/main/java/org/galemc/gale/executor/thread/pooled/ConditionalSurplusThread.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..6655bfe3f22ad4f80fdd2a29ef71435ffe2f922b
+index 0000000000000000000000000000000000000000..16061701d6df1a372d89046fd2065915892b214f
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/thread/pooled/ConditionalSurplusThread.java
-@@ -0,0 +1,101 @@
+@@ -0,0 +1,102 @@
 +// Gale - base thread pools
 +
 +package org.galemc.gale.executor.thread.pooled;
@@ -5333,7 +5355,8 @@ index 0000000000000000000000000000000000000000..6655bfe3f22ad4f80fdd2a29ef71435f
 + *
 + * @author Martijn Muijsers under AGPL-3.0
 + */
-+@AnyThreadSafe @YieldFree
++@AnyThreadSafe
++@YieldFree
 +public abstract class ConditionalSurplusThread extends BaseYieldingThread {
 +
 +    private final ConditionalSurplusThreadPool<?> pool;
@@ -5421,10 +5444,10 @@ index 0000000000000000000000000000000000000000..6655bfe3f22ad4f80fdd2a29ef71435f
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/thread/pooled/ConditionalSurplusThreadPool.java b/src/main/java/org/galemc/gale/executor/thread/pooled/ConditionalSurplusThreadPool.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..b198316ecf63696ac63a90d2075abd77c10cc888
+index 0000000000000000000000000000000000000000..22c3ad33a784cb8d6bcdcb8c787029f4922f6123
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/thread/pooled/ConditionalSurplusThreadPool.java
-@@ -0,0 +1,407 @@
+@@ -0,0 +1,408 @@
 +// Gale - base thread pools
 +
 +package org.galemc.gale.executor.thread.pooled;
@@ -5467,7 +5490,8 @@ index 0000000000000000000000000000000000000000..b198316ecf63696ac63a90d2075abd77
 + *
 + * @author Martijn Muijsers under AGPL-3.0
 + */
-+@AnyThreadSafe @YieldFree
++@AnyThreadSafe
++@YieldFree
 +public abstract class ConditionalSurplusThreadPool<T extends ConditionalSurplusThread> implements AbstractYieldingSignallableThreadPool {
 +
 +    /**
@@ -6099,10 +6123,10 @@ index 0000000000000000000000000000000000000000..9a4c05bb45b6bef224e42883d7fd6ee7
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/thread/pooled/TickAssistThread.java b/src/main/java/org/galemc/gale/executor/thread/pooled/TickAssistThread.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..45c5f483d33e1b5aeb431601dd51d3ec982cba15
+index 0000000000000000000000000000000000000000..da9265f13dea8a0b971402fa7e09d30f44f38be4
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/thread/pooled/TickAssistThread.java
-@@ -0,0 +1,37 @@
+@@ -0,0 +1,39 @@
 +// Gale - base thread pools
 +
 +package org.galemc.gale.executor.thread.pooled;
@@ -6126,7 +6150,8 @@ index 0000000000000000000000000000000000000000..45c5f483d33e1b5aeb431601dd51d3ec
 +    /**
 +     * @return The current thread if it is a {@link TickAssistThread}, or null otherwise.
 +     */
-+    @AnyThreadSafe @YieldFree
++    @AnyThreadSafe
++    @YieldFree
 +    public static @Nullable TickAssistThread currentTickAssistThread() {
 +        return Thread.currentThread() instanceof TickAssistThread tickAssistThread ? tickAssistThread : null;
 +    }
@@ -6134,7 +6159,8 @@ index 0000000000000000000000000000000000000000..45c5f483d33e1b5aeb431601dd51d3ec
 +    /**
 +     * @return Whether the current thread is a {@link TickAssistThread}.
 +     */
-+    @AnyThreadSafe @YieldFree
++    @AnyThreadSafe
++    @YieldFree
 +    public static boolean isTickAssistThread() {
 +        return Thread.currentThread() instanceof TickAssistThread;
 +    }
@@ -6264,10 +6290,10 @@ index 0000000000000000000000000000000000000000..51a94ffbd039260bdb84ee80131ae182
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/thread/wait/IndexArrayWaitingThreadSet.java b/src/main/java/org/galemc/gale/executor/thread/wait/IndexArrayWaitingThreadSet.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..782491195488292b73bdaf439acf636a8f7be090
+index 0000000000000000000000000000000000000000..a3c11208a831a8e55dfd0cfc6698ea571f602e75
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/thread/wait/IndexArrayWaitingThreadSet.java
-@@ -0,0 +1,160 @@
+@@ -0,0 +1,161 @@
 +// Gale - base thread pools
 +
 +package org.galemc.gale.executor.thread.wait;
@@ -6290,7 +6316,8 @@ index 0000000000000000000000000000000000000000..782491195488292b73bdaf439acf636a
 + *
 + * @author Martijn Muijsers under AGPL-3.0
 + */
-+@AnyThreadSafe @YieldFree
++@AnyThreadSafe
++@YieldFree
 +public abstract class IndexArrayWaitingThreadSet<T extends Thread & SignallableThread> implements WaitingThreadSet {
 +
 +    /**
@@ -6430,10 +6457,10 @@ index 0000000000000000000000000000000000000000..782491195488292b73bdaf439acf636a
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/thread/wait/SignalReason.java b/src/main/java/org/galemc/gale/executor/thread/wait/SignalReason.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..7cb55f9acc0450f96d5010c9600f3d6dd8a989d3
+index 0000000000000000000000000000000000000000..e6189d5b796e369566ed6322a41f57cf4e347981
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/thread/wait/SignalReason.java
-@@ -0,0 +1,53 @@
+@@ -0,0 +1,56 @@
 +// Gale - base thread pools
 +
 +package org.galemc.gale.executor.thread.wait;
@@ -6457,7 +6484,8 @@ index 0000000000000000000000000000000000000000..7cb55f9acc0450f96d5010c9600f3d6d
 +     */
 +    boolean signalAnother();
 +
-+    @AnyThreadSafe @YieldFree
++    @AnyThreadSafe
++    @YieldFree
 +    static SignalReason createForThreadPoolNewTasks(AbstractYieldingSignallableThreadPool threadPool, boolean yielding) {
 +        return new SignalReason() {
 +
@@ -6469,7 +6497,8 @@ index 0000000000000000000000000000000000000000..7cb55f9acc0450f96d5010c9600f3d6d
 +        };
 +    }
 +
-+    @AnyThreadSafe @YieldFree
++    @AnyThreadSafe
++    @YieldFree
 +    static SignalReason createForWaitingThreadSet(WaitingThreadSet waitingThreads) {
 +        return new SignalReason() {
 +
@@ -6481,7 +6510,8 @@ index 0000000000000000000000000000000000000000..7cb55f9acc0450f96d5010c9600f3d6d
 +        };
 +    }
 +
-+    @AnyThreadSafe @YieldFree
++    @AnyThreadSafe
++    @YieldFree
 +    static SignalReason createNonRetrying() {
 +        return () -> false;
 +    }
@@ -6659,10 +6689,10 @@ index 0000000000000000000000000000000000000000..2e631d1c3c1cbbad9d22a187077e148b
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/thread/wait/WaitingThreadSet.java b/src/main/java/org/galemc/gale/executor/thread/wait/WaitingThreadSet.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..eb010be7b5d4a87115651546f590b5a7da81799b
+index 0000000000000000000000000000000000000000..a22f4815cbf6411ac32a070d1769c2389c8140b4
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/thread/wait/WaitingThreadSet.java
-@@ -0,0 +1,51 @@
+@@ -0,0 +1,52 @@
 +// Gale - base thread pools
 +
 +package org.galemc.gale.executor.thread.wait;
@@ -6679,7 +6709,8 @@ index 0000000000000000000000000000000000000000..eb010be7b5d4a87115651546f590b5a7
 + *
 + * @author Martijn Muijsers under AGPL-3.0
 + */
-+@AnyThreadSafe @YieldFree
++@AnyThreadSafe
++@YieldFree
 +public interface WaitingThreadSet {
 +
 +    /**

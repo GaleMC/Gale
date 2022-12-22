@@ -90,10 +90,10 @@ index 0000000000000000000000000000000000000000..65ec8cf910575dfa4c5024ec69b3be1e
 +}
 diff --git a/src/main/java/org/galemc/gale/concurrent/SemaphoreMutex.java b/src/main/java/org/galemc/gale/concurrent/SemaphoreMutex.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..b4d6e136b9d8f41f070c4f720c1f64e2c729a445
+index 0000000000000000000000000000000000000000..2e31501d26b141729c80975e97a23b09653ba3bf
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/concurrent/SemaphoreMutex.java
-@@ -0,0 +1,33 @@
+@@ -0,0 +1,34 @@
 +// Gale - mutex utility
 +
 +package org.galemc.gale.concurrent;
@@ -113,7 +113,8 @@ index 0000000000000000000000000000000000000000..b4d6e136b9d8f41f070c4f720c1f64e2
 + *
 + * @author Martijn Muijsers
 + */
-+@AnyThreadSafe @YieldFree
++@AnyThreadSafe
++@YieldFree
 +public class SemaphoreMutex extends Semaphore implements Mutex {
 +
 +    public SemaphoreMutex() {

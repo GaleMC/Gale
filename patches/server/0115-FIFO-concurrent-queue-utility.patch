@@ -8,10 +8,10 @@ Gale - https://galemc.org
 
 diff --git a/src/main/java/org/galemc/gale/collection/FIFOConcurrentLinkedQueue.java b/src/main/java/org/galemc/gale/collection/FIFOConcurrentLinkedQueue.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..f8463820ac0b712d82ec05adb387525ae85ef97c
+index 0000000000000000000000000000000000000000..f59e71b5942e8e7fb142e605dd4986a3c6752ed4
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/collection/FIFOConcurrentLinkedQueue.java
-@@ -0,0 +1,133 @@
+@@ -0,0 +1,134 @@
 +// Gale - FIFO concurrent queue utility
 +
 +package org.galemc.gale.collection;
@@ -33,7 +33,8 @@ index 0000000000000000000000000000000000000000..f8463820ac0b712d82ec05adb387525a
 + *
 + * @author Martijn Muijsers under AGPL-3.0
 + */
-+@AnyThreadSafe @YieldFree
++@AnyThreadSafe
++@YieldFree
 +public class FIFOConcurrentLinkedQueue<E> implements Queue<E> {
 +
 +    private final ConcurrentLinkedDeque<E> deque;
