@@ -469,7 +469,7 @@ index 0000000000000000000000000000000000000000..7fee1c2779ab390586b2d3f75f568908
 +}
 diff --git a/src/main/java/org/galemc/gale/version/GaleVersionFetcher.java b/src/main/java/org/galemc/gale/version/GaleVersionFetcher.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..e329f866bc5d7ba9838b124e84ae8d7045799ffa
+index 0000000000000000000000000000000000000000..81d4ba3b3a0110e19c6cf210e32e570ffea08088
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/version/GaleVersionFetcher.java
 @@ -0,0 +1,11 @@
@@ -480,7 +480,7 @@ index 0000000000000000000000000000000000000000..e329f866bc5d7ba9838b124e84ae8d70
 +public class GaleVersionFetcher extends AbstractPaperVersionFetcher {
 +
 +    public GaleVersionFetcher() {
-+        super("master", "https://github.com/GaleMC/Gale", "Gale", "GaleMC", "GaleMC", "Gale");
++        super("dev", "https://github.com/GaleMC/Gale", "Gale", "GaleMC", "GaleMC", "Gale");
 +    }
 +
 +}
