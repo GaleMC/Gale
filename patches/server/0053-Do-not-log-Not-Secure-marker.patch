@@ -7,10 +7,10 @@ License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/io/papermc/paper/adventure/ChatProcessor.java b/src/main/java/io/papermc/paper/adventure/ChatProcessor.java
-index fd5cbb45e9894b7895ea488e2b9876c0391f6f11..58afed3efbe5a2a316b6b71028c760a593da256c 100644
+index 0f5cf192c0848bdeadeda381e19ec035455abfe5..04329cb72f6d42ca0967bd0a1d59ba56d80b8042 100644
 --- a/src/main/java/io/papermc/paper/adventure/ChatProcessor.java
 +++ b/src/main/java/io/papermc/paper/adventure/ChatProcessor.java
-@@ -38,6 +38,7 @@ import org.bukkit.event.player.PlayerChatEvent;
+@@ -42,6 +42,7 @@ import org.bukkit.event.player.PlayerChatEvent;
  import org.checkerframework.checker.nullness.qual.NonNull;
  import org.checkerframework.checker.nullness.qual.Nullable;
  import org.checkerframework.framework.qual.DefaultQualifier;
@@ -18,17 +18,17 @@ index fd5cbb45e9894b7895ea488e2b9876c0391f6f11..58afed3efbe5a2a316b6b71028c760a5
  
  import static net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection;
  
-@@ -307,7 +308,7 @@ public final class ChatProcessor {
+@@ -351,7 +352,7 @@ public final class ChatProcessor {
  
          private void sendToServer(final ChatType.Bound chatType, final @Nullable Function<Audience, net.minecraft.network.chat.Component> msgFunction) {
              final PlayerChatMessage toConsoleMessage = msgFunction == null ? ChatProcessor.this.message : ChatProcessor.this.message.withUnsignedContent(msgFunction.apply(ChatProcessor.this.server.console));
 -            ChatProcessor.this.server.logChatMessage(toConsoleMessage.decoratedContent(), chatType, ChatProcessor.this.server.getPlayerList().verifyChatTrusted(toConsoleMessage) ? null : "Not Secure");
 +            ChatProcessor.this.server.logChatMessage(toConsoleMessage.decoratedContent(), chatType, !GaleGlobalConfiguration.get().logToConsole.chat.notSecureMarker || ChatProcessor.this.server.getPlayerList().verifyChatTrusted(toConsoleMessage) ? null : "Not Secure"); // Gale - do not log Not Secure marker
          }
+     }
  
-         record ConstantFunction(net.minecraft.network.chat.Component component) implements Function<Audience, net.minecraft.network.chat.Component> {
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index b348d33726b2b14ea2d12ce3430df2c0b94295f4..fe7037310e1a2b5fc2956b565982847e4c2be041 100644
+index 6cc577d17201513af62ce847363ee25a3852a1b5..8a59fade265e586622bcaa2cab2772613f9391aa 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
 @@ -100,6 +100,7 @@ import net.minecraft.world.scores.Objective;
@@ -39,7 +39,7 @@ index b348d33726b2b14ea2d12ce3430df2c0b94295f4..fe7037310e1a2b5fc2956b565982847e
  import org.slf4j.Logger;
  
  // CraftBukkit start
-@@ -1448,7 +1449,7 @@ public abstract class PlayerList {
+@@ -1373,7 +1374,7 @@ public abstract class PlayerList {
          // Paper end
          boolean flag = this.verifyChatTrusted(message);
  

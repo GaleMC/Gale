@@ -343,7 +343,7 @@ index a2920b8a9eff77d9c5d1d7f70ad3abdacba8f0fa..43f402d9032e4570a81a80e412215598
      protected CipherBase(Cipher cipher) {
          this.cipher = cipher;
 diff --git a/src/main/java/net/minecraft/network/Connection.java b/src/main/java/net/minecraft/network/Connection.java
-index 507e98438f6d13de1bcf063db673a8e483dbea47..82fcd448f2f2ac2c060d7a3fc672a9ffcfd6a93a 100644
+index 38c09c65dfa4a7a0c80d36f726c1fd028cbe05f8..b6a80edbbceb85932a5fa8b9488d44d41f5c5314 100644
 --- a/src/main/java/net/minecraft/network/Connection.java
 +++ b/src/main/java/net/minecraft/network/Connection.java
 @@ -20,7 +20,6 @@ import io.netty.channel.epoll.EpollSocketChannel;
@@ -448,7 +448,7 @@ index 590b756842f5f9d1c2f0aed6517f9b46e3dc74db..ce7f36f38165a58e3fab7a98bece75df
  
              for (int j = 0; j < i; ++j) {
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index 5f3e3383f20b850720835fab948bb610978e4fe9..7b9b2ac6f7b7413849c4a9144abdb8dcc80a22e3 100644
+index 89aaa846d5cb1cfd8ccf634f85bdc4180013cfd0..f69ea29648b090334d98dd8f3ed71cf8f10427ac 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
 @@ -38,6 +38,8 @@ import java.util.stream.Collectors;
@@ -460,7 +460,7 @@ index 5f3e3383f20b850720835fab948bb610978e4fe9..7b9b2ac6f7b7413849c4a9144abdb8dc
  import net.minecraft.CrashReport;
  import net.minecraft.Util;
  import net.minecraft.core.BlockPos;
-@@ -901,7 +903,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -899,7 +901,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
                      BlockPos blockposition2 = blockposition.set(j + randomX, randomY, k + randomZ);
                      BlockState iblockdata = com.destroystokyo.paper.util.maplist.IBlockDataList.getBlockDataFromRaw(raw);
  
@@ -469,7 +469,7 @@ index 5f3e3383f20b850720835fab948bb610978e4fe9..7b9b2ac6f7b7413849c4a9144abdb8dc
                      // We drop the fluid tick since LAVA is ALREADY TICKED by the above method (See LiquidBlock).
                      // TODO CHECK ON UPDATE (ping the Canadian)
                  }
-@@ -1155,7 +1157,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -1153,7 +1155,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
  
      public static List<Entity> getCurrentlyTickingEntities() {
          Entity ticking = currentlyTickingEntity.get();
@@ -479,7 +479,7 @@ index 5f3e3383f20b850720835fab948bb610978e4fe9..7b9b2ac6f7b7413849c4a9144abdb8dc
          return ret;
      }
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index d98928904f74a86c72dbfc402723d50fb1b62f28..51a336fa29e92669ce48b7724de0134480ac6adb 100644
+index ee3acb578d4f72836eb3a4e8336701b3b939da50..60e2b951216003ae1861b1ee218e38da107b1760 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -28,6 +28,8 @@ import java.util.function.UnaryOperator;
@@ -516,7 +516,7 @@ index d98928904f74a86c72dbfc402723d50fb1b62f28..51a336fa29e92669ce48b7724de01344
  import org.bukkit.event.player.PlayerChatEvent;
  import org.bukkit.event.player.PlayerCommandPreprocessEvent;
  import org.bukkit.event.player.PlayerInteractAtEntityEvent;
-@@ -404,7 +402,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -400,7 +398,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
          if (this.keepAlivePending) {
              if (!this.processedDisconnect && elapsedTime >= KEEPALIVE_LIMIT) { // check keepalive limit, don't fire if already disconnected
                  ServerGamePacketListenerImpl.LOGGER.warn("{} was kicked due to keepalive timeout!", this.player.getScoreboardName()); // more info
@@ -525,7 +525,7 @@ index d98928904f74a86c72dbfc402723d50fb1b62f28..51a336fa29e92669ce48b7724de01344
              }
          } else {
              if (elapsedTime >= 15000L) { // 15 seconds
-@@ -868,13 +866,13 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -864,13 +862,13 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
          // PacketUtils.ensureRunningOnSameThread(packet, this, this.player.getLevel()); // Paper - run this async
          // CraftBukkit start
          if (this.chatSpamTickCount.addAndGet(io.papermc.paper.configuration.GlobalConfiguration.get().spamLimiter.tabSpamIncrement) > io.papermc.paper.configuration.GlobalConfiguration.get().spamLimiter.tabSpamLimit && !this.server.getPlayerList().isOp(this.player.getGameProfile())) { // Paper start - split and make configurable
@@ -541,7 +541,7 @@ index d98928904f74a86c72dbfc402723d50fb1b62f28..51a336fa29e92669ce48b7724de01344
              return;
          }
          // Paper end
-@@ -3255,7 +3253,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -3251,7 +3249,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
          // Paper start
          if (!org.bukkit.Bukkit.isPrimaryThread()) {
              if (recipeSpamPackets.addAndGet(io.papermc.paper.configuration.GlobalConfiguration.get().spamLimiter.recipeSpamIncrement) > io.papermc.paper.configuration.GlobalConfiguration.get().spamLimiter.recipeSpamLimit) {
@@ -551,7 +551,7 @@ index d98928904f74a86c72dbfc402723d50fb1b62f28..51a336fa29e92669ce48b7724de01344
              }
          }
 diff --git a/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
-index f3b340fc6be9878d677a76673450aac3e0b73d4b..e373f0a745db273c774afbe448b96cd876a1990c 100644
+index 3f7fab2f80ded9a7a720bd623f1ef028a4d0dca6..2ed3f42b1e487374287d033ac634a922a5ef37bd 100644
 --- a/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
 @@ -12,8 +12,9 @@ import java.security.PrivateKey;
@@ -588,7 +588,7 @@ index f3b340fc6be9878d677a76673450aac3e0b73d4b..e373f0a745db273c774afbe448b96cd8
          final String s;
  
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index fe7037310e1a2b5fc2956b565982847e4c2be041..c0226f0445e2554000f2fc0a3906f9b3ed404097 100644
+index 8a59fade265e586622bcaa2cab2772613f9391aa..ede2eb274ca715dccfbfd98e0e2c410990508ced 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
 @@ -27,6 +27,8 @@ import java.util.UUID;
@@ -608,7 +608,7 @@ index fe7037310e1a2b5fc2956b565982847e4c2be041..c0226f0445e2554000f2fc0a3906f9b3
  import org.bukkit.entity.Player;
  import org.bukkit.event.player.PlayerChangedWorldEvent;
  import org.bukkit.event.player.PlayerJoinEvent;
-@@ -750,7 +751,7 @@ public abstract class PlayerList {
+@@ -675,7 +676,7 @@ public abstract class PlayerList {
          while (iterator.hasNext()) {
              entityplayer = (ServerPlayer) iterator.next();
              this.save(entityplayer); // CraftBukkit - Force the player's inventory to be saved
@@ -697,7 +697,7 @@ index 97ff19efa0b3943ccb7a6e02cba6ed2fea61adac..b2ae2bd8bd4ff3cb6457e8c08172e348
      private EquipmentSlot(EquipmentSlot.Type type, int entityId, int armorStandId, String name) {
          this.type = type;
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index 197c99b23584ef1aed1be821d9673bacabb561e5..6ad1e6c4a20bec34b56276736ee616b5dcff0354 100644
+index b3bac6c7366c27a2c31e13118a51123daab92d75..c60cabeff2058663ba05d6c41ff80756b43355a4 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
 @@ -3103,7 +3103,7 @@ public abstract class LivingEntity extends Entity {

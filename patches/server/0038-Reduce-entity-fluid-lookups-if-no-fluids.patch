@@ -31,10 +31,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index a8d10092a990aa63c71846425aed261ecb845514..910724dce6b96a0359808f2311dbd1e9ccee47ea 100644
+index 820bb37e9d9e670c2f8282967926dcce61852bf5..a3f717c6aacdae306a4c61b34d6aaaffa41f7c68 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -4082,16 +4082,18 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -4089,16 +4089,18 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
      }
  
      public boolean updateFluidHeightAndDoFluidPushing(TagKey<Fluid> tag, double speed) {
@@ -60,7 +60,7 @@ index a8d10092a990aa63c71846425aed261ecb845514..910724dce6b96a0359808f2311dbd1e9
              double d1 = 0.0D;
              boolean flag = this.isPushedByFluid();
              boolean flag1 = false;
-@@ -4099,14 +4101,61 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -4106,14 +4108,61 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
              int k1 = 0;
              BlockPos.MutableBlockPos blockposition_mutableblockposition = new BlockPos.MutableBlockPos();
  
@@ -128,7 +128,7 @@ index a8d10092a990aa63c71846425aed261ecb845514..910724dce6b96a0359808f2311dbd1e9
  
                              if (d2 >= axisalignedbb.minY) {
                                  flag1 = true;
-@@ -4128,9 +4177,12 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -4135,9 +4184,12 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
                                  // CraftBukkit end
                              }
                          }

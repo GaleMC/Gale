@@ -26,10 +26,10 @@ index 23dcdc71a8a6fd5472cdc1c22331b56c6bb3ded9..c3f88980f1ea2f7b04ad110494962725
              double d1 = (double) (center.y - maxRange);
              double d2 = (double) (center.x + maxRange);
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index c0b0a7fdb75266a7064d54bda6441953184ecc64..1a272d716a23ddf6bd7b8c2733199c5729f333c5 100644
+index 9d74ef6973f6a9e12861256aa7032f8d746a97f5..6ed357bff6cafce563774ca2f5e2944bcdfb7f92 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-@@ -392,7 +392,7 @@ public class ServerPlayer extends Player {
+@@ -391,7 +391,7 @@ public class ServerPlayer extends Player {
              long l = k * k;
              int i1 = l > 2147483647L ? Integer.MAX_VALUE : (int) l;
              int j1 = this.getCoprime(i1);
@@ -38,7 +38,7 @@ index c0b0a7fdb75266a7064d54bda6441953184ecc64..1a272d716a23ddf6bd7b8c2733199c57
  
              for (int l1 = 0; l1 < i1; ++l1) {
                  int i2 = (k1 + j1 * l1) % i1;
-@@ -429,7 +429,7 @@ public class ServerPlayer extends Player {
+@@ -428,7 +428,7 @@ public class ServerPlayer extends Player {
              long l = k * k;
              int i1 = l > 2147483647L ? Integer.MAX_VALUE : (int) l;
              int j1 = this.getCoprime(i1);
@@ -96,7 +96,7 @@ index b13ef853419d2783d09b3e685b9b506a4ff5676e..7a7e87954868c3eb267d3255652d67d3
          this.level = world;
          this.id = nbt.getInt("Id");
 diff --git a/src/main/java/net/minecraft/world/level/Explosion.java b/src/main/java/net/minecraft/world/level/Explosion.java
-index e7ce14ab0732034107e735787354a6fb0ec90f54..d300629f99332b00c06264ab09a1dbac175d93b8 100644
+index d3ade2eb7c492cd8fdb24c78fa2886db8986fc09..b6e537dd77f2eda819b00962284f36546a2bd158 100644
 --- a/src/main/java/net/minecraft/world/level/Explosion.java
 +++ b/src/main/java/net/minecraft/world/level/Explosion.java
 @@ -81,7 +81,7 @@ public class Explosion {

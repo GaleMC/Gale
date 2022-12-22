@@ -360,7 +360,7 @@ index 51b3db0b6c2cede95b584268e035c0fb36d38094..98f00bdc85ade95ccbfaa1999c70ac65
          if (this.convertOldUsers()) {
              this.getProfileCache().save(false); // Paper
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index f3a19d00f78e19aa98c57461efb90d79f656a992..e9c7e0f0c411f4a810c9ab3b846c74353a6ef815 100644
+index 54c2b7fba83d6f06dba95b1bb5b487a02048d6e6..4b1b828b72a8ddef240d005fc514ae0a54b22982 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
 @@ -128,12 +128,10 @@ import net.minecraft.world.level.chunk.storage.EntityStorage;
@@ -376,7 +376,7 @@ index f3a19d00f78e19aa98c57461efb90d79f656a992..e9c7e0f0c411f4a810c9ab3b846c7435
  import net.minecraft.world.level.gameevent.DynamicGameEventListener;
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.level.gameevent.GameEventDispatcher;
-@@ -529,7 +527,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -527,7 +525,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
      public ServerLevel(MinecraftServer minecraftserver, Executor executor, LevelStorageSource.LevelStorageAccess convertable_conversionsession, PrimaryLevelData iworlddataserver, ResourceKey<Level> resourcekey, LevelStem worlddimension, ChunkProgressListener worldloadlistener, boolean flag, long i, List<CustomSpawner> list, boolean flag1, org.bukkit.World.Environment env, org.bukkit.generator.ChunkGenerator gen, org.bukkit.generator.BiomeProvider biomeProvider) {
          // Holder holder = worlddimension.type(); // CraftBukkit - decompile error
          // Objects.requireNonNull(minecraftserver); // CraftBukkit - decompile error
@@ -462,7 +462,7 @@ index 3cbf801b2e5420c0e870f73788deb550e49ad54d..6b5740e4e73a753c9516d7cbde575c18
          this.world = new CraftWorld((ServerLevel) this, gen, biomeProvider, env);
  
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index 454721406d596f65512eadf0e4b901990490f0c6..0addf9c9db5895aaca03dc1781ed76e5ef5fd334 100644
+index 0739d32db0dd69965fd0c93be6a1f2c7448d3439..a7326db69297f46cd403114069a1d5c033ffb809 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 @@ -979,6 +979,7 @@ public final class CraftServer implements Server {
@@ -473,7 +473,7 @@ index 454721406d596f65512eadf0e4b901990490f0c6..0addf9c9db5895aaca03dc1781ed76e5
          for (ServerLevel world : this.console.getAllLevels()) {
              // world.serverLevelData.setDifficulty(config.difficulty); // Paper - per level difficulty
              world.setSpawnSettings(world.serverLevelData.getDifficulty() != Difficulty.PEACEFUL && config.spawnMonsters, config.spawnAnimals); // Paper - per level difficulty (from MinecraftServer#setDifficulty(ServerLevel, Difficulty, boolean))
-@@ -2760,6 +2761,14 @@ public final class CraftServer implements Server {
+@@ -2763,6 +2764,14 @@ public final class CraftServer implements Server {
              return CraftServer.this.console.paperConfigurations.createLegacyObject(CraftServer.this.console);
          }
  

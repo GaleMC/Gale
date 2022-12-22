@@ -611,7 +611,7 @@ index ca84eddbdb1e198b899750e5f6b3eafd25ce970f..d95c3b14c06421c03c99f84efb3a5319
          }
  
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index e9c7e0f0c411f4a810c9ab3b846c74353a6ef815..c44d75ccda1edc7d2d04c42fb1af141cd22b2354 100644
+index 4b1b828b72a8ddef240d005fc514ae0a54b22982..e8658ed3784444991c5a6c8f03d2a5e021a11385 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
 @@ -76,7 +76,6 @@ import net.minecraft.util.CsvOutput;
@@ -622,7 +622,7 @@ index e9c7e0f0c411f4a810c9ab3b846c74353a6ef815..c44d75ccda1edc7d2d04c42fb1af141c
  import net.minecraft.world.DifficultyInstance;
  import net.minecraft.world.damagesource.DamageSource;
  import net.minecraft.world.entity.Entity;
-@@ -527,15 +526,17 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -525,15 +524,17 @@ public class ServerLevel extends Level implements WorldGenLevel {
      public ServerLevel(MinecraftServer minecraftserver, Executor executor, LevelStorageSource.LevelStorageAccess convertable_conversionsession, PrimaryLevelData iworlddataserver, ResourceKey<Level> resourcekey, LevelStem worlddimension, ChunkProgressListener worldloadlistener, boolean flag, long i, List<CustomSpawner> list, boolean flag1, org.bukkit.World.Environment env, org.bukkit.generator.ChunkGenerator gen, org.bukkit.generator.BiomeProvider biomeProvider) {
          // Holder holder = worlddimension.type(); // CraftBukkit - decompile error
          // Objects.requireNonNull(minecraftserver); // CraftBukkit - decompile error
@@ -643,7 +643,7 @@ index e9c7e0f0c411f4a810c9ab3b846c74353a6ef815..c44d75ccda1edc7d2d04c42fb1af141c
          this.navigatingMobs = new ObjectOpenHashSet();
          this.blockEvents = new ObjectLinkedOpenHashSet();
          this.blockEventsToReschedule = new ArrayList(64);
-@@ -633,12 +634,8 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -631,12 +632,8 @@ public class ServerLevel extends Level implements WorldGenLevel {
              }
          }
          // Paper end - optimise checkDespawn
@@ -656,7 +656,7 @@ index e9c7e0f0c411f4a810c9ab3b846c74353a6ef815..c44d75ccda1edc7d2d04c42fb1af141c
          this.advanceWeatherCycle();
          int i = this.getGameRules().getInt(GameRules.RULE_PLAYERS_SLEEPING_PERCENTAGE);
          long j;
-@@ -665,32 +662,24 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -663,32 +660,24 @@ public class ServerLevel extends Level implements WorldGenLevel {
  
          this.updateSkyBrightness();
          this.tickTime();
@@ -689,7 +689,7 @@ index e9c7e0f0c411f4a810c9ab3b846c74353a6ef815..c44d75ccda1edc7d2d04c42fb1af141c
          boolean flag = true || !this.players.isEmpty() || !this.getForcedChunks().isEmpty(); // CraftBukkit - this prevents entity cleanup, other issues on servers with no players
  
          if (flag) {
-@@ -698,12 +687,9 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -696,12 +685,9 @@ public class ServerLevel extends Level implements WorldGenLevel {
          }
  
          if (flag || this.emptyTime++ < 300) {
@@ -702,7 +702,7 @@ index e9c7e0f0c411f4a810c9ab3b846c74353a6ef815..c44d75ccda1edc7d2d04c42fb1af141c
              }
  
              org.spigotmc.ActivationRange.activateEntities(this); // Spigot
-@@ -713,9 +699,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -711,9 +697,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
                      if (false && this.shouldDiscardEntity(entity)) { // CraftBukkit - We prevent spawning in general, so this butchering is not needed
                          entity.discard();
                      } else {
@@ -712,7 +712,7 @@ index e9c7e0f0c411f4a810c9ab3b846c74353a6ef815..c44d75ccda1edc7d2d04c42fb1af141c
                          if (true || this.chunkSource.chunkMap.getDistanceManager().inEntityTickingRange(entity.chunkPosition().toLong())) { // Paper - now always true if in the ticking list
                              Entity entity1 = entity.getVehicle();
  
-@@ -727,22 +711,17 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -725,22 +709,17 @@ public class ServerLevel extends Level implements WorldGenLevel {
                                  entity.stopRiding();
                              }
  
@@ -735,7 +735,7 @@ index e9c7e0f0c411f4a810c9ab3b846c74353a6ef815..c44d75ccda1edc7d2d04c42fb1af141c
      }
  
      @Override
-@@ -801,9 +780,6 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -799,9 +778,6 @@ public class ServerLevel extends Level implements WorldGenLevel {
          boolean flag = this.isRaining();
          int j = chunkcoordintpair.getMinBlockX();
          int k = chunkcoordintpair.getMinBlockZ();
@@ -745,7 +745,7 @@ index e9c7e0f0c411f4a810c9ab3b846c74353a6ef815..c44d75ccda1edc7d2d04c42fb1af141c
          final BlockPos.MutableBlockPos blockposition = this.chunkTickMutablePosition; // Paper - use mutable to reduce allocation rate, final to force compile fail on change
  
          if (!this.paperConfig().environment.disableThunder && flag && this.isThundering() && this.spigotConfig.thunderChance > 0 && this.random.nextInt(this.spigotConfig.thunderChance) == 0) { // Spigot // Paper - disable thunder
-@@ -833,7 +809,6 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -831,7 +807,6 @@ public class ServerLevel extends Level implements WorldGenLevel {
              }
          }
  
@@ -753,7 +753,7 @@ index e9c7e0f0c411f4a810c9ab3b846c74353a6ef815..c44d75ccda1edc7d2d04c42fb1af141c
          int l;
  
          if (!this.paperConfig().environment.disableIceAndSnow && this.random.nextInt(16) == 0) { // Paper - Disable ice and snow
-@@ -885,7 +860,6 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -883,7 +858,6 @@ public class ServerLevel extends Level implements WorldGenLevel {
          }
  
          // Paper start - optimise random block ticking
@@ -761,7 +761,7 @@ index e9c7e0f0c411f4a810c9ab3b846c74353a6ef815..c44d75ccda1edc7d2d04c42fb1af141c
          timings.chunkTicksBlocks.startTiming(); // Paper
          if (randomTickSpeed > 0) {
              LevelChunkSection[] sections = chunk.getSections();
-@@ -921,7 +895,6 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -919,7 +893,6 @@ public class ServerLevel extends Level implements WorldGenLevel {
          }
          // Paper end - optimise random block ticking
          timings.chunkTicksBlocks.stopTiming(); // Paper
@@ -769,7 +769,7 @@ index e9c7e0f0c411f4a810c9ab3b846c74353a6ef815..c44d75ccda1edc7d2d04c42fb1af141c
      }
  
      public Optional<BlockPos> findLightningRod(BlockPos pos) {
-@@ -1199,19 +1172,13 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -1197,19 +1170,13 @@ public class ServerLevel extends Level implements WorldGenLevel {
          try {
          // Paper end - timings
          entity.setOldPosAndRot();
@@ -789,7 +789,7 @@ index e9c7e0f0c411f4a810c9ab3b846c74353a6ef815..c44d75ccda1edc7d2d04c42fb1af141c
          } finally { timer.stopTiming(); } // Paper - timings
          Iterator iterator = entity.getPassengers().iterator();
  
-@@ -1240,12 +1207,6 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -1238,12 +1205,6 @@ public class ServerLevel extends Level implements WorldGenLevel {
                  // Paper end
                  passenger.setOldPosAndRot();
                  ++passenger.tickCount;
@@ -802,7 +802,7 @@ index e9c7e0f0c411f4a810c9ab3b846c74353a6ef815..c44d75ccda1edc7d2d04c42fb1af141c
                  // Paper start - EAR 2
                  if (isActive) {
                  passenger.rideTick();
-@@ -1257,7 +1218,6 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -1255,7 +1216,6 @@ public class ServerLevel extends Level implements WorldGenLevel {
                      vehicle.positionRider(passenger);
                  }
                  // Paper end - EAR 2
@@ -811,10 +811,10 @@ index e9c7e0f0c411f4a810c9ab3b846c74353a6ef815..c44d75ccda1edc7d2d04c42fb1af141c
  
                  while (iterator.hasNext()) {
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index c0b0a7fdb75266a7064d54bda6441953184ecc64..4b9be8345946fab0d5f2a206bf916b19d78765b5 100644
+index 7d6d3c8556033d289fdadc489e73fba478fce41a..a07da939bb6b2dd0bd75cc74dd79493695035259 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-@@ -1151,7 +1151,6 @@ public class ServerPlayer extends Player {
+@@ -1149,7 +1149,6 @@ public class ServerPlayer extends Player {
              PortalInfo shapedetectorshape = this.findDimensionEntryPoint(worldserver);
  
              if (shapedetectorshape != null) {
@@ -822,7 +822,7 @@ index c0b0a7fdb75266a7064d54bda6441953184ecc64..4b9be8345946fab0d5f2a206bf916b19
                  worldserver = shapedetectorshape.world; // CraftBukkit
                  if (worldserver == null) { } else // CraftBukkit - empty to fall through to null to event
                  if (resourcekey == LevelStem.OVERWORLD && worldserver.getTypeKey() == LevelStem.NETHER) { // CraftBukkit
-@@ -1174,8 +1173,6 @@ public class ServerPlayer extends Player {
+@@ -1172,8 +1171,6 @@ public class ServerPlayer extends Player {
              worldserver = ((CraftWorld) exit.getWorld()).getHandle();
              // CraftBukkit end
  
@@ -831,7 +831,7 @@ index c0b0a7fdb75266a7064d54bda6441953184ecc64..4b9be8345946fab0d5f2a206bf916b19
              if (true) { // CraftBukkit
                  this.isChangingDimension = true; // CraftBukkit - Set teleport invulnerability only if player changing worlds
  
-@@ -1193,7 +1190,6 @@ public class ServerPlayer extends Player {
+@@ -1191,7 +1188,6 @@ public class ServerPlayer extends Player {
                  this.connection.teleport(exit); // CraftBukkit - use internal teleport without event
                  this.connection.resetPosition();
                  worldserver.addDuringPortalTeleport(this);
@@ -840,18 +840,18 @@ index c0b0a7fdb75266a7064d54bda6441953184ecc64..4b9be8345946fab0d5f2a206bf916b19
                  this.connection.send(new ClientboundPlayerAbilitiesPacket(this.getAbilities()));
                  playerlist.sendLevelInfo(this, worldserver);
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 0c2255b6e2fb7752f85b0f83d4f84732758bd14d..757146c2b20d731577983375d34afaa80df639d8 100644
+index 08cb3db28f13c352a162009deeb28ee637e98d2a..81b27d48c1421c02f86b95db1d7a1eeaf130cd09 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -394,7 +394,6 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -390,7 +390,6 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
              this.aboveGroundVehicleTickCount = 0;
-         }} // Paper - end if (valid)
+         }
  
 -        this.server.getProfiler().push("keepAlive");
          // Paper Start - give clients a longer time to respond to pings as per pre 1.12.2 timings
          // This should effectively place the keepalive handling back to "as it was" before 1.12.2
          long currentTime = Util.getMillis();
-@@ -415,7 +414,6 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -411,7 +410,6 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
          }
          // Paper end
  
@@ -936,7 +936,7 @@ index 7ab57748b2f2aea1003d9b7e70e76c372aa1e432..47e75ec4a01f8a456ec6ebc13031c1f0
      }
  
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 7f94da8059147760cbdc2476d0e8beda4a105f40..756e952a808ab5185f1feef16a121ed677242e37 100644
+index be54a70b47433c2abaeb8632ffe55d0762f619d6..372a60f326c1472697a0153bb7cdd08b3a02e9c3 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -787,7 +787,6 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
@@ -1051,7 +1051,7 @@ index 7f94da8059147760cbdc2476d0e8beda4a105f40..756e952a808ab5185f1feef16a121ed6
              }
          } else {
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index 9e075de3542bda8ae086c9ca68bcd00b16d565d0..90d45d9c7dca9ff4acde6fc8539dcaf8eb59fe11 100644
+index 864ab97b7a6c62c376ca38dbbc65bc9406dfd62b..5f3796c9b0f910e578fe70c46ca97c36b70378f8 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
 @@ -393,7 +393,6 @@ public abstract class LivingEntity extends Entity {
@@ -1526,7 +1526,7 @@ index 18eac340386a396c9850f53f30d20a41c1437788..a4029cd16d964cd3a58f9f6e8471fbdf
              this.assignProfessionWhenSpawned = false;
          }
 diff --git a/src/main/java/net/minecraft/world/level/Explosion.java b/src/main/java/net/minecraft/world/level/Explosion.java
-index e7ce14ab0732034107e735787354a6fb0ec90f54..a9aa5c23f424513ef121c9875f8b63b360fb9d32 100644
+index f16593a99ca4089151c2247f6028b823614c78e4..d3ade2eb7c492cd8fdb24c78fa2886db8986fc09 100644
 --- a/src/main/java/net/minecraft/world/level/Explosion.java
 +++ b/src/main/java/net/minecraft/world/level/Explosion.java
 @@ -362,7 +362,6 @@ public class Explosion {

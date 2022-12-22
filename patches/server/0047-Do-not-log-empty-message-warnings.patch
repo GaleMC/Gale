@@ -7,7 +7,7 @@ License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index ba408197c1d949800726bd08563c25033d84072b..d98928904f74a86c72dbfc402723d50fb1b62f28 100644
+index 8fac3c35b04429e66e440895ab82a65497147812..ee3acb578d4f72836eb3a4e8336701b3b939da50 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -182,6 +182,8 @@ import net.minecraft.world.phys.Vec3;
@@ -19,7 +19,7 @@ index ba408197c1d949800726bd08563c25033d84072b..d98928904f74a86c72dbfc402723d50f
  import org.slf4j.Logger;
  
  // CraftBukkit start
-@@ -2536,7 +2538,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -2532,7 +2534,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
          // CraftBukkit start
          String s = message.signedContent();
          if (s.isEmpty()) {

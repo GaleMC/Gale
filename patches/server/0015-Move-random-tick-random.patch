@@ -19,10 +19,10 @@ require it to be initialized earlier. By moving it to the superclass, we
 initialize it earlier, ensuring that it is available sooner.
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index c44d75ccda1edc7d2d04c42fb1af141cd22b2354..a44374f7ec27bdb12ab69d516fb847d223fc60ee 100644
+index e8658ed3784444991c5a6c8f03d2a5e021a11385..b8c4a0177b69dc3f79560e7ca5e80e681c73f698 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
-@@ -772,7 +772,6 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -770,7 +770,6 @@ public class ServerLevel extends Level implements WorldGenLevel {
      }
      // Paper start - optimise random block ticking
      private final BlockPos.MutableBlockPos chunkTickMutablePosition = new BlockPos.MutableBlockPos();

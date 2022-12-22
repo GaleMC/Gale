@@ -37,7 +37,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 diff --git a/src/main/java/org/bukkit/craftbukkit/legacy/CraftLegacy.java b/src/main/java/org/bukkit/craftbukkit/legacy/CraftLegacy.java
-index 6a083e269b828ef53f943cae56b029f2e0021ef1..8244810e9ac8aed6248cca71af3be31292cd99aa 100644
+index 110503062b3043cffa082a1cda6b8d57152869aa..951ca1e25cdcdf6a1ade4090ca397f6d21c4e599 100644
 --- a/src/main/java/org/bukkit/craftbukkit/legacy/CraftLegacy.java
 +++ b/src/main/java/org/bukkit/craftbukkit/legacy/CraftLegacy.java
 @@ -31,6 +31,7 @@ import org.bukkit.Material;
@@ -48,12 +48,12 @@ index 6a083e269b828ef53f943cae56b029f2e0021ef1..8244810e9ac8aed6248cca71af3be312
  
  /**
   * This class may seem unnecessarily slow and complicated/repetitive however it
-@@ -255,7 +256,7 @@ public final class CraftLegacy {
+@@ -256,7 +257,7 @@ public final class CraftLegacy {
      }
  
      static {
--        System.err.println("Initializing Legacy Material Support. Unless you have legacy plugins and/or data this is a bug!");
-+        if (GaleGlobalConfiguration.get().logToConsole.legacyMaterialInitialization) System.err.println("Initializing Legacy Material Support. Unless you have legacy plugins and/or data this is a bug!"); // Gale - Purpur - do not log legacy Material initialization
+-        LOGGER.warn("Initializing Legacy Material Support. Unless you have legacy plugins and/or data this is a bug!"); // Paper - doesn't need to be an error
++        if (GaleGlobalConfiguration.get().logToConsole.legacyMaterialInitialization) LOGGER.warn("Initializing Legacy Material Support. Unless you have legacy plugins and/or data this is a bug!"); // Paper - doesn't need to be an error // Gale - Purpur - do not log legacy Material initialization
          if (MinecraftServer.getServer() != null && MinecraftServer.getServer().isDebugging()) {
              new Exception().printStackTrace();
          }
