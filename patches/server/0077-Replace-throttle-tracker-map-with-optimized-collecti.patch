@@ -1,0 +1,94 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Martijn Muijsers <martijnmuijsers@live.nl>
+Date: Fri, 23 Dec 2022 22:22:47 +0100
+Subject: [PATCH] Replace throttle tracker map with optimized collection
+
+License: MIT (https://opensource.org/licenses/MIT)
+Gale - https://galemc.org
+
+This patch is based on the following patch:
+"Use more fastutil data structures"
+By: nopjmp <kthompson@hey.com>
+As part of: Dionysus (https://github.com/nopjmp/Dionysus)
+Licensed under: MIT (https://opensource.org/licenses/MIT)
+
+* Dionysus description *
+
+Use them in more places.
+
+* Dionysus copyright *
+
+Copyright 2021 Kayla Thompson
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
+rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit
+persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
+IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+diff --git a/src/main/java/net/minecraft/server/network/ServerHandshakePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerHandshakePacketListenerImpl.java
+index e7ff7ad3bf4dd17fdd34202ec3aef8e9512bc36d..8e68d1373a519cc12bf83de6aadcb24cbbd34af6 100644
+--- a/src/main/java/net/minecraft/server/network/ServerHandshakePacketListenerImpl.java
++++ b/src/main/java/net/minecraft/server/network/ServerHandshakePacketListenerImpl.java
+@@ -1,10 +1,11 @@
+ package net.minecraft.server.network;
+ 
++import it.unimi.dsi.fastutil.objects.Object2LongMap;
++import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
+ import net.minecraft.SharedConstants;
+ import net.minecraft.network.Connection;
+ import net.minecraft.network.ConnectionProtocol;
+ import net.minecraft.network.chat.Component;
+-import net.minecraft.network.chat.MutableComponent;
+ import net.minecraft.network.protocol.handshake.ClientIntentionPacket;
+ import net.minecraft.network.protocol.handshake.ServerHandshakePacketListener;
+ import net.minecraft.network.protocol.login.ClientboundLoginDisconnectPacket;
+@@ -12,7 +13,8 @@ import net.minecraft.server.MinecraftServer;
+ 
+ // CraftBukkit start
+ import java.net.InetAddress;
+-import java.util.HashMap;
++import java.util.Iterator;
++import java.util.Map;
+ // CraftBukkit end
+ 
+ public class ServerHandshakePacketListenerImpl implements ServerHandshakePacketListener {
+@@ -23,7 +25,7 @@ public class ServerHandshakePacketListenerImpl implements ServerHandshakePacketL
+     static final java.util.regex.Pattern PROP_PATTERN = java.util.regex.Pattern.compile("\\w{0,16}");
+     // Spigot end
+     // CraftBukkit start - add fields
+-    private static final HashMap<InetAddress, Long> throttleTracker = new HashMap<InetAddress, Long>();
++    private static final Object2LongOpenHashMap<InetAddress> throttleTracker = new Object2LongOpenHashMap<>(); // Gale - Dionysus - replace throttle tracker map with optimized collection
+     private static int throttleCounter = 0;
+     // CraftBukkit end
+     private static final Component IGNORE_STATUS_REASON = Component.literal("Ignoring status request");
+@@ -50,7 +52,7 @@ public class ServerHandshakePacketListenerImpl implements ServerHandshakePacketL
+                     InetAddress address = ((java.net.InetSocketAddress) this.connection.getRemoteAddress()).getAddress();
+ 
+                     synchronized (ServerHandshakePacketListenerImpl.throttleTracker) {
+-                        if (ServerHandshakePacketListenerImpl.throttleTracker.containsKey(address) && !"127.0.0.1".equals(address.getHostAddress()) && currentTime - ServerHandshakePacketListenerImpl.throttleTracker.get(address) < connectionThrottle) {
++                        if (ServerHandshakePacketListenerImpl.throttleTracker.containsKey(address) && !"127.0.0.1".equals(address.getHostAddress()) && currentTime - ServerHandshakePacketListenerImpl.throttleTracker.getLong(address) < connectionThrottle) { // Gale - Dionysus - replace throttle tracker map with optimized collection
+                             ServerHandshakePacketListenerImpl.throttleTracker.put(address, currentTime);
+                             Component chatmessage = io.papermc.paper.adventure.PaperAdventure.asVanilla(io.papermc.paper.configuration.GlobalConfiguration.get().messages.kick.connectionThrottle); // Paper - Configurable connection throttle kick message
+                             this.connection.send(new ClientboundLoginDisconnectPacket(chatmessage));
+@@ -64,13 +66,7 @@ public class ServerHandshakePacketListenerImpl implements ServerHandshakePacketL
+                             ServerHandshakePacketListenerImpl.throttleCounter = 0;
+ 
+                             // Cleanup stale entries
+-                            java.util.Iterator iter = ServerHandshakePacketListenerImpl.throttleTracker.entrySet().iterator();
+-                            while (iter.hasNext()) {
+-                                java.util.Map.Entry<InetAddress, Long> entry = (java.util.Map.Entry) iter.next();
+-                                if (entry.getValue() > connectionThrottle) {
+-                                    iter.remove();
+-                                }
+-                            }
++                            throttleTracker.object2LongEntrySet().removeIf(entry -> entry.getLongValue() > connectionThrottle); // Gale - Dionysus - replace throttle tracker map with optimized collection
+                         }
+                     }
+                     } // Paper - add closing bracket for if check above
