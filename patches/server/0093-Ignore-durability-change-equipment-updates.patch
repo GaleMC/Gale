@@ -53,7 +53,7 @@ index 8fd080110ed4efaf6cb3a2561b32ed66ff8c78f0..b1a01ef0090718923aff4365d8e93c77
          return stack.is(otherStack.getItem()) && ItemStack.tagMatches(stack, otherStack);
      }
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index b26f8204494271b8eae627533a7e6bd883db614c..7b99d605267dfd24f875fbf929b2a97728d16976 100644
+index 24a6e2ef5472936f478b759e79197442490e3ada..6f6aa43685584517d3ea05fac1297c696eeea07d 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 @@ -33,6 +33,8 @@ public class GaleWorldConfiguration extends ConfigurationPart {

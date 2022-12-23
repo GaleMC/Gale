@@ -157,7 +157,7 @@ index ede2eb274ca715dccfbfd98e0e2c410990508ced..d2fc479811087a7536fbe1226ae2efa0
          }
  
 diff --git a/src/main/java/net/minecraft/world/entity/player/Player.java b/src/main/java/net/minecraft/world/entity/player/Player.java
-index 2e6557a19523d18aecff709de30cb4466b46a9fa..6f071601266dff833270bbde9863cc0c4dcfa97d 100644
+index bb838cad051ab8da85e2f5bcf689b6d280e91fcb..68247b9daf710c71f84e1fae9d91efed151d39aa 100644
 --- a/src/main/java/net/minecraft/world/entity/player/Player.java
 +++ b/src/main/java/net/minecraft/world/entity/player/Player.java
 @@ -40,6 +40,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
