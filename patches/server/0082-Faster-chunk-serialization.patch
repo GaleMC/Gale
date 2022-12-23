@@ -320,7 +320,7 @@ index acae3eb30e0689048937f479dc3070f0688abdad..4b79f0474a9013dd4fdb68c6363ca194
      int onResize(int newBits, T object);
  }
 diff --git a/src/main/java/net/minecraft/world/level/chunk/PalettedContainer.java b/src/main/java/net/minecraft/world/level/chunk/PalettedContainer.java
-index 7908360dd47937b2cb702e381802b7b278a5198e..1da043e5883dcde484fbbaab11dda3ec4a6e2481 100644
+index 3c7ef1e8e338a84eee34f39ce73e64876632ea87..5eee4afb7bac7937155c979759bbc991f92c61fd 100644
 --- a/src/main/java/net/minecraft/world/level/chunk/PalettedContainer.java
 +++ b/src/main/java/net/minecraft/world/level/chunk/PalettedContainer.java
 @@ -22,8 +22,25 @@ import net.minecraft.util.Mth;

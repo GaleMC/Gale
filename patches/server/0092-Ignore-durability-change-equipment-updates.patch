@@ -13,7 +13,7 @@ As part of: Slice (https://github.com/Cryptite/Slice)
 Licensed under: MIT (https://opensource.org/licenses/MIT)
 
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index 75ae119719cf566f66371606e70f19b6b36dc7cb..88bfda2090a1f8c9368f5d6f98374d045c045150 100644
+index 7a228425a973122de3d0b0e78d18586d6669e9ed..c6488bf509178c54ac95665f96a11cfced87cd34 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
 @@ -3148,7 +3148,7 @@ public abstract class LivingEntity extends Entity {
@@ -53,7 +53,7 @@ index 8fd080110ed4efaf6cb3a2561b32ed66ff8c78f0..b1a01ef0090718923aff4365d8e93c77
          return stack.is(otherStack.getItem()) && ItemStack.tagMatches(stack, otherStack);
      }
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index 201f30774536966bda6f79b4db2fba6352829e10..dcbda08a6246b21b370a9005ed095d4413be6a81 100644
+index b26f8204494271b8eae627533a7e6bd883db614c..7b99d605267dfd24f875fbf929b2a97728d16976 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 @@ -33,6 +33,8 @@ public class GaleWorldConfiguration extends ConfigurationPart {

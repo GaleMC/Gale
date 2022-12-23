@@ -49,7 +49,7 @@ index f80545f80948db27d1fbde77d0505c916eb504ed..2a596cc374206a85bb692f5e09ee2dd8
  
              blockEntity.teleportCooldown = 100;
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index 0ae303da1858ed75cb0eb4b224a0e21fa352fc70..3b023cbd132c6aa263dbbe54ed7d30e1049d3875 100644
+index c1349f89da677297ca1c24e375addaed1f91953c..1d3a49182fbd661e05e93d101a3fc723bf5e274e 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 @@ -249,6 +249,7 @@ public class GaleWorldConfiguration extends ConfigurationPart {

@@ -13,7 +13,7 @@ As part of: Mirai (https://github.com/etil2jz/Mirai)
 Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 
 diff --git a/src/main/java/net/minecraft/advancements/Advancement.java b/src/main/java/net/minecraft/advancements/Advancement.java
-index 2c01231dcfbb992c9d2f034fcfd4af52fe8ac265..b84c69e722ae120c38c3b7c4cc7c5584496f13ab 100644
+index dd4409790524293be07483f00df05d8a8743e3d9..8fbed180d3f6207cdda70ca6c82dcc9c20741836 100644
 --- a/src/main/java/net/minecraft/advancements/Advancement.java
 +++ b/src/main/java/net/minecraft/advancements/Advancement.java
 @@ -45,7 +45,7 @@ public class Advancement {
