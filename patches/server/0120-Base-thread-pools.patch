@@ -1342,7 +1342,7 @@ index 8ed18a158a13dceca7cd342125c09e52ac0d013c..d513245ec5fadfa511895feeef73d2a5
          // CraftBukkit start - process pending Chunk loadCallback() and unloadCallback() after each run task
          public boolean pollTask() {
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index f69ea29648b090334d98dd8f3ed71cf8f10427ac..5e8ae0114ef0a55e13d32480951ea5b006ecae6f 100644
+index 37e0b6212fec71ec9662e6be3b1e8bea487eb4a6..251f098fa2203d06e5e5aa68a31a76532ee5d09c 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
 @@ -22,6 +22,8 @@ import java.io.Writer;
@@ -1374,7 +1374,7 @@ index f69ea29648b090334d98dd8f3ed71cf8f10427ac..5e8ae0114ef0a55e13d32480951ea5b0
      private final MinecraftServer server;
      public final PrimaryLevelData serverLevelData; // CraftBukkit - type
      final EntityTickList entityTickList;
-@@ -2548,7 +2556,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -2558,7 +2566,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
              // Spigot start
              if ( entity instanceof Player )
              {

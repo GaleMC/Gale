@@ -1,0 +1,46 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Martijn Muijsers <martijnmuijsers@live.nl>
+Date: Fri, 23 Dec 2022 20:42:50 +0100
+Subject: [PATCH] Reduce block destruction packet allocations
+
+License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+Gale - https://galemc.org
+
+This patch is based on the following patch:
+"Cache block break animation packet"
+By: VytskaLT <VytskaLT@protonmail.com>
+As part of: SportPaper (https://github.com/Electroid/SportPaper)
+Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+
+diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
+index f69ea29648b090334d98dd8f3ed71cf8f10427ac..37e0b6212fec71ec9662e6be3b1e8bea487eb4a6 100644
+--- a/src/main/java/net/minecraft/server/level/ServerLevel.java
++++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
+@@ -1554,7 +1554,17 @@ public class ServerLevel extends Level implements WorldGenLevel {
+ 
+     @Override
+     public void destroyBlockProgress(int entityId, BlockPos pos, int progress) {
+-        Iterator iterator = this.server.getPlayerList().getPlayers().iterator();
++
++        // Gale start - SportPaper - reduce block destruction packet allocations
++        var players = this.server.getPlayerList().getPlayers();
++        if (players.isEmpty()) {
++            return;
++        }
++
++        ClientboundBlockDestructionPacket packet = new ClientboundBlockDestructionPacket(entityId, pos, progress);
++
++        Iterator iterator = players.iterator();
++        // Gale end - SportPaper - reduce block destruction packet allocations
+ 
+         // CraftBukkit start
+         Player entityhuman = null;
+@@ -1577,7 +1587,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
+                 // CraftBukkit end
+ 
+                 if (d0 * d0 + d1 * d1 + d2 * d2 < 1024.0D) {
+-                    entityplayer.connection.send(new ClientboundBlockDestructionPacket(entityId, pos, progress));
++                    entityplayer.connection.send(packet); // Gale - SportPaper - reduce block destruction packet allocations
+                 }
+             }
+         }
