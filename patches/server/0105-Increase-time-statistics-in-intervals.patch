@@ -87,13 +87,17 @@ index 6f071601266dff833270bbde9863cc0c4dcfa97d..529df114eb0ca3020bf8c699889b9a54
  
          int i = 29999999;
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index 8fc0095ec5bbb8245a528731741bad87da3bd937..3d0c6e754264fc864485eb01deec63f1b80c7044 100644
+index 1225c6197293b04ddb18462d7d2ee0caf7834a76..5b2b861292c638c28a92c894fb0959493e8f7b99 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-@@ -43,6 +43,25 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
-             public int checkSpookySeason = 20 * 60 * 60;
-             // Gale end - Airplane - reduced spooky season checks
+@@ -27,7 +27,29 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+     public SmallOptimizations smallOptimizations;
+     public class SmallOptimizations extends ConfigurationPart {
  
+-        public int dummyValue = 0;
++        public ReducedIntervals reducedIntervals;
++        public class ReducedIntervals extends ConfigurationPart {
++
 +            // Gale start - Hydrinity - increase time statistics in intervals
 +            /**
 +             * The interval at which to increase the time-related statistics such as total playtime, time since
@@ -113,6 +117,7 @@ index 8fc0095ec5bbb8245a528731741bad87da3bd937..3d0c6e754264fc864485eb01deec63f1
 +            public int increaseTimeStatistics = 100;
 +            // Gale end - Hydrinity - increase time statistics in intervals
 +
-         }
++        }
  
          // Gale start - Pufferfish - SIMD support
+         public Simd simd;

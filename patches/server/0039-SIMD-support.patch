@@ -68,12 +68,12 @@ index 9c3ccbbd657d1605b8fabb6e01c11ff31f39a17e..1d1db89362b78ac34d46cdd71b9ab274
          this.setFlightAllowed(dedicatedserverproperties.allowFlight);
          this.setMotd(dedicatedserverproperties.motd);
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index af4883f8939d017866a9b057491a8400b11fe009..9bdbd921acdbfdc8da49ce113d009b58749c1d5d 100644
+index 8f8fd98f96cd390ba43033521982a13044df91cf..d46f952e5e425eb90f8c435276bfc4542e85f6a7 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-@@ -41,6 +41,14 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+@@ -25,6 +25,14 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
  
-         }
+         public int dummyValue = 0;
  
 +        // Gale start - Pufferfish - SIMD support
 +        public Simd simd;
