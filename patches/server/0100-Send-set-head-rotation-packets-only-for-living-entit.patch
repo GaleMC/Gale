@@ -1,0 +1,41 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Martijn Muijsers <martijnmuijsers@live.nl>
+Date: Sat, 24 Dec 2022 00:33:27 +0100
+Subject: [PATCH] Send set head rotation packets only for living entities
+
+License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+Gale - https://galemc.org
+
+This patch is based on the following patch:
+"Fix head rotation packet spam"
+By: cswhite2000 <18whitechristop@gmail.com>
+As part of: SportPaper (https://github.com/Electroid/SportPaper)
+Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+
+diff --git a/src/main/java/net/minecraft/server/level/ServerEntity.java b/src/main/java/net/minecraft/server/level/ServerEntity.java
+index ce7f36f38165a58e3fab7a98bece75df2d0ec6ed..46dc2deb8eb066e51a03a010a7bd920486914bb2 100644
+--- a/src/main/java/net/minecraft/server/level/ServerEntity.java
++++ b/src/main/java/net/minecraft/server/level/ServerEntity.java
+@@ -331,7 +331,9 @@ public class ServerEntity {
+ 
+         // CraftBukkit start - Fix for nonsensical head yaw
+         this.yHeadRotp = Mth.floor(this.entity.getYHeadRot() * 256.0F / 360.0F);
++        if (!this.level.galeConfig().smallOptimizations.sendSetHeadRotationPacketsOnlyForLivingEntities || this.entity instanceof LivingEntity) { // Gale - SportPaper - send set head rotation packets only for living entities
+         consumer.accept(new ClientboundRotateHeadPacket(this.entity, (byte) this.yHeadRotp));
++        } // Gale - SportPaper - send set head rotation packets only for living entities
+         // CraftBukkit end
+ 
+         if (this.entity instanceof LivingEntity) {
+diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
+index 3274742f667c9b0bec5f1bf8d03b2fd3165eb807..ffc39061f2363b979590888e736dd7a53a0d256a 100644
+--- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
++++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
+@@ -50,6 +50,8 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+ 
+         public boolean processFullEquipmentChangeIfOnlyDurabilityChanged = false; // Gale - Slice - ignore durability change equipment updates
+ 
++        public boolean sendSetHeadRotationPacketsOnlyForLivingEntities = true; // Gale - SportPaper - send set head rotation packets only for living entities
++
+         // Gale start - Airplane - reduce projectile chunk loading
+         public MaxProjectileChunkLoads maxProjectileChunkLoads;
+         public class MaxProjectileChunkLoads extends ConfigurationPart {
