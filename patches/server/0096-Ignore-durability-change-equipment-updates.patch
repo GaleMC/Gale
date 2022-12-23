@@ -53,12 +53,12 @@ index 8fd080110ed4efaf6cb3a2561b32ed66ff8c78f0..b1a01ef0090718923aff4365d8e93c77
          return stack.is(otherStack.getItem()) && ItemStack.tagMatches(stack, otherStack);
      }
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index 24a6e2ef5472936f478b759e79197442490e3ada..6f6aa43685584517d3ea05fac1297c696eeea07d 100644
+index b480d492d411d33393ac1b2f41bd4d62d232c568..ce94f9a5bc826ce33ee63581ab864b04a8b4526e 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-@@ -33,6 +33,8 @@ public class GaleWorldConfiguration extends ConfigurationPart {
-     public SmallOptimizations smallOptimizations;
-     public class SmallOptimizations extends ConfigurationPart {
+@@ -48,6 +48,8 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+         public boolean useOptimizedSheepOffspringColor = true;
+         // Gale end - carpet-fixes - optimize sheep offspring color
  
 +        public boolean processFullEquipmentChangeIfOnlyDurabilityChanged = false; // Gale - Slice - ignore durability change equipment updates
 +
