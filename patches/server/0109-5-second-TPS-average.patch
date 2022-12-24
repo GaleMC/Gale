@@ -79,10 +79,10 @@ index 81bb87b729f20be8ca4e5be0c2f5b1b6c1ce4422..1d45eefe9c791b742946cb162b0a7358
                      tps5.add(currentTps, diff);
                      tps15.add(currentTps, diff);
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index 52e6d550d1e761dfbb45bced098d4bed30dc5bdb..c36ad6c7681afdf9cb022b556d82f78f987c0f22 100644
+index ec1b0178a7c6d12e79cdbd4e52bd22613f8af7eb..cba623f82835e189ec615948c939ce4e4c690215 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-@@ -2733,6 +2733,13 @@ public final class CraftServer implements Server {
+@@ -2734,6 +2734,13 @@ public final class CraftServer implements Server {
  
      // Gale start - specific interval TPS API
  

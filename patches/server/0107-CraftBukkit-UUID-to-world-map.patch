@@ -1,0 +1,66 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Martijn Muijsers <martijnmuijsers@live.nl>
+Date: Sat, 24 Dec 2022 13:09:34 +0100
+Subject: [PATCH] CraftBukkit UUID to world map
+
+License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+Gale - https://galemc.org
+
+This patch is based on the following patch:
+"Optimize CraftServer.getWorld(UUID)"
+By: PureGero <puregero@gmail.com>
+As part of: MultiPaper (https://github.com/MultiPaper/MultiPaper)
+Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+index 3107642e3e0888ff599e89ca21dd5f2c8b152448..3553b7cbbbcc2aff07be6bdcfbfceb8044675d77 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+@@ -48,6 +48,9 @@ import java.util.logging.Level;
+ import java.util.logging.Logger;
+ import java.util.stream.Collectors;
+ import javax.imageio.ImageIO;
++
++import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
++import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+ import net.minecraft.advancements.Advancement;
+ import net.minecraft.commands.CommandSourceStack;
+ import net.minecraft.commands.Commands;
+@@ -275,6 +278,7 @@ public final class CraftServer implements Server {
+     protected final DedicatedServer console;
+     protected final DedicatedPlayerList playerList;
+     private final Map<String, World> worlds = new LinkedHashMap<String, World>();
++    private final Object2ObjectMap<UUID, World> worldsByUUID = new Object2ObjectOpenHashMap<>(); // Gale - MultiPaper - CraftBukkit UUID to world map
+     private final Map<Class<?>, Registry<?>> registries = new HashMap<>();
+     private YamlConfiguration configuration;
+     private YamlConfiguration commandsConfiguration;
+@@ -1342,6 +1346,7 @@ public final class CraftServer implements Server {
+             this.getLogger().log(Level.SEVERE, null, ex);
+         }
+ 
++        this.worldsByUUID.remove(world.getUID()); // Gale - MultiPaper - CraftBukkit UUID to world map
+         this.worlds.remove(world.getName().toLowerCase(java.util.Locale.ENGLISH));
+         this.console.removeLevel(handle);
+         return true;
+@@ -1360,12 +1365,7 @@ public final class CraftServer implements Server {
+ 
+     @Override
+     public World getWorld(UUID uid) {
+-        for (World world : this.worlds.values()) {
+-            if (world.getUID().equals(uid)) {
+-                return world;
+-            }
+-        }
+-        return null;
++        return this.worldsByUUID.get(uid); // Gale - MultiPaper - CraftBukkit UUID to world map
+     }
+ 
+     // Paper start
+@@ -1383,6 +1383,7 @@ public final class CraftServer implements Server {
+             System.out.println("World " + world.getName() + " is a duplicate of another world and has been prevented from loading. Please delete the uid.dat file from " + world.getName() + "'s world directory if you want to be able to load the duplicate world.");
+             return;
+         }
++        this.worldsByUUID.put(world.getUID(), world); // Gale - MultiPaper - CraftBukkit UUID to world map
+         this.worlds.put(world.getName().toLowerCase(java.util.Locale.ENGLISH), world);
+     }
+ 
