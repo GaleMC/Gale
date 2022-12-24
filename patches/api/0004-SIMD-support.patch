@@ -13,7 +13,7 @@ As part of: Pufferfish (https://github.com/pufferfish-gg/Pufferfish)
 Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index fdb495c0e0f1ce702a590e6a7bcdcf40fd418d1c..2c3c8fbba6247a44b1782dbed45a00fdaa051473 100644
+index 447b549bc7035410ae18f3e9063de2d014530b98..33e7179c81310283e5e6efb5fd776a60ae669624 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -89,6 +89,7 @@ tasks.withType<JavaCompile> {
