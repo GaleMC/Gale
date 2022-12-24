@@ -1,0 +1,81 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Martijn Muijsers <martijnmuijsers@live.nl>
+Date: Sat, 24 Dec 2022 23:49:36 +0100
+Subject: [PATCH] Don't double save stored user lists
+
+License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+Gale - https://galemc.org
+
+This patch is based on the following patch:
+"Don't double save the json lists"
+By: PureGero <puregero@gmail.com>
+As part of: MultiPaper (https://github.com/MultiPaper/MultiPaper)
+Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+
+diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedPlayerList.java b/src/main/java/net/minecraft/server/dedicated/DedicatedPlayerList.java
+index 935dac757280731bfeb0a8f033cbe315ecac46da..a9786790620d4100b52fafc15933d312bb9323f1 100644
+--- a/src/main/java/net/minecraft/server/dedicated/DedicatedPlayerList.java
++++ b/src/main/java/net/minecraft/server/dedicated/DedicatedPlayerList.java
+@@ -45,13 +45,11 @@ public class DedicatedPlayerList extends PlayerList {
+     @Override
+     public void op(GameProfile profile) {
+         super.op(profile);
+-        this.saveOps();
+     }
+ 
+     @Override
+     public void deop(GameProfile profile) {
+         super.deop(profile);
+-        this.saveOps();
+     }
+ 
+     @Override
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftIpBanList.java b/src/main/java/org/bukkit/craftbukkit/CraftIpBanList.java
+index 61cb647b2aa590303402e6652bd37b5bca0e0b1d..620784dbbf5e57dc855b4d38a3b05c3411e64040 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftIpBanList.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftIpBanList.java
+@@ -41,12 +41,6 @@ public class CraftIpBanList implements org.bukkit.BanList {
+ 
+         this.list.add(entry);
+ 
+-        try {
+-            this.list.save();
+-        } catch (IOException ex) {
+-            Bukkit.getLogger().log(Level.SEVERE, "Failed to save banned-ips.json, {0}", ex.getMessage());
+-        }
+-
+         return new CraftIpBanEntry(target, entry, this.list);
+     }
+ 
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftProfileBanEntry.java b/src/main/java/org/bukkit/craftbukkit/CraftProfileBanEntry.java
+index 126968d557263b3efddc9d53d0f8f436a401cf78..3854c93794d27ecd0331105106b104b1a6017a77 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftProfileBanEntry.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftProfileBanEntry.java
+@@ -78,10 +78,5 @@ public final class CraftProfileBanEntry implements org.bukkit.BanEntry {
+     public void save() {
+         UserBanListEntry entry = new UserBanListEntry(this.profile, this.created, this.source, this.expiration, this.reason);
+         this.list.add(entry);
+-        try {
+-            this.list.save();
+-        } catch (IOException ex) {
+-            Bukkit.getLogger().log(Level.SEVERE, "Failed to save banned-players.json, {0}", ex.getMessage());
+-        }
+     }
+ }
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftProfileBanList.java b/src/main/java/org/bukkit/craftbukkit/CraftProfileBanList.java
+index 6e2047f1b45799c7a1ddfdcd24d76e6e12f91e4b..a31d126590505c00d1a4c0fbb9eb327ec87f7895 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftProfileBanList.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftProfileBanList.java
+@@ -54,12 +54,6 @@ public class CraftProfileBanList implements org.bukkit.BanList {
+ 
+         this.list.add(entry);
+ 
+-        try {
+-            this.list.save();
+-        } catch (IOException ex) {
+-            Bukkit.getLogger().log(Level.SEVERE, "Failed to save banned-players.json, {0}", ex.getMessage());
+-        }
+-
+         return new CraftProfileBanEntry(profile, entry, this.list);
+     }
+ 
