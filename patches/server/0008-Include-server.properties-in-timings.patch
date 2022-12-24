@@ -113,14 +113,15 @@ index 8f8fd98f96cd390ba43033521982a13044df91cf..dbb0f523608a9208e8c656898b18ce1b
  }
 diff --git a/src/main/java/org/galemc/gale/configuration/timingsexport/VanillaServerPropertiesTimingsExport.java b/src/main/java/org/galemc/gale/configuration/timingsexport/VanillaServerPropertiesTimingsExport.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..b8c2d4e74d99d1f955d300d403f519cd68017ac4
+index 0000000000000000000000000000000000000000..9d9ee3f38f04cfc4fcab00b8ff5558e75674da11
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/configuration/timingsexport/VanillaServerPropertiesTimingsExport.java
-@@ -0,0 +1,120 @@
+@@ -0,0 +1,128 @@
 +// Gale - include server.properties in timings
 +
 +package org.galemc.gale.configuration.timingsexport;
 +
++import co.aikar.timings.TimingsExport;
 +import net.minecraft.server.MinecraftServer;
 +import net.minecraft.server.dedicated.DedicatedServer;
 +import org.galemc.gale.configuration.GaleGlobalConfiguration;
@@ -129,6 +130,13 @@ index 0000000000000000000000000000000000000000..b8c2d4e74d99d1f955d300d403f519cd
 +
 +import java.util.Optional;
 +
++/**
++ * Exports the vanilla server.properties to a JSON object, to be included in a timings report.
++ *
++ * @see TimingsExport
++ *
++ * @author Martijn Muijsers under GPL-3.0
++ */
 +public final class VanillaServerPropertiesTimingsExport {
 +
 +    private VanillaServerPropertiesTimingsExport() {}
@@ -138,7 +146,7 @@ index 0000000000000000000000000000000000000000..b8c2d4e74d99d1f955d300d403f519cd
 +
 +        var json = new JSONObject();
 +        var properties = ((DedicatedServer) MinecraftServer.getServer()).getProperties();
-+        var includeConfig = GaleGlobalConfiguration.get().misc.includeInTimingsReport;
++        var includeConfig = GaleGlobalConfiguration.get().misc.includeInTimingsReport.serverProperties;
 +
 +        json.put("allow-flight", String.valueOf(properties.allowFlight));
 +        json.put("allow-nether", String.valueOf(properties.allowNether));
