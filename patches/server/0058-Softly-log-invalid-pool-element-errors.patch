@@ -39,7 +39,7 @@ index d2b4654a9095a678bbc9e004af969cf54da0fcab..d797bac97ec1adec7a25a26c8e052e70
          });
          this.rotation = Rotation.valueOf(nbt.getString("rotation"));
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index a1170d6616d1a11c10ed1b9c68946e0c8943ef6b..9e8b9bd7e863fae1fa44f5a5afbdce8d7ffb57b1 100644
+index ea01742510e04cf6c94fc0abeddec51caee61074..655e750c52472aa2f6d535cbf4a5499d37378b3e 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 @@ -4,8 +4,12 @@ package org.galemc.gale.configuration;
@@ -55,7 +55,7 @@ index a1170d6616d1a11c10ed1b9c68946e0c8943ef6b..9e8b9bd7e863fae1fa44f5a5afbdce8d
  @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal", "FieldMayBeFinal", "NotNullFieldNotInitialized", "InnerClassMayBeStatic"})
  public class GaleGlobalConfiguration extends ConfigurationPart {
      static final int CURRENT_VERSION = 1;
-@@ -36,7 +40,7 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+@@ -61,7 +65,7 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
      }
  
      public LogToConsole logToConsole;
@@ -64,7 +64,7 @@ index a1170d6616d1a11c10ed1b9c68946e0c8943ef6b..9e8b9bd7e863fae1fa44f5a5afbdce8d
  
          public boolean invalidStatistics = true; // Gale - EMC - do not log invalid statistics
          public boolean ignoredAdvancements = true; // Gale - Purpur - do not log ignored advancements
-@@ -51,6 +55,21 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+@@ -76,6 +80,21 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
              public boolean notSecureMarker = true; // Gale - do not log Not Secure marker
          }
  

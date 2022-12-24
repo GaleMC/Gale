@@ -13,7 +13,7 @@ As part of: Mirai (https://github.com/etil2jz/Mirai)
 Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 
 diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-index 63ec2ebb71aa0e0dbb64bbce7cd3c9494e9ce2e7..20bbb6473f7e8574bc52842e72c12ffb29c68d23 100644
+index 8d442c5a498ecf288a0cc0c54889c6e2fda849ce..811a35412b5cba79287195762e7a205eca6aa442 100644
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 @@ -52,7 +52,7 @@ public class GlobalConfiguration extends ConfigurationPart {

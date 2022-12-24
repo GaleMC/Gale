@@ -23,11 +23,11 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index c2960564ae266dce00f10178c4182f4a5338a161..1225c6197293b04ddb18462d7d2ee0caf7834a76 100644
+index ca37994763c45767d2def1b88768d44863a4b8c2..47b036b6194020ad775077d661063329b3491ca6 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-@@ -83,6 +83,14 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
-             
+@@ -69,6 +69,14 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+ 
          }
  
 +        // Gale start - YAPFA - last tick time - in TPS command
@@ -40,7 +40,7 @@ index c2960564ae266dce00f10178c4182f4a5338a161..1225c6197293b04ddb18462d7d2ee0ca
 +
      }
  
- }
+     public LogToConsole logToConsole;
 diff --git a/src/main/java/org/spigotmc/TicksPerSecondCommand.java b/src/main/java/org/spigotmc/TicksPerSecondCommand.java
 index 29e27dd3c8908956f2708a3562e69e4f35b26249..b42b31cd33232a99befd8334bc24b8ae8b021ccb 100644
 --- a/src/main/java/org/spigotmc/TicksPerSecondCommand.java

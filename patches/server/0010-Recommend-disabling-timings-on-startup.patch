@@ -31,7 +31,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-index 20bbb6473f7e8574bc52842e72c12ffb29c68d23..81a7e10a0cb30e6c51c985afdc6a11e023b3e3d2 100644
+index 811a35412b5cba79287195762e7a205eca6aa442..66512a1385b7b907763a82bdb52661c3b0821ba7 100644
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 @@ -7,6 +7,7 @@ import net.kyori.adventure.text.Component;

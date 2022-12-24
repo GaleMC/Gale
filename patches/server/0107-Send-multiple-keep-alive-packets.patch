@@ -109,23 +109,20 @@ index 60e2b951216003ae1861b1ee218e38da107b1760..315c7737f75c426a7e5c091fb340187d
          if (this.keepAlivePending && packet.getId() == this.keepAliveChallenge) {
              int i = (int) (Util.getMillis() - this.keepAliveTime);
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index fd2138ff050c36c1223843ec770d7658c09c24d9..c2960564ae266dce00f10178c4182f4a5338a161 100644
+index 0cdae0f868e0136f6f74cff8efa76f37252e8d12..ca37994763c45767d2def1b88768d44863a4b8c2 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-@@ -73,4 +73,16 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+@@ -62,6 +62,13 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+         }
+         // Gale end - include server.properties in timings
  
-     }
- 
-+    public Misc misc;
-+    public class Misc extends ConfigurationPart {
-+
 +        public Keepalive keepalive;
 +        public class Keepalive extends ConfigurationPart {
 +
 +            public boolean sendMultiple = true; // Gale end - Purpur - send multiple keep-alive packets
-+            
++
 +        }
 +
-+    }
-+
- }
+     }
+ 
+     public LogToConsole logToConsole;

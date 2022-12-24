@@ -1899,7 +1899,7 @@ index 69acbab61a79c24312359a63086f9353d740113f..49ace73d901b6f55545bb21a93d026a0
              }
          } catch (Exception ex) {
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index 23e49bcea2aa7c0625cbee99535094d5a5f7045b..fccfcb9401b9a1347e71959db8635d2dac22fde2 100644
+index 88177eced0473e121964db48228a808aed058e6e..6d978ea10bc1aa4bbf3efd19faaf3f8b50002426 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 @@ -2,11 +2,14 @@
@@ -2140,7 +2140,7 @@ index 23e49bcea2aa7c0625cbee99535094d5a5f7045b..fccfcb9401b9a1347e71959db8635d2d
 +
      }
  
-     public LogToConsole logToConsole;
+     public Misc misc;
 diff --git a/src/main/java/org/galemc/gale/executor/AbstractBlockableEventLoop.java b/src/main/java/org/galemc/gale/executor/AbstractBlockableEventLoop.java
 new file mode 100644
 index 0000000000000000000000000000000000000000..e73bf57a9777488dc00efe671cee955e6fb108a1
