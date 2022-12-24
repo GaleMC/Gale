@@ -3,11 +3,11 @@ From: Martijn Muijsers <martijnmuijsers@live.nl>
 Date: Thu, 22 Dec 2022 15:47:39 +0100
 Subject: [PATCH] Server thread priority environment variable
 
-License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 942cffa7e10b9d8022daeb2eff623a49c031d131..cfdc9ebe5e2271dea15e1dd8aa44bb2aea542943 100644
+index 41195011f5b1c99072d5027e282632f6f45d41fa..ffccb397d700496e813cf5d7ea802890e4cf3467 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -194,6 +194,8 @@ import co.aikar.timings.MinecraftTimings; // Paper

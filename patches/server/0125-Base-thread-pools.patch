@@ -485,7 +485,7 @@ index 0c4c62674b4c7e8e3921c7eb3ef726759ac75075..31b488a3c1b81b99bf5bda9f90c3cf69
                  WorldLoader.InitConfig worldloader_c = Main.loadOrCreateConfig(dedicatedserversettings.getProperties(), convertable_conversionsession, flag, resourcepackrepository);
  
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index cfdc9ebe5e2271dea15e1dd8aa44bb2aea542943..2175b1ecb8b1e4bc0459b8a8d7689a0ca46b4a68 100644
+index ffccb397d700496e813cf5d7ea802890e4cf3467..8b9ab6641686fa7d4a8337fbcd88d50c75e56bd3 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -40,7 +40,6 @@ import java.util.Optional;

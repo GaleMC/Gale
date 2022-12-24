@@ -40,7 +40,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index 90d45d9c7dca9ff4acde6fc8539dcaf8eb59fe11..dc4bbb66a4077350657ef0034960a646ba03082b 100644
+index 5f3796c9b0f910e578fe70c46ca97c36b70378f8..4ede155dc9a5f8935043f58640616c72e7898309 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
 @@ -3629,7 +3629,7 @@ public abstract class LivingEntity extends Entity {
