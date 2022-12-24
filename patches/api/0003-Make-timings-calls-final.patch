@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Martijn Muijsers <martijnmuijsers@live.nl>
 Date: Sat, 24 Dec 2022 22:37:29 +0100
-Subject: [PATCH] Final timings calls
+Subject: [PATCH] Make timings calls final
 
 License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
 Gale - https://galemc.org

@@ -7,7 +7,7 @@ License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
-index 2ed3f42b1e487374287d033ac634a922a5ef37bd..b4458776442df2b1e42e143e0b217973618d0af8 100644
+index 2ed3f42b1e487374287d033ac634a922a5ef37bd..af96c170c58553f4ce0554c9bd24fea2ad96ed01 100644
 --- a/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
 @@ -37,6 +37,7 @@ import net.minecraft.util.Crypt;
@@ -18,17 +18,20 @@ index 2ed3f42b1e487374287d033ac634a922a5ef37bd..b4458776442df2b1e42e143e0b217973
  import org.slf4j.Logger;
  
  // CraftBukkit start
-@@ -96,7 +97,7 @@ public class ServerLoginPacketListenerImpl implements ServerLoginPacketListener,
+@@ -96,7 +97,10 @@ public class ServerLoginPacketListenerImpl implements ServerLoginPacketListener,
              }
          }
  
 -        if (this.tick++ == 600) {
-+        if (this.tick++ >= GaleGlobalConfiguration.get().misc.premiumAccountSlowLoginTimeout) { // Gale - make slow login timeout configurable
++        // Gale start - make slow login timeout configurable
++        int slowLoginTimeout = GaleGlobalConfiguration.get().misc.premiumAccountSlowLoginTimeout;
++        if (this.tick++ >= (slowLoginTimeout < 1 ? MAX_TICKS_BEFORE_LOGIN : slowLoginTimeout)) {
++            // Gale end - make slow login timeout configurable
              this.disconnect(Component.translatable("multiplayer.disconnect.slow_login"));
          }
  
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index d87db127a13c37cd4d9e0ff2f0a5b5387c5fbb0b..b25c861d7ea1c167c27fb30fceaf4bbca899a666 100644
+index d87db127a13c37cd4d9e0ff2f0a5b5387c5fbb0b..dcbd9b09ffbadaf0af13814c7da1e8b8899b9695 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 @@ -42,6 +42,20 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
@@ -46,7 +49,7 @@ index d87db127a13c37cd4d9e0ff2f0a5b5387c5fbb0b..b25c861d7ea1c167c27fb30fceaf4bbc
 +         *     <li><i>Vanilla</i>: -1</li>
 +         * </ul>
 +         */
-+        public int premiumAccountSlowLoginTimeout = 600;
++        public int premiumAccountSlowLoginTimeout = -1;
 +        // Gale end - make slow login timeout configurable
 +
          public IncludeInTimingsReport includeInTimingsReport;

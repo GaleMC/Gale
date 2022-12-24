@@ -1384,7 +1384,7 @@ index 37e0b6212fec71ec9662e6be3b1e8bea487eb4a6..251f098fa2203d06e5e5aa68a31a7653
                      for (Object o : worldData.cache.values() )
                      {
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 315c7737f75c426a7e5c091fb340187df12235de..99e684ae2f5ac07660e4f724b15cf1bba185d438 100644
+index c7f996e8ef77671de4134db37e96022343f223a1..37c36f94f5dcc8470b1f1d3776d393e6ea4e006a 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -186,6 +186,8 @@ import net.minecraft.world.phys.shapes.Shapes;
@@ -1899,7 +1899,7 @@ index 69acbab61a79c24312359a63086f9353d740113f..49ace73d901b6f55545bb21a93d026a0
              }
          } catch (Exception ex) {
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index 238e8da987540751c3fcc7c1d91f707fd1e1f927..17b855482c00f6dedef07df8b8ba044088a12eaf 100644
+index 300c7a31a4b07a566659efff842ed15e8e478663..cff8a4847ba5b920aed9ae5b9aae1f54373a8c6a 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 @@ -2,11 +2,14 @@
