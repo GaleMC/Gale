@@ -29,10 +29,10 @@ index 8fac3c35b04429e66e440895ab82a65497147812..ee3acb578d4f72836eb3a4e8336701b3
              final String conversationInput = s;
              this.server.processQueue.add(new Runnable() {
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index 6f2d920dbae80740732e2a871365425cbccd8b86..17df0f36ee469118a8ae69669af749e7d2ff12f9 100644
+index 4fd116ba1666b154650805ce5558221ffc6f4190..85239fb626a1ea7b81d0be4711822fcadf4d1022 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-@@ -65,6 +65,11 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+@@ -80,6 +80,11 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
  
          public boolean invalidStatistics = true; // Gale - EMC - do not log invalid statistics
  

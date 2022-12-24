@@ -13,7 +13,7 @@ As part of: Paper (https://github.com/PaperMC/Paper)
 Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 
 diff --git a/src/main/java/co/aikar/timings/TimingsExport.java b/src/main/java/co/aikar/timings/TimingsExport.java
-index 06bff37e4c1fddd3be6343049a66787c63fb420c..ce257cf454300603d93ed68eb409461111bbac31 100644
+index 06bff37e4c1fddd3be6343049a66787c63fb420c..2a4904b09b4b13e41c7aaa211c7eae6d48582b7a 100644
 --- a/src/main/java/co/aikar/timings/TimingsExport.java
 +++ b/src/main/java/co/aikar/timings/TimingsExport.java
 @@ -241,7 +241,10 @@ public class TimingsExport extends Thread {
@@ -21,10 +21,10 @@ index 06bff37e4c1fddd3be6343049a66787c63fb420c..ce257cf454300603d93ed68eb4094611
              pair("spigot", mapAsJSON(Bukkit.spigot().getSpigotConfig(), null)),
              pair("bukkit", mapAsJSON(Bukkit.spigot().getBukkitConfig(), null)),
 -            pair("paper", mapAsJSON(Bukkit.spigot().getPaperConfig(), null))
-+            // Gale start - Gale configuration - including in timings
++            // Gale start - Gale configuration - include in timings
 +            pair("paper", mapAsJSON(Bukkit.spigot().getPaperConfig(), null)),
 +            pair("gale", mapAsJSON(Bukkit.spigot().getGaleConfig(), null))
-+            // Gale end - Gale configuration - including in timings
++            // Gale end - Gale configuration - include in timings
          ));
  
          new TimingsExport(listeners, parent, history).start();

@@ -485,7 +485,7 @@ index 0c4c62674b4c7e8e3921c7eb3ef726759ac75075..31b488a3c1b81b99bf5bda9f90c3cf69
                  WorldLoader.InitConfig worldloader_c = Main.loadOrCreateConfig(dedicatedserversettings.getProperties(), convertable_conversionsession, flag, resourcepackrepository);
  
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index ffccb397d700496e813cf5d7ea802890e4cf3467..8b9ab6641686fa7d4a8337fbcd88d50c75e56bd3 100644
+index eb951c9fda85d9620d3038a3db22d578db45e878..60ed76588347f4d4c09d8df4952bf55501ed7c00 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -40,7 +40,6 @@ import java.util.Optional;
@@ -1899,7 +1899,7 @@ index 69acbab61a79c24312359a63086f9353d740113f..49ace73d901b6f55545bb21a93d026a0
              }
          } catch (Exception ex) {
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index 88177eced0473e121964db48228a808aed058e6e..6d978ea10bc1aa4bbf3efd19faaf3f8b50002426 100644
+index 5b4f9956094f20daf9864b679b283448f357fecc..a00c6ba256ddbcb6330e2b00ef361200df08036a 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 @@ -2,11 +2,14 @@

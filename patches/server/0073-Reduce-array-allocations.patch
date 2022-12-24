@@ -409,7 +409,7 @@ index 31faf2d6492696f7d0c99a48edbc0d6f15db1209..0c4c62674b4c7e8e3921c7eb3ef72675
          OptionSpec<Integer> optionspec11 = optionparser.accepts("port").withRequiredArg().ofType(Integer.class).defaultsTo(-1, new Integer[0]);
          OptionSpec<String> optionspec12 = optionparser.accepts("serverId").withRequiredArg();
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 480846d3d90c9dd8dd2a7c0f3837c3220fd7a57f..700f8fc483ab847dc8f7fb5398a3c4ed43b0df35 100644
+index cdac47539c8989c21e6a5edf5f63f7f5c02b2f30..c485cec0e9f4e1d55b526c8f6d915a355538a475 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -49,6 +49,8 @@ import java.util.stream.Collectors;

@@ -58,10 +58,10 @@ index d13ed3069e944d138442ea440ac3eaf8d44c18d3..c89b8e5ea10a465160504f7364db4741
                      handler.accept((Recipe) optional.get());
                  }
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index f54b31f5ed4658bb31f18c9a6ff016d5ccf6852c..6ed23528eace48554dc9cf953eecd7f90d7fa162 100644
+index 7641e941027153cea10699b1928122241befe2c2..efd05ee1eed398eaef04419166a928302b8a8bb2 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-@@ -66,6 +66,7 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+@@ -81,6 +81,7 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
          public boolean invalidStatistics = true; // Gale - EMC - do not log invalid statistics
          public boolean ignoredAdvancements = true; // Gale - Purpur - do not log ignored advancements
          public boolean setBlockInFarChunk = true; // Gale - Purpur - do not log setBlock in far chunks

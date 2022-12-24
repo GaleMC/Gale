@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Martijn Muijsers <martijnmuijsers@live.nl>
-Date: Fri, 25 Nov 2022 13:28:38 +0100
-Subject: [PATCH] Do not log setBlock in far chunks
+Date: Fri, 25 Nov 2022 13:18:54 +0100
+Subject: [PATCH] Do not log ignored advancements
 
 License: MIT (https://opensource.org/licenses/MIT)
 Gale - https://galemc.org
@@ -36,35 +36,36 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-diff --git a/src/main/java/net/minecraft/server/level/WorldGenRegion.java b/src/main/java/net/minecraft/server/level/WorldGenRegion.java
-index 877498729c66de9aa6a27c9148f7494d7895615c..d2bbbb0e73dafd2294838137bfbd16acf1c76940 100644
---- a/src/main/java/net/minecraft/server/level/WorldGenRegion.java
-+++ b/src/main/java/net/minecraft/server/level/WorldGenRegion.java
-@@ -54,6 +54,7 @@ import net.minecraft.world.phys.AABB;
- import net.minecraft.world.phys.Vec3;
- import net.minecraft.world.ticks.LevelTickAccess;
- import net.minecraft.world.ticks.WorldGenTickAccess;
+diff --git a/src/main/java/net/minecraft/server/PlayerAdvancements.java b/src/main/java/net/minecraft/server/PlayerAdvancements.java
+index a0c19503aabab5378d672a30163d35a5ba05b6c1..5ba0a756d45350dcda3caa5518c9a47a4de06f14 100644
+--- a/src/main/java/net/minecraft/server/PlayerAdvancements.java
++++ b/src/main/java/net/minecraft/server/PlayerAdvancements.java
+@@ -47,6 +47,7 @@ import net.minecraft.server.level.ServerPlayer;
+ import net.minecraft.server.players.PlayerList;
+ import net.minecraft.util.datafix.DataFixTypes;
+ import net.minecraft.world.level.GameRules;
 +import org.galemc.gale.configuration.GaleGlobalConfiguration;
  import org.slf4j.Logger;
  
- public class WorldGenRegion implements WorldGenLevel {
-@@ -297,6 +298,7 @@ public class WorldGenRegion implements WorldGenLevel {
-             return true;
-         } else {
-             // Paper start
-+            if (GaleGlobalConfiguration.get().logToConsole.setBlockInFarChunk) // Gale - Purpur - do not log setBlock in far chunks
-             if (!hasSetFarWarned) {
-             Util.logAndPauseIfInIde("Detected setBlock in a far chunk [" + i + ", " + j + "], pos: " + pos + ", status: " + this.generatingStatus + (this.currentlyGenerating == null ? "" : ", currently generating: " + (String) this.currentlyGenerating.get()));
-             hasSetFarWarned = true;
+ public class PlayerAdvancements {
+@@ -183,7 +184,7 @@ public class PlayerAdvancements {
+                         if (advancement == null) {
+                             // CraftBukkit start
+                             if (entry.getKey().getNamespace().equals("minecraft")) {
+-                                PlayerAdvancements.LOGGER.warn("Ignored advancement '{}' in progress file {} - it doesn't exist anymore?", entry.getKey(), this.file);
++                                if (GaleGlobalConfiguration.get().logToConsole.ignoredAdvancements) PlayerAdvancements.LOGGER.warn("Ignored advancement '{}' in progress file {} - it doesn't exist anymore?", entry.getKey(), this.file); // Gale - Purpur - do not log ignored advancements
+                             }
+                             // CraftBukkit end
+                         } else {
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index 92c94f946986550b0efa50a2c3fee6136564625f..f54b31f5ed4658bb31f18c9a6ff016d5ccf6852c 100644
+index 85239fb626a1ea7b81d0be4711822fcadf4d1022..5d4ddec708638aa3f22391cfbc27059c9980f367 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-@@ -65,6 +65,7 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+@@ -79,6 +79,7 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+     public class LogToConsole extends ConfigurationPart {
  
          public boolean invalidStatistics = true; // Gale - EMC - do not log invalid statistics
-         public boolean ignoredAdvancements = true; // Gale - Purpur - do not log ignored advancements
-+        public boolean setBlockInFarChunk = true; // Gale - Purpur - do not log setBlock in far chunks
++        public boolean ignoredAdvancements = true; // Gale - Purpur - do not log ignored advancements
  
          public Chat chat;
          public class Chat extends ConfigurationPart {
