@@ -73,7 +73,7 @@ index 330f6c79417378da855326b4da665f9d240e748d..6f7b5884a82cd3a3483fbbd478c0e929
  
          return b0;
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 3cf432a08a660c093552bf2270c897df10711a8d..480846d3d90c9dd8dd2a7c0f3837c3220fd7a57f 100644
+index dae9146b50ad430c815877a81cfe1111a42ccc80..cdac47539c8989c21e6a5edf5f63f7f5c02b2f30 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -213,14 +213,6 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
@@ -177,7 +177,7 @@ index 3cf432a08a660c093552bf2270c897df10711a8d..480846d3d90c9dd8dd2a7c0f3837c322
          this.frameTimer.logFrameDuration(i1 - i);
 -        this.profiler.pop();
          org.spigotmc.WatchdogThread.tick(); // Spigot
-         co.aikar.timings.TimingsManager.FULL_SERVER_TICK.stopTimingFullServerTick(); // Paper // Gale - effectively final timings calls
+         co.aikar.timings.TimingsManager.FULL_SERVER_TICK.stopTimingFullServerTick(); // Paper // Gale - final timings calls
      }
 @@ -1476,11 +1443,9 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          MinecraftTimings.bukkitSchedulerTimer.startTiming(); // Spigot // Paper

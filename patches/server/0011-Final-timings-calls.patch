@@ -1,13 +1,13 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Martijn Muijsers <martijnmuijsers@live.nl>
 Date: Sat, 24 Dec 2022 13:24:18 +0100
-Subject: [PATCH] Effectively final timings calls
+Subject: [PATCH] Final timings calls
 
 License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 3898e8a92edca52bc7d4e9ac061e24baceaec608..3cf432a08a660c093552bf2270c897df10711a8d 100644
+index 3898e8a92edca52bc7d4e9ac061e24baceaec608..dae9146b50ad430c815877a81cfe1111a42ccc80 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -1385,7 +1385,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
@@ -15,7 +15,7 @@ index 3898e8a92edca52bc7d4e9ac061e24baceaec608..3cf432a08a660c093552bf2270c897df
  
      public void tickServer(BooleanSupplier shouldKeepTicking) {
 -        co.aikar.timings.TimingsManager.FULL_SERVER_TICK.startTiming(); // Paper
-+        co.aikar.timings.TimingsManager.FULL_SERVER_TICK.startTimingFullServerTick(); // Paper // Gale - effectively final timings calls
++        co.aikar.timings.TimingsManager.FULL_SERVER_TICK.startTimingFullServerTick(); // Paper // Gale - final timings calls
          long i = Util.getNanos();
  
          // Paper start - move oversleep into full server tick
@@ -24,7 +24,7 @@ index 3898e8a92edca52bc7d4e9ac061e24baceaec608..3cf432a08a660c093552bf2270c897df
          this.profiler.pop();
          org.spigotmc.WatchdogThread.tick(); // Spigot
 -        co.aikar.timings.TimingsManager.FULL_SERVER_TICK.stopTiming(); // Paper
-+        co.aikar.timings.TimingsManager.FULL_SERVER_TICK.stopTimingFullServerTick(); // Paper // Gale - effectively final timings calls
++        co.aikar.timings.TimingsManager.FULL_SERVER_TICK.stopTimingFullServerTick(); // Paper // Gale - final timings calls
      }
  
      public void tickChildren(BooleanSupplier shouldKeepTicking) {
