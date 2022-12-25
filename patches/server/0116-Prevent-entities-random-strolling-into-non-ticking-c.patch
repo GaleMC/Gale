@@ -36,10 +36,10 @@ index 216929c838446c3c14d9b9906ffa625ef35fcbc8..29c7f53a4fa88a77c4076a6294e689e4
              } else {
                  this.wantedX = vec3.x;
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index 5b5fb89408b201bc3f73cf3dd80a5f8856b48b68..c68f384067059bb5ab92a268daffa3e406123cd7 100644
+index 4a338bbc038f70368adc1eb85c0c94312186cd80..cf9ed5ceac35ec20dc653fbe65f28d839fe04b71 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-@@ -281,6 +281,7 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+@@ -293,6 +293,7 @@ public class GaleWorldConfiguration extends ConfigurationPart {
      public class GameplayMechanics extends ConfigurationPart.Post {
  
          public boolean entitiesCanEatBlocksInNonTickingChunks = false; // Gale - Purpur - prevent entities eating blocks in non-ticking chunks
