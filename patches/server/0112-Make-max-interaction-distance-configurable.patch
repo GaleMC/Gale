@@ -1,0 +1,118 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Martijn Muijsers <martijnmuijsers@live.nl>
+Date: Sat, 24 Dec 2022 23:30:35 +0100
+Subject: [PATCH] Make max interaction distance configurable
+
+License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
+Gale - https://galemc.org
+
+diff --git a/src/main/java/net/minecraft/server/level/ServerPlayerGameMode.java b/src/main/java/net/minecraft/server/level/ServerPlayerGameMode.java
+index 58b093bb1de78ee3b3b2ea364aa50474883f443a..7be34e5df2b6d33c1d7943c9c0b6fd065b010c34 100644
+--- a/src/main/java/net/minecraft/server/level/ServerPlayerGameMode.java
++++ b/src/main/java/net/minecraft/server/level/ServerPlayerGameMode.java
+@@ -173,7 +173,7 @@ public class ServerPlayerGameMode {
+     private void debugLogging(BlockPos pos, boolean success, int sequence, String reason) {}
+ 
+     public void handleBlockBreakAction(BlockPos pos, ServerboundPlayerActionPacket.Action action, Direction direction, int worldHeight, int sequence) {
+-        if (this.player.getEyePosition().distanceToSqr(Vec3.atCenterOf(pos)) > ServerGamePacketListenerImpl.MAX_INTERACTION_DISTANCE) {
++        if (this.player.getEyePosition().distanceToSqr(Vec3.atCenterOf(pos)) > ServerGamePacketListenerImpl.getMaxInteractionDistanceSquared(this.player.level)) { // Gale - make max interaction distance configurable
+             if (true) return; // Paper - Don't notify if unreasonably far away
+             this.debugLogging(pos, false, sequence, "too far");
+         } else if (pos.getY() >= worldHeight) {
+diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
+index 315c7737f75c426a7e5c091fb340187df12235de..9e45e69b16f483d1b94b21f4510d056eb0ceb8b1 100644
+--- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
++++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
+@@ -184,7 +184,6 @@ import net.minecraft.world.phys.Vec3;
+ import net.minecraft.world.phys.shapes.BooleanOp;
+ import net.minecraft.world.phys.shapes.Shapes;
+ import net.minecraft.world.phys.shapes.VoxelShape;
+-import org.apache.commons.lang3.StringUtils;
+ import org.galemc.gale.configuration.GaleGlobalConfiguration;
+ import org.slf4j.Logger;
+ 
+@@ -249,7 +248,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+ 
+     static final Logger LOGGER = LogUtils.getLogger();
+     private static final int LATENCY_CHECK_INTERVAL = 15000;
+-    public static final double MAX_INTERACTION_DISTANCE = Mth.square(6.0D);
++    public static final double DEFAULT_MAX_INTERACTION_DISTANCE_SQUARED = Mth.square(6.0D); // Gale - make max interaction distance configurable
+     private static final int NO_BLOCK_UPDATES_TO_ACK = -1;
+     private static final int TRACKED_MESSAGE_DISCONNECT_THRESHOLD = 4096;
+     private static final Component CHAT_VALIDATION_FAILED = Component.translatable("multiplayer.disconnect.chat_validation_failed");
+@@ -346,6 +345,13 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+     }
+     // CraftBukkit end
+ 
++    // Gale start - make max interaction distance configurable
++    public static double getMaxInteractionDistanceSquared(Level level) {
++        var config = level.galeConfig().gameplayMechanics;
++        return config.playerMaxInteractionDistance < 0 ? ServerGamePacketListenerImpl.DEFAULT_MAX_INTERACTION_DISTANCE_SQUARED : config.playerMaxInteractionDistanceSquared;
++    }
++    // Gale end - make max interaction distance configurable
++
+     @Override
+     public void tick() {
+         if (this.ackBlockChangesUpTo > -1) {
+@@ -1962,7 +1968,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+             BlockPos blockposition = movingobjectpositionblock.getBlockPos();
+             Vec3 vec3d1 = Vec3.atCenterOf(blockposition);
+ 
+-            if (this.player.getEyePosition().distanceToSqr(vec3d1) <= ServerGamePacketListenerImpl.MAX_INTERACTION_DISTANCE) {
++            if (this.player.getEyePosition().distanceToSqr(vec3d1) <= ServerGamePacketListenerImpl.getMaxInteractionDistanceSquared(this.player.level)) { // Gale - make max interaction distance configurable
+                 Vec3 vec3d2 = vec3d.subtract(vec3d1);
+                 double d0 = 1.0000001D;
+ 
+@@ -2777,7 +2783,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+                 return;
+             }
+ 
+-            if (entity.distanceToSqr(this.player.getEyePosition()) < ServerGamePacketListenerImpl.MAX_INTERACTION_DISTANCE) {
++            if (entity.distanceToSqr(this.player.getEyePosition()) < ServerGamePacketListenerImpl.getMaxInteractionDistanceSquared(this.player.level)) { // Gale - make max interaction distance configurable
+                 packet.dispatch(new ServerboundInteractPacket.Handler() {
+                     private void performInteraction(InteractionHand enumhand, ServerGamePacketListenerImpl.EntityInteraction playerconnection_a, PlayerInteractEntityEvent event) { // CraftBukkit
+                         ItemStack itemstack = ServerGamePacketListenerImpl.this.player.getItemInHand(enumhand);
+diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
+index ffc39061f2363b979590888e736dd7a53a0d256a..53bc702695674ea969a3a0b7c7946e1d9b4a4f82 100644
+--- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
++++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
+@@ -261,12 +261,26 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+     }
+ 
+     public GameplayMechanics gameplayMechanics;
+-    public class GameplayMechanics extends ConfigurationPart {
++    public class GameplayMechanics extends ConfigurationPart.Post {
+ 
+         public boolean entitiesCanEatBlocksInNonTickingChunks = false; // Gale - Purpur - prevent entities eating blocks in non-ticking chunks
+         public boolean arrowMovementResetsDespawnCounter = true; // Gale - Purpur - make arrow movement resetting despawn counter configurable
+         public boolean hideFlamesOnEntitiesWithFireResistance = false; // Gale - Slice - hide flames on entities with fire resistance
+ 
++        // Gale start - make max interaction distance configurable
++        /**
++         * The maximum distance for blocks with which a player can interact with left- or right-clicking.
++         * Any value < 0 uses the default max distance, which is currently 6.0.
++         * <ul>
++         *     <li><i>Default</i>: -1.0</li>
++         *     <li><i>Vanilla</i>: -1.0</li>
++         * </ul>
++         */
++        public double playerMaxInteractionDistance = -1.0;
++
++        public transient double playerMaxInteractionDistanceSquared;
++        // Gale end - make max interaction distance configurable
++
+         public Fixes fixes;
+         public class Fixes extends ConfigurationPart {
+ 
+@@ -301,6 +315,11 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+ 
+         }
+ 
++        @Override
++        public void postProcess() {
++            this.playerMaxInteractionDistanceSquared = this.playerMaxInteractionDistance * this.playerMaxInteractionDistance; // Gale - make max interaction distance configurable
++        }
++
+     }
+ 
+ }
