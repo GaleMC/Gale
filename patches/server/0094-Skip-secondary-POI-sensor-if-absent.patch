@@ -1,0 +1,36 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Martijn Muijsers <martijnmuijsers@live.nl>
+Date: Sun, 25 Dec 2022 10:47:29 +0100
+Subject: [PATCH] Skip secondary POI sensor if absent
+
+License: LGPL-3.0 (https://www.gnu.org/licenses/lgpl-3.0.html)
+Gale - https://galemc.org
+
+This patch is based on the following mixin:
+"me/jellysquid/mods/lithium/mixin/ai/sensor/secondary_poi/SecondaryPointsOfInterestSensorMixin.java"
+By: 2No2Name <2No2Name@web.de>
+As part of: Lithium (https://github.com/CaffeineMC/lithium-fabric)
+Licensed under: LGPL-3.0 (https://www.gnu.org/licenses/lgpl-3.0.html)
+
+* Lithium description *
+
+villagers that have no secondary POI (farmland) do not search for it
+
+diff --git a/src/main/java/net/minecraft/world/entity/ai/sensing/SecondaryPoiSensor.java b/src/main/java/net/minecraft/world/entity/ai/sensing/SecondaryPoiSensor.java
+index cb1d91f9fe98f21c2afbe3894dfd9bca3bdd3ba6..75dc06a3041bfdfb08c914eb50cfa282ae9eb2fe 100644
+--- a/src/main/java/net/minecraft/world/entity/ai/sensing/SecondaryPoiSensor.java
++++ b/src/main/java/net/minecraft/world/entity/ai/sensing/SecondaryPoiSensor.java
+@@ -22,6 +22,13 @@ public class SecondaryPoiSensor extends Sensor<Villager> {
+ 
+     @Override
+     protected void doTick(ServerLevel world, Villager entity) {
++        // Gale start - Lithium - skip secondary POI sensor if absent
++        var secondaryPoi = entity.getVillagerData().getProfession().secondaryPoi();
++        if (secondaryPoi.isEmpty()) {
++            entity.getBrain().eraseMemory(MemoryModuleType.SECONDARY_JOB_SITE);
++            return;
++        }
++        // Gale end - Lithium - skip secondary POI sensor if absent
+         ResourceKey<Level> resourceKey = world.dimension();
+         BlockPos blockPos = entity.blockPosition();
+         List<GlobalPos> list = Lists.newArrayList();
