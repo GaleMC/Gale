@@ -7,7 +7,7 @@ License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 7a2c57900d6d651bc9e05073fffe1476f6032e80..5f1cea3088cb48804c46d7aadf347a8481470933 100644
+index 26f06bf9b738938f47eb5707d843eec66d0edb3b..271f818e2aff1e7527aad9417be848f2cfb89da6 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -1187,9 +1187,18 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
