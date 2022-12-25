@@ -1,0 +1,42 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Martijn Muijsers <martijnmuijsers@live.nl>
+Date: Sun, 25 Dec 2022 20:51:32 +0100
+Subject: [PATCH] Optimize identical item checks
+
+License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
+Gale - https://galemc.org
+
+diff --git a/src/main/java/net/minecraft/world/item/ItemStack.java b/src/main/java/net/minecraft/world/item/ItemStack.java
+index b1a01ef0090718923aff4365d8e93c776a5ebae4..c2160103d34c07f27cccf94613b9ae34dcd0c154 100644
+--- a/src/main/java/net/minecraft/world/item/ItemStack.java
++++ b/src/main/java/net/minecraft/world/item/ItemStack.java
+@@ -705,14 +705,29 @@ public final class ItemStack {
+     }
+ 
+     public static boolean tagMatches(ItemStack left, ItemStack right) {
++        // Gale start - optimize identical item checks
++        if (left == right) {
++            return true;
++        }
++        // Gale end - optimize identical item checks
+         return left.isEmpty() && right.isEmpty() ? true : (!left.isEmpty() && !right.isEmpty() ? (left.tag == null && right.tag != null ? false : left.tag == null || left.tag.equals(right.tag)) : false);
+     }
+ 
+     public static boolean matches(ItemStack left, ItemStack right) {
++        // Gale start - optimize identical item checks
++        if (left == right) {
++            return true;
++        }
++        // Gale end - optimize identical item checks
+         return left.isEmpty() && right.isEmpty() ? true : (!left.isEmpty() && !right.isEmpty() ? left.matches(right) : false);
+     }
+ 
+     private boolean matches(ItemStack stack) {
++        // Gale start - optimize identical item checks
++        if (this == stack) {
++            return true;
++        }
++        // Gale end - optimize identical item checks
+         return this.count != stack.count ? false : (!this.is(stack.getItem()) ? false : (this.tag == null && stack.tag != null ? false : this.tag == null || this.tag.equals(stack.tag)));
+     }
+ 
