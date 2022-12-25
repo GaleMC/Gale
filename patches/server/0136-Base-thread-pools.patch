@@ -1299,7 +1299,7 @@ index eed9f125df46b616b7234a2d669971bc51bc231b..396258cb21a8e5488f0f456b65dc629f
          // CraftBukkit end
          this.settings = dedicatedserversettings;
 diff --git a/src/main/java/net/minecraft/server/level/ServerChunkCache.java b/src/main/java/net/minecraft/server/level/ServerChunkCache.java
-index 8ed18a158a13dceca7cd342125c09e52ac0d013c..d513245ec5fadfa511895feeef73d2a57bd21160 100644
+index df4db98618c6c9261b4ec8e2987c4ed26af4bd4b..5f0eb08636ffa742de7e804a03c9cf2cea0afd1a 100644
 --- a/src/main/java/net/minecraft/server/level/ServerChunkCache.java
 +++ b/src/main/java/net/minecraft/server/level/ServerChunkCache.java
 @@ -11,7 +11,6 @@ import java.util.Collections;
@@ -1326,7 +1326,7 @@ index 8ed18a158a13dceca7cd342125c09e52ac0d013c..d513245ec5fadfa511895feeef73d2a5
  
  public class ServerChunkCache extends ChunkSource {
  
-@@ -977,6 +978,14 @@ public class ServerChunkCache extends ChunkSource {
+@@ -999,6 +1000,14 @@ public class ServerChunkCache extends ChunkSource {
              super.doRunTask(task);
          }
  
