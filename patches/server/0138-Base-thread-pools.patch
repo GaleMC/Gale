@@ -1562,7 +1562,7 @@ index 4b3d2280326c7eeda4952c36edff141cbff90e16..fa3a58f09178604e301b107f1a029e59
  
      private static URL getEndpoint(URI root, @Nullable JsonObject endpoints, String key, String fallback) throws MalformedURLException {
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index b34d64de19f387b4a95cc24b57aa98f81c4f2a9c..636a5afca868b05f7dbb4da8a7e04b968ada5048 100644
+index d18bef8b90e786929e58afe6d7fd7ad1468cf6e0..7249935d895189d2dbf629507590fd084564c7a6 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
 @@ -15,7 +15,6 @@ import java.net.SocketAddress;
@@ -1585,7 +1585,16 @@ index b34d64de19f387b4a95cc24b57aa98f81c4f2a9c..636a5afca868b05f7dbb4da8a7e04b96
  import net.minecraft.server.dedicated.DedicatedServer;
  import net.minecraft.server.level.ServerLevel;
  import net.minecraft.server.level.ServerPlayer;
-@@ -289,6 +288,58 @@ public abstract class PlayerList {
+@@ -255,7 +254,7 @@ public abstract class PlayerList {
+ 
+         // Gale start - MultiPaper - do not place player in world if kicked before being spawned in
+         if (!connection.isConnected() || player.quitReason != null) {
+-            pendingPlayers.remove(player.getUUID(), player);
++            /*pendingPlayers.remove(player.getUUID(), player);*/ // Gale - base thread pools - this patch was removed from Paper but might be useful later
+             return;
+         }
+         // Gale end - MultiPaper - do not place player in world if kicked before being spawned in
+@@ -296,6 +295,58 @@ public abstract class PlayerList {
          player.getRecipeBook().sendInitialRecipeBook(player);
          this.updateEntireScoreboard(worldserver1.getScoreboard(), player);
          this.server.invalidateStatus();
@@ -1644,7 +1653,7 @@ index b34d64de19f387b4a95cc24b57aa98f81c4f2a9c..636a5afca868b05f7dbb4da8a7e04b96
          MutableComponent ichatmutablecomponent;
  
          if (player.getGameProfile().getName().equalsIgnoreCase(s)) {
-@@ -1494,10 +1545,8 @@ public abstract class PlayerList {
+@@ -1501,10 +1552,8 @@ public abstract class PlayerList {
      public void setViewDistance(int viewDistance) {
          this.viewDistance = viewDistance;
          //this.broadcastAll(new ClientboundSetChunkCacheRadiusPacket(viewDistance)); // Paper - move into setViewDistance
@@ -1656,7 +1665,7 @@ index b34d64de19f387b4a95cc24b57aa98f81c4f2a9c..636a5afca868b05f7dbb4da8a7e04b96
  
              if (worldserver != null) {
                  worldserver.getChunkSource().setViewDistance(viewDistance);
-@@ -1509,10 +1558,8 @@ public abstract class PlayerList {
+@@ -1516,10 +1565,8 @@ public abstract class PlayerList {
      public void setSimulationDistance(int simulationDistance) {
          this.simulationDistance = simulationDistance;
          //this.broadcastAll(new ClientboundSetSimulationDistancePacket(simulationDistance)); // Paper - handled by playerchunkloader
