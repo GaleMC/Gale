@@ -1908,7 +1908,7 @@ index 69acbab61a79c24312359a63086f9353d740113f..49ace73d901b6f55545bb21a93d026a0
              }
          } catch (Exception ex) {
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index 300c7a31a4b07a566659efff842ed15e8e478663..cff8a4847ba5b920aed9ae5b9aae1f54373a8c6a 100644
+index 45df85b2b7cf715422697d330971ff71ca585813..f5adad65a312df55fbbbe191c8919767c4dde3fb 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 @@ -2,11 +2,14 @@
