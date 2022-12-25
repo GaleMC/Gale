@@ -36,7 +36,7 @@ index 216929c838446c3c14d9b9906ffa625ef35fcbc8..29c7f53a4fa88a77c4076a6294e689e4
              } else {
                  this.wantedX = vec3.x;
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index 4a338bbc038f70368adc1eb85c0c94312186cd80..cf9ed5ceac35ec20dc653fbe65f28d839fe04b71 100644
+index 1458877261308dd067c9e46d943ec3af23788944..77398e2fc01a919b324b7952de4736807987549b 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 @@ -293,6 +293,7 @@ public class GaleWorldConfiguration extends ConfigurationPart {
