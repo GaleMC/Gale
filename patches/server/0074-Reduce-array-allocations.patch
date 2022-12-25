@@ -588,7 +588,7 @@ index 3f7fab2f80ded9a7a720bd623f1ef028a4d0dca6..2ed3f42b1e487374287d033ac634a922
          final String s;
  
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index 8a59fade265e586622bcaa2cab2772613f9391aa..ede2eb274ca715dccfbfd98e0e2c410990508ced 100644
+index b4c97cf1755e95bb8f2547d0b4def2d9e0834e8d..05eb03bb11b65ea09780b67926585aaf50581647 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
 @@ -27,6 +27,8 @@ import java.util.UUID;
@@ -608,7 +608,7 @@ index 8a59fade265e586622bcaa2cab2772613f9391aa..ede2eb274ca715dccfbfd98e0e2c4109
  import org.bukkit.entity.Player;
  import org.bukkit.event.player.PlayerChangedWorldEvent;
  import org.bukkit.event.player.PlayerJoinEvent;
-@@ -675,7 +676,7 @@ public abstract class PlayerList {
+@@ -681,7 +682,7 @@ public abstract class PlayerList {
          while (iterator.hasNext()) {
              entityplayer = (ServerPlayer) iterator.next();
              this.save(entityplayer); // CraftBukkit - Force the player's inventory to be saved

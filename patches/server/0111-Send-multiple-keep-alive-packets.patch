@@ -109,7 +109,7 @@ index 60e2b951216003ae1861b1ee218e38da107b1760..315c7737f75c426a7e5c091fb340187d
          if (this.keepAlivePending && packet.getId() == this.keepAliveChallenge) {
              int i = (int) (Util.getMillis() - this.keepAliveTime);
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index 2d8d042112db908d76da023329f16402791029aa..d87db127a13c37cd4d9e0ff2f0a5b5387c5fbb0b 100644
+index 58f9d024f5a17c2d28d89f740e04f638fe3a2a92..e87d93e364eccc4dde3c00d34df6d63fae597b25 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 @@ -77,6 +77,13 @@ public class GaleGlobalConfiguration extends ConfigurationPart {

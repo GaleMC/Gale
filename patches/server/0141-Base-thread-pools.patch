@@ -1562,7 +1562,7 @@ index 4b3d2280326c7eeda4952c36edff141cbff90e16..fa3a58f09178604e301b107f1a029e59
  
      private static URL getEndpoint(URI root, @Nullable JsonObject endpoints, String key, String fallback) throws MalformedURLException {
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index d18bef8b90e786929e58afe6d7fd7ad1468cf6e0..7249935d895189d2dbf629507590fd084564c7a6 100644
+index 1561ea392ce6fb35a01e407cb6fddab0c1942a1c..fe87ef6e0540bf81518fa01ca2c3516c95c2fb53 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
 @@ -15,7 +15,6 @@ import java.net.SocketAddress;
@@ -1653,7 +1653,7 @@ index d18bef8b90e786929e58afe6d7fd7ad1468cf6e0..7249935d895189d2dbf629507590fd08
          MutableComponent ichatmutablecomponent;
  
          if (player.getGameProfile().getName().equalsIgnoreCase(s)) {
-@@ -1501,10 +1552,8 @@ public abstract class PlayerList {
+@@ -1507,10 +1558,8 @@ public abstract class PlayerList {
      public void setViewDistance(int viewDistance) {
          this.viewDistance = viewDistance;
          //this.broadcastAll(new ClientboundSetChunkCacheRadiusPacket(viewDistance)); // Paper - move into setViewDistance
@@ -1665,7 +1665,7 @@ index d18bef8b90e786929e58afe6d7fd7ad1468cf6e0..7249935d895189d2dbf629507590fd08
  
              if (worldserver != null) {
                  worldserver.getChunkSource().setViewDistance(viewDistance);
-@@ -1516,10 +1565,8 @@ public abstract class PlayerList {
+@@ -1522,10 +1571,8 @@ public abstract class PlayerList {
      public void setSimulationDistance(int simulationDistance) {
          this.simulationDistance = simulationDistance;
          //this.broadcastAll(new ClientboundSetSimulationDistancePacket(simulationDistance)); // Paper - handled by playerchunkloader
@@ -1908,7 +1908,7 @@ index 69acbab61a79c24312359a63086f9353d740113f..49ace73d901b6f55545bb21a93d026a0
              }
          } catch (Exception ex) {
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index 45df85b2b7cf715422697d330971ff71ca585813..f5adad65a312df55fbbbe191c8919767c4dde3fb 100644
+index 1452704bc21ca859261169431d2d36a90d5f1e3f..3919608d32c0d528a7e54e66c4f95f3175504b92 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 @@ -2,11 +2,14 @@

@@ -68,13 +68,13 @@ index b9a799997e3475117ab91d7f3edb5f2f243a9f6b..e23fdd5ba09b50b7eef0ca4f36c54807
  import org.yaml.snakeyaml.constructor.SafeConstructor;
  import org.yaml.snakeyaml.error.MarkedYAMLException;
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index 5cd1c4d360b879cfaf706f39b9c7127923241413..45df85b2b7cf715422697d330971ff71ca585813 100644
+index a7f1be75344f5f4d20d7561704a20a90a7db8a66..1452704bc21ca859261169431d2d36a90d5f1e3f 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-@@ -152,6 +152,7 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
-         public boolean setBlockInFarChunk = true; // Gale - Purpur - do not log setBlock in far chunks
+@@ -153,6 +153,7 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
          public boolean unrecognizedRecipes = false; // Gale - Purpur - do not log unrecognized recipes
          public boolean legacyMaterialInitialization = false; // Gale - Purpur - do not log legacy Material initialization
+         public boolean playerLoginLocations = true; // Gale - JettPack - make logging login location configurable
 +        public boolean cpuCoresEstimation = true; // Gale - CPU cores estimation
  
          public Chat chat;
