@@ -25,10 +25,10 @@ index a07da939bb6b2dd0bd75cc74dd79493695035259..9d74ef6973f6a9e12861256aa7032f8d
      // CraftBukkit end
      public boolean isRealPlayer; // Paper
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 2503af47e491d456e3044e097f35c928e45e5a21..cf95be6fcad6ad508d6ea1f6b10efa4e3bd2bfe5 100644
+index d31f52ace6dd6a80adb639e1e50f4b547b23103d..e88035e907b49983daafda61a3218cef1a34b2fb 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -2331,6 +2331,10 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -2333,6 +2333,10 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
          } else if (this.player.isRemoved() || this.player.getChatVisibility() == ChatVisiblity.HIDDEN) { // CraftBukkit - dead men tell no tales
              this.send(new ClientboundSystemChatPacket(Component.translatable("chat.disabled.options").withStyle(ChatFormatting.RED), false));
              return Optional.empty();
@@ -40,7 +40,7 @@ index 2503af47e491d456e3044e097f35c928e45e5a21..cf95be6fcad6ad508d6ea1f6b10efa4e
              Optional<LastSeenMessages> optional = this.unpackAndApplyLastSeen(acknowledgment);
  
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index c0b599b1835d28ddda3690b29f29bd8c6f03e215..6cc577d17201513af62ce847363ee25a3852a1b5 100644
+index f381bf9064be548a4a603e0042886d8a5e70ba5b..603d87fedf731498ebf516fdda3c785bd01bf830 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
 @@ -322,6 +322,8 @@ public abstract class PlayerList {

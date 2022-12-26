@@ -13,10 +13,10 @@ As part of: MultiPaper (https://github.com/MultiPaper/MultiPaper)
 Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index d05e5b9b4dec0779489856dab5e50b53ff698c38..2929669ae099482185f1abef60c569bf00b0597f 100644
+index 0ce745f5a00d4db68e8559fc1826dace52ae44d8..54dac74a5de4f967b3af7a63c8977d569a90157b 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -3446,6 +3446,13 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -3456,6 +3456,13 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
                  Entity entity = this.getType().create(worldserver);
  
                  if (entity != null) {

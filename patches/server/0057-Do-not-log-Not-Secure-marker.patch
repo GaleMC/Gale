@@ -7,7 +7,7 @@ License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/io/papermc/paper/adventure/ChatProcessor.java b/src/main/java/io/papermc/paper/adventure/ChatProcessor.java
-index 0f5cf192c0848bdeadeda381e19ec035455abfe5..04329cb72f6d42ca0967bd0a1d59ba56d80b8042 100644
+index 309fe1162db195c7c3c94d785d6aa2700e42b08a..e50b9ba2a711e6d05393b833342090bcfda2c93f 100644
 --- a/src/main/java/io/papermc/paper/adventure/ChatProcessor.java
 +++ b/src/main/java/io/papermc/paper/adventure/ChatProcessor.java
 @@ -42,6 +42,7 @@ import org.bukkit.event.player.PlayerChatEvent;
@@ -18,7 +18,7 @@ index 0f5cf192c0848bdeadeda381e19ec035455abfe5..04329cb72f6d42ca0967bd0a1d59ba56
  
  import static net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection;
  
-@@ -351,7 +352,7 @@ public final class ChatProcessor {
+@@ -352,7 +353,7 @@ public final class ChatProcessor {
  
          private void sendToServer(final ChatType.Bound chatType, final @Nullable Function<Audience, net.minecraft.network.chat.Component> msgFunction) {
              final PlayerChatMessage toConsoleMessage = msgFunction == null ? ChatProcessor.this.message : ChatProcessor.this.message.withUnsignedContent(msgFunction.apply(ChatProcessor.this.server.console));
@@ -28,7 +28,7 @@ index 0f5cf192c0848bdeadeda381e19ec035455abfe5..04329cb72f6d42ca0967bd0a1d59ba56
      }
  
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index 6cc577d17201513af62ce847363ee25a3852a1b5..8a59fade265e586622bcaa2cab2772613f9391aa 100644
+index 603d87fedf731498ebf516fdda3c785bd01bf830..05d35c0cddb2c647fff9d7238fa0f6ce7ddd520f 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
 @@ -100,6 +100,7 @@ import net.minecraft.world.scores.Objective;

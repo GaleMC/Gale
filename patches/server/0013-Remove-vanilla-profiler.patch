@@ -840,7 +840,7 @@ index 7d6d3c8556033d289fdadc489e73fba478fce41a..a07da939bb6b2dd0bd75cc74dd794936
                  this.connection.send(new ClientboundPlayerAbilitiesPacket(this.getAbilities()));
                  playerlist.sendLevelInfo(this, worldserver);
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 08cb3db28f13c352a162009deeb28ee637e98d2a..81b27d48c1421c02f86b95db1d7a1eeaf130cd09 100644
+index 50d8d16b1856c0c875ccabbcfc240379a7669559..1192b751c8d00754d40781e714bc3f6330767f75 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -390,7 +390,6 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
@@ -936,10 +936,10 @@ index 7ab57748b2f2aea1003d9b7e70e76c372aa1e432..47e75ec4a01f8a456ec6ebc13031c1f0
      }
  
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index be54a70b47433c2abaeb8632ffe55d0762f619d6..372a60f326c1472697a0153bb7cdd08b3a02e9c3 100644
+index 7555b04dcf274bb624b89f2eb9ff80da0056de4e..da40e419a245a43dec75a0cc3028cb0a42087c3f 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -787,7 +787,6 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -788,7 +788,6 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
      // CraftBukkit end
  
      public void baseTick() {
@@ -947,7 +947,7 @@ index be54a70b47433c2abaeb8632ffe55d0762f619d6..372a60f326c1472697a0153bb7cdd08b
          if (firstTick && this instanceof net.minecraft.world.entity.NeutralMob neutralMob) neutralMob.tickInitialPersistentAnger(level); // Paper - Update last hurt when ticking
          this.feetBlockState = null;
          if (this.isPassenger() && this.getVehicle().isRemoved()) {
-@@ -848,7 +847,6 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -849,7 +848,6 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
          }
  
          this.firstTick = false;
@@ -955,7 +955,7 @@ index be54a70b47433c2abaeb8632ffe55d0762f619d6..372a60f326c1472697a0153bb7cdd08b
      }
  
      public void setSharedFlagOnFire(boolean onFire) {
-@@ -1022,7 +1020,6 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -1023,7 +1021,6 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
                  }
              }
  
@@ -963,7 +963,7 @@ index be54a70b47433c2abaeb8632ffe55d0762f619d6..372a60f326c1472697a0153bb7cdd08b
              if (this.stuckSpeedMultiplier.lengthSqr() > 1.0E-7D) {
                  movement = movement.multiply(this.stuckSpeedMultiplier);
                  this.stuckSpeedMultiplier = Vec3.ZERO;
-@@ -1031,7 +1028,6 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -1032,7 +1029,6 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
              // Paper start - ignore movement changes while inactive.
              if (isTemporarilyActive && !(this instanceof ItemEntity || this instanceof net.minecraft.world.entity.vehicle.AbstractMinecart) && movement == getDeltaMovement() && movementType == MoverType.SELF) {
                  setDeltaMovement(Vec3.ZERO);
@@ -971,7 +971,7 @@ index be54a70b47433c2abaeb8632ffe55d0762f619d6..372a60f326c1472697a0153bb7cdd08b
                  return;
              }
              // Paper end
-@@ -1052,8 +1048,6 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -1053,8 +1049,6 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
                  this.setPos(this.getX() + vec3d1.x, this.getY() + vec3d1.y, this.getZ() + vec3d1.z);
              }
  
@@ -980,7 +980,7 @@ index be54a70b47433c2abaeb8632ffe55d0762f619d6..372a60f326c1472697a0153bb7cdd08b
              boolean flag = !Mth.equal(movement.x, vec3d1.x);
              boolean flag1 = !Mth.equal(movement.z, vec3d1.z);
  
-@@ -1071,9 +1065,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -1072,9 +1066,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
              BlockState iblockdata = this.level.getBlockState(blockposition);
  
              this.checkFallDamage(vec3d1.y, this.onGround, iblockdata, blockposition);
@@ -991,7 +991,7 @@ index be54a70b47433c2abaeb8632ffe55d0762f619d6..372a60f326c1472697a0153bb7cdd08b
                  if (this.horizontalCollision) {
                      Vec3 vec3d2 = this.getDeltaMovement();
  
-@@ -1212,8 +1204,6 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -1213,8 +1205,6 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
                  if (this.isOnFire() && (this.isInPowderSnow || this.isInWaterRainOrBubble())) {
                      this.setRemainingFireTicks(-this.getFireImmuneTicks());
                  }
@@ -1000,7 +1000,7 @@ index be54a70b47433c2abaeb8632ffe55d0762f619d6..372a60f326c1472697a0153bb7cdd08b
              }
          }
          // Paper start - detailed watchdog information
-@@ -2884,7 +2874,6 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -2894,7 +2884,6 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
                  ServerLevel worldserver1 = minecraftserver.getLevel(resourcekey);
  
                  if (true && !this.isPassenger() && this.portalTime++ >= i) { // CraftBukkit
@@ -1008,7 +1008,7 @@ index be54a70b47433c2abaeb8632ffe55d0762f619d6..372a60f326c1472697a0153bb7cdd08b
                      this.portalTime = i;
                      // Paper start
                      io.papermc.paper.event.entity.EntityPortalReadyEvent event = new io.papermc.paper.event.entity.EntityPortalReadyEvent(this.getBukkitEntity(), worldserver1 == null ? null : worldserver1.getWorld(), org.bukkit.PortalType.NETHER);
-@@ -2902,7 +2891,6 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -2912,7 +2901,6 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
                      }
                      } // Paper
                      // CraftBukkit end
@@ -1016,7 +1016,7 @@ index be54a70b47433c2abaeb8632ffe55d0762f619d6..372a60f326c1472697a0153bb7cdd08b
                  }
  
                  this.isInsidePortal = false;
-@@ -3367,14 +3355,12 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -3377,14 +3365,12 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
          }
          // Paper end
          if (this.level instanceof ServerLevel && !this.isRemoved()) {
@@ -1031,7 +1031,7 @@ index be54a70b47433c2abaeb8632ffe55d0762f619d6..372a60f326c1472697a0153bb7cdd08b
              PortalInfo shapedetectorshape = (location == null) ? this.findDimensionEntryPoint(worldserver) : new PortalInfo(new Vec3(location.x(), location.y(), location.z()), Vec3.ZERO, this.yRot, this.xRot, worldserver, null); // CraftBukkit
  
              if (shapedetectorshape == null) {
-@@ -3408,7 +3394,6 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -3418,7 +3404,6 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
                  this.unRide();
                  // CraftBukkit end
  
@@ -1039,7 +1039,7 @@ index be54a70b47433c2abaeb8632ffe55d0762f619d6..372a60f326c1472697a0153bb7cdd08b
                  // Paper start - Change lead drop timing to prevent dupe
                  if (this instanceof Mob) {
                      ((Mob) this).dropLeash(true, true); // Paper drop lead
-@@ -3431,10 +3416,8 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -3441,10 +3426,8 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
                  }
  
                  this.removeAfterChangingDimensions();
@@ -1051,7 +1051,7 @@ index be54a70b47433c2abaeb8632ffe55d0762f619d6..372a60f326c1472697a0153bb7cdd08b
              }
          } else {
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index 864ab97b7a6c62c376ca38dbbc65bc9406dfd62b..5f3796c9b0f910e578fe70c46ca97c36b70378f8 100644
+index 529ea9094c0c7b6263c13b3b7a2d1e652f7bc29e..3a116b37a89306ea8f2b7eec867d0e3c3523f74c 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
 @@ -393,7 +393,6 @@ public abstract class LivingEntity extends Entity {
@@ -1408,10 +1408,10 @@ index f2e84e832ad95df26fe3b9ba439ce38fc59b3585..831bd88383e48f704d6cb4f8f5137114
      }
  
 diff --git a/src/main/java/net/minecraft/world/entity/animal/frog/Tadpole.java b/src/main/java/net/minecraft/world/entity/animal/frog/Tadpole.java
-index e8574bd4b412c1db82aaec9dced47b63de9dbf28..dd6edc8d69903b79356d3603d5c48e7d862d4256 100644
+index 9058f9f2e561cda9f475f33218bf7a78297de4bc..09240841cd9216c06da8dc4059f8a60ef9022d39 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/frog/Tadpole.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/frog/Tadpole.java
-@@ -78,12 +78,8 @@ public class Tadpole extends AbstractFish {
+@@ -79,12 +79,8 @@ public class Tadpole extends AbstractFish {
  
      @Override
      protected void customServerAiStep() {
@@ -1456,7 +1456,7 @@ index 51ad507a3b625201ecca50bd92f8f089f3b4d60a..818d1f09b63ad0df9e3fae059a058015
      }
  
 diff --git a/src/main/java/net/minecraft/world/entity/monster/hoglin/Hoglin.java b/src/main/java/net/minecraft/world/entity/monster/hoglin/Hoglin.java
-index 45741410a13cffe3419e34b5607b048bbcf1c3ff..ca749e552ecc995e8a9d5168c1959b95c6e9cb97 100644
+index 5d3b3cb3a882eb5d716f678095a65b28d0967476..739f4f86af7951ea42a3b248b93989de8b8f4f54 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/hoglin/Hoglin.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/hoglin/Hoglin.java
 @@ -128,9 +128,7 @@ public class Hoglin extends Animal implements Enemy, HoglinBase {

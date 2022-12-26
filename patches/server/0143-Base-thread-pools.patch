@@ -1384,7 +1384,7 @@ index 37e0b6212fec71ec9662e6be3b1e8bea487eb4a6..251f098fa2203d06e5e5aa68a31a7653
                      for (Object o : worldData.cache.values() )
                      {
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 171ee521040d1e971a39eac2a748937a41dcf6e5..f05d23e40a709b8da25531ecb8be125a82ffc04b 100644
+index 4aadf8dcb71ab98d01ff69077af93db98024fee4..aded21fa9948d79f7fc8fbe7d901da36e751cf5a 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -187,6 +187,8 @@ import net.minecraft.world.phys.shapes.VoxelShape;
@@ -1510,7 +1510,7 @@ index 171ee521040d1e971a39eac2a748937a41dcf6e5..f05d23e40a709b8da25531ecb8be125a
          } else {
              Optional<LastSeenMessages> optional = this.tryHandleChat(packet.command(), packet.timeStamp(), packet.lastSeenMessages());
  
-@@ -2351,9 +2349,9 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -2353,9 +2351,9 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
      private Optional<LastSeenMessages> tryHandleChat(String message, Instant timestamp, LastSeenMessages.Update acknowledgment) {
          if (!this.updateChatOrder(timestamp)) {
              ServerGamePacketListenerImpl.LOGGER.warn("{} sent out-of-order chat: '{}': {} > {}", this.player.getName().getString(), message, this.lastChatTimeStamp.get().getEpochSecond(), timestamp.getEpochSecond()); // Paper
@@ -1523,7 +1523,7 @@ index 171ee521040d1e971a39eac2a748937a41dcf6e5..f05d23e40a709b8da25531ecb8be125a
              return Optional.empty();
          } else if (this.player.isRemoved() || this.player.getChatVisibility() == ChatVisiblity.HIDDEN) { // CraftBukkit - dead men tell no tales
              this.send(new ClientboundSystemChatPacket(Component.translatable("chat.disabled.options").withStyle(ChatFormatting.RED), false));
-@@ -3283,7 +3281,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -3285,7 +3283,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
          // Paper start
          if (!org.bukkit.Bukkit.isPrimaryThread()) {
              if (recipeSpamPackets.addAndGet(io.papermc.paper.configuration.GlobalConfiguration.get().spamLimiter.recipeSpamIncrement) > io.papermc.paper.configuration.GlobalConfiguration.get().spamLimiter.recipeSpamLimit) {
@@ -1562,7 +1562,7 @@ index 4b3d2280326c7eeda4952c36edff141cbff90e16..fa3a58f09178604e301b107f1a029e59
  
      private static URL getEndpoint(URI root, @Nullable JsonObject endpoints, String key, String fallback) throws MalformedURLException {
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index 1561ea392ce6fb35a01e407cb6fddab0c1942a1c..fe87ef6e0540bf81518fa01ca2c3516c95c2fb53 100644
+index ac12cde39125f3b9dc57f251dd124739422426f9..92a1a5cfc9f0ba2f2af7773e98794ec0e5db81f1 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
 @@ -15,7 +15,6 @@ import java.net.SocketAddress;

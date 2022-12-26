@@ -479,7 +479,7 @@ index 89aaa846d5cb1cfd8ccf634f85bdc4180013cfd0..f69ea29648b090334d98dd8f3ed71cf8
          return ret;
      }
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 5fcca730767294e88445e701083c07c96d740147..2e82442846b275d4928a0905e4d5a4bbfa752d9b 100644
+index 5fe32932cce864997682b0d6b6b268074ba6f7c6..f9207ef2e6cc6d13c2b8f9eeb878c3f5c3e237ee 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -28,6 +28,8 @@ import java.util.function.UnaryOperator;
@@ -541,7 +541,7 @@ index 5fcca730767294e88445e701083c07c96d740147..2e82442846b275d4928a0905e4d5a4bb
              return;
          }
          // Paper end
-@@ -3257,7 +3255,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -3259,7 +3257,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
          // Paper start
          if (!org.bukkit.Bukkit.isPrimaryThread()) {
              if (recipeSpamPackets.addAndGet(io.papermc.paper.configuration.GlobalConfiguration.get().spamLimiter.recipeSpamIncrement) > io.papermc.paper.configuration.GlobalConfiguration.get().spamLimiter.recipeSpamLimit) {
@@ -588,7 +588,7 @@ index 3f7fab2f80ded9a7a720bd623f1ef028a4d0dca6..2ed3f42b1e487374287d033ac634a922
          final String s;
  
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index b4c97cf1755e95bb8f2547d0b4def2d9e0834e8d..05eb03bb11b65ea09780b67926585aaf50581647 100644
+index f6b8e5d32b29f38301afb7e1b93de3d31c9fa774..0c1192cb92de739f96a188b9a0775337eb3f6e2c 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
 @@ -27,6 +27,8 @@ import java.util.UUID;
@@ -697,7 +697,7 @@ index 97ff19efa0b3943ccb7a6e02cba6ed2fea61adac..b2ae2bd8bd4ff3cb6457e8c08172e348
      private EquipmentSlot(EquipmentSlot.Type type, int entityId, int armorStandId, String name) {
          this.type = type;
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index c7b8c58a67a4e6f4a98730c7ef9f62072b788bc3..ffbf128d95a8e19758559cc03bb4beb2b3da038c 100644
+index 20f70e0bc085a941a7e5de3ceff968870f23fb5f..5c0c1100dc5bec3978f514f4403f9ee2c0352dc9 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
 @@ -3102,7 +3102,7 @@ public abstract class LivingEntity extends Entity {
