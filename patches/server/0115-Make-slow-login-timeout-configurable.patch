@@ -31,12 +31,12 @@ index 2ed3f42b1e487374287d033ac634a922a5ef37bd..af96c170c58553f4ce0554c9bd24fea2
          }
  
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index 35e22328fccd6f7635cab3ebdde172a3ffec853f..c4f54e9e7ecc03f8417db36d8f463ffe54ead94b 100644
+index ef95ee4238c6da237e939c06c63cd8666a863ac5..7dcb82b0784816a84557a3842fe6f5f13ec3d5ff 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-@@ -61,6 +61,20 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
-     public Misc misc;
-     public class Misc extends ConfigurationPart {
+@@ -74,6 +74,20 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+         public boolean verifyChatOrder = true;
+         // Gale end - Pufferfish - make chat order verification configurable
  
 +        // Gale start - make slow login timeout configurable
 +        /**

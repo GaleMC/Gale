@@ -25,7 +25,7 @@ index a07da939bb6b2dd0bd75cc74dd79493695035259..9d74ef6973f6a9e12861256aa7032f8d
      // CraftBukkit end
      public boolean isRealPlayer; // Paper
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index d31f52ace6dd6a80adb639e1e50f4b547b23103d..e88035e907b49983daafda61a3218cef1a34b2fb 100644
+index 9e8c1bb48b2453296cd235cc0c127032ebf73053..63b54d47203d796b7dfeac2e6e04ce49b5a72ae5 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -2333,6 +2333,10 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic

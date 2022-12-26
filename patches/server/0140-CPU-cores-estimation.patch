@@ -68,10 +68,10 @@ index b9a799997e3475117ab91d7f3edb5f2f243a9f6b..e23fdd5ba09b50b7eef0ca4f36c54807
  import org.yaml.snakeyaml.constructor.SafeConstructor;
  import org.yaml.snakeyaml.error.MarkedYAMLException;
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index 049371931a4563755d3f6c082f3e4f0ae2b5835a..e10f1f7b72a4c52b5b3d3c006f6ae40fbb4e777c 100644
+index 48f6e114a3ead68d72f27f9d5572eacbc7613ac3..7a3111603c75105769cf0fc3ff3c5ee6d45b57e5 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-@@ -172,6 +172,7 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+@@ -185,6 +185,7 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
          public boolean unrecognizedRecipes = false; // Gale - Purpur - do not log unrecognized recipes
          public boolean legacyMaterialInitialization = false; // Gale - Purpur - do not log legacy Material initialization
          public boolean playerLoginLocations = true; // Gale - JettPack - make logging login location configurable

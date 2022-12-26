@@ -1384,7 +1384,7 @@ index 37e0b6212fec71ec9662e6be3b1e8bea487eb4a6..251f098fa2203d06e5e5aa68a31a7653
                      for (Object o : worldData.cache.values() )
                      {
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index dd3d223b25171db508fe36453c308d6610e78038..a9b544b0da46cd4326455a678a4f7459e93ec621 100644
+index 68e0f2208c5f098042ebfad08301e3154e2a2152..deadeb7a98e5b64d7b9fae3a9e7858a4cd1d39e2 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -187,6 +187,8 @@ import net.minecraft.world.phys.shapes.VoxelShape;
@@ -1523,7 +1523,7 @@ index dd3d223b25171db508fe36453c308d6610e78038..a9b544b0da46cd4326455a678a4f7459
              return Optional.empty();
          } else if (this.player.isRemoved() || this.player.getChatVisibility() == ChatVisiblity.HIDDEN) { // CraftBukkit - dead men tell no tales
              this.send(new ClientboundSystemChatPacket(Component.translatable("chat.disabled.options").withStyle(ChatFormatting.RED), false));
-@@ -3285,7 +3283,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -3290,7 +3288,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
          // Paper start
          if (!org.bukkit.Bukkit.isPrimaryThread()) {
              if (recipeSpamPackets.addAndGet(io.papermc.paper.configuration.GlobalConfiguration.get().spamLimiter.recipeSpamIncrement) > io.papermc.paper.configuration.GlobalConfiguration.get().spamLimiter.recipeSpamLimit) {
@@ -1908,7 +1908,7 @@ index 69acbab61a79c24312359a63086f9353d740113f..49ace73d901b6f55545bb21a93d026a0
              }
          } catch (Exception ex) {
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index e10f1f7b72a4c52b5b3d3c006f6ae40fbb4e777c..ae192a01c4ef5b4183baf0eee9604619342e6082 100644
+index 7a3111603c75105769cf0fc3ff3c5ee6d45b57e5..e910c998b2195b5f7f8018b8779947504920d514 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 @@ -2,11 +2,14 @@

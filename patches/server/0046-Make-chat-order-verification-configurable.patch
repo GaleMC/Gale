@@ -1,0 +1,54 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Martijn Muijsers <martijnmuijsers@live.nl>
+Date: Mon, 26 Dec 2022 05:22:43 +0100
+Subject: [PATCH] Make chat order verification configurable
+
+License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+Gale - https://galemc.org
+
+This patch is based on the following patch:
+"Add option to disable out-of-order chat"
+By: Kevin Raneri <kevin.raneri@gmail.com>
+As part of: Pufferfish (https://github.com/pufferfish-gg/Pufferfish)
+Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+
+diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
+index d31f52ace6dd6a80adb639e1e50f4b547b23103d..9e8c1bb48b2453296cd235cc0c127032ebf73053 100644
+--- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
++++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
+@@ -2357,6 +2357,11 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+     }
+ 
+     private boolean updateChatOrder(Instant timestamp) {
++        // Gale start - Pufferfish - make chat order verification configurable
++        if (!GaleGlobalConfiguration.get().misc.verifyChatOrder) {
++            return true;
++        }
++        // Gale end - Pufferfish - make chat order verification configurable
+         Instant instant1;
+ 
+         do {
+diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
+index be4e05851e94f943b6382ba5bb9f0750c95bdad4..5021cc0b7a0f99ec53d565862add241428311dc3 100644
+--- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
++++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
+@@ -57,6 +57,19 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+     public Misc misc;
+     public class Misc extends ConfigurationPart {
+ 
++        // Gale start - Pufferfish - make chat order verification configurable
++        /**
++         * Whether to verify the order of chat messages.
++         * If this option is set to true, and a player sends an out-of-order chat packet, they will be kicked.
++         * If this option is set to false, no verification will occur, and players will not be kicked.
++         * <ul>
++         *     <li><i>Default</i>: true</li>
++         *     <li><i>Vanilla</i>: true</li>
++         * </ul>
++         */
++        public boolean verifyChatOrder = true;
++        // Gale end - Pufferfish - make chat order verification configurable
++
+         public IncludeInTimingsReport includeInTimingsReport;
+         public class IncludeInTimingsReport extends ConfigurationPart {
+ 

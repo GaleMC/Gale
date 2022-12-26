@@ -131,10 +131,10 @@ index b9922b07cb105618390187d98acdf89e728e1f5a..a66d202749f243f6752df5027cb7c82f
 +
  }
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index 8b9f4add9d11c4a3e361283ce636683c20f73060..4f01d27e8c18ef45ccc26def015a2503d1c01fd0 100644
+index 882830dd0bddb81e1a592cdd089d4340beb946a7..f4f6f59af9ae02748763b82f2c2ae5da90737749 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-@@ -101,6 +101,7 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+@@ -114,6 +114,7 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
      public LogToConsole logToConsole;
      public class LogToConsole extends ConfigurationPart.Post { // Gale - EMC - softly log invalid pool element errors
  
