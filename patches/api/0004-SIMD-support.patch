@@ -26,10 +26,10 @@ index 447b549bc7035410ae18f3e9063de2d014530b98..33e7179c81310283e5e6efb5fd776a60
  
 diff --git a/src/main/java/gg/pufferfish/pufferfish/simd/SIMDChecker.java b/src/main/java/gg/pufferfish/pufferfish/simd/SIMDChecker.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..d51f9de6ac01f518ca9577827dc719daad78df4c
+index 0000000000000000000000000000000000000000..48312d416805697257e4cd3451b8d14bab7ea252
 --- /dev/null
 +++ b/src/main/java/gg/pufferfish/pufferfish/simd/SIMDChecker.java
-@@ -0,0 +1,44 @@
+@@ -0,0 +1,45 @@
 +// Gale - Pufferfish - SIMD support
 +
 +package gg.pufferfish.pufferfish.simd;
@@ -49,7 +49,8 @@ index 0000000000000000000000000000000000000000..d51f9de6ac01f518ca9577827dc719da
 +    @Deprecated
 +    public static boolean canEnable(Logger logger, boolean logVectorSizesToConsole) {
 +        try {
-+            if (SIMDDetection.getJavaVersion() != 17 && SIMDDetection.getJavaVersion() != 18) {
++            int javaVersion = SIMDDetection.getJavaVersion();
++            if (!(javaVersion >= 17 && javaVersion <= 19)) {
 +                return false;
 +            } else {
 +                SIMDDetection.testRun = true;
