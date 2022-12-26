@@ -479,7 +479,7 @@ index 89aaa846d5cb1cfd8ccf634f85bdc4180013cfd0..f69ea29648b090334d98dd8f3ed71cf8
          return ret;
      }
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index ee3acb578d4f72836eb3a4e8336701b3b939da50..60e2b951216003ae1861b1ee218e38da107b1760 100644
+index 5fcca730767294e88445e701083c07c96d740147..2e82442846b275d4928a0905e4d5a4bbfa752d9b 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -28,6 +28,8 @@ import java.util.function.UnaryOperator;
@@ -507,7 +507,7 @@ index ee3acb578d4f72836eb3a4e8336701b3b939da50..60e2b951216003ae1861b1ee218e38da
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.BlockHitResult;
-@@ -224,8 +224,6 @@ import org.bukkit.event.inventory.InventoryCreativeEvent;
+@@ -225,8 +225,6 @@ import org.bukkit.event.inventory.InventoryCreativeEvent;
  import org.bukkit.event.inventory.InventoryType.SlotType;
  import org.bukkit.event.inventory.SmithItemEvent;
  import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -516,7 +516,7 @@ index ee3acb578d4f72836eb3a4e8336701b3b939da50..60e2b951216003ae1861b1ee218e38da
  import org.bukkit.event.player.PlayerChatEvent;
  import org.bukkit.event.player.PlayerCommandPreprocessEvent;
  import org.bukkit.event.player.PlayerInteractAtEntityEvent;
-@@ -400,7 +398,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -401,7 +399,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
          if (this.keepAlivePending) {
              if (!this.processedDisconnect && elapsedTime >= KEEPALIVE_LIMIT) { // check keepalive limit, don't fire if already disconnected
                  ServerGamePacketListenerImpl.LOGGER.warn("{} was kicked due to keepalive timeout!", this.player.getScoreboardName()); // more info
@@ -525,7 +525,7 @@ index ee3acb578d4f72836eb3a4e8336701b3b939da50..60e2b951216003ae1861b1ee218e38da
              }
          } else {
              if (elapsedTime >= 15000L) { // 15 seconds
-@@ -864,13 +862,13 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -865,13 +863,13 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
          // PacketUtils.ensureRunningOnSameThread(packet, this, this.player.getLevel()); // Paper - run this async
          // CraftBukkit start
          if (this.chatSpamTickCount.addAndGet(io.papermc.paper.configuration.GlobalConfiguration.get().spamLimiter.tabSpamIncrement) > io.papermc.paper.configuration.GlobalConfiguration.get().spamLimiter.tabSpamLimit && !this.server.getPlayerList().isOp(this.player.getGameProfile())) { // Paper start - split and make configurable
@@ -541,7 +541,7 @@ index ee3acb578d4f72836eb3a4e8336701b3b939da50..60e2b951216003ae1861b1ee218e38da
              return;
          }
          // Paper end
-@@ -3251,7 +3249,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -3257,7 +3255,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
          // Paper start
          if (!org.bukkit.Bukkit.isPrimaryThread()) {
              if (recipeSpamPackets.addAndGet(io.papermc.paper.configuration.GlobalConfiguration.get().spamLimiter.recipeSpamIncrement) > io.papermc.paper.configuration.GlobalConfiguration.get().spamLimiter.recipeSpamLimit) {

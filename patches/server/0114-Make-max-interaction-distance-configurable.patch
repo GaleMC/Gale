@@ -20,18 +20,10 @@ index 58b093bb1de78ee3b3b2ea364aa50474883f443a..7be34e5df2b6d33c1d7943c9c0b6fd06
              this.debugLogging(pos, false, sequence, "too far");
          } else if (pos.getY() >= worldHeight) {
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 315c7737f75c426a7e5c091fb340187df12235de..9e45e69b16f483d1b94b21f4510d056eb0ceb8b1 100644
+index 6faa4013b8a6b44d49f90decb4ad91ad585a3549..171ee521040d1e971a39eac2a748937a41dcf6e5 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -184,7 +184,6 @@ import net.minecraft.world.phys.Vec3;
- import net.minecraft.world.phys.shapes.BooleanOp;
- import net.minecraft.world.phys.shapes.Shapes;
- import net.minecraft.world.phys.shapes.VoxelShape;
--import org.apache.commons.lang3.StringUtils;
- import org.galemc.gale.configuration.GaleGlobalConfiguration;
- import org.slf4j.Logger;
- 
-@@ -249,7 +248,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -250,7 +250,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
  
      static final Logger LOGGER = LogUtils.getLogger();
      private static final int LATENCY_CHECK_INTERVAL = 15000;
@@ -40,7 +32,7 @@ index 315c7737f75c426a7e5c091fb340187df12235de..9e45e69b16f483d1b94b21f4510d056e
      private static final int NO_BLOCK_UPDATES_TO_ACK = -1;
      private static final int TRACKED_MESSAGE_DISCONNECT_THRESHOLD = 4096;
      private static final Component CHAT_VALIDATION_FAILED = Component.translatable("multiplayer.disconnect.chat_validation_failed");
-@@ -346,6 +345,13 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -347,6 +347,13 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
      }
      // CraftBukkit end
  
@@ -54,7 +46,7 @@ index 315c7737f75c426a7e5c091fb340187df12235de..9e45e69b16f483d1b94b21f4510d056e
      @Override
      public void tick() {
          if (this.ackBlockChangesUpTo > -1) {
-@@ -1962,7 +1968,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -1968,7 +1975,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
              BlockPos blockposition = movingobjectpositionblock.getBlockPos();
              Vec3 vec3d1 = Vec3.atCenterOf(blockposition);
  
@@ -63,7 +55,7 @@ index 315c7737f75c426a7e5c091fb340187df12235de..9e45e69b16f483d1b94b21f4510d056e
                  Vec3 vec3d2 = vec3d.subtract(vec3d1);
                  double d0 = 1.0000001D;
  
-@@ -2777,7 +2783,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -2783,7 +2790,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
                  return;
              }
  

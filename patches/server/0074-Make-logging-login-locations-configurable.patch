@@ -31,10 +31,10 @@ index 8a59fade265e586622bcaa2cab2772613f9391aa..b4c97cf1755e95bb8f2547d0b4def2d9
  
      public void updateEntireScoreboard(ServerScoreboard scoreboard, ServerPlayer player) {
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index 2d8d042112db908d76da023329f16402791029aa..58f9d024f5a17c2d28d89f740e04f638fe3a2a92 100644
+index c5e20847f609ad6e21c84a2aaa7f932956995863..1cd80a98b222df886d39b62663d1060b47dbd966 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-@@ -88,6 +88,7 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+@@ -107,6 +107,7 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
          public boolean setBlockInFarChunk = true; // Gale - Purpur - do not log setBlock in far chunks
          public boolean unrecognizedRecipes = false; // Gale - Purpur - do not log unrecognized recipes
          public boolean legacyMaterialInitialization = false; // Gale - Purpur - do not log legacy Material initialization

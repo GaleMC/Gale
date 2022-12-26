@@ -57,10 +57,10 @@ index 877498729c66de9aa6a27c9148f7494d7895615c..d2bbbb0e73dafd2294838137bfbd16ac
              Util.logAndPauseIfInIde("Detected setBlock in a far chunk [" + i + ", " + j + "], pos: " + pos + ", status: " + this.generatingStatus + (this.currentlyGenerating == null ? "" : ", currently generating: " + (String) this.currentlyGenerating.get()));
              hasSetFarWarned = true;
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index 5d4ddec708638aa3f22391cfbc27059c9980f367..7641e941027153cea10699b1928122241befe2c2 100644
+index 883a344b3e0c1a9c1cb2ed9e70a8b0e73ce28bed..a1a073a0600ecc78b76abcd312d005aa82cad69e 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-@@ -80,6 +80,7 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+@@ -99,6 +99,7 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
  
          public boolean invalidStatistics = true; // Gale - EMC - do not log invalid statistics
          public boolean ignoredAdvancements = true; // Gale - Purpur - do not log ignored advancements

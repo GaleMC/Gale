@@ -44,10 +44,10 @@ index 72946e324c575ef39f3939225b96b68f724da460..75e2a7d19a7056b73c1524902e44cca0
                              }
                          }
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index 5ade5d2ff3a68cf9e0240fc86e4b63432cb899c0..4fd116ba1666b154650805ce5558221ffc6f4190 100644
+index be4e05851e94f943b6382ba5bb9f0750c95bdad4..79f8d5286adeabffdcb682c33e5d2b83afb11dda 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-@@ -39,6 +39,7 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+@@ -58,6 +58,7 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
      public class Misc extends ConfigurationPart {
  
          public IncludeInTimingsReport includeInTimingsReport;
@@ -55,7 +55,7 @@ index 5ade5d2ff3a68cf9e0240fc86e4b63432cb899c0..4fd116ba1666b154650805ce5558221f
          public class IncludeInTimingsReport extends ConfigurationPart {
  
              // Gale start - include server.properties in timings
-@@ -74,4 +75,11 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+@@ -93,4 +94,11 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
  
      }
  

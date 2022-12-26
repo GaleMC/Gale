@@ -25,10 +25,10 @@ index a07da939bb6b2dd0bd75cc74dd79493695035259..9d74ef6973f6a9e12861256aa7032f8d
      // CraftBukkit end
      public boolean isRealPlayer; // Paper
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 81b27d48c1421c02f86b95db1d7a1eeaf130cd09..8fac3c35b04429e66e440895ab82a65497147812 100644
+index 2503af47e491d456e3044e097f35c928e45e5a21..cf95be6fcad6ad508d6ea1f6b10efa4e3bd2bfe5 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -2324,6 +2324,10 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -2331,6 +2331,10 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
          } else if (this.player.isRemoved() || this.player.getChatVisibility() == ChatVisiblity.HIDDEN) { // CraftBukkit - dead men tell no tales
              this.send(new ClientboundSystemChatPacket(Component.translatable("chat.disabled.options").withStyle(ChatFormatting.RED), false));
              return Optional.empty();

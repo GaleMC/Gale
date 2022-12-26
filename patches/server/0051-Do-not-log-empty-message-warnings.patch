@@ -7,19 +7,18 @@ License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 8fac3c35b04429e66e440895ab82a65497147812..ee3acb578d4f72836eb3a4e8336701b3b939da50 100644
+index cf95be6fcad6ad508d6ea1f6b10efa4e3bd2bfe5..5fcca730767294e88445e701083c07c96d740147 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -182,6 +182,8 @@ import net.minecraft.world.phys.Vec3;
- import net.minecraft.world.phys.shapes.BooleanOp;
+@@ -183,6 +183,7 @@ import net.minecraft.world.phys.shapes.BooleanOp;
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
+ import org.bukkit.craftbukkit.util.permissions.CraftDefaultPermissions;
 +import org.apache.commons.lang3.StringUtils;
-+import org.galemc.gale.configuration.GaleGlobalConfiguration;
+ import org.galemc.gale.configuration.GaleGlobalConfiguration;
  import org.slf4j.Logger;
  
- // CraftBukkit start
-@@ -2532,7 +2534,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -2539,7 +2540,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
          // CraftBukkit start
          String s = message.signedContent();
          if (s.isEmpty()) {
@@ -29,10 +28,10 @@ index 8fac3c35b04429e66e440895ab82a65497147812..ee3acb578d4f72836eb3a4e8336701b3
              final String conversationInput = s;
              this.server.processQueue.add(new Runnable() {
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index 4fd116ba1666b154650805ce5558221ffc6f4190..85239fb626a1ea7b81d0be4711822fcadf4d1022 100644
+index 79f8d5286adeabffdcb682c33e5d2b83afb11dda..1ac238ebf7280c70ba49c3f59d3b3800d6b39ee0 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-@@ -80,6 +80,11 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+@@ -99,6 +99,11 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
  
          public boolean invalidStatistics = true; // Gale - EMC - do not log invalid statistics
  

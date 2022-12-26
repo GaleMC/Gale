@@ -37,7 +37,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 60e2b951216003ae1861b1ee218e38da107b1760..315c7737f75c426a7e5c091fb340187df12235de 100644
+index 2e82442846b275d4928a0905e4d5a4bbfa752d9b..6faa4013b8a6b44d49f90decb4ad91ad585a3549 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -7,6 +7,8 @@ import com.mojang.brigadier.StringReader;
@@ -49,7 +49,7 @@ index 60e2b951216003ae1861b1ee218e38da107b1760..315c7737f75c426a7e5c091fb340187d
  import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
  import it.unimi.dsi.fastutil.objects.ObjectIterator;
  import java.time.Duration;
-@@ -259,6 +261,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -260,6 +262,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
      private long keepAliveTime = Util.getMillis();
      private boolean keepAlivePending;
      private long keepAliveChallenge;
@@ -57,7 +57,7 @@ index 60e2b951216003ae1861b1ee218e38da107b1760..315c7737f75c426a7e5c091fb340187d
      // CraftBukkit start - multithreaded fields
      private final AtomicInteger chatSpamTickCount = new AtomicInteger();
      private final java.util.concurrent.atomic.AtomicInteger tabSpamLimiter = new java.util.concurrent.atomic.AtomicInteger(); // Paper - configurable tab spam limits
-@@ -296,7 +299,10 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -297,7 +300,10 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
      private final LastSeenMessagesValidator lastSeenMessages;
      private final MessageSignatureCache messageSignatureCache;
      private final FutureChain chatMessageChain;
@@ -69,7 +69,7 @@ index 60e2b951216003ae1861b1ee218e38da107b1760..315c7737f75c426a7e5c091fb340187d
      private static final int MAX_SIGN_LINE_LENGTH = Integer.getInteger("Paper.maxSignLength", 80); // Paper
  
      private String clientBrandName = null; // Paper - Brand name
-@@ -395,6 +401,21 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -396,6 +402,21 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
          long currentTime = Util.getMillis();
          long elapsedTime = currentTime - this.keepAliveTime;
  
@@ -91,7 +91,7 @@ index 60e2b951216003ae1861b1ee218e38da107b1760..315c7737f75c426a7e5c091fb340187d
          if (this.keepAlivePending) {
              if (!this.processedDisconnect && elapsedTime >= KEEPALIVE_LIMIT) { // check keepalive limit, don't fire if already disconnected
                  ServerGamePacketListenerImpl.LOGGER.warn("{} was kicked due to keepalive timeout!", this.player.getScoreboardName()); // more info
-@@ -3453,6 +3474,16 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -3459,6 +3480,16 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
  
      @Override
      public void handleKeepAlive(ServerboundKeepAlivePacket packet) {
@@ -109,10 +109,10 @@ index 60e2b951216003ae1861b1ee218e38da107b1760..315c7737f75c426a7e5c091fb340187d
          if (this.keepAlivePending && packet.getId() == this.keepAliveChallenge) {
              int i = (int) (Util.getMillis() - this.keepAliveTime);
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index 58f9d024f5a17c2d28d89f740e04f638fe3a2a92..e87d93e364eccc4dde3c00d34df6d63fae597b25 100644
+index 1cd80a98b222df886d39b62663d1060b47dbd966..521f134697ee40b7d5503d54fbdd7de06df6c5d0 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-@@ -77,6 +77,13 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+@@ -96,6 +96,13 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
  
          }
  
