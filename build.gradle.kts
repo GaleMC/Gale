@@ -1,5 +1,3 @@
-import io.papermc.paperweight.util.constants.*
-
 plugins {
     java
     `maven-publish`
@@ -7,10 +5,12 @@ plugins {
     id("io.papermc.paperweight.patcher") version "1.4.0"
 }
 
+val paperMavenPublicUrl = "https://repo.papermc.io/repository/maven-public/"
+
 repositories {
     mavenCentral()
-    maven("https://repo.papermc.io/repository/maven-public/") {
-        content { onlyForConfigurations("paperclip") }
+    maven(paperMavenPublicUrl) {
+        content { onlyForConfigurations(configurations.paperclip.name) }
     }
 }
 
@@ -20,7 +20,7 @@ dependencies {
     paperclip("io.papermc:paperclip:3.0.2")
 }
 
-subprojects {
+allprojects {
     apply(plugin = "java")
     apply(plugin = "maven-publish")
 
@@ -29,7 +29,9 @@ subprojects {
             languageVersion.set(JavaLanguageVersion.of(17))
         }
     }
+}
 
+subprojects {
     tasks.withType<JavaCompile> {
         options.encoding = Charsets.UTF_8.name()
         options.release.set(17)
@@ -42,32 +44,24 @@ subprojects {
     }
 
     repositories {
-        mavenLocal()
         mavenCentral()
-        maven("https://oss.sonatype.org/content/groups/public/")
-        maven("https://repo.papermc.io/repository/maven-public/")
-        maven("https://ci.emc.gs/nexus/content/groups/aikar/")
-        maven("https://repo.aikar.co/content/groups/aikar")
-        maven("https://repo.md-5.net/content/repositories/releases/")
-        maven("https://hub.spigotmc.org/nexus/content/groups/public/")
-        maven("https://jitpack.io")
-        maven("https://repo.codemc.io/repository/maven-public/")
+        maven(paperMavenPublicUrl)
     }
 }
 
 paperweight {
-    serverProject.set(project(":gale-server"))
+    serverProject.set(project(":gale-server")) // Gale - build changes
 
-    remapRepo.set("https://maven.fabricmc.net/")
-    decompileRepo.set("https://maven.quiltmc.org/")
+    remapRepo.set(paperMavenPublicUrl)
+    decompileRepo.set(paperMavenPublicUrl)
 
-		usePaperUpstream(providers.gradleProperty("paperRef")) {
+    usePaperUpstream(providers.gradleProperty("paperRef")) {
         withPaperPatcher {
             apiPatchDir.set(layout.projectDirectory.dir("patches/api"))
-            apiOutputDir.set(layout.projectDirectory.dir("gale-api"))
+            apiOutputDir.set(layout.projectDirectory.dir("gale-api")) // Gale - build changes
 
             serverPatchDir.set(layout.projectDirectory.dir("patches/server"))
-            serverOutputDir.set(layout.projectDirectory.dir("gale-server"))
+            serverOutputDir.set(layout.projectDirectory.dir("gale-server")) // Gale - build changes
         }
     }
 }

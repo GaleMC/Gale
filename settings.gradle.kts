@@ -1,10 +1,10 @@
 pluginManagement {
     repositories {
         gradlePluginPortal()
-        maven("https://papermc.io/repo/repository/maven-public/")
+        maven("https://repo.papermc.io/repository/maven-public/")
     }
 }
 
-rootProject.name = "gale"
+rootProject.name = "gale" // Gale - build changes
 
-include("gale-api", "gale-server")
+include("gale-api", "gale-server") // Gale - build changes
