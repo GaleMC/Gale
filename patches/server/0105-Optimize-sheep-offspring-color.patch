@@ -110,12 +110,12 @@ index efac4395fdb79a78fbb18a0f828b1a3c90b102fe..ef70179f71eb3f63f707d990bfc4d551
          DyeColor enumcolor1 = ((Sheep) secondParent).getColor();
          CraftingContainer inventorycrafting = Sheep.makeContainer(enumcolor, enumcolor1);
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index 24a6e2ef5472936f478b759e79197442490e3ada..b480d492d411d33393ac1b2f41bd4d62d232c568 100644
+index 711154b099acfe51705503ea5784727d4cac6ab1..122361057f2b25072ca763df68d614c176c57b5d 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-@@ -33,6 +33,21 @@ public class GaleWorldConfiguration extends ConfigurationPart {
-     public SmallOptimizations smallOptimizations;
-     public class SmallOptimizations extends ConfigurationPart {
+@@ -47,6 +47,21 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+         public boolean saveFireworks = true;
+         // Gale end - EMC - make saving fireworks configurable
  
 +        // Gale start - carpet-fixes - optimize sheep offspring color
 +        /**

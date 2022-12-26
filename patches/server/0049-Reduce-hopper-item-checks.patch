@@ -180,10 +180,10 @@ index 877e07c62a6235670c756edef3eebb385bccccd4..3b5b3750265ea72d6d0c33c7261f0dab
      public double getLevelX() {
          return (double) this.worldPosition.getX() + 0.5D;
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index d34ee90eaf160a72d4898feed13d94b0b61eded3..729600e22e1fee8ae33e51ed2da66a489cec2659 100644
+index ccc36bb32b99de79ccc157a695fd83f007e7d86a..0f2f14b0612f764a2780bc244c89db548997b2c1 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-@@ -116,6 +116,112 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+@@ -130,6 +130,112 @@ public class GaleWorldConfiguration extends ConfigurationPart {
              public int checkStuckInWall = 10;
              // Gale end - Pufferfish - reduce in wall checks
  

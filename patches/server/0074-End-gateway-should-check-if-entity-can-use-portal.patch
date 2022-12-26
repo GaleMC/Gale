@@ -49,10 +49,10 @@ index f80545f80948db27d1fbde77d0505c916eb504ed..2a596cc374206a85bb692f5e09ee2dd8
  
              blockEntity.teleportCooldown = 100;
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index a7228108ffb447b27f254737a81709d0de2222f6..824815ac8e1f90e2667b32b35c447a009a149cbb 100644
+index d190b3ab4ed9f0c183932d235f9f7752a6177f31..f623518450d1d750b81b84da936282c2df949b7d 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-@@ -249,6 +249,7 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+@@ -263,6 +263,7 @@ public class GaleWorldConfiguration extends ConfigurationPart {
  
              public boolean sandDuping = true; // Gale - Purpur - make sand duping fix configurable
              public boolean keepMooshroomRotationAfterShearing = true; // Gale - Purpur - fix cow rotation when shearing mooshroom

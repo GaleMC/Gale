@@ -59,10 +59,10 @@ index 80aa539f7c6a6ee44338de084cdcdf5fb4ef996a..cb8fc8a88c14d2374a0bbe35aa1c2056
              return EatBlockGoal.IS_TALL_GRASS.test(this.level.getBlockState(blockposition)) ? true : this.level.getBlockState(blockposition.below()).is(Blocks.GRASS_BLOCK);
          }
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index 824815ac8e1f90e2667b32b35c447a009a149cbb..10cd0e029d40ae02d12be358be03141e7cf89017 100644
+index f623518450d1d750b81b84da936282c2df949b7d..6bc83bfe35c52d314fde725c672de6971d8a86c5 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-@@ -244,6 +244,8 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+@@ -258,6 +258,8 @@ public class GaleWorldConfiguration extends ConfigurationPart {
      public GameplayMechanics gameplayMechanics;
      public class GameplayMechanics extends ConfigurationPart {
  

@@ -65,10 +65,10 @@ index 7df5ea545c19ccc43f553a229722c3fd88adc3ec..68e0f2208c5f098042ebfad08301e315
                      private void performInteraction(InteractionHand enumhand, ServerGamePacketListenerImpl.EntityInteraction playerconnection_a, PlayerInteractEntityEvent event) { // CraftBukkit
                          ItemStack itemstack = ServerGamePacketListenerImpl.this.player.getItemInHand(enumhand);
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index ffc39061f2363b979590888e736dd7a53a0d256a..53bc702695674ea969a3a0b7c7946e1d9b4a4f82 100644
+index b18bc70c5ada1124e63cdbe8d75adf058a34bd4f..a3fb445c105a0335bd3360122d39aea93ea2de59 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-@@ -261,12 +261,26 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+@@ -275,12 +275,26 @@ public class GaleWorldConfiguration extends ConfigurationPart {
      }
  
      public GameplayMechanics gameplayMechanics;
@@ -96,7 +96,7 @@ index ffc39061f2363b979590888e736dd7a53a0d256a..53bc702695674ea969a3a0b7c7946e1d
          public Fixes fixes;
          public class Fixes extends ConfigurationPart {
  
-@@ -301,6 +315,11 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+@@ -315,6 +329,11 @@ public class GaleWorldConfiguration extends ConfigurationPart {
  
          }
  

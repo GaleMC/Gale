@@ -31,10 +31,10 @@ index 0ce745f5a00d4db68e8559fc1826dace52ae44d8..54dac74a5de4f967b3af7a63c8977d56
                      entity.moveTo(position.x, position.y, position.z, yaw, pitch); // Paper - use EntityPortalExitEvent values
                      entity.setDeltaMovement(velocity); // Paper - use EntityPortalExitEvent values
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index 53bc702695674ea969a3a0b7c7946e1d9b4a4f82..c45f4b9d06956a58b4e59afe70203ee8abbfccee 100644
+index a3fb445c105a0335bd3360122d39aea93ea2de59..f2e8569007b9d52885696de76b1bd1e1035f8121 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-@@ -315,6 +315,23 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+@@ -329,6 +329,23 @@ public class GaleWorldConfiguration extends ConfigurationPart {
  
          }
  

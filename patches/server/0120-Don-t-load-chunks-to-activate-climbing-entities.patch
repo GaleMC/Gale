@@ -79,10 +79,10 @@ index e9554db6c331beec32ce11bb6a939bb909b1a877..714863ce4d401887119a6eab49a6c041
              if (iblockdata.is(BlockTags.CLIMBABLE)) {
                  this.lastClimbablePos = Optional.of(blockposition);
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index 5b5fb89408b201bc3f73cf3dd80a5f8856b48b68..4a338bbc038f70368adc1eb85c0c94312186cd80 100644
+index 75e0128d1f4f5b112f9908373b2e32941c68888e..f611c38cb628569fbf3257e006f410d6f0a25d39 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-@@ -273,6 +273,18 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+@@ -287,6 +287,18 @@ public class GaleWorldConfiguration extends ConfigurationPart {
              public boolean toSpawnPhantoms = false;
              // Gale end - MultiPaper - don't load chunks to spawn phantoms
  

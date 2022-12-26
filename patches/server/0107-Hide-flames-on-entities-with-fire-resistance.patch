@@ -31,10 +31,10 @@ index bf3bdbdb4384f374419f00635280305f84ce078c..0ce745f5a00d4db68e8559fc1826dace
  
          this.firstTick = false;
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index ce94f9a5bc826ce33ee63581ab864b04a8b4526e..3274742f667c9b0bec5f1bf8d03b2fd3165eb807 100644
+index 72ab895b4b64d224b847ec330512f1aed0b39f6b..61d1cf5008da9969a08fcd3257f19c4d5c46ff16 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-@@ -263,6 +263,7 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+@@ -277,6 +277,7 @@ public class GaleWorldConfiguration extends ConfigurationPart {
  
          public boolean entitiesCanEatBlocksInNonTickingChunks = false; // Gale - Purpur - prevent entities eating blocks in non-ticking chunks
          public boolean arrowMovementResetsDespawnCounter = true; // Gale - Purpur - make arrow movement resetting despawn counter configurable

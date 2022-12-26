@@ -27,10 +27,10 @@ index ce7f36f38165a58e3fab7a98bece75df2d0ec6ed..46dc2deb8eb066e51a03a010a7bd9204
  
          if (this.entity instanceof LivingEntity) {
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index 3274742f667c9b0bec5f1bf8d03b2fd3165eb807..ffc39061f2363b979590888e736dd7a53a0d256a 100644
+index 61d1cf5008da9969a08fcd3257f19c4d5c46ff16..b18bc70c5ada1124e63cdbe8d75adf058a34bd4f 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-@@ -50,6 +50,8 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+@@ -64,6 +64,8 @@ public class GaleWorldConfiguration extends ConfigurationPart {
  
          public boolean processFullEquipmentChangeIfOnlyDurabilityChanged = false; // Gale - Slice - ignore durability change equipment updates
  
