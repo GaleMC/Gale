@@ -13,7 +13,7 @@ As part of: JettPack (https://gitlab.com/Titaniumtown/JettPack)
 Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index 8a59fade265e586622bcaa2cab2772613f9391aa..b4c97cf1755e95bb8f2547d0b4def2d9e0834e8d 100644
+index 05d35c0cddb2c647fff9d7238fa0f6ce7ddd520f..f6b8e5d32b29f38301afb7e1b93de3d31c9fa774 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
 @@ -453,7 +453,13 @@ public abstract class PlayerList {
@@ -31,7 +31,7 @@ index 8a59fade265e586622bcaa2cab2772613f9391aa..b4c97cf1755e95bb8f2547d0b4def2d9
  
      public void updateEntireScoreboard(ServerScoreboard scoreboard, ServerPlayer player) {
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index c5e20847f609ad6e21c84a2aaa7f932956995863..1cd80a98b222df886d39b62663d1060b47dbd966 100644
+index 4f01d27e8c18ef45ccc26def015a2503d1c01fd0..20f8b03393174af05f0d2a06ac3a0155d33ded10 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 @@ -107,6 +107,7 @@ public class GaleGlobalConfiguration extends ConfigurationPart {

@@ -45,7 +45,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 diff --git a/src/main/java/net/minecraft/world/entity/player/Player.java b/src/main/java/net/minecraft/world/entity/player/Player.java
-index 68247b9daf710c71f84e1fae9d91efed151d39aa..92b30f5293e80e078d8a1a740d22367ea36a71f1 100644
+index 78e662ef3dbf3e6941be7b8f20ca2a1501ca04e7..f8d90166f76663fdd49b6b2988e0e1559622a503 100644
 --- a/src/main/java/net/minecraft/world/entity/player/Player.java
 +++ b/src/main/java/net/minecraft/world/entity/player/Player.java
 @@ -114,6 +114,7 @@ import net.minecraft.world.phys.AABB;
@@ -87,7 +87,7 @@ index 68247b9daf710c71f84e1fae9d91efed151d39aa..92b30f5293e80e078d8a1a740d22367e
  
          int i = 29999999;
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index 0764acc8f254814e7308c3c21da072107c1b2487..e6cd22031e3a9b77c244bf5781216f794b191ab3 100644
+index 7eb54872b7d9dd6881951963ad7dd8c416c8c229..049371931a4563755d3f6c082f3e4f0ae2b5835a 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 @@ -27,7 +27,29 @@ public class GaleGlobalConfiguration extends ConfigurationPart {

@@ -37,7 +37,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index f9207ef2e6cc6d13c2b8f9eeb878c3f5c3e237ee..87b3e7d235e6e05db4d4139125e5bdb2a0ee87f2 100644
+index 72851ef72eb39b1bf24a618d6405df8d345d40df..3a46580b2da12a3b9f1a525a1a481ef5ecd0f766 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -7,6 +7,8 @@ import com.mojang.brigadier.StringReader;
@@ -109,7 +109,7 @@ index f9207ef2e6cc6d13c2b8f9eeb878c3f5c3e237ee..87b3e7d235e6e05db4d4139125e5bdb2
          if (this.keepAlivePending && packet.getId() == this.keepAliveChallenge) {
              int i = (int) (Util.getMillis() - this.keepAliveTime);
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index 1cd80a98b222df886d39b62663d1060b47dbd966..521f134697ee40b7d5503d54fbdd7de06df6c5d0 100644
+index 20f8b03393174af05f0d2a06ac3a0155d33ded10..35e22328fccd6f7635cab3ebdde172a3ffec853f 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 @@ -96,6 +96,13 @@ public class GaleGlobalConfiguration extends ConfigurationPart {

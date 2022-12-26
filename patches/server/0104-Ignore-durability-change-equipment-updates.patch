@@ -13,7 +13,7 @@ As part of: Slice (https://github.com/Cryptite/Slice)
 Licensed under: MIT (https://opensource.org/licenses/MIT)
 
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index a843f98ac406e364b75a85ef2077aad87ad162d4..b82786fa3ec2c42ed9f210548a15a551557466f8 100644
+index e5574a6349d3649392be3f001242782a34a0cb57..e9554db6c331beec32ce11bb6a939bb909b1a877 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
 @@ -3147,7 +3147,7 @@ public abstract class LivingEntity extends Entity {

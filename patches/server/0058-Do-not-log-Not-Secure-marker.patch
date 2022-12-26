@@ -49,13 +49,13 @@ index 603d87fedf731498ebf516fdda3c785bd01bf830..05d35c0cddb2c647fff9d7238fa0f6ce
          boolean flag1 = false;
  
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index 038d48c12b9d8612cba7c02149d4b867eff25dfd..4e9f7b3986521e9d20d5b7e6f4bed67428ce8e6a 100644
+index 79c1b4fb105877f05299eb4c9a363e7ddad1fc68..63d089f23a0e158573f270e8b03a095634289d21 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-@@ -107,6 +107,7 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
-         public class Chat extends ConfigurationPart {
+@@ -108,6 +108,7 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
              public boolean emptyMessageWarning = false; // Gale - do not log empty message warnings
              public boolean expiredMessageWarning = false; // Gale - do not log expired message warnings
+             public boolean outOfOrderMessageWarning = false; // Gale - do not log out-of-order message warnings
 +            public boolean notSecureMarker = true; // Gale - do not log Not Secure marker
          }
  
