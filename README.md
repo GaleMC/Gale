@@ -12,16 +12,21 @@
 Gale is a fork of [Paper](https://github.com/PaperMC/Paper). It is intended to provide strong performance, but we do not make any specific claims.
 The project is in open alpha. We do not recommend running it on your production server.
 
-## Building
+## Features
 
-You can clone this repository and build it yourself.
-If you are interested in making a Paperweight fork, check out [the example template](https://github.com/PaperMC/paperweight-examples)!
+Gale aims to include good patches other forks have, with added configuration options if gameplay is affected. Unnecessary or risky patches will not be added. See a comparison with other forks [here](https://github.com/GaleMC/Gale/wiki/Comparison-with-other-forks).
 
-In order to distribute and use this server software, you need a Paperclip file:
+## Making your own fork
 
-```bash
-./gradlew applyPatches && ./gradlew createReobfPaperclipJar
-```
+If you would like to make a Paper fork based on Gale, check out the tutorial [here](https://github.com/GaleMC/Gale/wiki/Tutorial:-Making-your-own-fork).
+
+## Contributing
+
+Pull requests are welcomed! Don't be afraid to submit a pull request that you may feel is just for yourself. All ideas are welcome. To learn how to submit pull requests, check out the tutorial [here](https://github.com/GaleMC/Gale/wiki/Tutorial:-Contributing).
+
+## Building from source
+
+If you only want to build the Gale .jar file yourself, without a plan to add or change any patches, check out the tutorial [here](https://github.com/GaleMC/Gale/wiki/Tutorial:-Building-from-source).
 
 ## Acknowledgements
 
