@@ -212,10 +212,18 @@ index 75dc06a3041bfdfb08c914eb50cfa282ae9eb2fe..53b0519bbc5d52490040eaf0fe449648
          } else {
              brain.eraseMemory(MemoryModuleType.SECONDARY_JOB_SITE);
 diff --git a/src/main/java/net/minecraft/world/entity/npc/Villager.java b/src/main/java/net/minecraft/world/entity/npc/Villager.java
-index a4029cd16d964cd3a58f9f6e8471fbdf07de578b..3a5e51aed3223527e42affdebd93633ec06eb7ca 100644
+index a4029cd16d964cd3a58f9f6e8471fbdf07de578b..7740adf7e852d860d08cdf15ab9d6b0fb6b68055 100644
 --- a/src/main/java/net/minecraft/world/entity/npc/Villager.java
 +++ b/src/main/java/net/minecraft/world/entity/npc/Villager.java
-@@ -103,8 +103,9 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
+@@ -88,6 +88,7 @@ import net.minecraft.world.item.trading.MerchantOffers;
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.ServerLevelAccessor;
+ import net.minecraft.world.phys.AABB;
++import org.jetbrains.annotations.NotNull;
+ import org.slf4j.Logger;
+ 
+ // CraftBukkit start
+@@ -103,8 +104,9 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
      private static final EntityDataAccessor<VillagerData> DATA_VILLAGER_DATA = SynchedEntityData.defineId(Villager.class, EntityDataSerializers.VILLAGER_DATA);
      public static final int BREEDING_FOOD_THRESHOLD = 12;
      public static final Map<Item, Integer> FOOD_POINTS = ImmutableMap.of(Items.BREAD, 4, Items.POTATO, 1, Items.CARROT, 1, Items.BEETROOT, 1);
@@ -226,7 +234,7 @@ index a4029cd16d964cd3a58f9f6e8471fbdf07de578b..3a5e51aed3223527e42affdebd93633e
      private static final int MAX_GOSSIP_TOPICS = 10;
      private static final int GOSSIP_COOLDOWN = 1200;
      private static final int GOSSIP_DECAY_INTERVAL = 24000;
-@@ -896,7 +897,24 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
+@@ -896,7 +898,27 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
      public boolean wantsToPickUp(ItemStack stack) {
          Item item = stack.getItem();
  
@@ -240,10 +248,13 @@ index a4029cd16d964cd3a58f9f6e8471fbdf07de578b..3a5e51aed3223527e42affdebd93633e
 +            }
 +        }
 +        if (!isDesired) {
-+            for (Item requestedItem : this.getVillagerData().getProfession().requestedItems()) {
-+                if (requestedItem == item) {
-+                    isDesired = true;
-+                    break;
++            var requestedItems = this.getVillagerData().getProfession().requestedItems();
++            if (requestedItems != null) {
++                for (Item requestedItem : requestedItems) {
++                    if (requestedItem == item) {
++                        isDesired = true;
++                        break;
++                    }
 +                }
 +            }
 +        }
