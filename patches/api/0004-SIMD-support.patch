@@ -13,7 +13,7 @@ As part of: Pufferfish (https://github.com/pufferfish-gg/Pufferfish)
 Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 447b549bc7035410ae18f3e9063de2d014530b98..33e7179c81310283e5e6efb5fd776a60ae669624 100644
+index f983a2c154da233919c277d951c7ddbeeaabf2e1..e19c9544c346e7f505cfdd379be7f8f059d9e53d 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -89,6 +89,7 @@ tasks.withType<JavaCompile> {
@@ -24,6 +24,14 @@ index 447b549bc7035410ae18f3e9063de2d014530b98..33e7179c81310283e5e6efb5fd776a60
  }
  // Gale end - hide irrelevant compilation warnings
  
+@@ -142,6 +143,7 @@ tasks.withType<Javadoc> {
+     }
+ 
+     options.addStringOption("Xdoclint:none", "-quiet") // Gale - hide irrelevant compilation warnings
++    options.addStringOption("-add-modules", "jdk.incubator.vector") // Gale - Pufferfish - SIMD support
+ }
+ 
+ // Paper start
 diff --git a/src/main/java/gg/pufferfish/pufferfish/simd/SIMDChecker.java b/src/main/java/gg/pufferfish/pufferfish/simd/SIMDChecker.java
 new file mode 100644
 index 0000000000000000000000000000000000000000..48312d416805697257e4cd3451b8d14bab7ea252

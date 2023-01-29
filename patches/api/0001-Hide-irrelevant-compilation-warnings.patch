@@ -7,7 +7,7 @@ License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 9f5694204091e23c4771657127a06f98e27ad8f1..fdb495c0e0f1ce702a590e6a7bcdcf40fd418d1c 100644
+index 3c4dd6ebc2289c44c2f5723e7920aadffdc51884..f983a2c154da233919c277d951c7ddbeeaabf2e1 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -83,6 +83,15 @@ val generateApiVersioningFile by tasks.registering {
@@ -26,3 +26,12 @@ index 9f5694204091e23c4771657127a06f98e27ad8f1..fdb495c0e0f1ce702a590e6a7bcdcf40
  tasks.jar {
      from(generateApiVersioningFile.map { it.outputs.files.singleFile }) {
          into("META-INF/maven/${project.group}/${project.name}")
+@@ -131,6 +140,8 @@ tasks.withType<Javadoc> {
+             into("build/docs/javadoc")
+         }
+     }
++
++    options.addStringOption("Xdoclint:none", "-quiet") // Gale - hide irrelevant compilation warnings
+ }
+ 
+ // Paper start
