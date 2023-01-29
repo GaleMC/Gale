@@ -630,26 +630,6 @@ index 95cac7edae8ac64811fc6a2f6b97dd4a0fceb0b0..a376259202b4a16c67db4d3ef071e0b3
          this.dataFixer = dataFixer;
          this.generatorKey = generatorKey;
          this.removeCaches = removeCaches;
-diff --git a/src/main/java/me/titaniumtown/ArrayConstants.java b/src/main/java/me/titaniumtown/ArrayConstants.java
-index ceec23a85aae625fbbe2db95c8e9c83fb9f9767c..fdb9eefdcbd4abf1936761136077c3d10ef5e594 100644
---- a/src/main/java/me/titaniumtown/ArrayConstants.java
-+++ b/src/main/java/me/titaniumtown/ArrayConstants.java
-@@ -2,6 +2,8 @@
- 
- package me.titaniumtown;
- 
-+import net.minecraft.server.level.ServerLevel;
-+
- public final class ArrayConstants {
- 
-     private ArrayConstants() {}
-@@ -14,5 +16,6 @@ public final class ArrayConstants {
-     public static final long[] emptyLongArray = new long[0];
-     public static final org.bukkit.entity.Entity[] emptyBukkitEntityArray = new org.bukkit.entity.Entity[0];
-     public static final net.minecraft.world.entity.Entity[] emptyEntityArray = new net.minecraft.world.entity.Entity[0];
-+    public static final ServerLevel[] emptyServerLevelArray = new ServerLevel[0]; // Gale - base thread pool
- 
- }
 diff --git a/src/main/java/net/minecraft/Util.java b/src/main/java/net/minecraft/Util.java
 index 5ef58831a857fd8aa4ac30147762dc17d773a53e..6b109d92dec227d4a91a455caf596beb112a8351 100644
 --- a/src/main/java/net/minecraft/Util.java
