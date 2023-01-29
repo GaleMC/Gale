@@ -479,7 +479,7 @@ index 89aaa846d5cb1cfd8ccf634f85bdc4180013cfd0..f69ea29648b090334d98dd8f3ed71cf8
          return ret;
      }
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 03befb9a39b7668ff5ec2e72ab68bbc0dd52f007..66fb07316734927c4f3df1bec36ad3738f841822 100644
+index 8d9e2573c6d9597699e74f19989dcde600a5fb61..f8ba64187acb6148f81b2c652813e6637c151bf0 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -28,6 +28,8 @@ import java.util.function.UnaryOperator;
@@ -551,7 +551,7 @@ index 03befb9a39b7668ff5ec2e72ab68bbc0dd52f007..66fb07316734927c4f3df1bec36ad373
              }
          }
 diff --git a/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
-index 3f7fab2f80ded9a7a720bd623f1ef028a4d0dca6..2ed3f42b1e487374287d033ac634a922a5ef37bd 100644
+index a25306fe8a35bb70a490e6a0c01d0340bbc0d781..be73149535c5fd8914db99bb835f4cbb731b63be 100644
 --- a/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
 @@ -12,8 +12,9 @@ import java.security.PrivateKey;
@@ -588,7 +588,7 @@ index 3f7fab2f80ded9a7a720bd623f1ef028a4d0dca6..2ed3f42b1e487374287d033ac634a922
          final String s;
  
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index f6b8e5d32b29f38301afb7e1b93de3d31c9fa774..0c1192cb92de739f96a188b9a0775337eb3f6e2c 100644
+index f86c3b75b4b5f2d159d91c61e77dfcc3d60a8311..91d009a0e48e68711f51aaf65d4c52c291f8b4b2 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
 @@ -27,6 +27,8 @@ import java.util.UUID;
@@ -608,7 +608,7 @@ index f6b8e5d32b29f38301afb7e1b93de3d31c9fa774..0c1192cb92de739f96a188b9a0775337
  import org.bukkit.entity.Player;
  import org.bukkit.event.player.PlayerChangedWorldEvent;
  import org.bukkit.event.player.PlayerJoinEvent;
-@@ -681,7 +682,7 @@ public abstract class PlayerList {
+@@ -687,7 +688,7 @@ public abstract class PlayerList {
          while (iterator.hasNext()) {
              entityplayer = (ServerPlayer) iterator.next();
              this.save(entityplayer); // CraftBukkit - Force the player's inventory to be saved
@@ -697,7 +697,7 @@ index 97ff19efa0b3943ccb7a6e02cba6ed2fea61adac..b2ae2bd8bd4ff3cb6457e8c08172e348
      private EquipmentSlot(EquipmentSlot.Type type, int entityId, int armorStandId, String name) {
          this.type = type;
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index 20f70e0bc085a941a7e5de3ceff968870f23fb5f..5c0c1100dc5bec3978f514f4403f9ee2c0352dc9 100644
+index 6b1fb422d68f3b83fef66a8af997b2140f1d0897..8ea5861bc9ae59c15ee6db042c769046f74abeed 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
 @@ -3102,7 +3102,7 @@ public abstract class LivingEntity extends Entity {
@@ -763,10 +763,10 @@ index 71a36cf9b976443cca9ab63cd0eb23253f638562..201b0e1b25d0773bbcf9c1ed69fd888a
  
          for (int j = 0; j < i; ++j) {
 diff --git a/src/main/java/net/minecraft/world/item/ItemStack.java b/src/main/java/net/minecraft/world/item/ItemStack.java
-index 8450a22b0fc6e8dc5cad0f61ac52a82b3cd3791e..8fd080110ed4efaf6cb3a2561b32ed66ff8c78f0 100644
+index 6860096cb8c0deecc9c1d87543d1128fb95fd2d4..7626dfea095023343f041e0c5b6d0117873c1236 100644
 --- a/src/main/java/net/minecraft/world/item/ItemStack.java
 +++ b/src/main/java/net/minecraft/world/item/ItemStack.java
-@@ -976,7 +976,7 @@ public final class ItemStack {
+@@ -977,7 +977,7 @@ public final class ItemStack {
          int k;
  
          if (ItemStack.shouldShowInTooltip(i, ItemStack.TooltipPart.MODIFIERS)) {

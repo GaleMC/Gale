@@ -13,7 +13,7 @@ As part of: Slice (https://github.com/Cryptite/Slice)
 Licensed under: MIT (https://opensource.org/licenses/MIT)
 
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index e5574a6349d3649392be3f001242782a34a0cb57..e9554db6c331beec32ce11bb6a939bb909b1a877 100644
+index 25829f5b2675e1eafef5f5a0e40db8a4bbc80ba4..0cc1008b3db93487c8e0801895264683f6d2e439 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
 @@ -3147,7 +3147,7 @@ public abstract class LivingEntity extends Entity {
@@ -26,10 +26,10 @@ index e5574a6349d3649392be3f001242782a34a0cb57..e9554db6c331beec32ce11bb6a939bb9
  
      private void handleHandSwap(Map<EquipmentSlot, ItemStack> equipmentChanges) {
 diff --git a/src/main/java/net/minecraft/world/item/ItemStack.java b/src/main/java/net/minecraft/world/item/ItemStack.java
-index 8fd080110ed4efaf6cb3a2561b32ed66ff8c78f0..b1a01ef0090718923aff4365d8e93c776a5ebae4 100644
+index 7626dfea095023343f041e0c5b6d0117873c1236..3cc1096880deea3eb5f50e38f4757455606e28c8 100644
 --- a/src/main/java/net/minecraft/world/item/ItemStack.java
 +++ b/src/main/java/net/minecraft/world/item/ItemStack.java
-@@ -720,10 +720,22 @@ public final class ItemStack {
+@@ -721,10 +721,22 @@ public final class ItemStack {
          return left == right ? true : (!left.isEmpty() && !right.isEmpty() ? left.sameItem(right) : false);
      }
  

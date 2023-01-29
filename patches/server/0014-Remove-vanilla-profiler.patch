@@ -840,7 +840,7 @@ index 7d6d3c8556033d289fdadc489e73fba478fce41a..a07da939bb6b2dd0bd75cc74dd794936
                  this.connection.send(new ClientboundPlayerAbilitiesPacket(this.getAbilities()));
                  playerlist.sendLevelInfo(this, worldserver);
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 50d8d16b1856c0c875ccabbcfc240379a7669559..1192b751c8d00754d40781e714bc3f6330767f75 100644
+index 3472f7f9b98d6d9c9f6465872803ef17fa67486d..547cc76d2086a658cbf667dcd6e47227a0a26b7b 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -390,7 +390,6 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
@@ -936,7 +936,7 @@ index 7ab57748b2f2aea1003d9b7e70e76c372aa1e432..47e75ec4a01f8a456ec6ebc13031c1f0
      }
  
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 7555b04dcf274bb624b89f2eb9ff80da0056de4e..da40e419a245a43dec75a0cc3028cb0a42087c3f 100644
+index 1eaab1f6923e6aa34b643293347348e5cc19af3c..aaa5af793ae0c177bcde75880445a3eb5970ce23 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -788,7 +788,6 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
@@ -1051,7 +1051,7 @@ index 7555b04dcf274bb624b89f2eb9ff80da0056de4e..da40e419a245a43dec75a0cc3028cb0a
              }
          } else {
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index 529ea9094c0c7b6263c13b3b7a2d1e652f7bc29e..3a116b37a89306ea8f2b7eec867d0e3c3523f74c 100644
+index 42eb78830855d7282b7f3f1bdbe85e632d489784..763b3a46e922c3db26507d2975f4b3e105f30838 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
 @@ -393,7 +393,6 @@ public abstract class LivingEntity extends Entity {
@@ -1526,10 +1526,10 @@ index 18eac340386a396c9850f53f30d20a41c1437788..a4029cd16d964cd3a58f9f6e8471fbdf
              this.assignProfessionWhenSpawned = false;
          }
 diff --git a/src/main/java/net/minecraft/world/level/Explosion.java b/src/main/java/net/minecraft/world/level/Explosion.java
-index f16593a99ca4089151c2247f6028b823614c78e4..d3ade2eb7c492cd8fdb24c78fa2886db8986fc09 100644
+index a213f4098859858a73ddd601bbe8c7511972e0d5..5c7f2be28fbb5d2f7b48c04bb862fb15440dda03 100644
 --- a/src/main/java/net/minecraft/world/level/Explosion.java
 +++ b/src/main/java/net/minecraft/world/level/Explosion.java
-@@ -362,7 +362,6 @@ public class Explosion {
+@@ -360,7 +360,6 @@ public class Explosion {
                  if (!iblockdata.isAir() && iblockdata.isDestroyable()) { // Paper
                      BlockPos blockposition1 = blockposition.immutable();
  
@@ -1537,7 +1537,7 @@ index f16593a99ca4089151c2247f6028b823614c78e4..d3ade2eb7c492cd8fdb24c78fa2886db
                      if (block.dropFromExplosion(this)) {
                          Level world = this.level;
  
-@@ -384,7 +383,6 @@ public class Explosion {
+@@ -382,7 +381,6 @@ public class Explosion {
  
                      this.level.setBlock(blockposition, Blocks.AIR.defaultBlockState(), 3);
                      block.wasExploded(this.level, blockposition, this);

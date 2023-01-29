@@ -37,10 +37,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-index 99bf1485ddecb5fc88850242e9c32850781c4b36..53a5464aa0261d50ce9a0b7528af56f9436e3c1c 100644
+index 7c43de6ad6bd7259c6bcb2a55e312e8abfcf546b..d274e9373f7507dd38f2e0162c8a683b1ddde04e 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-@@ -1849,6 +1849,13 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+@@ -1862,6 +1862,13 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
          return !this.hiddenEntities.containsKey(entity.getUniqueId());
      }
  

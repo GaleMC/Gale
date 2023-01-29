@@ -7,10 +7,10 @@ License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/net/minecraft/world/item/ItemStack.java b/src/main/java/net/minecraft/world/item/ItemStack.java
-index b1a01ef0090718923aff4365d8e93c776a5ebae4..c2160103d34c07f27cccf94613b9ae34dcd0c154 100644
+index 3cc1096880deea3eb5f50e38f4757455606e28c8..6a5452d6210bcc268d933f0051f1ce65f6dff4a1 100644
 --- a/src/main/java/net/minecraft/world/item/ItemStack.java
 +++ b/src/main/java/net/minecraft/world/item/ItemStack.java
-@@ -705,14 +705,29 @@ public final class ItemStack {
+@@ -706,14 +706,29 @@ public final class ItemStack {
      }
  
      public static boolean tagMatches(ItemStack left, ItemStack right) {

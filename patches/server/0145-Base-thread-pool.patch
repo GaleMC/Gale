@@ -459,10 +459,10 @@ index cf6d50218769e3fecd12dbde70a03b5042feddf4..9d8ee965f7dcd0f416b7aa8368e34b91
          }
          return global;
 diff --git a/src/main/java/io/papermc/paper/configuration/PaperConfigurations.java b/src/main/java/io/papermc/paper/configuration/PaperConfigurations.java
-index 3088d5f008a8cb5a75f1e11bd80a2614a4c1b75d..052ac3ee2a59995ae48f141b2b81b25e1c220f42 100644
+index a82be9c7226348b6c8ed5edfa8dd8262b4f49f07..47a3580caef45ffe71446c247d4e06e332b2fda2 100644
 --- a/src/main/java/io/papermc/paper/configuration/PaperConfigurations.java
 +++ b/src/main/java/io/papermc/paper/configuration/PaperConfigurations.java
-@@ -285,7 +285,7 @@ public class PaperConfigurations extends Configurations<GlobalConfiguration, Wor
+@@ -289,7 +289,7 @@ public class PaperConfigurations extends Configurations<GlobalConfiguration, Wor
          try {
              this.initializeGlobalConfiguration(reloader(this.globalConfigClass, GlobalConfiguration.get()));
              this.initializeWorldDefaultsConfiguration();
@@ -1746,7 +1746,7 @@ index 37e0b6212fec71ec9662e6be3b1e8bea487eb4a6..e7747b19685fd943d7fbefbfef656f8b
                      for (Object o : worldData.cache.values() )
                      {
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 68e0f2208c5f098042ebfad08301e3154e2a2152..05234b2093be73f36e53590e4e44027376294828 100644
+index 14ee62567ace6fc1becf4257761a811d2ab6f71d..93a533bdeb5108f5c3e758f8062de083283fd075 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -185,8 +185,9 @@ import net.minecraft.world.phys.shapes.BooleanOp;
@@ -1926,7 +1926,7 @@ index 4b3d2280326c7eeda4952c36edff141cbff90e16..e684fa1990d631cafd8e84debe52301f
  
      private static URL getEndpoint(URI root, @Nullable JsonObject endpoints, String key, String fallback) throws MalformedURLException {
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index ac12cde39125f3b9dc57f251dd124739422426f9..c75082dcf1eb2c4820d47886b8d9aada854dc9b5 100644
+index 6f139e6cbb61bfb2be9b8b886bec7cddbb2c8993..0cbef825129b173a5244a195ea68444c216c0b1b 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
 @@ -15,7 +15,6 @@ import java.net.SocketAddress;
@@ -2017,7 +2017,7 @@ index ac12cde39125f3b9dc57f251dd124739422426f9..c75082dcf1eb2c4820d47886b8d9aada
          MutableComponent ichatmutablecomponent;
  
          if (player.getGameProfile().getName().equalsIgnoreCase(s)) {
-@@ -1507,10 +1558,8 @@ public abstract class PlayerList {
+@@ -1523,10 +1574,8 @@ public abstract class PlayerList {
      public void setViewDistance(int viewDistance) {
          this.viewDistance = viewDistance;
          //this.broadcastAll(new ClientboundSetChunkCacheRadiusPacket(viewDistance)); // Paper - move into setViewDistance
@@ -2029,7 +2029,7 @@ index ac12cde39125f3b9dc57f251dd124739422426f9..c75082dcf1eb2c4820d47886b8d9aada
  
              if (worldserver != null) {
                  worldserver.getChunkSource().setViewDistance(viewDistance);
-@@ -1522,10 +1571,8 @@ public abstract class PlayerList {
+@@ -1538,10 +1587,8 @@ public abstract class PlayerList {
      public void setSimulationDistance(int simulationDistance) {
          this.simulationDistance = simulationDistance;
          //this.broadcastAll(new ClientboundSetSimulationDistancePacket(simulationDistance)); // Paper - handled by playerchunkloader
@@ -2140,7 +2140,7 @@ index e23fdd5ba09b50b7eef0ca4f36c5480779fba624..a7bb3275b2da8308696b18fb527514f9
              if (entity != null) {
                  return entity.getBukkitEntity();
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
-index f8d321e925bf2708e51590542325c1bdc67d5964..76bd4095a051fb78e71f51aadb0376483c3fa053 100644
+index 4cb0307935aa63d44aac55c80ee50be074d7913c..949feba1264bcafb8dc2dcecd0a566fea80a2ba0 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
 @@ -5,7 +5,6 @@ import com.google.common.base.Predicates;
@@ -2246,10 +2246,10 @@ index 2e31501d26b141729c80975e97a23b09653ba3bf..5a454236073dd75ed36d058c0f033c4a
  @AnyThreadSafe
  @YieldFree
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleConfigurations.java b/src/main/java/org/galemc/gale/configuration/GaleConfigurations.java
-index 69acbab61a79c24312359a63086f9353d740113f..8832121c8ab79d7f006858f2abcd03b3b96e5589 100644
+index 9571aae593999d11b3908856b0295a7d6b588007..ed2841d3a6c6d90ad02266f38c0821bca4f549f1 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleConfigurations.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleConfigurations.java
-@@ -267,7 +267,7 @@ public class GaleConfigurations extends Configurations<GaleGlobalConfiguration,
+@@ -264,7 +264,7 @@ public class GaleConfigurations extends Configurations<GaleGlobalConfiguration,
          try {
              this.initializeGlobalConfiguration(reloader(this.globalConfigClass, GaleGlobalConfiguration.get()));
              this.initializeWorldDefaultsConfiguration();

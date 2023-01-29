@@ -160,10 +160,10 @@ index a0aa1f1a7adf986d500a2135aa42e138aa3c4f08..6d19b985222d78750828fd2719c1fbf7
      }
  }
 diff --git a/src/main/java/io/papermc/paper/configuration/PaperConfigurations.java b/src/main/java/io/papermc/paper/configuration/PaperConfigurations.java
-index 0b6d68350f608bb64a701d0e390283d50f12094e..3088d5f008a8cb5a75f1e11bd80a2614a4c1b75d 100644
+index 9fde9ccb5d069ddce8dd837ef1bc68b93ce66434..a82be9c7226348b6c8ed5edfa8dd8262b4f49f07 100644
 --- a/src/main/java/io/papermc/paper/configuration/PaperConfigurations.java
 +++ b/src/main/java/io/papermc/paper/configuration/PaperConfigurations.java
-@@ -125,13 +125,13 @@ public class PaperConfigurations extends Configurations<GlobalConfiguration, Wor
+@@ -127,13 +127,13 @@ public class PaperConfigurations extends Configurations<GlobalConfiguration, Wor
          See https://docs.papermc.io/paper/configuration for more information.
          """;
  
@@ -179,7 +179,7 @@ index 0b6d68350f608bb64a701d0e390283d50f12094e..3088d5f008a8cb5a75f1e11bd80a2614
  
  
      public PaperConfigurations(final Path globalFolder) {
-@@ -293,7 +293,7 @@ public class PaperConfigurations extends Configurations<GlobalConfiguration, Wor
+@@ -297,7 +297,7 @@ public class PaperConfigurations extends Configurations<GlobalConfiguration, Wor
          }
      }
  
@@ -188,7 +188,7 @@ index 0b6d68350f608bb64a701d0e390283d50f12094e..3088d5f008a8cb5a75f1e11bd80a2614
          return createWorldContextMap(level.convertable.levelDirectory.path(), level.serverLevelData.getLevelName(), level.dimension().location(), level.spigotConfig);
      }
  
-@@ -394,17 +394,6 @@ public class PaperConfigurations extends Configurations<GlobalConfiguration, Wor
+@@ -398,17 +398,6 @@ public class PaperConfigurations extends Configurations<GlobalConfiguration, Wor
          return Files.exists(legacyConfig) && Files.isRegularFile(legacyConfig);
      }
  
@@ -206,7 +206,7 @@ index 0b6d68350f608bb64a701d0e390283d50f12094e..3088d5f008a8cb5a75f1e11bd80a2614
      @Deprecated
      public static YamlConfiguration loadLegacyConfigFile(File configFile) throws Exception {
          YamlConfiguration config = new YamlConfiguration();
-@@ -427,9 +416,16 @@ public class PaperConfigurations extends Configurations<GlobalConfiguration, Wor
+@@ -431,9 +420,16 @@ public class PaperConfigurations extends Configurations<GlobalConfiguration, Wor
      }
  
      // Symlinks are not correctly checked in createDirectories
@@ -490,10 +490,10 @@ index 0739d32db0dd69965fd0c93be6a1f2c7448d3439..a7326db69297f46cd403114069a1d5c0
              org.spigotmc.RestartCommand.restart();
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleConfigurations.java b/src/main/java/org/galemc/gale/configuration/GaleConfigurations.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..69acbab61a79c24312359a63086f9353d740113f
+index 0000000000000000000000000000000000000000..9571aae593999d11b3908856b0295a7d6b588007
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/configuration/GaleConfigurations.java
-@@ -0,0 +1,292 @@
+@@ -0,0 +1,289 @@
 +// Gale - Gale configuration
 +
 +package org.galemc.gale.configuration;
@@ -510,10 +510,10 @@ index 0000000000000000000000000000000000000000..69acbab61a79c24312359a63086f9353
 +import io.papermc.paper.configuration.legacy.RequiresSpigotInitialization;
 +import io.papermc.paper.configuration.serializer.ComponentSerializer;
 +import io.papermc.paper.configuration.serializer.EnumValueSerializer;
-+import io.papermc.paper.configuration.serializer.FastutilMapSerializer;
++import io.papermc.paper.configuration.serializer.collections.FastutilMapSerializer;
 +import io.papermc.paper.configuration.serializer.PacketClassSerializer;
 +import io.papermc.paper.configuration.serializer.StringRepresentableSerializer;
-+import io.papermc.paper.configuration.serializer.TableSerializer;
++import io.papermc.paper.configuration.serializer.collections.TableSerializer;
 +import io.papermc.paper.configuration.serializer.collections.MapSerializer;
 +import io.papermc.paper.configuration.serializer.registry.RegistryHolderSerializer;
 +import io.papermc.paper.configuration.serializer.registry.RegistryValueSerializer;
@@ -528,7 +528,6 @@ index 0000000000000000000000000000000000000000..69acbab61a79c24312359a63086f9353
 +import it.unimi.dsi.fastutil.objects.Reference2IntOpenHashMap;
 +import it.unimi.dsi.fastutil.objects.Reference2LongMap;
 +import it.unimi.dsi.fastutil.objects.Reference2LongOpenHashMap;
-+import net.minecraft.core.Registry;
 +import net.minecraft.core.registries.Registries;
 +import net.minecraft.server.MinecraftServer;
 +import net.minecraft.server.level.ServerLevel;
@@ -545,10 +544,8 @@ index 0000000000000000000000000000000000000000..69acbab61a79c24312359a63086f9353
 +import org.spongepowered.configurate.transformation.TransformAction;
 +import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 +
-+import java.io.File;
 +import java.io.IOException;
 +import java.lang.reflect.Type;
-+import java.nio.file.Files;
 +import java.nio.file.Path;
 +import java.util.Collections;
 +import java.util.List;
