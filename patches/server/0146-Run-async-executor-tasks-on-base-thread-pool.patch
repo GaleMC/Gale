@@ -1,0 +1,70 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Martijn Muijsers <martijnmuijsers@live.nl>
+Date: Sun, 29 Jan 2023 23:18:21 +0100
+Subject: [PATCH] Run async executor tasks on base thread pool
+
+License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
+Gale - https://galemc.org
+
+diff --git a/src/main/java/io/papermc/paper/util/MCUtil.java b/src/main/java/io/papermc/paper/util/MCUtil.java
+index 4b8da38db72d7ebc2d498ec3d711d3b30911096c..80f9e70d5c4330e079feccc9a4b1b5957c79ef45 100644
+--- a/src/main/java/io/papermc/paper/util/MCUtil.java
++++ b/src/main/java/io/papermc/paper/util/MCUtil.java
+@@ -57,14 +57,7 @@ import java.util.function.Consumer;
+ import java.util.function.Supplier;
+ 
+ public final class MCUtil {
+-    public static final ThreadPoolExecutor asyncExecutor = new ThreadPoolExecutor(
+-        0, 2, 60L, TimeUnit.SECONDS,
+-        new LinkedBlockingQueue<>(),
+-        new ThreadFactoryBuilder()
+-            .setNameFormat("Paper Async Task Handler Thread - %1$d")
+-            .setUncaughtExceptionHandler(new net.minecraft.DefaultUncaughtExceptionHandlerWithName(MinecraftServer.LOGGER))
+-            .build()
+-    );
++    public static final Executor asyncExecutor = BaseTaskQueues.scheduledAsync.yieldingExecutor; // Gale - base thread pool - remove Paper async executor
+     public static final ThreadPoolExecutor cleanerExecutor = new ThreadPoolExecutor(
+         1, 1, 0L, TimeUnit.SECONDS,
+         new LinkedBlockingQueue<>(),
+diff --git a/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java b/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java
+index f80c0e0ebeee46913ae050db77f888438064d8ae..07212e5d1d9e0e30dc2475fc6e7777aa4d5ce66a 100644
+--- a/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java
++++ b/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java
+@@ -63,7 +63,9 @@ public enum BaseTaskQueueTier {
+      * asynchronously with respect to the {@link ServerThread} and the ticking of the server.
+      * Execution of
+      */
+-    ASYNC(new AbstractTaskQueue[0], Integer.getInteger("gale.thread.priority.async", 6));
++    ASYNC(new AbstractTaskQueue[]{
++        BaseTaskQueues.scheduledAsync
++    }, Integer.getInteger("gale.thread.priority.async", 6));
+ 
+     /**
+      * Equal to {@link #ordinal()}.
+diff --git a/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueues.java b/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueues.java
+index 42cc10eb5c71879562b3dcc527730cb333a54100..2295ead9ddcb57be81f8b8bd0731f56c9f7f60b9 100644
+--- a/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueues.java
++++ b/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueues.java
+@@ -79,7 +79,8 @@ public final class BaseTaskQueues {
+ 
+     /**
+      * This queue explicitly stores tasks that represent steps or parts of steps in ticking the server that do not have
+-     * to be executed on the main thread (but must be executed on a {@link BaseThread}).
++     * to be executed on the main thread (but must be executed on a {@link BaseThread}), and have a higher priority
++     * in being started than pending tasks in {@link #scheduledAsync}.
+      * <br>
+      * This queue may contain tasks of every {@link TaskSpan}.
+      * <br>
+@@ -89,4 +90,12 @@ public final class BaseTaskQueues {
+      */
+     public static final SimpleTaskQueue tickAssist = SimpleTaskQueue.allSpans("TickAssist");
+ 
++    /**
++     * This queue stores the tasks scheduled to be executed on any thread, which would usually be stored in various
++     * executors with a specific purpose.
++     * <br>
++     * This queue may contain tasks of every {@link TaskSpan}.
++     */
++    public static final SimpleTaskQueue scheduledAsync = SimpleTaskQueue.allSpans("ScheduledAsync");
++
+ }

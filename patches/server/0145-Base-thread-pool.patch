@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Martijn Muijsers <martijnmuijsers@live.nl>
-Date: Sun, 29 Jan 2023 22:25:11 +0100
+Date: Sun, 29 Jan 2023 23:02:18 +0100
 Subject: [PATCH] Base thread pool
 
 License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
@@ -396,86 +396,25 @@ index a82be9c7226348b6c8ed5edfa8dd8262b4f49f07..47a3580caef45ffe71446c247d4e06e3
              }
          } catch (Exception ex) {
 diff --git a/src/main/java/io/papermc/paper/util/MCUtil.java b/src/main/java/io/papermc/paper/util/MCUtil.java
-index 3fad7e58a1461d897526d63efd27075f044f2962..e4955e8d04735b74007aae0bf323028137e34466 100644
+index 3fad7e58a1461d897526d63efd27075f044f2962..4b8da38db72d7ebc2d498ec3d711d3b30911096c 100644
 --- a/src/main/java/io/papermc/paper/util/MCUtil.java
 +++ b/src/main/java/io/papermc/paper/util/MCUtil.java
-@@ -2,12 +2,10 @@ package io.papermc.paper.util;
- 
- import com.destroystokyo.paper.profile.CraftPlayerProfile;
- import com.destroystokyo.paper.profile.PlayerProfile;
--import com.google.common.util.concurrent.ThreadFactoryBuilder;
- import com.google.gson.JsonArray;
- import com.google.gson.JsonObject;
- import com.google.gson.internal.Streams;
- import com.google.gson.stream.JsonWriter;
--import com.mojang.datafixers.util.Either;
- import it.unimi.dsi.fastutil.objects.ObjectRBTreeSet;
- import java.lang.ref.Cleaner;
- import it.unimi.dsi.fastutil.objects.ReferenceArrayList;
-@@ -17,16 +15,11 @@ import net.minecraft.server.MinecraftServer;
- import net.minecraft.nbt.CompoundTag;
- import net.minecraft.network.chat.Component;
- import net.minecraft.server.level.ChunkHolder;
--import net.minecraft.server.level.ChunkMap;
--import net.minecraft.server.level.DistanceManager;
- import net.minecraft.server.level.ServerLevel;
- import net.minecraft.server.level.ServerPlayer;
--import net.minecraft.server.level.Ticket;
- import net.minecraft.world.entity.Entity;
- import net.minecraft.world.level.ChunkPos;
--import net.minecraft.world.level.ClipContext;
- import net.minecraft.world.level.Level;
--import net.minecraft.world.level.chunk.ChunkAccess;
- import net.minecraft.world.level.chunk.ChunkStatus;
- import org.apache.commons.lang.exception.ExceptionUtils;
- import com.mojang.authlib.GameProfile;
-@@ -34,7 +27,7 @@ import org.bukkit.Location;
- import org.bukkit.block.BlockFace;
+@@ -35,6 +35,7 @@ import org.bukkit.block.BlockFace;
  import org.bukkit.craftbukkit.CraftWorld;
  import org.bukkit.craftbukkit.util.Waitable;
--import org.spigotmc.AsyncCatcher;
+ import org.spigotmc.AsyncCatcher;
 +import org.galemc.gale.executor.queue.BaseTaskQueues;
  
  import javax.annotation.Nonnull;
  import javax.annotation.Nullable;
-@@ -42,11 +35,9 @@ import java.io.*;
- import java.nio.charset.StandardCharsets;
- import java.util.List;
- import java.util.Queue;
--import java.util.Set;
- import java.util.concurrent.CompletableFuture;
+@@ -47,6 +48,7 @@ import java.util.concurrent.CompletableFuture;
  import java.util.concurrent.ExecutionException;
--import java.util.concurrent.LinkedBlockingQueue;
--import java.util.concurrent.ThreadPoolExecutor;
+ import java.util.concurrent.LinkedBlockingQueue;
+ import java.util.concurrent.ThreadPoolExecutor;
 +import java.util.concurrent.Executor;
  import java.util.concurrent.TimeUnit;
  import java.util.concurrent.TimeoutException;
  import java.util.concurrent.atomic.AtomicBoolean;
-@@ -55,22 +46,8 @@ import java.util.function.Consumer;
- import java.util.function.Supplier;
- 
- public final class MCUtil {
--    public static final ThreadPoolExecutor asyncExecutor = new ThreadPoolExecutor(
--        0, 2, 60L, TimeUnit.SECONDS,
--        new LinkedBlockingQueue<>(),
--        new ThreadFactoryBuilder()
--            .setNameFormat("Paper Async Task Handler Thread - %1$d")
--            .setUncaughtExceptionHandler(new net.minecraft.DefaultUncaughtExceptionHandlerWithName(MinecraftServer.LOGGER))
--            .build()
--    );
--    public static final ThreadPoolExecutor cleanerExecutor = new ThreadPoolExecutor(
--        1, 1, 0L, TimeUnit.SECONDS,
--        new LinkedBlockingQueue<>(),
--        new ThreadFactoryBuilder()
--            .setNameFormat("Paper Object Cleaner")
--            .setUncaughtExceptionHandler(new net.minecraft.DefaultUncaughtExceptionHandlerWithName(MinecraftServer.LOGGER))
--            .build()
--    );
-+    public static final Executor asyncExecutor = BaseTaskQueues.scheduledAsync.yieldingExecutor; // Gale - base thread pool - remove Paper async executor
-+    public static final Executor cleanerExecutor = BaseTaskQueues.cleaner.executor; // Gale - base thread pool - remove Paper cleaner executor
- 
-     public static final long INVALID_CHUNK_KEY = getCoordinateKey(Integer.MAX_VALUE, Integer.MAX_VALUE);
- 
 diff --git a/src/main/java/io/papermc/paper/util/TickThread.java b/src/main/java/io/papermc/paper/util/TickThread.java
 index fc57850b80303fcade89ca95794f63910404a407..04c678712f154c2da33e1e38c8583c40f385efed 100644
 --- a/src/main/java/io/papermc/paper/util/TickThread.java
@@ -3410,10 +3349,10 @@ index 0000000000000000000000000000000000000000..690979cb9b7ec3dedbd7d0c45d0c183a
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java b/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..648621821d1ac3a0f5aa2af57c8c7d9176c3cfdf
+index 0000000000000000000000000000000000000000..f80c0e0ebeee46913ae050db77f888438064d8ae
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java
-@@ -0,0 +1,114 @@
+@@ -0,0 +1,110 @@
 +// Gale - base thread pool
 +
 +package org.galemc.gale.executor.queue;
@@ -3479,11 +3418,7 @@ index 0000000000000000000000000000000000000000..648621821d1ac3a0f5aa2af57c8c7d91
 +     * asynchronously with respect to the {@link ServerThread} and the ticking of the server.
 +     * Execution of
 +     */
-+    ASYNC(new AbstractTaskQueue[]{
-+        // The cleaner queue has high priority because it releases resources back to a pool, thereby saving memory
-+        BaseTaskQueues.cleaner,
-+        BaseTaskQueues.scheduledAsync
-+    }, Integer.getInteger("gale.thread.priority.async", 6));
++    ASYNC(new AbstractTaskQueue[0], Integer.getInteger("gale.thread.priority.async", 6));
 +
 +    /**
 +     * Equal to {@link #ordinal()}.
@@ -3530,10 +3465,10 @@ index 0000000000000000000000000000000000000000..648621821d1ac3a0f5aa2af57c8c7d91
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueues.java b/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueues.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..92721a51268becb05d708db04e9d6daaa66fb8b2
+index 0000000000000000000000000000000000000000..42cc10eb5c71879562b3dcc527730cb333a54100
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueues.java
-@@ -0,0 +1,106 @@
+@@ -0,0 +1,92 @@
 +// Gale - base thread pool
 +
 +package org.galemc.gale.executor.queue;
@@ -3615,8 +3550,7 @@ index 0000000000000000000000000000000000000000..92721a51268becb05d708db04e9d6daa
 +
 +    /**
 +     * This queue explicitly stores tasks that represent steps or parts of steps in ticking the server that do not have
-+     * to be executed on the main thread (but must be executed on a {@link BaseThread}), and have a higher priority
-+     * in being started than pending tasks in {@link #scheduledAsync}.
++     * to be executed on the main thread (but must be executed on a {@link BaseThread}).
 +     * <br>
 +     * This queue may contain tasks of every {@link TaskSpan}.
 +     * <br>
@@ -3625,19 +3559,6 @@ index 0000000000000000000000000000000000000000..92721a51268becb05d708db04e9d6daa
 +     * in different queues: either the queue for potentially yielding tasks or the queue for yield-free tasks.
 +     */
 +    public static final SimpleTaskQueue tickAssist = SimpleTaskQueue.allSpans("TickAssist");
-+
-+    /**
-+     * This queue stores the tasks posted to {@link MCUtil#cleanerExecutor}.
-+     */
-+    public static final SingleSpanSimpleTaskQueue cleaner = SimpleTaskQueue.singleSpan("Cleaner", TaskSpan.TINY);
-+
-+    /**
-+     * This queue stores the tasks scheduled to be executed on any thread, which would usually be stored in various
-+     * executors with a specific purpose.
-+     * <br>
-+     * This queue may contain tasks of every {@link TaskSpan}.
-+     */
-+    public static final SimpleTaskQueue scheduledAsync = SimpleTaskQueue.allSpans("ScheduledAsync");
 +
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/queue/ScheduledServerThreadTaskQueues.java b/src/main/java/org/galemc/gale/executor/queue/ScheduledServerThreadTaskQueues.java
