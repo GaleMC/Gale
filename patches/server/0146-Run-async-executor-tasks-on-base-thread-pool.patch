@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Martijn Muijsers <martijnmuijsers@live.nl>
-Date: Sun, 29 Jan 2023 23:18:21 +0100
+Date: Sun, 29 Jan 2023 23:52:19 +0100
 Subject: [PATCH] Run async executor tasks on base thread pool
 
 License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
@@ -26,6 +26,33 @@ index 4b8da38db72d7ebc2d498ec3d711d3b30911096c..80f9e70d5c4330e079feccc9a4b1b595
      public static final ThreadPoolExecutor cleanerExecutor = new ThreadPoolExecutor(
          1, 1, 0L, TimeUnit.SECONDS,
          new LinkedBlockingQueue<>(),
+diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
+index ac12cabaf15bc3520ff74d09faa48a135c63f23c..0019e5eefc4b638526a75dd3706a54033dd9b811 100644
+--- a/src/main/java/net/minecraft/server/MinecraftServer.java
++++ b/src/main/java/net/minecraft/server/MinecraftServer.java
+@@ -1080,9 +1080,6 @@ public abstract class MinecraftServer extends MinecraftServerBlockableEventLoop
+             MinecraftServer.LOGGER.error("Failed to unlock level {}", this.storageSource.getLevelId(), ioexception1);
+         }
+         // Spigot start
+-        io.papermc.paper.util.MCUtil.asyncExecutor.shutdown(); // Paper
+-        try { io.papermc.paper.util.MCUtil.asyncExecutor.awaitTermination(30, java.util.concurrent.TimeUnit.SECONDS); // Paper
+-        } catch (java.lang.InterruptedException ignored) {} // Paper
+         if (org.spigotmc.SpigotConfig.saveUserCacheOnStopOnly) {
+             MinecraftServer.LOGGER.info("Saving usercache.json");
+             this.getProfileCache().save(false); // Paper
+@@ -1092,6 +1089,12 @@ public abstract class MinecraftServer extends MinecraftServerBlockableEventLoop
+         LOGGER.info("Flushing Chunk IO");
+         io.papermc.paper.chunk.system.io.RegionFileIOThread.close(true); // Paper // Paper - rewrite chunk system
+         LOGGER.info("Closing Thread Pool");
++        // Gale start - base thread pool - remove Paper async executor
++        long startTime = Util.getMillis();
++        LOGGER.info("Waiting 30 seconds for asynchronous tasks to finish...");
++        serverThread.runTasksUntil(() -> Util.getMillis() - startTime >= 30 || !BaseTaskQueues.scheduledAsync.hasTasks(), null); // Paper
++        LOGGER.info("Shutting down IO executor...");
++        // Gale end - base thread pool - remove Paper async executor
+         Util.shutdownExecutors(); // Paper
+         LOGGER.info("Closing Server");
+         try {
 diff --git a/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java b/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java
 index f80c0e0ebeee46913ae050db77f888438064d8ae..07212e5d1d9e0e30dc2475fc6e7777aa4d5ce66a 100644
 --- a/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java
