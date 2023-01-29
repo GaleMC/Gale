@@ -1,0 +1,154 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Martijn Muijsers <martijnmuijsers@live.nl>
+Date: Sun, 29 Jan 2023 22:37:12 +0100
+Subject: [PATCH] Run chunk cache tasks on base thread pool
+
+License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
+Gale - https://galemc.org
+
+diff --git a/src/main/java/net/minecraft/server/level/ServerChunkCache.java b/src/main/java/net/minecraft/server/level/ServerChunkCache.java
+index df4db98618c6c9261b4ec8e2987c4ed26af4bd4b..ba352013692b987518dd200d376fb6cf2c90da19 100644
+--- a/src/main/java/net/minecraft/server/level/ServerChunkCache.java
++++ b/src/main/java/net/minecraft/server/level/ServerChunkCache.java
+@@ -11,7 +11,6 @@ import java.util.Collections;
+ import java.util.Iterator;
+ import java.util.List;
+ import java.util.Objects;
+-import java.util.Optional;
+ import java.util.concurrent.CompletableFuture;
+ import java.util.concurrent.Executor;
+ import java.util.function.BooleanSupplier;
+@@ -22,6 +21,7 @@ import net.minecraft.Util;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.SectionPos;
+ import net.minecraft.network.protocol.Packet;
++import net.minecraft.server.MinecraftServer;
+ import net.minecraft.server.level.progress.ChunkProgressListener;
+ import net.minecraft.util.VisibleForDebug;
+ import net.minecraft.util.thread.BlockableEventLoop;
+@@ -48,6 +48,8 @@ import net.minecraft.world.level.storage.DimensionDataStorage;
+ import net.minecraft.world.level.storage.LevelData;
+ import net.minecraft.world.level.storage.LevelStorageSource;
+ import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet; // Paper
++import org.galemc.gale.executor.queue.BaseTaskQueues;
++import org.galemc.gale.executor.thread.pool.BaseThreadActivation;
+ 
+ public class ServerChunkCache extends ChunkSource {
+ 
+@@ -999,6 +1001,14 @@ public class ServerChunkCache extends ChunkSource {
+             super.doRunTask(task);
+         }
+ 
++        // Gale start - base thread pool
++        @Override
++        public void tell(Runnable runnable) {
++            super.tell(runnable);
++            MinecraftServer.nextTimeAssumeWeMayHaveDelayedTasks = true;
++            BaseTaskQueues.allLevelsScheduledChunkCache.newTaskWasAdded();
++        }
++
+         @Override
+         // CraftBukkit start - process pending Chunk loadCallback() and unloadCallback() after each run task
+         public boolean pollTask() {
+diff --git a/src/main/java/org/galemc/gale/executor/queue/AllLevelsScheduledChunkCacheTaskQueue.java b/src/main/java/org/galemc/gale/executor/queue/AllLevelsScheduledChunkCacheTaskQueue.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..60a3b6e935fcea6cf27c31e2b967bf3758283274
+--- /dev/null
++++ b/src/main/java/org/galemc/gale/executor/queue/AllLevelsScheduledChunkCacheTaskQueue.java
+@@ -0,0 +1,52 @@
++// Gale - base thread pool
++
++package org.galemc.gale.executor.queue;
++
++import net.minecraft.server.MinecraftServer;
++import net.minecraft.server.level.ServerChunkCache;
++import net.minecraft.server.level.ServerLevel;
++import org.galemc.gale.executor.TaskSpan;
++import org.galemc.gale.executor.annotation.thread.AnyThreadSafe;
++import org.galemc.gale.executor.annotation.YieldFree;
++import org.galemc.gale.executor.thread.ServerThread;
++import org.jetbrains.annotations.Nullable;
++
++/**
++ * This class provides access to, but does not store, the tasks scheduled to be executed on the main thread,
++ * that are scheduled and normally polled by each world's {@link ServerChunkCache#mainThreadProcessor} in their
++ * respective {@link ServerChunkCache.MainThreadExecutor#managedBlock}. These tasks could normally also be run in the
++ * server's {@link MinecraftServer#managedBlock} if there were no more global scheduled server thread tasks, and as
++ * such we provide access to polling these tasks from a {@link ServerThread}.
++ * <br>
++ * All tasks provided by this queue must be yield-free.
++ *
++ * @author Martijn Muijsers under AGPL-3.0
++ */
++@AnyThreadSafe
++@YieldFree
++public final class AllLevelsScheduledChunkCacheTaskQueue extends AllLevelsScheduledTaskQueue {
++
++    AllLevelsScheduledChunkCacheTaskQueue() {
++        super(TaskSpan.FREE, false); // TODO Gale could be TINY maybe? Should check the type of tasks scheduled
++    }
++
++    @Override
++    public String getName() {
++        return "AllLevelsScheduledChunkCache";
++    }
++
++    @Override
++    protected boolean hasLevelTasks(ServerLevel level) {
++        return level.getChunkSource().mainThreadProcessor.hasPendingTasks();
++    }
++
++    @Override
++    protected @Nullable Runnable pollLevel(ServerLevel level) {
++        var executor = level.getChunkSource().mainThreadProcessor;
++        if (executor.hasPendingTasks()) {
++            return executor::pollTask;
++        }
++        return null;
++    }
++
++}
+diff --git a/src/main/java/org/galemc/gale/executor/queue/AllLevelsScheduledTaskQueue.java b/src/main/java/org/galemc/gale/executor/queue/AllLevelsScheduledTaskQueue.java
+index bbe92d92f58d484084114da73003c345d00aac7e..2a42fa59fb09196959be66d58b67862902a5e17f 100644
+--- a/src/main/java/org/galemc/gale/executor/queue/AllLevelsScheduledTaskQueue.java
++++ b/src/main/java/org/galemc/gale/executor/queue/AllLevelsScheduledTaskQueue.java
+@@ -12,7 +12,8 @@ import org.galemc.gale.executor.thread.pool.BaseThreadActivation;
+ import org.jetbrains.annotations.Nullable;
+ 
+ /**
+- * Common implementation for queues with scheduled tasks for all levels.
++ * Common implementation for queues with scheduled tasks for all levels,
++ * such as {@link AllLevelsScheduledChunkCacheTaskQueue}.
+  * <br>
+  * All tasks provided by this queue must be yield-free.
+  *
+diff --git a/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java b/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java
+index 648621821d1ac3a0f5aa2af57c8c7d9176c3cfdf..c2598a93b3cf755659e8fb79f4ec5c280abad6fa 100644
+--- a/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java
++++ b/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java
+@@ -49,7 +49,8 @@ public enum BaseTaskQueueTier {
+     SERVER(new AbstractTaskQueue[]{
+         BaseTaskQueues.deferredToServerThread,
+         BaseTaskQueues.serverThreadTick,
+-        BaseTaskQueues.anyTickScheduledServerThread
++        BaseTaskQueues.anyTickScheduledServerThread,
++        BaseTaskQueues.allLevelsScheduledChunkCache
+     }, MinecraftServer.SERVER_THREAD_PRIORITY),
+     /**
+      * A tier for queues that contain tasks that are part of ticking,
+diff --git a/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueues.java b/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueues.java
+index 92721a51268becb05d708db04e9d6daaa66fb8b2..c608cdfc17e02a37e8f1799af2b26f973a32c839 100644
+--- a/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueues.java
++++ b/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueues.java
+@@ -90,6 +90,11 @@ public final class BaseTaskQueues {
+      */
+     public static final SimpleTaskQueue tickAssist = SimpleTaskQueue.allSpans("TickAssist");
+ 
++    /**
++     * @see AllLevelsScheduledChunkCacheTaskQueue
++     */
++    public static final AllLevelsScheduledChunkCacheTaskQueue allLevelsScheduledChunkCache = new AllLevelsScheduledChunkCacheTaskQueue();
++
+     /**
+      * This queue stores the tasks posted to {@link MCUtil#cleanerExecutor}.
+      */

@@ -1,0 +1,187 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Martijn Muijsers <martijnmuijsers@live.nl>
+Date: Sun, 29 Jan 2023 22:43:55 +0100
+Subject: [PATCH] Run TickThread chunk tasks on base thread pool
+
+License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
+Gale - https://galemc.org
+
+diff --git a/src/main/java/ca/spottedleaf/concurrentutil/executor/standard/PrioritisedThreadedTaskQueue.java b/src/main/java/ca/spottedleaf/concurrentutil/executor/standard/PrioritisedThreadedTaskQueue.java
+index b71404be2c82f7db35272b367af861e94d6c73d3..0b4ae235398eda804d6facd4db74c721e9d76b57 100644
+--- a/src/main/java/ca/spottedleaf/concurrentutil/executor/standard/PrioritisedThreadedTaskQueue.java
++++ b/src/main/java/ca/spottedleaf/concurrentutil/executor/standard/PrioritisedThreadedTaskQueue.java
+@@ -1,10 +1,15 @@
+ package ca.spottedleaf.concurrentutil.executor.standard;
+ 
++import net.minecraft.server.MinecraftServer;
++import org.galemc.gale.executor.queue.BaseTaskQueues;
++
+ import java.util.ArrayDeque;
+ import java.util.concurrent.atomic.AtomicLong;
+ 
+ public class PrioritisedThreadedTaskQueue implements PrioritisedExecutor {
+ 
++    private final boolean influenceMayHaveDelayedTasks; // Gale - base thread pool
++
+     protected final ArrayDeque<PrioritisedTask>[] queues = new ArrayDeque[Priority.TOTAL_SCHEDULABLE_PRIORITIES]; {
+         for (int i = 0; i < Priority.TOTAL_SCHEDULABLE_PRIORITIES; ++i) {
+             this.queues[i] = new ArrayDeque<>();
+@@ -20,6 +25,16 @@ public class PrioritisedThreadedTaskQueue implements PrioritisedExecutor {
+ 
+     protected long taskIdGenerator = 0;
+ 
++    public PrioritisedThreadedTaskQueue() {
++        this(false);
++    }
++
++    // Gale start - base thread pool
++    public PrioritisedThreadedTaskQueue(boolean influenceMayHaveDelayedTasks) {
++        this.influenceMayHaveDelayedTasks = influenceMayHaveDelayedTasks;
++    }
++    // Gale end - base thread pool
++
+     @Override
+     public PrioritisedExecutor.PrioritisedTask queueRunnable(final Runnable task, final PrioritisedExecutor.Priority priority) throws IllegalStateException, IllegalArgumentException {
+         if (!PrioritisedExecutor.Priority.isValidPriority(priority)) {
+@@ -145,6 +160,12 @@ public class PrioritisedThreadedTaskQueue implements PrioritisedExecutor {
+     }
+ 
+     protected final long getAndAddTotalScheduledTasksVolatile(final long value) {
++        // Gale start - base thread pool
++        if (this.influenceMayHaveDelayedTasks) {
++            MinecraftServer.nextTimeAssumeWeMayHaveDelayedTasks = true;
++            BaseTaskQueues.allLevelsScheduledTickThreadChunk.newTaskWasAdded();
++        }
++        // Gale end - base thread pool
+         return this.totalScheduledTasks.getAndAdd(value);
+     }
+ 
+@@ -158,6 +179,12 @@ public class PrioritisedThreadedTaskQueue implements PrioritisedExecutor {
+         return this.totalCompletedTasks.getAndAdd(value);
+     }
+ 
++    // Gale start - base thread pool
++    public final boolean hasScheduledUncompletedTasksVolatile() {
++        return this.totalScheduledTasks.get() > this.totalCompletedTasks.get();
++    }
++    // Gale end - base thread pool
++
+     protected static final class PrioritisedTask implements PrioritisedExecutor.PrioritisedTask {
+         protected final PrioritisedThreadedTaskQueue queue;
+         protected long id;
+diff --git a/src/main/java/io/papermc/paper/chunk/system/scheduling/ChunkTaskScheduler.java b/src/main/java/io/papermc/paper/chunk/system/scheduling/ChunkTaskScheduler.java
+index 84cc9397237fa0c17aa1012dfb5683c90eb6d3b8..f5c15d40094c2ddc6220b0595597d12103fcf425 100644
+--- a/src/main/java/io/papermc/paper/chunk/system/scheduling/ChunkTaskScheduler.java
++++ b/src/main/java/io/papermc/paper/chunk/system/scheduling/ChunkTaskScheduler.java
+@@ -113,7 +113,7 @@ public final class ChunkTaskScheduler {
+     public final PrioritisedThreadPool.PrioritisedPoolExecutor parallelGenExecutor;
+     public final PrioritisedThreadPool.PrioritisedPoolExecutor loadExecutor;
+ 
+-    private final PrioritisedThreadedTaskQueue mainThreadExecutor = new PrioritisedThreadedTaskQueue();
++    public final PrioritisedThreadedTaskQueue mainThreadExecutor = new PrioritisedThreadedTaskQueue(true); // Gale - base thread pool - private -> public, count delayed tasks
+ 
+     final ReentrantLock schedulingLock = new ReentrantLock();
+     public final ChunkHolderManager chunkHolderManager;
+diff --git a/src/main/java/org/galemc/gale/executor/queue/AllLevelsScheduledTaskQueue.java b/src/main/java/org/galemc/gale/executor/queue/AllLevelsScheduledTaskQueue.java
+index 2a42fa59fb09196959be66d58b67862902a5e17f..5a83bd0edb8f74b6603da9be79913f70cab5b50a 100644
+--- a/src/main/java/org/galemc/gale/executor/queue/AllLevelsScheduledTaskQueue.java
++++ b/src/main/java/org/galemc/gale/executor/queue/AllLevelsScheduledTaskQueue.java
+@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
+ 
+ /**
+  * Common implementation for queues with scheduled tasks for all levels,
+- * such as {@link AllLevelsScheduledChunkCacheTaskQueue}.
++ * such as {@link AllLevelsScheduledChunkCacheTaskQueue} and {@link AllLevelsScheduledTickThreadChunkTaskQueue}.
+  * <br>
+  * All tasks provided by this queue must be yield-free.
+  *
+diff --git a/src/main/java/org/galemc/gale/executor/queue/AllLevelsScheduledTickThreadChunkTaskQueue.java b/src/main/java/org/galemc/gale/executor/queue/AllLevelsScheduledTickThreadChunkTaskQueue.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..117797c4ac2a81218e9f3e977467b62a18e8136f
+--- /dev/null
++++ b/src/main/java/org/galemc/gale/executor/queue/AllLevelsScheduledTickThreadChunkTaskQueue.java
+@@ -0,0 +1,54 @@
++// Gale - base thread pool
++
++package org.galemc.gale.executor.queue;
++
++import io.papermc.paper.chunk.system.scheduling.ChunkTaskScheduler;
++import io.papermc.paper.util.TickThread;
++import net.minecraft.server.MinecraftServer;
++import net.minecraft.server.level.ServerChunkCache;
++import net.minecraft.server.level.ServerLevel;
++import org.galemc.gale.executor.TaskSpan;
++import org.galemc.gale.executor.annotation.thread.AnyThreadSafe;
++import org.galemc.gale.executor.annotation.YieldFree;
++import org.jetbrains.annotations.Nullable;
++
++/**
++ * This class provides access to, but does not store, the tasks scheduled to be executed on the main thread,
++ * that are scheduled and normally polled by each world's {@link ServerLevel#chunkTaskScheduler} using
++ * respective {@link ChunkTaskScheduler#executeMainThreadTask}. These tasks could normally also be run in the
++ * server's {@link MinecraftServer#managedBlock} or a level's {@link ServerChunkCache}'s
++ * {@link ServerChunkCache.MainThreadExecutor#managedBlock}, and as such we provide access to polling these tasks
++ * from a {@link TickThread}.
++ * <br>
++ * All tasks provided by this queue must be yield-free.
++ *
++ * @author Martijn Muijsers under AGPL-3.0
++ */
++@AnyThreadSafe
++@YieldFree
++public final class AllLevelsScheduledTickThreadChunkTaskQueue extends AllLevelsScheduledTaskQueue {
++
++    AllLevelsScheduledTickThreadChunkTaskQueue() {
++        super(TaskSpan.FREE, true); // TODO Gale could be TINY maybe? But probably not? Should check the type of tasks scheduled
++    }
++
++    @Override
++    public String getName() {
++        return "AllLevelsScheduledTickThreadChunk";
++    }
++
++    @Override
++    protected boolean hasLevelTasks(ServerLevel level) {
++        return level.chunkTaskScheduler.mainThreadExecutor.hasScheduledUncompletedTasksVolatile();
++    }
++
++    @Override
++    protected @Nullable Runnable pollLevel(ServerLevel level) {
++        var executor = level.chunkTaskScheduler.mainThreadExecutor;
++        if (executor.hasScheduledUncompletedTasksVolatile()) {
++            return executor::executeTask;
++        }
++        return null;
++    }
++
++}
+diff --git a/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java b/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java
+index c2598a93b3cf755659e8fb79f4ec5c280abad6fa..bfcec658cbf381cc793d7dd844a81fac27c43337 100644
+--- a/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java
++++ b/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java
+@@ -50,7 +50,8 @@ public enum BaseTaskQueueTier {
+         BaseTaskQueues.deferredToServerThread,
+         BaseTaskQueues.serverThreadTick,
+         BaseTaskQueues.anyTickScheduledServerThread,
+-        BaseTaskQueues.allLevelsScheduledChunkCache
++        BaseTaskQueues.allLevelsScheduledChunkCache,
++        BaseTaskQueues.allLevelsScheduledTickThreadChunk
+     }, MinecraftServer.SERVER_THREAD_PRIORITY),
+     /**
+      * A tier for queues that contain tasks that are part of ticking,
+diff --git a/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueues.java b/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueues.java
+index c608cdfc17e02a37e8f1799af2b26f973a32c839..ed3ccf2e64539363a7be2d507c68c40b5913f75c 100644
+--- a/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueues.java
++++ b/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueues.java
+@@ -95,6 +95,11 @@ public final class BaseTaskQueues {
+      */
+     public static final AllLevelsScheduledChunkCacheTaskQueue allLevelsScheduledChunkCache = new AllLevelsScheduledChunkCacheTaskQueue();
+ 
++    /**
++     * @see AllLevelsScheduledTickThreadChunkTaskQueue
++     */
++    public static final AllLevelsScheduledTickThreadChunkTaskQueue allLevelsScheduledTickThreadChunk = new AllLevelsScheduledTickThreadChunkTaskQueue();
++
+     /**
+      * This queue stores the tasks posted to {@link MCUtil#cleanerExecutor}.
+      */
