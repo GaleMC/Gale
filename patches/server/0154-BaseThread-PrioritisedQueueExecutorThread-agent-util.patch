@@ -1,0 +1,152 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Martijn Muijsers <martijnmuijsers@live.nl>
+Date: Mon, 30 Jan 2023 22:34:48 +0100
+Subject: [PATCH] BaseThread PrioritisedQueueExecutorThread agent utility
+
+License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+Gale - https://galemc.org
+
+diff --git a/src/main/java/org/galemc/gale/executor/chunksystem/PrioritisedQueueExecutorThreadAgent.java b/src/main/java/org/galemc/gale/executor/chunksystem/PrioritisedQueueExecutorThreadAgent.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..1cd17795c8f8a7a0d111123e662904522a6c8819
+--- /dev/null
++++ b/src/main/java/org/galemc/gale/executor/chunksystem/PrioritisedQueueExecutorThreadAgent.java
+@@ -0,0 +1,138 @@
++// Gale - base thread pool - chunk worker task queue
++
++package org.galemc.gale.executor.chunksystem;
++
++import ca.spottedleaf.concurrentutil.executor.standard.PrioritisedExecutor;
++import ca.spottedleaf.concurrentutil.executor.standard.PrioritisedQueueExecutorThread;
++import com.mojang.logging.LogUtils;
++import org.galemc.gale.executor.queue.BaseTaskQueues;
++import org.galemc.gale.executor.thread.BaseThread;
++import org.slf4j.Logger;
++
++
++/**
++ * This class is a copy of {@link PrioritisedQueueExecutorThread}, with the notable difference
++ * that it does not extend {@link Thread}, but may be instantiated on its own, as an agent representing
++ * a {@link BaseThread} to the {@link PrioritisedExecutor}.
++ */
++public abstract class PrioritisedQueueExecutorThreadAgent implements PrioritisedExecutor {
++
++    private static final Logger LOGGER = LogUtils.getLogger();
++
++    protected final PrioritisedExecutor queue;
++    protected final BaseThread baseThread;
++
++    public PrioritisedQueueExecutorThreadAgent(final PrioritisedExecutor queue, final BaseThread baseThread) {
++        this.queue = queue;
++        this.baseThread = baseThread;
++    }
++
++    protected boolean pollTasks() {
++        boolean ret = false;
++
++        for (;;) {
++            try {
++                if (!this.queue.executeTask()) {
++                    break;
++                }
++                ret = true;
++            } catch (final ThreadDeath death) {
++                throw death; // goodbye world...
++            } catch (final Throwable throwable) {
++                LOGGER.error("Exception thrown from prioritized runnable task in thread '" + this.baseThread.getName() + "'", throwable);
++            }
++        }
++
++        return ret;
++    }
++
++    @Override
++    public PrioritisedTask createTask(final Runnable task, final Priority priority) {
++        final PrioritisedTask queueTask = this.queue.createTask(task, priority);
++
++        // need to override queue() to notify us of tasks
++        return new PrioritisedTask() {
++            @Override
++            public Priority getPriority() {
++                return queueTask.getPriority();
++            }
++
++            @Override
++            public boolean setPriority(final Priority priority) {
++                return queueTask.setPriority(priority);
++            }
++
++            @Override
++            public boolean raisePriority(final Priority priority) {
++                return queueTask.raisePriority(priority);
++            }
++
++            @Override
++            public boolean lowerPriority(final Priority priority) {
++                return queueTask.lowerPriority(priority);
++            }
++
++            @Override
++            public boolean queue() {
++                final boolean ret = queueTask.queue();
++                if (ret) {
++                    BaseTaskQueues.chunkWorker.newTaskWasAdded();
++                }
++                return ret;
++            }
++
++            @Override
++            public boolean cancel() {
++                return queueTask.cancel();
++            }
++
++            @Override
++            public boolean execute() {
++                return queueTask.execute();
++            }
++        };
++    }
++
++    @Override
++    public PrioritisedTask queueRunnable(final Runnable task, final Priority priority) {
++        final PrioritisedTask ret = this.queue.queueRunnable(task, priority);
++
++        BaseTaskQueues.chunkWorker.newTaskWasAdded();
++
++        return ret;
++    }
++
++    @Override
++    public boolean haveAllTasksExecuted() {
++        return this.queue.haveAllTasksExecuted();
++    }
++
++    @Override
++    public long getTotalTasksExecuted() {
++        return this.queue.getTotalTasksExecuted();
++    }
++
++    @Override
++    public long getTotalTasksScheduled() {
++        return this.queue.getTotalTasksScheduled();
++    }
++
++    /**
++     * {@inheritDoc}
++     * @throws IllegalStateException If the current thread is {@code this} thread, or the underlying queue throws this exception.
++     */
++    @Override
++    public void waitUntilAllExecuted() throws IllegalStateException {
++        this.queue.waitUntilAllExecuted();
++    }
++
++    /**
++     * {@inheritDoc}
++     * @throws IllegalStateException Always
++     */
++    @Override
++    public boolean executeTask() throws IllegalStateException {
++        throw new IllegalStateException();
++    }
++
++}
