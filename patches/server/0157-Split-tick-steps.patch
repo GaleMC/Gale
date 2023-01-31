@@ -7,20 +7,28 @@ License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 7ed820d2483bf6741a355b062f062a04866ba938..9e645dce4b4187797b74369219dfb5078b04aea2 100644
+index 7ed820d2483bf6741a355b062f062a04866ba938..75818d2e2149e0f95fe94706bdcb9489f184e078 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -1577,14 +1577,52 @@ public abstract class MinecraftServer extends MinecraftServerBlockableEventLoop
+@@ -154,7 +154,6 @@ import org.galemc.gale.executor.annotation.thread.OriginalServerThreadOnly;
+ import org.galemc.gale.executor.queue.BaseTaskQueues;
+ import org.galemc.gale.executor.queue.ScheduledServerThreadTaskQueues;
+ import org.galemc.gale.executor.thread.OriginalServerThread;
+-import org.galemc.gale.executor.thread.SignalReason;
+ import org.galemc.gale.executor.thread.pool.BaseThreadActivation;
+ import org.jetbrains.annotations.NotNull;
+ import org.slf4j.Logger;
+@@ -1577,14 +1576,52 @@ public abstract class MinecraftServer extends MinecraftServerBlockableEventLoop
      }
  
      public void tickChildren(BooleanSupplier shouldKeepTicking) {
-+        // Gale start - split tick steps
++        // Gale start - rearrange tick steps
 +        this.doSchedulerHeartbeat();
 +        this.tickFunctions();
 +        //Iterator iterator = this.getAllLevels().iterator(); // Paper - moved down
 +        this.runProcessQueueTasks();
 +        for (final ServerLevel world : this.getAllLevelsArray()) { // Gale - base thread pool - optimize server levels
-+            this.updateTime(world);
++            this.sendTimeUpdates(world);
 +        }
 +        this.isIteratingOverLevels = true; // Paper
 +        for (ServerLevel worldserver : this.getAllLevelsArray()) { // Paper - move down // Gale - base thread pool - optimize server levels
@@ -43,36 +51,36 @@ index 7ed820d2483bf6741a355b062f062a04866ba938..9e645dce4b4187797b74369219dfb507
 +    }
 +
 +    private void doSchedulerHeartbeat() {
-+        // Gale end - split tick steps
++        // Gale end - rearrange tick steps
          MinecraftTimings.bukkitSchedulerTimer.startTiming(); // Spigot // Paper
          this.server.getScheduler().mainThreadHeartbeat(this.tickCount); // CraftBukkit
          MinecraftTimings.bukkitSchedulerTimer.stopTiming(); // Spigot // Paper
-+        // Gale start - split tick steps
++        // Gale start - rearrange tick steps
 +    }
 +
 +    private void tickFunctions() {
-+        // Gale end - split tick steps
++        // Gale end - rearrange tick steps
          MinecraftTimings.commandFunctionsTimer.startTiming(); // Spigot // Paper
          this.getFunctions().tick();
          MinecraftTimings.commandFunctionsTimer.stopTiming(); // Spigot // Paper
 -        //Iterator iterator = this.getAllLevels().iterator(); // Paper - moved down
-+        // Gale start - split tick steps
++        // Gale start - rearrange tick steps
 +    }
  
 +    private void runProcessQueueTasks() {
-+        // Gale end - split tick steps
++        // Gale end - rearrange tick steps
          // CraftBukkit start
          // Run tasks that are waiting on processing
          MinecraftTimings.processQueueTimer.startTiming(); // Spigot
-@@ -1592,11 +1630,14 @@ public abstract class MinecraftServer extends MinecraftServerBlockableEventLoop
+@@ -1592,11 +1629,14 @@ public abstract class MinecraftServer extends MinecraftServerBlockableEventLoop
              this.processQueue.remove().run();
          }
          MinecraftTimings.processQueueTimer.stopTiming(); // Spigot
-+        // Gale start - split tick steps
++        // Gale start - rearrange tick steps
 +    }
  
-+    private void updateTime(ServerLevel world) {
-+        // Gale end - split tick steps
++    private void sendTimeUpdates(ServerLevel world) {
++        // Gale end - rearrange tick steps
          MinecraftTimings.timeUpdateTimer.startTiming(); // Spigot // Paper
          // Send time updates to everyone, it will get the right time from the world the player is in.
          // Paper start - optimize time updates
@@ -80,42 +88,42 @@ index 7ed820d2483bf6741a355b062f062a04866ba938..9e645dce4b4187797b74369219dfb507
              final boolean doDaylight = world.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT);
              final long dayTime = world.getDayTime();
              long worldTime = world.getGameTime();
-@@ -1611,15 +1652,17 @@ public abstract class MinecraftServer extends MinecraftServerBlockableEventLoop
+@@ -1611,15 +1651,17 @@ public abstract class MinecraftServer extends MinecraftServerBlockableEventLoop
                      new ClientboundSetTimePacket(worldTime, playerTime, doDaylight);
                  entityplayer.connection.send(packet); // Add support for per player time
              }
 -        }
          // Paper end
          MinecraftTimings.timeUpdateTimer.stopTiming(); // Spigot // Paper
-+        // Gale start - split tick steps
++        // Gale start - rearrange tick steps
 +    }
  
 -        this.isIteratingOverLevels = true; // Paper
 -        for (ServerLevel worldserver : this.getAllLevelsArray()) { // Paper - move down // Gale - base thread pool - optimize server levels
 +    private void updateEvents(ServerLevel worldserver) {
-+        // Gale end - split tick steps
++        // Gale end - rearrange tick steps
              worldserver.hasPhysicsEvent =  org.bukkit.event.block.BlockPhysicsEvent.getHandlerList().getRegisteredListeners().length > 0; // Paper
              worldserver.hasEntityMoveEvent =  io.papermc.paper.event.entity.EntityMoveEvent.getHandlerList().getRegisteredListeners().length > 0; // Paper
              net.minecraft.world.level.block.entity.HopperBlockEntity.skipHopperEvents = worldserver.paperConfig().hopper.disableMoveEvent || org.bukkit.event.inventory.InventoryMoveItemEvent.getHandlerList().getRegisteredListeners().length == 0; // Paper
-+    } // Gale - split tick steps
++    } // Gale - rearrange tick steps
  
              /* Drop global time updates
              if (this.tickCount % 20 == 0) {
-@@ -1629,16 +1672,27 @@ public abstract class MinecraftServer extends MinecraftServerBlockableEventLoop
+@@ -1629,16 +1671,27 @@ public abstract class MinecraftServer extends MinecraftServerBlockableEventLoop
              }
              // CraftBukkit end */
  
 -            try {
-+    private void tickWorld(ServerLevel worldserver, BooleanSupplier shouldKeepTicking) { // Gale - split tick steps
++    private void tickWorld(ServerLevel worldserver, BooleanSupplier shouldKeepTicking) { // Gale - rearrange tick steps
                  worldserver.timings.doTick.startTiming(); // Spigot
                  worldserver.tick(shouldKeepTicking);
-+                // Gale start - split tick steps
++                // Gale start - rearrange tick steps
 +                worldserver.timings.doTick.stopTiming(); // Spigot
 +    }
 +
 +    private void recalculateRegions(ServerLevel worldserver) {
 +                worldserver.timings.doTick.startTiming(); // Spigot
-+        // Gale end - split tick steps
++        // Gale end - rearrange tick steps
                  // Paper start
                  for (final io.papermc.paper.chunk.SingleThreadChunkRegionManager regionManager : worldserver.getChunkSource().chunkMap.regionManagers) {
                      regionManager.recalculateRegions();
@@ -124,56 +132,219 @@ index 7ed820d2483bf6741a355b062f062a04866ba938..9e645dce4b4187797b74369219dfb507
                  worldserver.timings.doTick.stopTiming(); // Spigot
 -            } catch (Throwable throwable) {
 +                // Paper end
-+        // Gale start - split tick steps
++        // Gale start - rearrange tick steps
 +    }
 +
 +    private void catchWorldTickException(ServerLevel worldserver, Throwable throwable) {
-+        // Gale end - split tick steps
++        // Gale end - rearrange tick steps
                  // Spigot Start
                  CrashReport crashreport;
                  try {
-@@ -1651,22 +1705,39 @@ public abstract class MinecraftServer extends MinecraftServerBlockableEventLoop
+@@ -1651,22 +1704,39 @@ public abstract class MinecraftServer extends MinecraftServerBlockableEventLoop
  
                  worldserver.fillReportDetails(crashreport);
                  throw new ReportedException(crashreport);
 -            }
-+        // Gale start - split tick steps
++        // Gale start - rearrange tick steps
 +    }
  
 +    private void clearExplosionDensity(ServerLevel worldserver) {
-+        // Gale end - split tick steps
++        // Gale end - rearrange tick steps
              worldserver.explosionDensityCache.clear(); // Paper - Optimize explosions
 -        }
 -        this.isIteratingOverLevels = false; // Paper
-+        // Gale start - split tick steps
++        // Gale start - rearrange tick steps
 +    }
  
 +    private void tickConnection() {
-+        // Gale end - split tick steps
++        // Gale end - rearrange tick steps
          MinecraftTimings.connectionTimer.startTiming(); // Spigot
          this.getConnection().tick();
          MinecraftTimings.connectionTimer.stopTiming(); // Spigot
-+        // Gale start - split tick steps
++        // Gale start - rearrange tick steps
 +    }
 +
 +    private void tickPlayerList() {
-+        // Gale end - split tick steps
++        // Gale end - rearrange tick steps
          MinecraftTimings.playerListTimer.startTiming(); // Spigot // Paper
          this.playerList.tick();
          MinecraftTimings.playerListTimer.stopTiming(); // Spigot // Paper
 -        if (SharedConstants.IS_RUNNING_IN_IDE) {
-+        // Gale start - split tick steps
++        // Gale start - rearrange tick steps
 +    }
 +
 +    private void tickGameTestTicker() {
-+        // Gale end - split tick steps
++        // Gale end - rearrange tick steps
              GameTestTicker.SINGLETON.tick();
 -        }
-+        // Gale start - split tick steps
++        // Gale start - rearrange tick steps
 +    }
  
 +    private void runTickables() {
-+        // Gale end - split tick steps
++        // Gale end - rearrange tick steps
          MinecraftTimings.tickablesTimer.startTiming(); // Spigot // Paper
          for (int i = 0; i < this.tickables.size(); ++i) {
              ((Runnable) this.tickables.get(i)).run();
+diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
+index e7747b19685fd943d7fbefbfef656f8bb7c359f1..937025fe8f16ce732eb34e074d8912d48e64d039 100644
+--- a/src/main/java/net/minecraft/server/level/ServerLevel.java
++++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
+@@ -634,6 +634,43 @@ public class ServerLevel extends Level implements WorldGenLevel {
+     }
+ 
+     public void tick(BooleanSupplier shouldKeepTicking) {
++        this.updatePlayersAffectingSpawning(); // Gale - rearrange tick steps
++        this.handlingTick = true;
++        // Gale start - rearrange tick steps
++        this.tickWorldBorder();
++        this.advanceWeatherCycle();
++        this.applySleep();
++        this.updateSkyBrightness();
++        this.tickTime();
++            long j = this.getGameTime();
++        if (!this.isDebug()) {
++            this.tickBlocks(j);
++            this.tickFluids(j);
++        }
++        this.tickRaids();
++        this.tickChunkSource(shouldKeepTicking);
++        this.doRunBlockEvents();
++        this.handlingTick = false;
++        // Gale end - rearrange tick steps
++        boolean flag = true || !this.players.isEmpty() || !this.getForcedChunks().isEmpty(); // CraftBukkit - this prevents entity cleanup, other issues on servers with no players
++
++        if (flag) {
++            this.resetEmptyTime();
++        }
++
++        if (flag || this.emptyTime++ < 300) {
++            // Gale start - rearrange tick steps
++            this.tickDragonFight();
++            this.activateEntities();
++            this.tickEntityList();
++            this.tickBlockEntities();
++            // Gale end - rearrange tick steps
++        }
++        //this.entityManager.tick(); // Paper - rewrite chunk system
++    }
++
++    private void updatePlayersAffectingSpawning() {
++        // Gale end - rearrange tick steps
+         // Paper start - optimise checkDespawn
+         this.playersAffectingSpawning.clear();
+         for (ServerPlayer player : this.players) {
+@@ -641,10 +678,17 @@ public class ServerLevel extends Level implements WorldGenLevel {
+                 this.playersAffectingSpawning.add(player);
+             }
+         }
+-        // Paper end - optimise checkDespawn
+-        this.handlingTick = true;
++        // Gale start - rearrange tick steps
++    }
++
++    private void tickWorldBorder() {
++        // Gale end - rearrange tick steps
+         this.getWorldBorder().tick();
+-        this.advanceWeatherCycle();
++        // Gale start - rearrange tick steps
++    }
++
++    private void applySleep() {
++        // Gale end - rearrange tick steps
+         int i = this.getGameRules().getInt(GameRules.RULE_PLAYERS_SLEEPING_PERCENTAGE);
+         long j;
+ 
+@@ -667,40 +711,70 @@ public class ServerLevel extends Level implements WorldGenLevel {
+                 this.resetWeatherCycle();
+             }
+         }
++        // Gale start - rearrange tick steps
++    }
+ 
+-        this.updateSkyBrightness();
+-        this.tickTime();
++    private void tickBlocks(long j) {
++        // Gale end - rearrange tick steps
+         timings.scheduledBlocks.startTiming(); // Paper
+-        if (!this.isDebug()) {
+-            j = this.getGameTime();
+             this.blockTicks.tick(j, 65536, this::tickBlock);
++        // Gale start - rearrange tick steps
++        timings.scheduledBlocks.stopTiming(); // Paper
++    }
++
++    private void tickFluids(long j) {
++        timings.scheduledBlocks.startTiming(); // Paper
++        // Gale end - rearrange tick steps
+             this.fluidTicks.tick(j, 65536, this::tickFluid);
+-        }
+         timings.scheduledBlocks.stopTiming(); // Paper
++        // Gale start - rearrange tick steps
++    }
+ 
++    private void tickRaids() {
++        // Gale end - rearrange tick steps
+         this.timings.raids.startTiming(); // Paper - timings
+         this.raids.tick();
+         this.timings.raids.stopTiming(); // Paper - timings
++        // Gale start - rearrange tick steps
++    }
++
++    private void tickChunkSource(BooleanSupplier shouldKeepTicking) {
++        // Gale end - rearrange tick steps
+         this.timings.chunkProviderTick.startTiming(); // Paper - timings
+         this.getChunkSource().tick(shouldKeepTicking, true);
+         this.timings.chunkProviderTick.stopTiming(); // Paper - timings
++        // Gale start - rearrange tick steps
++    }
++
++    private void doRunBlockEvents() {
++        // Gale end - rearrange tick steps
+         timings.doSounds.startTiming(); // Spigot
+         this.runBlockEvents();
+         timings.doSounds.stopTiming(); // Spigot
+-        this.handlingTick = false;
+-        boolean flag = true || !this.players.isEmpty() || !this.getForcedChunks().isEmpty(); // CraftBukkit - this prevents entity cleanup, other issues on servers with no players
+-
+-        if (flag) {
+-            this.resetEmptyTime();
+-        }
++        // Gale start - rearrange tick steps
++    }
+ 
+-        if (flag || this.emptyTime++ < 300) {
++    private void tickDragonFight() {
++        // Gale end - rearrange tick steps
+             timings.tickEntities.startTiming(); // Spigot
+             if (this.dragonFight != null) {
+                 this.dragonFight.tick();
+             }
++        // Gale start - rearrange tick steps
++            timings.tickEntities.stopTiming(); // Spigot
++    }
+ 
++    private void activateEntities() {
++            timings.tickEntities.startTiming(); // Spigot
++        // Gale end - rearrange tick steps
+             org.spigotmc.ActivationRange.activateEntities(this); // Spigot
++        // Gale start - rearrange tick steps
++            timings.tickEntities.stopTiming(); // Spigot
++    }
++
++    private void tickEntityList() {
++            timings.tickEntities.startTiming(); // Spigot
++        // Gale end - rearrange tick steps
+             timings.entityTick.startTiming(); // Spigot
+             this.entityTickList.forEach((entity) -> {
+                 if (!entity.isRemoved()) {
+@@ -739,10 +813,6 @@ public class ServerLevel extends Level implements WorldGenLevel {
+             });
+             timings.entityTick.stopTiming(); // Spigot
+             timings.tickEntities.stopTiming(); // Spigot
+-            this.tickBlockEntities();
+-        }
+-
+-        //this.entityManager.tick(); // Paper - rewrite chunk system
+     }
+ 
+     @Override
