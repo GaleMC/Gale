@@ -7,7 +7,7 @@ License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 7ed820d2483bf6741a355b062f062a04866ba938..eb7cdfc7fa5559e6ada351b6487c392b271edcd4 100644
+index 7ed820d2483bf6741a355b062f062a04866ba938..cf270ad8f63ab6351be654525d195d802a41e55c 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -42,6 +42,7 @@ import java.util.concurrent.CompletableFuture;
@@ -127,12 +127,12 @@ index 7ed820d2483bf6741a355b062f062a04866ba938..eb7cdfc7fa5559e6ada351b6487c392b
              }
              // CraftBukkit end */
  
-+    public Consumer<ServerLevel> wrapThrowingWorldTickStep(Consumer<ServerLevel> consumer) {
++    public static Consumer<ServerLevel> wrapThrowingWorldTickStep(Consumer<ServerLevel> consumer) {
 +        return worldserver -> {
              try {
 +                consumer.accept(worldserver);
 +            } catch (Throwable throwable) {
-+                this.catchWorldTickException(worldserver, throwable);
++                SERVER.catchWorldTickException(worldserver, throwable);
 +            }
 +        };
 +    }
@@ -141,7 +141,7 @@ index 7ed820d2483bf6741a355b062f062a04866ba938..eb7cdfc7fa5559e6ada351b6487c392b
 +        worldserver.tick(tick_shouldKeepTicking);
 +    };
 +
-+    public final Consumer<ServerLevel> tickStep_recalculateRegions = this.wrapThrowingWorldTickStep(worldserver -> {
++    public final Consumer<ServerLevel> tickStep_recalculateRegions = wrapThrowingWorldTickStep(worldserver -> {
                  worldserver.timings.doTick.startTiming(); // Spigot
 -                worldserver.tick(shouldKeepTicking);
 +        // Gale end - split tick steps
@@ -155,7 +155,7 @@ index 7ed820d2483bf6741a355b062f062a04866ba938..eb7cdfc7fa5559e6ada351b6487c392b
 +                // Paper end
 +    });
 +
-+    public final Runnable catchWorldTickException(ServerLevel worldserver, Throwable throwable) {
++    public final void catchWorldTickException(ServerLevel worldserver, Throwable throwable) {
 +        // Gale end - split tick steps
                  // Spigot Start
                  CrashReport crashreport;
@@ -218,14 +218,25 @@ index 7ed820d2483bf6741a355b062f062a04866ba938..eb7cdfc7fa5559e6ada351b6487c392b
      public boolean isNetherEnabled() {
          return true;
 diff --git a/src/main/java/net/minecraft/server/level/ServerChunkCache.java b/src/main/java/net/minecraft/server/level/ServerChunkCache.java
-index ba352013692b987518dd200d376fb6cf2c90da19..8e93689c159b60bb88d38891f943db07bcd5991e 100644
+index ba352013692b987518dd200d376fb6cf2c90da19..99fe51c3654bf5f978b6576290504c7b7bf2e7a1 100644
 --- a/src/main/java/net/minecraft/server/level/ServerChunkCache.java
 +++ b/src/main/java/net/minecraft/server/level/ServerChunkCache.java
-@@ -631,23 +631,74 @@ public class ServerChunkCache extends ChunkSource {
+@@ -629,23 +629,99 @@ public class ServerChunkCache extends ChunkSource {
+     }
+     // CraftBukkit end
  
++    // Gale start - split tick steps
++    public Runnable tickStep_purgeStaleTickets;
++    public Runnable tickStep_runDistanceManagerUpdates;
++    public Runnable tickStep_tickChunks;
++    public Runnable tickStep_tickChunkMap;
++    public Runnable tickStep_clearCache;
++    // Gale end - split tick steps
++
      @Override
      public void tick(BooleanSupplier shouldKeepTicking, boolean tickChunks) {
 +        // Gale start - split tick steps
++        this.initializeTickSteps();
 +        this.tickStep_purgeStaleTickets.run();
 +        this.tickStep_runDistanceManagerUpdates.run();
 +        this.tickStep_tickChunks.run();
@@ -233,7 +244,19 @@ index ba352013692b987518dd200d376fb6cf2c90da19..8e93689c159b60bb88d38891f943db07
 +        this.tickStep_clearCache.run();
 +    }
 +
-+    public Runnable wrapTickStep(Runnable runnable) {
++    public void initializeTickSteps() {
++        //noinspection ConstantValue
++        if (this.tickStep_purgeStaleTickets != null) {
++            return;
++        }
++        this.tickStep_purgeStaleTickets = this.tickStep_purgeStaleTickets_create();
++        this.tickStep_runDistanceManagerUpdates = this.tickStep_runDistanceManagerUpdates_create();
++        this.tickStep_tickChunks = this.tickStep_tickChunks_create();
++        this.tickStep_tickChunkMap = this.tickStep_tickChunkMap_create();
++        this.tickStep_clearCache = this.tickStep_clearCache_create();
++    }
++
++    private Runnable wrapTickStep(Runnable runnable) {
 +        return this.level.wrapTickStep(() -> {
 +            this.level.timings.chunkProviderTick.startTiming(); // Paper - timings
 +            runnable.run();
@@ -241,7 +264,7 @@ index ba352013692b987518dd200d376fb6cf2c90da19..8e93689c159b60bb88d38891f943db07
 +        });
 +    }
 +
-+    public Runnable wrapDoChunkMapTickStep(Runnable runnable) {
++    private Runnable wrapDoChunkMapTickStep(Runnable runnable) {
 +        return this.wrapTickStep(() -> {
 +            // Gale end - split tick steps
          this.level.timings.doChunkMap.startTiming(); // Spigot
@@ -251,23 +274,26 @@ index ba352013692b987518dd200d376fb6cf2c90da19..8e93689c159b60bb88d38891f943db07
 +        });
 +    }
 +
-+    public final void tickStep_purgeStaleTickets_inner() {
-+        // Gale end - split tick steps
++    private Runnable tickStep_purgeStaleTickets_create() {
++        return this.wrapDoChunkMapTickStep(() -> {
++            // Gale end - split tick steps
          this.distanceManager.purgeStaleTickets();
-+        // Gale start - split tick steps
++            // Gale start - split tick steps
++        });
 +    }
 +
-+    public final Runnable tickStep_purgeStaleTickets = this.wrapDoChunkMapTickStep(this::tickStep_purgeStaleTickets_inner);
-+
-+    public final Runnable tickStep_runDistanceManagerUpdates = this.wrapDoChunkMapTickStep(() -> {
-+        // Gale end - split tick steps
++    private Runnable tickStep_runDistanceManagerUpdates_create() {
++        return this.wrapDoChunkMapTickStep(() -> {
++            // Gale end - split tick steps
          this.runDistanceManagerUpdates();
 -        this.level.timings.doChunkMap.stopTiming(); // Spigot
 -        if (tickChunks) {
-+        // Gale start - split tick steps
-+    });
++            // Gale start - split tick steps
++        });
++    }
 +
-+    public final void tickStep_tickChunks_inner() {
++    private Runnable tickStep_tickChunks_create() {
++        return this.wrapTickStep(() -> {
 +        if (MinecraftServer.tick_tickChunks) {
 +            // Gale end - split tick steps
              this.level.timings.chunks.startTiming(); // Paper - timings
@@ -275,33 +301,31 @@ index ba352013692b987518dd200d376fb6cf2c90da19..8e93689c159b60bb88d38891f943db07
              this.tickChunks();
              this.level.timings.chunks.stopTiming(); // Paper - timings
          }
-+        // Gale start - split tick steps
++            // Gale start - split tick steps
++        });
 +    }
-+
-+    public final Runnable tickStep_tickChunks = this.wrapTickStep(this::tickStep_tickChunks_inner);
  
-+    public final void tickStep_tickChunkMap_inner () {
-+        // Gale end - split tick steps
++    private Runnable tickStep_tickChunkMap_create() {
++        return this.wrapTickStep(() -> {
++            // Gale end - split tick steps
          this.level.timings.doChunkUnload.startTiming(); // Spigot
 -        this.chunkMap.tick(shouldKeepTicking);
 +        this.chunkMap.tick(MinecraftServer.tick_shouldKeepTicking); // Gale - split tick steps
          this.level.timings.doChunkUnload.stopTiming(); // Spigot
--        this.clearCache();
-+        // Gale start - split tick steps
++            // Gale start - split tick steps
++        });
++    }
++
++    private Runnable tickStep_clearCache_create() {
++        return this.wrapTickStep(() -> {
++            // Gale end - split tick steps
+         this.clearCache();
++        }); // Gale - split tick steps
      }
  
-+    public final Runnable tickStep_tickChunkMap = this.wrapTickStep(this::tickStep_tickChunkMap_inner);
-+
-+    public final Runnable tickStep_clearCache = this.wrapTickStep(() -> {
-+        // Gale end - split tick steps
-+        this.clearCache();
-+    }); // Gale - split tick steps
-+
      private void tickChunks() {
-         long i = this.level.getGameTime();
-         long j = i - this.lastInhabitedUpdate;
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index e7747b19685fd943d7fbefbfef656f8bb7c359f1..dd0278bb5335f05d14d3da9d7f8949209f81e8bf 100644
+index e7747b19685fd943d7fbefbfef656f8bb7c359f1..8dfbd2f0ad7d767f2bbe2de235fef0e04daaf5c8 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
 @@ -23,7 +23,6 @@ import java.nio.file.Files;
@@ -329,11 +353,32 @@ index e7747b19685fd943d7fbefbfef656f8bb7c359f1..dd0278bb5335f05d14d3da9d7f894920
  import org.bukkit.event.world.TimeSkipEvent;
  // CraftBukkit end
  import it.unimi.dsi.fastutil.ints.IntArrayList; // Paper
-@@ -633,7 +629,51 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -633,7 +629,101 @@ public class ServerLevel extends Level implements WorldGenLevel {
          return this.structureManager;
      }
  
 +    // Gale start - split tick steps
++    public Runnable tickStep_updatePlayersAffectingSpawning;
++    public Runnable tickStep_startHandlingTick;
++    public Runnable tickStep_tickWorldBorder;
++    public Runnable tickStep_advanceWeatherCycle;
++    public Runnable tickStep_applySleep;
++    public Runnable tickStep_updateSkyBrightness;
++    public Runnable tickStep_tickTime;
++    public Runnable tickStep_setScheduledBlocksGameTime;
++    public Runnable tickStep_setIsDebug;
++    public Runnable tickStep_tickBlocks;
++    public Runnable tickStep_tickFluids;
++    public Runnable tickStep_tickRaids;
++    public Runnable tickStep_tickChunkSource;
++    public Runnable tickStep_doRunBlockEvents;
++    public Runnable tickStep_stopHandlingTick;
++    public Runnable tickStep_setDoEntityAndBlockEntityTick;
++    public Runnable tickStep_tickDragonFight;
++    public Runnable tickStep_activateEntities;
++    public Runnable tickStep_tickEntityList;
++    public Runnable tickStep_tickBlockEntities;
++    
 +    private long tick_scheduledBlocksGameTime;
 +    private boolean tick_isDebug;
 +    private boolean tick_doEntityAndBlockEntityTick;
@@ -341,6 +386,7 @@ index e7747b19685fd943d7fbefbfef656f8bb7c359f1..dd0278bb5335f05d14d3da9d7f894920
 +
      public void tick(BooleanSupplier shouldKeepTicking) {
 +        // Gale start - split tick steps
++        this.initializeTickSteps();
 +        this.tickStep_updatePlayersAffectingSpawning.run();
 +        this.tickStep_startHandlingTick.run();
 +        this.tickStep_tickWorldBorder.run();
@@ -364,6 +410,33 @@ index e7747b19685fd943d7fbefbfef656f8bb7c359f1..dd0278bb5335f05d14d3da9d7f894920
 +        //this.entityManager.tick(); // Paper - rewrite chunk system
 +    }
 +
++    public void initializeTickSteps() {
++        //noinspection ConstantValue
++        if (this.tickStep_updatePlayersAffectingSpawning != null) {
++            return;
++        }
++        this.tickStep_updatePlayersAffectingSpawning = this.tickStep_updatePlayersAffectingSpawning_create();
++        this.tickStep_startHandlingTick = this.tickStep_startHandlingTick_create();
++        this.tickStep_tickWorldBorder = this.tickStep_tickWorldBorder_create();
++        this.tickStep_advanceWeatherCycle = this.tickStep_advanceWeatherCycle_create();
++        this.tickStep_applySleep = this.tickStep_applySleep_create();
++        this.tickStep_updateSkyBrightness = this.tickStep_updateSkyBrightness_create();
++        this.tickStep_tickTime = this.tickStep_tickTime_create();
++        this.tickStep_setScheduledBlocksGameTime = this.tickStep_setScheduledBlocksGameTime_create();
++        this.tickStep_setIsDebug = this.tickStep_setIsDebug_create();
++        this.tickStep_tickBlocks = this.tickStep_tickBlocks_create();
++        this.tickStep_tickFluids = this.tickStep_tickFluids_create();
++        this.tickStep_tickRaids = this.tickStep_tickRaids_create();
++        this.tickStep_tickChunkSource = this.tickStep_tickChunkSource_create();
++        this.tickStep_doRunBlockEvents = this.tickStep_doRunBlockEvents_create();
++        this.tickStep_stopHandlingTick = this.tickStep_stopHandlingTick_create();
++        this.tickStep_setDoEntityAndBlockEntityTick = this.tickStep_setDoEntityAndBlockEntityTick_create();
++        this.tickStep_tickDragonFight = this.tickStep_tickDragonFight_create();
++        this.tickStep_activateEntities = this.tickStep_activateEntities_create();
++        this.tickStep_tickEntityList = this.tickStep_tickEntityList_create();
++        this.tickStep_tickBlockEntities = this.tickStep_tickBlockEntities_create();
++    }
++
 +    public Runnable wrapTickStep(Runnable runnable) {
 +        return () -> {
 +            try {
@@ -376,64 +449,75 @@ index e7747b19685fd943d7fbefbfef656f8bb7c359f1..dd0278bb5335f05d14d3da9d7f894920
 +        };
 +    }
 +
-+    public final void tickStep_updatePlayersAffectingSpawning_inner() {
-+        // Gale end - split tick steps
++    private Runnable tickStep_updatePlayersAffectingSpawning_create() {
++        return this.wrapTickStep(() -> {
++            // Gale end - split tick steps
          // Paper start - optimise checkDespawn
          this.playersAffectingSpawning.clear();
          for (ServerPlayer player : this.players) {
-@@ -641,10 +681,29 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -641,10 +731,35 @@ public class ServerLevel extends Level implements WorldGenLevel {
                  this.playersAffectingSpawning.add(player);
              }
          }
 -        // Paper end - optimise checkDespawn
-+        // Gale start - split tick steps
+-        this.handlingTick = true;
++            // Gale start - split tick steps
++        });
 +    }
 +
-+    public final Runnable tickStep_updatePlayersAffectingSpawning = this.wrapTickStep(this::tickStep_updatePlayersAffectingSpawning_inner);
++    private Runnable tickStep_startHandlingTick_create() {
++        return this.wrapTickStep(() -> {
++            this.handlingTick = true;
++        });
++    }
 +
-+    public final Runnable tickStep_startHandlingTick = this.wrapTickStep(() -> {
-         this.handlingTick = true;
-+    });
-+
-+    public final Runnable tickStep_tickWorldBorder = this.wrapTickStep(() -> {
-+        // Gale end - split tick steps
++    private Runnable tickStep_tickWorldBorder_create() {
++        return this.wrapTickStep(() -> {
++            // Gale end - split tick steps
          this.getWorldBorder().tick();
-+        // Gale start - split tick steps
-+    });
++            // Gale start - split tick steps
++        });
++    }
 +
-+    public final Runnable tickStep_advanceWeatherCycle = this.wrapTickStep(() -> {
-+        // Gale end - split tick steps
++    private Runnable tickStep_advanceWeatherCycle_create() {
++        return this.wrapTickStep(() -> {
++            // Gale end - split tick steps
          this.advanceWeatherCycle();
-+        // Gale start - split tick steps
-+    });
++            // Gale start - split tick steps
++        });
++    }
 +
-+    public final void tickStep_applySleep_inner() {
-+        // Gale end - split tick steps
++    private Runnable tickStep_applySleep_create() {
++        return this.wrapTickStep(() -> {
++            // Gale end - split tick steps
          int i = this.getGameRules().getInt(GameRules.RULE_PLAYERS_SLEEPING_PERCENTAGE);
          long j;
  
-@@ -667,40 +726,140 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -667,40 +782,156 @@ public class ServerLevel extends Level implements WorldGenLevel {
                  this.resetWeatherCycle();
              }
          }
-+        // Gale start - split tick steps
++            // Gale start - split tick steps
++        });
++    }
+ 
++    private Runnable tickStep_updateSkyBrightness_create() {
++        return this.wrapTickStep(() -> {
++            // Gale end - split tick steps
+         this.updateSkyBrightness();
++            // Gale start - split tick steps
++        });
 +    }
 +
-+    public final Runnable tickStep_applySleep = this.wrapTickStep(this::tickStep_applySleep_inner);
- 
-+    public final Runnable tickStep_updateSkyBrightness = this.wrapTickStep(() -> {
-+        // Gale end - split tick steps
-         this.updateSkyBrightness();
-+        // Gale start - split tick steps
-+    });
-+
-+    public final Runnable tickStep_tickTime = this.wrapTickStep(() -> {
-+        // Gale end - split tick steps
++    private Runnable tickStep_tickTime_create() {
++        return this.wrapTickStep(() -> {
++            // Gale end - split tick steps
          this.tickTime();
-+        // Gale start - split tick steps
-+    });
++            // Gale start - split tick steps
++        });
++    }
 +
-+    public Runnable wrapScheduledBlocksTickStep(Runnable runnable) {
++    private Runnable wrapScheduledBlocksTickStep(Runnable runnable) {
 +        return this.wrapTickStep(() -> {
 +            // Gale end - split tick steps
          timings.scheduledBlocks.startTiming(); // Paper
@@ -448,15 +532,19 @@ index e7747b19685fd943d7fbefbfef656f8bb7c359f1..dd0278bb5335f05d14d3da9d7f894920
 +        });
 +    }
 +
-+    public Runnable tickStep_setScheduledBlocksGameTime = this.wrapScheduledBlocksTickStep(() -> {
-+        this.tick_scheduledBlocksGameTime = this.getGameTime();
-+    });
-+
-+    public Runnable tickStep_setIsDebug = this.wrapScheduledBlocksTickStep(() -> {
-+        this.tick_isDebug = this.isDebug();
-+    });
++    private Runnable tickStep_setScheduledBlocksGameTime_create() {
++        return this.wrapScheduledBlocksTickStep(() -> {
++            this.tick_scheduledBlocksGameTime = this.getGameTime();
++        });
++    }
  
-+    public Runnable wrapNonDebugScheduledBlocksTickStep(Runnable runnable) {
++    private Runnable tickStep_setIsDebug_create() {
++        return this.wrapScheduledBlocksTickStep(() -> {
++            this.tick_isDebug = this.isDebug();
++        });
++    }
++
++    private Runnable wrapNonDebugScheduledBlocksTickStep(Runnable runnable) {
 +        return this.wrapScheduledBlocksTickStep(() -> {
 +            if (!this.tick_isDebug) {
 +                runnable.run();
@@ -464,51 +552,58 @@ index e7747b19685fd943d7fbefbfef656f8bb7c359f1..dd0278bb5335f05d14d3da9d7f894920
 +        });
 +    }
 +
-+    public final void tickStep_tickBlocks_inner() {
++    private Runnable tickStep_tickBlocks_create() {
++        return this.wrapScheduledBlocksTickStep(() -> {
 +            this.blockTicks.tick(this.tick_scheduledBlocksGameTime, 65536, this::tickBlock);
++        });
 +    }
 +
-+    public final Runnable tickStep_tickBlocks = this.wrapScheduledBlocksTickStep(this::tickStep_tickBlocks_inner);
-+
-+    public final void tickStep_tickFluids_inner() {
++    private Runnable tickStep_tickFluids_create() {
++        return this.wrapScheduledBlocksTickStep(() -> {
 +            this.fluidTicks.tick(this.tick_scheduledBlocksGameTime, 65536, this::tickFluid);
++        });
 +    }
 +
-+    public final Runnable tickStep_tickFluids = this.wrapScheduledBlocksTickStep(this::tickStep_tickFluids_inner);
-+
-+    public final void tickStep_tickRaids_inner() {
-+        // Gale end - split tick steps
++    private Runnable tickStep_tickRaids_create() {
++        return this.wrapTickStep(() -> {
++            // Gale end - split tick steps
          this.timings.raids.startTiming(); // Paper - timings
          this.raids.tick();
          this.timings.raids.stopTiming(); // Paper - timings
 -        this.timings.chunkProviderTick.startTiming(); // Paper - timings
 -        this.getChunkSource().tick(shouldKeepTicking, true);
 -        this.timings.chunkProviderTick.stopTiming(); // Paper - timings
-+        // Gale start - split tick steps
++            // Gale start - split tick steps
++        });
 +    }
 +
-+    public final Runnable tickStep_tickRaids = this.wrapTickStep(this::tickStep_tickRaids_inner);
++    private Runnable tickStep_tickChunkSource_create() {
++        return () -> {
++            this.getChunkSource().tick(MinecraftServer.tick_shouldKeepTicking, true);
++        };
++    }
 +
-+    public final Runnable tickStep_tickChunkSource = () -> {
-+        this.getChunkSource().tick(MinecraftServer.tick_shouldKeepTicking, true);
-+    };
-+
-+    public final Runnable tickStep_doRunBlockEvents = this.wrapTickStep(() -> {
-+        // Gale end - split tick steps
++    private Runnable tickStep_doRunBlockEvents_create() {
++        return this.wrapTickStep(() -> {
++            // Gale end - split tick steps
          timings.doSounds.startTiming(); // Spigot
          this.runBlockEvents();
          timings.doSounds.stopTiming(); // Spigot
-+        // Gale start - split tick steps
-+    });
++            // Gale start - split tick steps
++        });
++    }
 +
-+    public final Runnable tickStep_stopHandlingTick = this.wrapTickStep(() -> {
-+        // Gale end - split tick steps
++    private Runnable tickStep_stopHandlingTick_create() {
++        return this.wrapTickStep(() -> {
++            // Gale end - split tick steps
          this.handlingTick = false;
-+        // Gale start - split tick steps
-+    });
++            // Gale start - split tick steps
++        });
++    }
 +
-+    public final void tickStep_setDoEntityAndBlockEntityTick_inner() {
-+        // Gale end - split tick steps
++    private Runnable tickStep_setDoEntityAndBlockEntityTick_create() {
++        return this.wrapTickStep(() -> {
++            // Gale end - split tick steps
          boolean flag = true || !this.players.isEmpty() || !this.getForcedChunks().isEmpty(); // CraftBukkit - this prevents entity cleanup, other issues on servers with no players
  
          if (flag) {
@@ -516,13 +611,12 @@ index e7747b19685fd943d7fbefbfef656f8bb7c359f1..dd0278bb5335f05d14d3da9d7f894920
          }
  
 -        if (flag || this.emptyTime++ < 300) {
-+        // Gale start - split tick steps
-+        this.tick_doEntityAndBlockEntityTick = flag || this.emptyTime++ < 300;
++            // Gale start - split tick steps
++            this.tick_doEntityAndBlockEntityTick = flag || this.emptyTime++ < 300;
++        });
 +    }
 +
-+    public final Runnable tickStep_setDoEntityAndBlockEntityTick = this.wrapTickStep(this::tickStep_setDoEntityAndBlockEntityTick_inner);
-+
-+    public Runnable wrapDoEntityAndBlockEntityTickTickStep(Runnable runnable) {
++    private Runnable wrapDoEntityAndBlockEntityTickTickStep(Runnable runnable) {
 +        return this.wrapTickStep(() -> {
 +            if (this.tick_doEntityAndBlockEntityTick) {
 +                runnable.run();
@@ -530,7 +624,7 @@ index e7747b19685fd943d7fbefbfef656f8bb7c359f1..dd0278bb5335f05d14d3da9d7f894920
 +        });
 +    }
 +
-+    public Runnable wrapTickEntitiesTickStep(Runnable runnable) {
++    private Runnable wrapTickEntitiesTickStep(Runnable runnable) {
 +        return this.wrapDoEntityAndBlockEntityTickTickStep(() -> {
 +            // Gale end - split tick steps
 +            timings.tickEntities.startTiming(); // Spigot
@@ -540,47 +634,48 @@ index e7747b19685fd943d7fbefbfef656f8bb7c359f1..dd0278bb5335f05d14d3da9d7f894920
 +        });
 +    }
 +
-+    public final void tickStep_tickDragonFight_inner() {
-+        // Gale end - split tick steps
++    private Runnable tickStep_tickDragonFight_create() {
++        return this.wrapTickEntitiesTickStep(() -> {
++            // Gale end - split tick steps
              timings.tickEntities.startTiming(); // Spigot
              if (this.dragonFight != null) {
                  this.dragonFight.tick();
              }
-+        // Gale start - split tick steps
++            // Gale start - split tick steps
++        });
 +    }
  
-+    public final Runnable tickStep_tickDragonFight = this.wrapTickEntitiesTickStep(this::tickStep_tickDragonFight_inner);
-+
-+    public final Runnable tickStep_activateEntities = this.wrapTickEntitiesTickStep(() -> {
-+        // Gale end - split tick steps
++    private Runnable tickStep_activateEntities_create() {
++        return this.wrapTickEntitiesTickStep(() -> {
++            // Gale end - split tick steps
              org.spigotmc.ActivationRange.activateEntities(this); // Spigot
-+        // Gale start - split tick steps
-+    });
++            // Gale start - split tick steps
++        });
++    }
 +
-+    public final void tickStep_tickEntityList_inner() {
++    private Runnable tickStep_tickEntityList_create() {
++        return this.wrapTickEntitiesTickStep(() -> {
 +        // Gale end - split tick steps
              timings.entityTick.startTiming(); // Spigot
              this.entityTickList.forEach((entity) -> {
                  if (!entity.isRemoved()) {
-@@ -738,13 +897,16 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -738,11 +969,15 @@ public class ServerLevel extends Level implements WorldGenLevel {
                  }
              });
              timings.entityTick.stopTiming(); // Spigot
 -            timings.tickEntities.stopTiming(); // Spigot
 -            this.tickBlockEntities();
 -        }
--
--        //this.entityManager.tick(); // Paper - rewrite chunk system
 +        // Gale start - split tick steps
++        });
++    }
+ 
+-        //this.entityManager.tick(); // Paper - rewrite chunk system
++    private Runnable tickStep_tickBlockEntities_create() {
++        return this.wrapDoEntityAndBlockEntityTickTickStep(() -> {
++            // Gale end - split tick steps
++            this.tickBlockEntities();
++        }); // Gale - split tick steps
      }
  
-+    public final Runnable tickStep_tickEntityList = this.wrapTickEntitiesTickStep(this::tickStep_tickEntityList_inner);
-+
-+    public final Runnable tickStep_tickBlockEntities = this.wrapDoEntityAndBlockEntityTickTickStep(() -> {
-+        // Gale end - split tick steps
-+            this.tickBlockEntities();
-+    }); // Gale - split tick steps
-+
      @Override
-     public boolean shouldTickBlocksAt(long chunkPos) {
-         // Paper start - replace player chunk loader system
