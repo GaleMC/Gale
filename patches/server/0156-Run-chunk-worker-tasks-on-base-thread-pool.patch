@@ -654,7 +654,7 @@ index 0000000000000000000000000000000000000000..3f7095f502f883715799958f36980bbf
 +
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/thread/BaseThread.java b/src/main/java/org/galemc/gale/executor/thread/BaseThread.java
-index 1024c45be3d867af6563d4f6984e716cc0bc12d2..f384479004bdc9e412f14f35fd3bfedca371053e 100644
+index 7cdd16786a8fba4fbc79b27c0baa9ed10a0bac21..e20e3cb98ab828c4dc7187f3c63e51e7512d3a32 100644
 --- a/src/main/java/org/galemc/gale/executor/thread/BaseThread.java
 +++ b/src/main/java/org/galemc/gale/executor/thread/BaseThread.java
 @@ -2,6 +2,8 @@
@@ -674,7 +674,7 @@ index 1024c45be3d867af6563d4f6984e716cc0bc12d2..f384479004bdc9e412f14f35fd3bfedc
  import org.jetbrains.annotations.Nullable;
  
  import java.util.concurrent.TimeUnit;
-@@ -659,6 +662,20 @@ public abstract class BaseThread extends Thread implements AbstractYieldingThrea
+@@ -660,6 +663,20 @@ public abstract class BaseThread extends Thread implements AbstractYieldingThrea
          }
      }
  

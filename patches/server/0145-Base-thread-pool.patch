@@ -4259,10 +4259,10 @@ index 0000000000000000000000000000000000000000..a5605765f6be0b75e5df5613e8b393b6
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/thread/BaseThread.java b/src/main/java/org/galemc/gale/executor/thread/BaseThread.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..1024c45be3d867af6563d4f6984e716cc0bc12d2
+index 0000000000000000000000000000000000000000..7cdd16786a8fba4fbc79b27c0baa9ed10a0bac21
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/thread/BaseThread.java
-@@ -0,0 +1,682 @@
+@@ -0,0 +1,683 @@
 +// Gale - base thread pool
 +
 +package org.galemc.gale.executor.thread;
@@ -4438,7 +4438,8 @@ index 0000000000000000000000000000000000000000..1024c45be3d867af6563d4f6984e716c
 +    }
 +
 +    /**
-+     * This method is based on {@link #signal}.
++     * This method is based on {@link #signal}, and must be so, or {@link BaseThreadActivation} will get stuck
++     * while choosing a thread to activate.
 +     *
 +     * @see #signal
 +     */
@@ -5418,10 +5419,10 @@ index 0000000000000000000000000000000000000000..77fe10e51b00115da520cfc211bf84ba
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/thread/pool/BaseThreadActivation.java b/src/main/java/org/galemc/gale/executor/thread/pool/BaseThreadActivation.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..d454940cb5071e4932b96cd701ef7e91ec203787
+index 0000000000000000000000000000000000000000..1bcb4e58a1c3951c30ea4e6c12b877f3a10b6ca6
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/thread/pool/BaseThreadActivation.java
-@@ -0,0 +1,506 @@
+@@ -0,0 +1,514 @@
 +// Gale - base thread pool
 +
 +package org.galemc.gale.executor.thread.pool;
@@ -5647,15 +5648,23 @@ index 0000000000000000000000000000000000000000..d454940cb5071e4932b96cd701ef7e91
 +            // Perform an update
 +            do {
 +                try {
-+                    update();
++                    /*
++                     * If newUpdateCallsReceived is zero here, it was set to 0 between the check for whether
++                     * it is positive and the setting to true of isUpdateGoing in the while statement below,
++                     * or it was set to 0 between the increment and the subsequent setting to true of isUpdateGoing
++                     * at the start of this method.
++                     */
++                    if (newUpdateCallsReceived.get() > 0) {
++                        update();
++                    }
 +                } finally {
 +                    isUpdateOngoing.set(false);
 +                }
 +            /*
-+            If newUpdateCallsReceived is positive, it was increased between it being set to 0 and
++            If newUpdateCallsReceived is positive here, it was increased between it being set to 0 and
 +            isUpdateOngoing being set to false, so we must repeat.
 +             */
-+            } while (newUpdateCallsReceived.get() > 0);
++            } while (newUpdateCallsReceived.get() > 0 && !isUpdateOngoing.get() && !isUpdateOngoing.getAndSet(true));
 +        }
 +    }
 +
