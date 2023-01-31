@@ -1,0 +1,308 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Martijn Muijsers <martijnmuijsers@live.nl>
+Date: Tue, 31 Jan 2023 22:39:10 +0100
+Subject: [PATCH] Multithreaded ticking
+
+License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
+Gale - https://galemc.org
+
+diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
+index 39c4fe8fdd806b4b5bc3cb2dfdde9a29b11b386e..6188bfcffeded21563aa8eae0e3d135cc497e386 100644
+--- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
++++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
+@@ -432,4 +432,20 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+ 
+     }
+ 
++    // Gale start - multithreading
++    public Multithreading multithreading;
++    public class Multithreading extends ConfigurationPart {
++
++        // Gale start - multithreaded ticking
++        public Ticking ticking;
++        public class Ticking extends ConfigurationPart {
++
++            public boolean clearExplosionDensityCache = true;
++
++        }
++        // Gale end - multithreaded ticking
++
++    }
++    // Gale end - multithreading
++
+ }
+diff --git a/src/main/java/org/galemc/gale/tick/step/ServerChildrenTickSteps.java b/src/main/java/org/galemc/gale/tick/step/ServerChildrenTickSteps.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..9408c7c6e6b60bd9d5153912a2d85585bc7744d1
+--- /dev/null
++++ b/src/main/java/org/galemc/gale/tick/step/ServerChildrenTickSteps.java
+@@ -0,0 +1,146 @@
++// Gale - multithreaded ticking
++
++package org.galemc.gale.tick.step;
++
++import net.minecraft.server.MinecraftServer;
++import org.galemc.gale.configuration.GaleGlobalConfiguration;
++
++/**
++ * A utility class defining the tick steps in {@link MinecraftServer#tickChildren} in a way
++ * that they can be executed both in the default order, or submitted as tasks that may run in parallel.
++ *
++ * @author Martijn Muijsers under AGPL-3.0
++ */
++public final class ServerChildrenTickSteps {
++
++    private ServerChildrenTickSteps() {}
++
++    public static final ServerTickStep doSchedulerHeartbeat =
++        new ServerTickStep("doSchedulerHeartbeat", () -> MinecraftServer.SERVER.tickStep_doSchedulerHeartbeat());
++    public static final ServerTickStep tickFunctions =
++        new ServerTickStep("tickFunctions", () -> MinecraftServer.SERVER.tickStep_tickFunctions());
++    public static final ServerTickStep runProcessQueueTasks =
++        new ServerTickStep("runProcessQueueTasks", () -> MinecraftServer.SERVER.tickStep_runProcessQueueTasks());
++    public static final WorldTickStep sendTimeUpdates =
++        new WorldTickStep("sendTimeUpdates", world -> MinecraftServer.SERVER.tickStep_sendTimeUpdates(world));
++    public static final ServerTickStep startIteratingOverLevels =
++        new ServerTickStep("startIteratingOverLevels", () -> MinecraftServer.SERVER.tickStep_startIteratingOverLevels());
++    public static final WorldTickStep updateEvents =
++        new WorldTickStep("updateEvents", world -> MinecraftServer.SERVER.tickStep_updateEvents(world));
++
++    public static final WorldTickStep updatePlayersAffectingSpawning =
++        new WorldTickStep("updatePlayersAffectingSpawning", world -> world.tickStep_updatePlayersAffectingSpawning.run());
++    public static final WorldTickStep startHandlingTick =
++		new WorldTickStep("startHandlingTick", world -> world.tickStep_startHandlingTick.run());
++    public static final WorldTickStep tickWorldBorder =
++		new WorldTickStep("tickWorldBorder", world -> world.tickStep_tickWorldBorder.run());
++    public static final WorldTickStep advanceWeatherCycle =
++		new WorldTickStep("advanceWeatherCycle", world -> world.tickStep_advanceWeatherCycle.run());
++    public static final WorldTickStep applySleep =
++		new WorldTickStep("applySleep", world -> world.tickStep_applySleep.run());
++    public static final WorldTickStep updateSkyBrightness =
++		new WorldTickStep("updateSkyBrightness", world -> world.tickStep_updateSkyBrightness.run());
++    public static final WorldTickStep tickTime =
++		new WorldTickStep("tickTime", world -> world.tickStep_tickTime.run());
++    public static final WorldTickStep setScheduledBlocksGameTime =
++		new WorldTickStep("setScheduledBlocksGameTime", world -> world.tickStep_setScheduledBlocksGameTime.run());
++    public static final WorldTickStep setIsDebug =
++		new WorldTickStep("setIsDebug", world -> world.tickStep_setIsDebug.run());
++    public static final WorldTickStep tickBlocks =
++		new WorldTickStep("tickBlocks", world -> world.tickStep_tickBlocks.run());
++    public static final WorldTickStep tickFluids =
++		new WorldTickStep("tickFluids", world -> world.tickStep_tickFluids.run());
++    public static final WorldTickStep tickRaids =
++		new WorldTickStep("tickRaids", world -> world.tickStep_tickRaids.run());
++
++    public static final WorldTickStep purgeStaleTickets =
++		new WorldTickStep("purgeStaleTickets", world -> world.getChunkSource().tickStep_purgeStaleTickets.run());
++    public static final WorldTickStep runDistanceManagerUpdates =
++		new WorldTickStep("runDistanceManagerUpdates", world -> world.getChunkSource().tickStep_runDistanceManagerUpdates.run());
++    public static final WorldTickStep tickChunks =
++		new WorldTickStep("tickChunks", world -> world.getChunkSource().tickStep_tickChunks.run());
++    public static final WorldTickStep tickChunkMap =
++		new WorldTickStep("tickChunkMap", world -> world.getChunkSource().tickStep_tickChunkMap.run());
++    public static final WorldTickStep clearCache =
++		new WorldTickStep("clearCache", world -> world.getChunkSource().tickStep_clearCache.run());
++
++    public static final WorldTickStep doRunBlockEvents =
++		new WorldTickStep("doRunBlockEvents", world -> world.tickStep_doRunBlockEvents.run());
++    public static final WorldTickStep stopHandlingTick =
++		new WorldTickStep("stopHandlingTick", world -> world.tickStep_stopHandlingTick.run());
++    public static final WorldTickStep setDoEntityAndBlockEntityTick =
++		new WorldTickStep("setDoEntityAndBlockEntityTick", world -> world.tickStep_setDoEntityAndBlockEntityTick.run());
++    public static final WorldTickStep tickDragonFight =
++		new WorldTickStep("tickDragonFight", world -> world.tickStep_tickDragonFight.run());
++    public static final WorldTickStep activateEntities =
++		new WorldTickStep("activateEntities", world -> world.tickStep_activateEntities.run());
++    public static final WorldTickStep tickEntityList =
++		new WorldTickStep("tickEntityList", world -> world.tickStep_tickEntityList.run());
++    public static final WorldTickStep tickBlockEntities =
++		new WorldTickStep("tickBlockEntities", world -> world.tickStep_tickBlockEntities.run());
++
++    public static final WorldTickStep recalculateRegions =
++		new WorldTickStep("recalculateRegions", world -> MinecraftServer.SERVER.tickStep_recalculateRegions(world));
++    public static final WorldTickStep clearExplosionDensityCache = (WorldTickStep)
++		new WorldTickStep("clearExplosionDensityCache", world -> MinecraftServer.SERVER.tickStep_clearExplosionDensityCache(world))
++            .withGetDoMultithreaded(() -> GaleGlobalConfiguration.get().multithreading.ticking.clearExplosionDensityCache);
++    public static final ServerTickStep stopIteratingOverLevels =
++		new ServerTickStep("stopIteratingOverLevels", () -> MinecraftServer.SERVER.tickStep_stopIteratingOverLevels());
++    public static final ServerTickStep tickConnection =
++		new ServerTickStep("tickConnection", () -> MinecraftServer.SERVER.tickStep_tickConnection());
++    public static final ServerTickStep tickPlayerList =
++		new ServerTickStep("tickPlayerList", () -> MinecraftServer.SERVER.tickStep_tickPlayerList());
++    public static final ServerTickStep tickGameTestTicker =
++		new ServerTickStep("tickGameTestTicker", () -> MinecraftServer.SERVER.tickStep_tickGameTestTicker());
++    public static final ServerTickStep runTickables =
++		new ServerTickStep("runTickables", () -> MinecraftServer.SERVER.tickStep_runTickables());
++
++    /**
++     * The {@linkplain TickStep tick steps} that occur in {@link MinecraftServer#tickChildren},
++     * in the same order.
++     */
++    public static final TickStep[] values = {
++        doSchedulerHeartbeat,
++        tickFunctions,
++        runProcessQueueTasks,
++        sendTimeUpdates,
++        startIteratingOverLevels,
++        updateEvents,
++
++        updatePlayersAffectingSpawning,
++        startHandlingTick,
++        tickWorldBorder,
++        advanceWeatherCycle,
++        applySleep,
++        updateSkyBrightness,
++        tickTime,
++        setScheduledBlocksGameTime,
++        setIsDebug,
++        tickBlocks,
++        tickFluids,
++        tickRaids,
++
++        purgeStaleTickets,
++        runDistanceManagerUpdates,
++        tickChunks,
++        tickChunkMap,
++        clearCache,
++
++        doRunBlockEvents,
++        stopHandlingTick,
++        setDoEntityAndBlockEntityTick,
++        tickDragonFight,
++        activateEntities,
++        tickEntityList,
++        tickBlockEntities,
++
++        recalculateRegions,
++        clearExplosionDensityCache,
++        stopIteratingOverLevels,
++        tickConnection,
++        tickPlayerList,
++        tickGameTestTicker,
++        runTickables
++    };
++
++}
+diff --git a/src/main/java/org/galemc/gale/tick/step/ServerTickStep.java b/src/main/java/org/galemc/gale/tick/step/ServerTickStep.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..538dad9bfa0eb982ef0d0ffb96bb8a6ef7d4ca38
+--- /dev/null
++++ b/src/main/java/org/galemc/gale/tick/step/ServerTickStep.java
+@@ -0,0 +1,26 @@
++// Gale - multithreaded ticking
++
++package org.galemc.gale.tick.step;
++
++import net.minecraft.server.level.ServerLevel;
++
++import java.util.function.Consumer;
++
++/**
++ * A {@link TickStep} that applies to the whole server (i.e. is run once per tick).
++ *
++ * @author Martijn Muijsers under AGPL-3.0
++ */
++public class ServerTickStep extends TickStep {
++
++    /**
++     * A {@link Runnable} that performs this tick step.
++     */
++    public final Runnable action;
++
++    ServerTickStep(String name, Runnable action) {
++        super(name);
++        this.action = action;
++    }
++
++}
+diff --git a/src/main/java/org/galemc/gale/tick/step/TickStep.java b/src/main/java/org/galemc/gale/tick/step/TickStep.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..d34aa02b1164f96bf614381aca756faba0f044b4
+--- /dev/null
++++ b/src/main/java/org/galemc/gale/tick/step/TickStep.java
+@@ -0,0 +1,53 @@
++// Gale - multithreaded ticking
++
++package org.galemc.gale.tick.step;
++
++import java.util.function.Supplier;
++
++/**
++ * An abstract step of ticking, as used in {@link ServerChildrenTickSteps}.
++ *
++ * @author Martijn Muijsers under AGPL-3.0
++ */
++public abstract class TickStep {
++
++    /**
++     * A human-readable name for this tick step, for use in debugging.
++     */
++    public final String name;
++
++    /**
++     * Whether to execute this tick step over multiple threads, as far as possible.
++     * <br>
++     * This value is set by using {@link #updateDoMultithreaded()}.
++     */
++    public boolean doMultithreaded;
++
++    /**
++     * The supplier for updating {@link #doMultithreaded} via {@link #updateDoMultithreaded()}.
++     * <br>
++     * This can be set via {@link #withGetDoMultithreaded}
++     */
++    private Supplier<Boolean> getDoMultiThreaded = () -> false;
++
++    protected TickStep(String name) {
++        this.name = name;
++    }
++
++    /**
++     * @param getDoMultithreaded The new value for {@link #getDoMultiThreaded}.
++     * @return This instance.
++     */
++    TickStep withGetDoMultithreaded(Supplier<Boolean> getDoMultithreaded) {
++        this.getDoMultiThreaded = getDoMultithreaded;
++        return this;
++    }
++
++    /**
++     * Updates {@link #doMultithreaded} according to {@link #getDoMultiThreaded}.
++     */
++    public void updateDoMultithreaded() {
++        this.doMultithreaded = this.getDoMultiThreaded.get();
++    }
++
++}
+diff --git a/src/main/java/org/galemc/gale/tick/step/WorldTickStep.java b/src/main/java/org/galemc/gale/tick/step/WorldTickStep.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..2c07a88ffb341ce57a030c5d72b55debbd34fec6
+--- /dev/null
++++ b/src/main/java/org/galemc/gale/tick/step/WorldTickStep.java
+@@ -0,0 +1,26 @@
++// Gale - multithreaded ticking
++
++package org.galemc.gale.tick.step;
++
++import net.minecraft.server.level.ServerLevel;
++
++import java.util.function.Consumer;
++
++/**
++ * A {@link TickStep} that applies to each individual world separately.
++ *
++ * @author Martijn Muijsers under AGPL-3.0
++ */
++public class WorldTickStep extends TickStep {
++
++    /**
++     * A {@link Consumer} that performs this tick step for a given {@link ServerLevel}.
++     */
++    public final Consumer<ServerLevel> action;
++
++    WorldTickStep(String name, Consumer<ServerLevel> action) {
++        super(name);
++        this.action = action;
++    }
++
++}

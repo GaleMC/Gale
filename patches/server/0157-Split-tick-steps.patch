@@ -7,18 +7,10 @@ License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 7ed820d2483bf6741a355b062f062a04866ba938..d39b432ed49257901e0432c73ecd1a84f404a8d2 100644
+index 7ed820d2483bf6741a355b062f062a04866ba938..575f8ba79cf3547b837abb5957fed0aa29e1d0cf 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -42,6 +42,7 @@ import java.util.concurrent.CompletableFuture;
- import java.util.concurrent.Executor;
- import java.util.concurrent.atomic.AtomicReference;
- import java.util.function.BooleanSupplier;
-+import java.util.function.Consumer;
- import java.util.function.Function;
- import java.util.stream.Collectors;
- import java.util.stream.Stream;
-@@ -154,7 +155,6 @@ import org.galemc.gale.executor.annotation.thread.OriginalServerThreadOnly;
+@@ -154,7 +154,6 @@ import org.galemc.gale.executor.annotation.thread.OriginalServerThreadOnly;
  import org.galemc.gale.executor.queue.BaseTaskQueues;
  import org.galemc.gale.executor.queue.ScheduledServerThreadTaskQueues;
  import org.galemc.gale.executor.thread.OriginalServerThread;
@@ -26,7 +18,7 @@ index 7ed820d2483bf6741a355b062f062a04866ba938..d39b432ed49257901e0432c73ecd1a84
  import org.galemc.gale.executor.thread.pool.BaseThreadActivation;
  import org.jetbrains.annotations.NotNull;
  import org.slf4j.Logger;
-@@ -1576,15 +1576,53 @@ public abstract class MinecraftServer extends MinecraftServerBlockableEventLoop
+@@ -1576,15 +1575,53 @@ public abstract class MinecraftServer extends MinecraftServerBlockableEventLoop
          co.aikar.timings.TimingsManager.FULL_SERVER_TICK.stopTimingFullServerTick(); // Paper // Gale - final timings calls
      }
  
@@ -50,7 +42,7 @@ index 7ed820d2483bf6741a355b062f062a04866ba938..d39b432ed49257901e0432c73ecd1a84
 +            this.tickStep_updateEvents(worldserver);
 +            this.tickStep_tickWorld(worldserver);
 +            this.tickStep_recalculateRegions(worldserver);
-+            this.tickStep_clearExplosionDensity(worldserver);
++            this.tickStep_clearExplosionDensityCache(worldserver);
 +        }
 +        this.tickStep_stopIteratingOverLevels();
 +        this.tickStep_tickConnection();
@@ -81,7 +73,7 @@ index 7ed820d2483bf6741a355b062f062a04866ba938..d39b432ed49257901e0432c73ecd1a84
          // CraftBukkit start
          // Run tasks that are waiting on processing
          MinecraftTimings.processQueueTimer.startTiming(); // Spigot
-@@ -1592,11 +1630,14 @@ public abstract class MinecraftServer extends MinecraftServerBlockableEventLoop
+@@ -1592,11 +1629,14 @@ public abstract class MinecraftServer extends MinecraftServerBlockableEventLoop
              this.processQueue.remove().run();
          }
          MinecraftTimings.processQueueTimer.stopTiming(); // Spigot
@@ -97,7 +89,7 @@ index 7ed820d2483bf6741a355b062f062a04866ba938..d39b432ed49257901e0432c73ecd1a84
              final boolean doDaylight = world.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT);
              final long dayTime = world.getDayTime();
              long worldTime = world.getGameTime();
-@@ -1611,15 +1652,23 @@ public abstract class MinecraftServer extends MinecraftServerBlockableEventLoop
+@@ -1611,15 +1651,23 @@ public abstract class MinecraftServer extends MinecraftServerBlockableEventLoop
                      new ClientboundSetTimePacket(worldTime, playerTime, doDaylight);
                  entityplayer.connection.send(packet); // Add support for per player time
              }
@@ -123,7 +115,7 @@ index 7ed820d2483bf6741a355b062f062a04866ba938..d39b432ed49257901e0432c73ecd1a84
  
              /* Drop global time updates
              if (this.tickCount % 20 == 0) {
-@@ -1629,16 +1678,28 @@ public abstract class MinecraftServer extends MinecraftServerBlockableEventLoop
+@@ -1629,16 +1677,28 @@ public abstract class MinecraftServer extends MinecraftServerBlockableEventLoop
              }
              // CraftBukkit end */
  
@@ -157,7 +149,7 @@ index 7ed820d2483bf6741a355b062f062a04866ba938..d39b432ed49257901e0432c73ecd1a84
                  // Spigot Start
                  CrashReport crashreport;
                  try {
-@@ -1651,22 +1712,47 @@ public abstract class MinecraftServer extends MinecraftServerBlockableEventLoop
+@@ -1651,22 +1711,47 @@ public abstract class MinecraftServer extends MinecraftServerBlockableEventLoop
  
                  worldserver.fillReportDetails(crashreport);
                  throw new ReportedException(crashreport);
@@ -165,7 +157,7 @@ index 7ed820d2483bf6741a355b062f062a04866ba938..d39b432ed49257901e0432c73ecd1a84
 +        // Gale start - split tick steps
 +    }
  
-+    public final void tickStep_clearExplosionDensity(ServerLevel worldserver) {
++    public final void tickStep_clearExplosionDensityCache(ServerLevel worldserver) {
 +        // Gale end - split tick steps
              worldserver.explosionDensityCache.clear(); // Paper - Optimize explosions
 -        }
