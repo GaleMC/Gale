@@ -495,7 +495,7 @@ index 0019e5eefc4b638526a75dd3706a54033dd9b811..7ed820d2483bf6741a355b062f062a04
  
          this.isSaving = false;
 diff --git a/src/main/java/org/galemc/gale/executor/chunksystem/PrioritisedQueueExecutorThreadAgent.java b/src/main/java/org/galemc/gale/executor/chunksystem/PrioritisedQueueExecutorThreadAgent.java
-index 1cd17795c8f8a7a0d111123e662904522a6c8819..a6db8e2ca224410cc36080dbd5e8fe0e34ecabc0 100644
+index abdec5529763b77126494ae0c2be9b48de900bc1..35233587de14cf52da30324df89d9ec76b9c09fe 100644
 --- a/src/main/java/org/galemc/gale/executor/chunksystem/PrioritisedQueueExecutorThreadAgent.java
 +++ b/src/main/java/org/galemc/gale/executor/chunksystem/PrioritisedQueueExecutorThreadAgent.java
 @@ -9,7 +9,6 @@ import org.galemc.gale.executor.queue.BaseTaskQueues;
@@ -545,7 +545,7 @@ index ed3ccf2e64539363a7be2d507c68c40b5913f75c..a12250e5aaed02995b7bf09a8018a93f
  }
 diff --git a/src/main/java/org/galemc/gale/executor/queue/ChunkWorkerTaskQueue.java b/src/main/java/org/galemc/gale/executor/queue/ChunkWorkerTaskQueue.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..c82a83a310b0dffd2dc77256b128d0e58d6df691
+index 0000000000000000000000000000000000000000..3f7095f502f883715799958f36980bbfa8ccf581
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/queue/ChunkWorkerTaskQueue.java
 @@ -0,0 +1,104 @@
@@ -566,9 +566,9 @@ index 0000000000000000000000000000000000000000..c82a83a310b0dffd2dc77256b128d0e5
 + * This class provides access to, but does not store, the tasks related to chunk loading and chunk generation,
 + * that are scheduled and normally polled by the chunk system's {@link PrioritisedQueueExecutorThread}s.
 + * <br>
-+ * All tasks provided by this queue must be yield-free.//TODO Gale replace locks by spin locks
-+ * While multiple chunk system tasks may be executed in one base thread pool task,
-+ * tasks in this queue are not regarded as {@link TaskSpan#TINY}.
++ * All tasks provided by this queue must be yield-free. // TODO Gale replace potential used synchronized blocks etc. by spin locks
++ * Since multiple chunk system tasks may be executed in one base thread pool task,
++ * and individual tasks may be quite big, these tasks are not {@link TaskSpan#TINY}.
 + *
 + * @author Martijn Muijsers under AGPL-3.0
 + */
