@@ -54,24 +54,33 @@ index ac12cabaf15bc3520ff74d09faa48a135c63f23c..0019e5eefc4b638526a75dd3706a5403
          LOGGER.info("Closing Server");
          try {
 diff --git a/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java b/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java
-index f80c0e0ebeee46913ae050db77f888438064d8ae..07212e5d1d9e0e30dc2475fc6e7777aa4d5ce66a 100644
+index cc5373e78657d04a43cb844c4fcd5f0f9cacf187..43cb69a7fc55f6b5db05158b5dba3637a664bd19 100644
 --- a/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java
 +++ b/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java
 @@ -63,7 +63,9 @@ public enum BaseTaskQueueTier {
       * asynchronously with respect to the {@link ServerThread} and the ticking of the server.
       * Execution of
       */
--    ASYNC(new AbstractTaskQueue[0], Integer.getInteger("gale.thread.priority.async", 6));
+-    ASYNC(new AbstractTaskQueue[0], Integer.getInteger("gale.thread.priority.async", 6)),
 +    ASYNC(new AbstractTaskQueue[]{
 +        BaseTaskQueues.scheduledAsync
-+    }, Integer.getInteger("gale.thread.priority.async", 6));
- 
++    }, Integer.getInteger("gale.thread.priority.async", 6)),
      /**
-      * Equal to {@link #ordinal()}.
+      * A tier for queues that contain tasks with the same considerations as {@link #ASYNC},
+      * but with a low priority.
 diff --git a/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueues.java b/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueues.java
-index 42cc10eb5c71879562b3dcc527730cb333a54100..2295ead9ddcb57be81f8b8bd0731f56c9f7f60b9 100644
+index cf8e2b42ecfc8205af5b105e19975c3e54ffec5f..2295ead9ddcb57be81f8b8bd0731f56c9f7f60b9 100644
 --- a/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueues.java
 +++ b/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueues.java
+@@ -54,7 +54,7 @@ public final class BaseTaskQueues {
+     /**
+      * This queue explicitly stores tasks that represent steps or parts of steps in ticking the server and that must be
+      * executed on the main thread, and as such always have a higher priority in being started than pending tasks in
+-     * {@link #anyTickScheduledServerThread}.
++     * {@link #anyTickScheduledServerThread} and {@link #scheduledAsync}.
+      * <br>
+      * This queue may contain tasks of every {@link TaskSpan}.
+      * <br>
 @@ -79,7 +79,8 @@ public final class BaseTaskQueues {
  
      /**

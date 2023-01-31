@@ -3181,10 +3181,10 @@ index 0000000000000000000000000000000000000000..690979cb9b7ec3dedbd7d0c45d0c183a
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java b/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..f80c0e0ebeee46913ae050db77f888438064d8ae
+index 0000000000000000000000000000000000000000..cc5373e78657d04a43cb844c4fcd5f0f9cacf187
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java
-@@ -0,0 +1,110 @@
+@@ -0,0 +1,115 @@
 +// Gale - base thread pool
 +
 +package org.galemc.gale.executor.queue;
@@ -3250,7 +3250,12 @@ index 0000000000000000000000000000000000000000..f80c0e0ebeee46913ae050db77f88843
 +     * asynchronously with respect to the {@link ServerThread} and the ticking of the server.
 +     * Execution of
 +     */
-+    ASYNC(new AbstractTaskQueue[0], Integer.getInteger("gale.thread.priority.async", 6));
++    ASYNC(new AbstractTaskQueue[0], Integer.getInteger("gale.thread.priority.async", 6)),
++    /**
++     * A tier for queues that contain tasks with the same considerations as {@link #ASYNC},
++     * but with a low priority.
++     */
++    LOW_PRIORITY_ASYNC(new AbstractTaskQueue[0], Integer.getInteger("gale.thread.priority.async.low", 3));
 +
 +    /**
 +     * Equal to {@link #ordinal()}.
@@ -3297,7 +3302,7 @@ index 0000000000000000000000000000000000000000..f80c0e0ebeee46913ae050db77f88843
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueues.java b/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueues.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..42cc10eb5c71879562b3dcc527730cb333a54100
+index 0000000000000000000000000000000000000000..cf8e2b42ecfc8205af5b105e19975c3e54ffec5f
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueues.java
 @@ -0,0 +1,92 @@
@@ -3357,7 +3362,7 @@ index 0000000000000000000000000000000000000000..42cc10eb5c71879562b3dcc527730cb3
 +    /**
 +     * This queue explicitly stores tasks that represent steps or parts of steps in ticking the server and that must be
 +     * executed on the main thread, and as such always have a higher priority in being started than pending tasks in
-+     * {@link #anyTickScheduledServerThread} and {@link #scheduledAsync}.
++     * {@link #anyTickScheduledServerThread}.
 +     * <br>
 +     * This queue may contain tasks of every {@link TaskSpan}.
 +     * <br>

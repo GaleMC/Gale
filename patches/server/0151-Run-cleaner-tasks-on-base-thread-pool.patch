@@ -77,7 +77,7 @@ index 80f9e70d5c4330e079feccc9a4b1b5957c79ef45..e4955e8d04735b74007aae0bf3230281
      public static final long INVALID_CHUNK_KEY = getCoordinateKey(Integer.MAX_VALUE, Integer.MAX_VALUE);
  
 diff --git a/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java b/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java
-index 07212e5d1d9e0e30dc2475fc6e7777aa4d5ce66a..648621821d1ac3a0f5aa2af57c8c7d9176c3cfdf 100644
+index 43cb69a7fc55f6b5db05158b5dba3637a664bd19..c5e05b115eb3f8b2d55c5aa2ffce8d86822becf2 100644
 --- a/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java
 +++ b/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java
 @@ -64,6 +64,8 @@ public enum BaseTaskQueueTier {
@@ -87,8 +87,8 @@ index 07212e5d1d9e0e30dc2475fc6e7777aa4d5ce66a..648621821d1ac3a0f5aa2af57c8c7d91
 +        // The cleaner queue has high priority because it releases resources back to a pool, thereby saving memory
 +        BaseTaskQueues.cleaner,
          BaseTaskQueues.scheduledAsync
-     }, Integer.getInteger("gale.thread.priority.async", 6));
- 
+     }, Integer.getInteger("gale.thread.priority.async", 6)),
+     /**
 diff --git a/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueues.java b/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueues.java
 index 2295ead9ddcb57be81f8b8bd0731f56c9f7f60b9..92721a51268becb05d708db04e9d6daaa66fb8b2 100644
 --- a/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueues.java

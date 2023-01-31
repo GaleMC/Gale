@@ -533,10 +533,10 @@ index 0019e5eefc4b638526a75dd3706a54033dd9b811..7ed820d2483bf6741a355b062f062a04
  
          this.isSaving = false;
 diff --git a/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java b/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java
-index bfcec658cbf381cc793d7dd844a81fac27c43337..dc006d9940ef8114a3a3e4860fbc1da0f7c2ee60 100644
+index 9a908566ccdda9ca77e0f9236f674f17f79e9c40..dc006d9940ef8114a3a3e4860fbc1da0f7c2ee60 100644
 --- a/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java
 +++ b/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java
-@@ -63,13 +63,19 @@ public enum BaseTaskQueueTier {
+@@ -63,7 +63,6 @@ public enum BaseTaskQueueTier {
      /**
       * A tier for queues that contain general tasks that must be performed at some point in time,
       * asynchronously with respect to the {@link ServerThread} and the ticking of the server.
@@ -544,14 +544,11 @@ index bfcec658cbf381cc793d7dd844a81fac27c43337..dc006d9940ef8114a3a3e4860fbc1da0
       */
      ASYNC(new AbstractTaskQueue[]{
          // The cleaner queue has high priority because it releases resources back to a pool, thereby saving memory
-         BaseTaskQueues.cleaner,
-         BaseTaskQueues.scheduledAsync
--    }, Integer.getInteger("gale.thread.priority.async", 6));
-+    }, Integer.getInteger("gale.thread.priority.async", 6)),
-+    /**
-+     * A tier for queues that contain tasks with the same considerations as {@link #ASYNC},
-+     * but with a low priority.
-+     */
+@@ -74,7 +73,9 @@ public enum BaseTaskQueueTier {
+      * A tier for queues that contain tasks with the same considerations as {@link #ASYNC},
+      * but with a low priority.
+      */
+-    LOW_PRIORITY_ASYNC(new AbstractTaskQueue[0], Integer.getInteger("gale.thread.priority.async.low", 3));
 +    LOW_PRIORITY_ASYNC(new AbstractTaskQueue[]{
 +        BaseTaskQueues.chunkWorker
 +    }, Integer.getInteger("gale.thread.priority.async.low", 3));
