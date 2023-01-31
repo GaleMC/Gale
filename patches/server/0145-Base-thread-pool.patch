@@ -5418,7 +5418,7 @@ index 0000000000000000000000000000000000000000..77fe10e51b00115da520cfc211bf84ba
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/thread/pool/BaseThreadActivation.java b/src/main/java/org/galemc/gale/executor/thread/pool/BaseThreadActivation.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..4c5600945e57525a21fa0a39c6b627e9794afad7
+index 0000000000000000000000000000000000000000..d454940cb5071e4932b96cd701ef7e91ec203787
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/thread/pool/BaseThreadActivation.java
 @@ -0,0 +1,506 @@
@@ -5643,7 +5643,7 @@ index 0000000000000000000000000000000000000000..4c5600945e57525a21fa0a39c6b627e9
 +        // Make sure the updating thread repeats (must be set before evaluating isUpdateOngoing)
 +        newUpdateCallsReceived.incrementAndGet();
 +        // Start the update ourselves if not ongoing
-+        if (!isUpdateOngoing.getAndSet(true)) {
++        if (!isUpdateOngoing.get() && !isUpdateOngoing.getAndSet(true)) {
 +            // Perform an update
 +            do {
 +                try {
