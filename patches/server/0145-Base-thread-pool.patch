@@ -1851,18 +1851,18 @@ index 78f53ee557276de85f0431ebcb146445b1f4fb92..6176867eea06c53882dcaacfbde0334b
  
          return ret;
 diff --git a/src/main/java/org/galemc/gale/concurrent/Mutex.java b/src/main/java/org/galemc/gale/concurrent/Mutex.java
-index 65ec8cf910575dfa4c5024ec69b3be1ef2634722..174c248aa706f6b5f3e248cb7604b44a4d508967 100644
+index e8ab6cd25909a848c1826824a0f04dc593a26be7..fdad4a7a15d4af427e1441dcc3d837faf1189f85 100644
 --- a/src/main/java/org/galemc/gale/concurrent/Mutex.java
 +++ b/src/main/java/org/galemc/gale/concurrent/Mutex.java
-@@ -17,7 +17,7 @@ import java.util.concurrent.locks.Lock;
-  * respectively {@link #acquireUninterruptibly}, {@link #acquire}, {@link #tryAcquire} and
-  * {@link #release}. The {@link Lock#newCondition} method does not have a default implementation.
+@@ -19,7 +19,7 @@ import java.util.concurrent.locks.Lock;
+  * <br>
+  * This interface extends {@link AutoCloseable}, where {@link #close()} calls {@link #release()}.
   *
 - * @author Martijn Muijsers
 + * @author Martijn Muijsers under AGPL-3.0
   */
  @AnyThreadSafe
- public interface Mutex extends Lock {
+ public interface Mutex extends Lock, AutoCloseable {
 diff --git a/src/main/java/org/galemc/gale/concurrent/SemaphoreMutex.java b/src/main/java/org/galemc/gale/concurrent/SemaphoreMutex.java
 index 2e31501d26b141729c80975e97a23b09653ba3bf..5a454236073dd75ed36d058c0f033c4aada403e3 100644
 --- a/src/main/java/org/galemc/gale/concurrent/SemaphoreMutex.java

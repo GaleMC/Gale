@@ -8,10 +8,10 @@ Gale - https://galemc.org
 
 diff --git a/src/main/java/org/galemc/gale/concurrent/Mutex.java b/src/main/java/org/galemc/gale/concurrent/Mutex.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..65ec8cf910575dfa4c5024ec69b3be1ef2634722
+index 0000000000000000000000000000000000000000..e8ab6cd25909a848c1826824a0f04dc593a26be7
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/concurrent/Mutex.java
-@@ -0,0 +1,76 @@
+@@ -0,0 +1,121 @@
 +// Gale - mutex utility
 +
 +package org.galemc.gale.concurrent;
@@ -30,11 +30,13 @@ index 0000000000000000000000000000000000000000..65ec8cf910575dfa4c5024ec69b3be1e
 + * {@link Lock#tryLock} and {@link Lock#unlock} methods are simply deferred to their usual mutex versions,
 + * respectively {@link #acquireUninterruptibly}, {@link #acquire}, {@link #tryAcquire} and
 + * {@link #release}. The {@link Lock#newCondition} method does not have a default implementation.
++ * <br>
++ * This interface extends {@link AutoCloseable}, where {@link #close()} calls {@link #release()}.
 + *
 + * @author Martijn Muijsers
 + */
 +@AnyThreadSafe
-+public interface Mutex extends Lock {
++public interface Mutex extends Lock, AutoCloseable {
 +
 +    void acquireUninterruptibly();
 +
@@ -68,6 +70,49 @@ index 0000000000000000000000000000000000000000..65ec8cf910575dfa4c5024ec69b3be1e
 +
 +    @Override
 +    default void unlock() {
++        this.release();
++    }
++
++    /**
++     * Acquires this mutex in the style of a spin lock: repeatedly calls {@link #tryAcquire()} until successful.
++     */
++    default void spinLock() {
++        //noinspection StatementWithEmptyBody
++        while (!this.tryAcquire());
++    }
++
++    /**
++     * Acquires this mutex with {@link #acquire()}, then returns this instance.
++     * <br>
++     * This can be used in the following way:
++     * <p>
++     *     <code>
++     *         &nbsp;try (mutex.withLock()) {<br>
++     *         &nbsp;&nbsp;// code<br>
++     *         &nbsp;}
++     *     </code>
++     * </p>
++     *
++     * @return This {@link Mutex}, which implements {@link AutoCloseable}.
++     */
++    default Mutex withLock() throws InterruptedException {
++        this.acquire();
++        return this;
++    }
++
++    /**
++     * Acquires this mutex with {@link #spinLock()}, then returns this instance.
++     *
++     * @return This {@link Mutex}, which implements {@link AutoCloseable}.
++     * @see #withLock()
++     */
++    default Mutex withSpinLock() {
++        this.spinLock();
++        return this;
++    }
++
++    @Override
++    default void close() {
 +        this.release();
 +    }
 +
