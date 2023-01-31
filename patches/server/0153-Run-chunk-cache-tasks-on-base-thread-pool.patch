@@ -123,7 +123,7 @@ index bbe92d92f58d484084114da73003c345d00aac7e..2a42fa59fb09196959be66d58b678629
   * All tasks provided by this queue must be yield-free.
   *
 diff --git a/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java b/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java
-index 648621821d1ac3a0f5aa2af57c8c7d9176c3cfdf..c2598a93b3cf755659e8fb79f4ec5c280abad6fa 100644
+index c5e05b115eb3f8b2d55c5aa2ffce8d86822becf2..27fee00edfa768679d7f998bc997f2d69c6d7ac5 100644
 --- a/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java
 +++ b/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java
 @@ -49,7 +49,8 @@ public enum BaseTaskQueueTier {

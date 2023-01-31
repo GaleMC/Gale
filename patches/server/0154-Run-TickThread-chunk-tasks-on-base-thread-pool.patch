@@ -156,7 +156,7 @@ index 0000000000000000000000000000000000000000..117797c4ac2a81218e9f3e977467b62a
 +
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java b/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java
-index c2598a93b3cf755659e8fb79f4ec5c280abad6fa..bfcec658cbf381cc793d7dd844a81fac27c43337 100644
+index 27fee00edfa768679d7f998bc997f2d69c6d7ac5..9a908566ccdda9ca77e0f9236f674f17f79e9c40 100644
 --- a/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java
 +++ b/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java
 @@ -50,7 +50,8 @@ public enum BaseTaskQueueTier {
