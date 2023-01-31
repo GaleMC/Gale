@@ -7,7 +7,7 @@ License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/ca/spottedleaf/concurrentutil/executor/standard/PrioritisedQueueExecutorThread.java b/src/main/java/ca/spottedleaf/concurrentutil/executor/standard/PrioritisedQueueExecutorThread.java
-index 91fe0f7049122f62f05ba09c24cba5d758340cff..38da123e465130445ba094054bc5e9dc44d9c20d 100644
+index 91fe0f7049122f62f05ba09c24cba5d758340cff..a26735a795052d6770498561826e8c5c1bf9fa79 100644
 --- a/src/main/java/ca/spottedleaf/concurrentutil/executor/standard/PrioritisedQueueExecutorThread.java
 +++ b/src/main/java/ca/spottedleaf/concurrentutil/executor/standard/PrioritisedQueueExecutorThread.java
 @@ -2,6 +2,7 @@ package ca.spottedleaf.concurrentutil.executor.standard;
@@ -160,7 +160,7 @@ index 91fe0f7049122f62f05ba09c24cba5d758340cff..38da123e465130445ba094054bc5e9dc
 +
 +    @Override
 +    public boolean isHalted() {
-+        return this.isHalted();
++        return this.halted;
 +    }
 +
 +    @Override
