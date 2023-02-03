@@ -1851,10 +1851,10 @@ index 78f53ee557276de85f0431ebcb146445b1f4fb92..6176867eea06c53882dcaacfbde0334b
  
          return ret;
 diff --git a/src/main/java/org/galemc/gale/concurrent/Mutex.java b/src/main/java/org/galemc/gale/concurrent/Mutex.java
-index e8ab6cd25909a848c1826824a0f04dc593a26be7..fdad4a7a15d4af427e1441dcc3d837faf1189f85 100644
+index 56dcc0ec470743ab458f725b8fa7f5b9536102ad..d01949290487dbe8806427af82c0505dce79f60d 100644
 --- a/src/main/java/org/galemc/gale/concurrent/Mutex.java
 +++ b/src/main/java/org/galemc/gale/concurrent/Mutex.java
-@@ -19,7 +19,7 @@ import java.util.concurrent.locks.Lock;
+@@ -20,7 +20,7 @@ import java.util.concurrent.locks.Lock;
   * <br>
   * This interface extends {@link AutoCloseable}, where {@link #close()} calls {@link #release()}.
   *
@@ -1862,9 +1862,9 @@ index e8ab6cd25909a848c1826824a0f04dc593a26be7..fdad4a7a15d4af427e1441dcc3d837fa
 + * @author Martijn Muijsers under AGPL-3.0
   */
  @AnyThreadSafe
- public interface Mutex extends Lock, AutoCloseable {
+ public interface Mutex extends CheckableLock, AutoCloseable {
 diff --git a/src/main/java/org/galemc/gale/concurrent/SemaphoreMutex.java b/src/main/java/org/galemc/gale/concurrent/SemaphoreMutex.java
-index 2e31501d26b141729c80975e97a23b09653ba3bf..5a454236073dd75ed36d058c0f033c4aada403e3 100644
+index c310264afea6c81ec575bdf6aa5495ccb34d7ae4..d31293a2a2151bc9fbdc6eb2175045b429fb4461 100644
 --- a/src/main/java/org/galemc/gale/concurrent/SemaphoreMutex.java
 +++ b/src/main/java/org/galemc/gale/concurrent/SemaphoreMutex.java
 @@ -15,7 +15,7 @@ import java.util.concurrent.locks.Lock;
@@ -2758,10 +2758,10 @@ index 0000000000000000000000000000000000000000..a248a9ea644a8bb4175da2e1903483ab
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/lock/YieldingLock.java b/src/main/java/org/galemc/gale/executor/lock/YieldingLock.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..ad3a7e94824c32c812e6ca57cc6cea78227eac5f
+index 0000000000000000000000000000000000000000..3ec790a7b19790731f70f59cc2bdb1919f26dd2d
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/lock/YieldingLock.java
-@@ -0,0 +1,152 @@
+@@ -0,0 +1,163 @@
 +// Gale - base thread pool
 +
 +package org.galemc.gale.executor.lock;
@@ -2788,6 +2788,8 @@ index 0000000000000000000000000000000000000000..ad3a7e94824c32c812e6ca57cc6cea78
 + * The lock only be speculatively acquired from any {@link AbstractYieldingThread}.
 + * Acquiring it on a thread that is not an {@link AbstractYieldingThread} will perform regular locking
 + * on the underlying controlled lock, which typically blocks the thread.
++ * <br>
++ * A thread cannot acquire a {@link YieldingLock} when it already owns one.
 + *
 + * @author Martijn Muijsers under AGPL-3.0
 + */
@@ -2840,10 +2842,10 @@ index 0000000000000000000000000000000000000000..ad3a7e94824c32c812e6ca57cc6cea78
 +    @PotentiallyYielding
 +    @Override
 +    public void lock() {
++        // Find out our current yielding thread, if any
++        @Nullable AbstractYieldingThread yieldingThread = AbstractYieldingThread.currentYieldingThread();
 +        // Try to acquire the lock straight away
 +        if (!this.innerLock.tryLock()) {
-+            // If unsuccessful, we find out our current thread
-+            AbstractYieldingThread yieldingThread = AbstractYieldingThread.currentYieldingThread();
 +            // If we are not on a yielding thread, we wait for the lock instead of yielding
 +            if (yieldingThread == null) {
 +                this.innerLock.lock();
@@ -2851,6 +2853,10 @@ index 0000000000000000000000000000000000000000..ad3a7e94824c32c812e6ca57cc6cea78
 +            }
 +            // Otherwise, we yield to other tasks until the lock can be acquired
 +            yieldingThread.yieldUntil(null, this);
++        }
++        // Increment the YieldingLock count of the current thread
++        if (yieldingThread != null) {
++            yieldingThread.incrementHeldYieldingLockCount();
 +        }
 +    }
 +
@@ -2860,6 +2866,11 @@ index 0000000000000000000000000000000000000000..ad3a7e94824c32c812e6ca57cc6cea78
 +    @Override
 +    public void unlock() {
 +        this.innerLock.unlock();
++        // Decrement the YieldingLock count of the current thread
++        @Nullable AbstractYieldingThread yieldingThread = AbstractYieldingThread.currentYieldingThread();
++        if (yieldingThread != null) {
++            yieldingThread.decrementHeldYieldingLockCount();
++        }
 +        // Potentially signal a thread that this lock has become available.
 +        // Another thread could also acquire the lock at this moment, so when we signal the thread we obtain below,
 +        // it may already be too late for the polled thread to acquire this lock
@@ -4126,17 +4137,19 @@ index 0000000000000000000000000000000000000000..fb4f9c047fc71a9a01aa47871254c6a9
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/thread/AbstractYieldingThread.java b/src/main/java/org/galemc/gale/executor/thread/AbstractYieldingThread.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..bb2055d8da984671762d9a5f8c4dc12f9353ceeb
+index 0000000000000000000000000000000000000000..d1c305735488ee02e3d86c777ada068da955495b
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/thread/AbstractYieldingThread.java
-@@ -0,0 +1,43 @@
+@@ -0,0 +1,68 @@
 +// Gale - base thread pool
 +
 +package org.galemc.gale.executor.thread;
 +
 +import org.galemc.gale.executor.annotation.thread.AnyThreadSafe;
 +import org.galemc.gale.executor.annotation.YieldFree;
++import org.galemc.gale.executor.annotation.thread.ThisThreadOnly;
 +import org.galemc.gale.executor.lock.YieldingLock;
++import org.jetbrains.annotations.NotNull;
 +import org.jetbrains.annotations.Nullable;
 +
 +import java.util.function.BooleanSupplier;
@@ -4149,12 +4162,35 @@ index 0000000000000000000000000000000000000000..bb2055d8da984671762d9a5f8c4dc12f
 + */
 +public interface AbstractYieldingThread extends SignallableThread {
 +
++    /**
++     * @return Whether this thread currently holds any {@link YieldingLock}.
++     */
++    @ThisThreadOnly
++    @YieldFree
++    boolean holdsYieldingLock();
 +
++    /**
++     * Increments the number of times this thread is holding a {@link YieldingLock}.
++     * A thread can hold one {@link YieldingLock} multiple times (it can be reentrant).
++     */
++    @ThisThreadOnly
++    @YieldFree
++    void incrementHeldYieldingLockCount();
++
++    /**
++     * Decrements the number of times this thread is holding a {@link YieldingLock}.
++     *
++     * @see #incrementHeldYieldingLockCount()
++     */
++    @ThisThreadOnly
++    @YieldFree
++    void decrementHeldYieldingLockCount();
++
++    @ThisThreadOnly
 +    void yieldUntil(@Nullable BooleanSupplier stopCondition, @Nullable YieldingLock yieldingLock);
 +
-+
++    @ThisThreadOnly
 +    void runTasksUntil(@Nullable BooleanSupplier stopCondition, @Nullable YieldingLock yieldingLock);
-+
 +
 +    @AnyThreadSafe
 +    @YieldFree
@@ -4259,10 +4295,10 @@ index 0000000000000000000000000000000000000000..a5605765f6be0b75e5df5613e8b393b6
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/thread/BaseThread.java b/src/main/java/org/galemc/gale/executor/thread/BaseThread.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..7cdd16786a8fba4fbc79b27c0baa9ed10a0bac21
+index 0000000000000000000000000000000000000000..633c1aeddca31f5fe95cc8c9ad54e6a2cf1b4ac1
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/thread/BaseThread.java
-@@ -0,0 +1,683 @@
+@@ -0,0 +1,721 @@
 +// Gale - base thread pool
 +
 +package org.galemc.gale.executor.thread;
@@ -4326,6 +4362,15 @@ index 0000000000000000000000000000000000000000..7cdd16786a8fba4fbc79b27c0baa9ed1
 +    public final int maximumYieldDepth;
 +
 +    /**
++     * The number of times this thread holds a {@link YieldingLock},
++     * used in {@link #holdsYieldingLock()}.
++     *
++     * @see AbstractYieldingThread#incrementHeldYieldingLockCount()
++     */
++    @ThisThreadOnly
++    public int heldYieldingLockCount = 0;
++
++    /**
 +     * The current yield depth of this thread.
 +     */
 +    @AnyThreadSafe(Access.READ) @ThisThreadOnly(Access.WRITE)
@@ -4335,7 +4380,8 @@ index 0000000000000000000000000000000000000000..7cdd16786a8fba4fbc79b27c0baa9ed1
 +     * Whether this thread can currently start yielding tasks with respect to being restricted
 +     * due to {@link #yieldDepth} being at least {@link #maximumYieldDepth}.
 +     * <br>
-+     * This is updated after {@link #yieldDepth} is updated.
++     * This is updated using {@link #updateCanStartYieldingTasks()}
++     * after {@link #yieldDepth} or {@link #heldYieldingLockCount} is changed.
 +     */
 +    @AnyThreadSafe(Access.READ) @ThisThreadOnly(Access.WRITE)
 +    public volatile boolean canStartYieldingTasks = true;
@@ -4437,6 +4483,34 @@ index 0000000000000000000000000000000000000000..7cdd16786a8fba4fbc79b27c0baa9ed1
 +        this.maximumYieldDepth = maximumYieldDepth;
 +    }
 +
++    @Override
++    public boolean holdsYieldingLock() {
++        return this.heldYieldingLockCount > 0;
++    }
++
++    @Override
++    public void incrementHeldYieldingLockCount() {
++        this.heldYieldingLockCount++;
++        if (this.heldYieldingLockCount == 1) {
++            this.updateCanStartYieldingTasks();
++        }
++    }
++
++    @Override
++    public void decrementHeldYieldingLockCount() {
++        this.heldYieldingLockCount--;
++        if (this.heldYieldingLockCount == 0) {
++            this.updateCanStartYieldingTasks();
++        }
++    }
++
++    /**
++     * Updates {@link #canStartYieldingTasks} according to {@link #yieldDepth} and {@link #heldYieldingLockCount}.
++     */
++    private void updateCanStartYieldingTasks() {
++        this.canStartYieldingTasks = this.heldYieldingLockCount == 0 && this.yieldDepth < this.maximumYieldDepth;
++    }
++
 +    /**
 +     * This method is based on {@link #signal}, and must be so, or {@link BaseThreadActivation} will get stuck
 +     * while choosing a thread to activate.
@@ -4475,16 +4549,16 @@ index 0000000000000000000000000000000000000000..7cdd16786a8fba4fbc79b27c0baa9ed1
 +    @ThisThreadOnly
 +    @PotentiallyYielding("this method is meant to yield")
 +    public final void yieldUntil(@Nullable BooleanSupplier stopCondition, @Nullable YieldingLock yieldingLock) {
-+        //noinspection NonAtomicOperationOnVolatileField
-+        this.yieldDepth++;
-+        if (this.canStartYieldingTasks && this.yieldDepth >= this.maximumYieldDepth) {
-+            this.canStartYieldingTasks = false;
++        int oldYieldDepth = this.yieldDepth;
++        int newYieldDepth = oldYieldDepth + 1;
++        this.yieldDepth = newYieldDepth;
++        if (newYieldDepth == maximumYieldDepth) {
++            this.updateCanStartYieldingTasks();
 +        }
 +        this.runTasksUntil(stopCondition, yieldingLock);
-+        //noinspection NonAtomicOperationOnVolatileField
-+        this.yieldDepth--;
-+        if (!this.canStartYieldingTasks && this.yieldDepth < this.maximumYieldDepth) {
-+            this.canStartYieldingTasks = true;
++        this.yieldDepth = oldYieldDepth;
++        if (newYieldDepth == maximumYieldDepth) {
++            this.updateCanStartYieldingTasks();
 +        }
 +    }
 +
@@ -5419,10 +5493,10 @@ index 0000000000000000000000000000000000000000..77fe10e51b00115da520cfc211bf84ba
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/thread/pool/BaseThreadActivation.java b/src/main/java/org/galemc/gale/executor/thread/pool/BaseThreadActivation.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..1bcb4e58a1c3951c30ea4e6c12b877f3a10b6ca6
+index 0000000000000000000000000000000000000000..ac1f646ed846ed6067f77e7526e2bd0a43bf6677
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/thread/pool/BaseThreadActivation.java
-@@ -0,0 +1,514 @@
+@@ -0,0 +1,518 @@
 +// Gale - base thread pool
 +
 +package org.galemc.gale.executor.thread.pool;
@@ -5608,8 +5682,9 @@ index 0000000000000000000000000000000000000000..1bcb4e58a1c3951c30ea4e6c12b877f3
 +     *         {@link BaseThread#skipNextWait}, which are set at similar times as {@link BaseThread#isWaiting}.
 +    *     </li>
 +    *     <li>
-+    *         {@link BaseThread#yieldDepth} and {@link BaseThread#canStartYieldingTasks},
-+    *         which are always updated in tandem.
++    *         {@link BaseThread#canStartYieldingTasks} and the values
++     *        {@link BaseThread#yieldDepth} and {@link BaseThread#heldYieldingLockCount} it depends on.
++     *        //TODO Gale We currently do not call callForUpdate just due to changes in heldYieldingLockCount, do we really have to? That would cause a lot of calls.
 +    *     </li>
 +     * </ul>
 +     * This specifically does not include:
@@ -5855,6 +5930,7 @@ index 0000000000000000000000000000000000000000..1bcb4e58a1c3951c30ea4e6c12b877f3
 +                            int threadIToUpdate = -1;
 +                            boolean threadIToUpdateIsWaitingForAvailableYieldingLock = false;
 +                            int threadIToUpdateYieldDepth = 0;
++                            int threadIToUpdateYieldPotential = 0;
 +                            int threadIToUpdateTierOrdinalOrLength = 0;
 +                            for (int threadI = tryThreadsStart; threadI < tryThreadsEnd; threadI++) {
 +                                BaseThread thread = threads[threadI];
@@ -5878,6 +5954,7 @@ index 0000000000000000000000000000000000000000..1bcb4e58a1c3951c30ea4e6c12b877f3
 +                                        if (isThreadWaitingForAvailableYieldingLock || highestTierOfTaskOnStack == null || highestTierOfTaskOnStack.ordinal >= tierI) {
 +                                            boolean isBestChoice = false;
 +                                            int yieldDepth = thread.yieldDepth;
++                                            int yieldPotential = thread.maximumYieldDepth - yieldDepth;
 +                                            if (threadIToUpdate == -1) {
 +                                                isBestChoice = true;
 +                                            } else if (isThreadWaitingForAvailableYieldingLock != threadIToUpdateIsWaitingForAvailableYieldingLock) {
@@ -5885,7 +5962,7 @@ index 0000000000000000000000000000000000000000..1bcb4e58a1c3951c30ea4e6c12b877f3
 +                                            } else if (threadIToUpdateYieldDepth == 0 && yieldDepth != 0) {
 +                                                isBestChoice = true;
 +                                            } else if (yieldDepth != 0) {
-+                                                if (yieldDepth < threadIToUpdateYieldDepth) {
++                                                if (yieldPotential > threadIToUpdateYieldPotential) {
 +                                                    isBestChoice = true;
 +                                                } else if (highestTierOfTaskOnStackOrdinalOrLength > threadIToUpdateTierOrdinalOrLength) {
 +                                                    isBestChoice = true;
@@ -5895,6 +5972,7 @@ index 0000000000000000000000000000000000000000..1bcb4e58a1c3951c30ea4e6c12b877f3
 +                                                threadIToUpdate = threadI;
 +                                                threadIToUpdateIsWaitingForAvailableYieldingLock = isThreadWaitingForAvailableYieldingLock;
 +                                                threadIToUpdateYieldDepth = yieldDepth;
++                                                threadIToUpdateYieldPotential = yieldPotential;
 +                                                threadIToUpdateTierOrdinalOrLength = highestTierOfTaskOnStackOrdinalOrLength;
 +                                            }
 +                                        }

@@ -545,10 +545,10 @@ index ed3ccf2e64539363a7be2d507c68c40b5913f75c..a12250e5aaed02995b7bf09a8018a93f
  }
 diff --git a/src/main/java/org/galemc/gale/executor/queue/ChunkWorkerTaskQueue.java b/src/main/java/org/galemc/gale/executor/queue/ChunkWorkerTaskQueue.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..3f7095f502f883715799958f36980bbfa8ccf581
+index 0000000000000000000000000000000000000000..6f78603c87517bb681ae473d0c72b75e23db6689
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/queue/ChunkWorkerTaskQueue.java
-@@ -0,0 +1,104 @@
+@@ -0,0 +1,102 @@
 +// Gale - base thread pool - chunk worker task queue
 +
 +package org.galemc.gale.executor.queue;
@@ -566,9 +566,7 @@ index 0000000000000000000000000000000000000000..3f7095f502f883715799958f36980bbf
 + * This class provides access to, but does not store, the tasks related to chunk loading and chunk generation,
 + * that are scheduled and normally polled by the chunk system's {@link PrioritisedQueueExecutorThread}s.
 + * <br>
-+ * All tasks provided by this queue must be yield-free. // TODO Gale replace potential used synchronized blocks etc. by spin locks
-+ * Since multiple chunk system tasks may be executed in one base thread pool task,
-+ * and individual tasks may be quite big, these tasks are not {@link TaskSpan#TINY}.
++ * Tasks provided by this queue are {@link TaskSpan#YIELDING}. // TODO Gale replace potential used synchronized blocks etc. by spin locks or yielding locks
 + *
 + * @author Martijn Muijsers under AGPL-3.0
 + */
@@ -606,12 +604,12 @@ index 0000000000000000000000000000000000000000..3f7095f502f883715799958f36980bbf
 +
 +    @Override
 +    public boolean hasTasks(TaskSpan span) {
-+        return span == TaskSpan.FREE && this.hasTasks();
++        return span == TaskSpan.YIELDING && this.hasTasks();
 +    }
 +
 +    @Override
 +    public boolean canHaveTasks(TaskSpan span) {
-+        return span == TaskSpan.FREE;
++        return span == TaskSpan.YIELDING;
 +    }
 +
 +    @Override
@@ -641,7 +639,7 @@ index 0000000000000000000000000000000000000000..3f7095f502f883715799958f36980bbf
 +     * To be called when a new task has been added to the underlying storage of this queue.
 +     */
 +    public void newTaskWasAdded() {
-+        BaseThreadActivation.newTaskWasAdded(this.tier, TaskSpan.FREE, true);
++        BaseThreadActivation.newTaskWasAdded(this.tier, TaskSpan.YIELDING, true);
 +    }
 +
 +    @Override
@@ -654,7 +652,7 @@ index 0000000000000000000000000000000000000000..3f7095f502f883715799958f36980bbf
 +
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/thread/BaseThread.java b/src/main/java/org/galemc/gale/executor/thread/BaseThread.java
-index 7cdd16786a8fba4fbc79b27c0baa9ed10a0bac21..e20e3cb98ab828c4dc7187f3c63e51e7512d3a32 100644
+index 633c1aeddca31f5fe95cc8c9ad54e6a2cf1b4ac1..81e244e94c7422de589e91db44b8e493e1daf5e7 100644
 --- a/src/main/java/org/galemc/gale/executor/thread/BaseThread.java
 +++ b/src/main/java/org/galemc/gale/executor/thread/BaseThread.java
 @@ -2,6 +2,8 @@
@@ -674,7 +672,7 @@ index 7cdd16786a8fba4fbc79b27c0baa9ed10a0bac21..e20e3cb98ab828c4dc7187f3c63e51e7
  import org.jetbrains.annotations.Nullable;
  
  import java.util.concurrent.TimeUnit;
-@@ -660,6 +663,20 @@ public abstract class BaseThread extends Thread implements AbstractYieldingThrea
+@@ -698,6 +701,20 @@ public abstract class BaseThread extends Thread implements AbstractYieldingThrea
          }
      }
  

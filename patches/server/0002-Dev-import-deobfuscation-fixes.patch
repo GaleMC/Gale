@@ -92,6 +92,109 @@ index 50a9f33aa31e9273c7c52d4bb2b02f0f884f7ba5..19779298b2b2ecbe30f9308dad1d8037
                  return this.allInstances.stream().filter(typeClass::isInstance).collect(Collectors.toList());
              });
              return Collections.unmodifiableCollection(list);
+diff --git a/src/main/java/net/minecraft/util/ExtraCodecs.java b/src/main/java/net/minecraft/util/ExtraCodecs.java
+index 0e30e20eca4dfd7c9b3f1ec49333cff809ab1b8a..7591002e07271389f9ac8decea25747c0cd8a213 100644
+--- a/src/main/java/net/minecraft/util/ExtraCodecs.java
++++ b/src/main/java/net/minecraft/util/ExtraCodecs.java
+@@ -174,7 +174,7 @@ public class ExtraCodecs {
+             return ImmutableList.of(leftFunction.apply(pair), rightFunction.apply(pair));
+         });
+         Codec<I> codec3 = RecordCodecBuilder.<Pair>create((instance) -> {
+-            return instance.group(codec.fieldOf(leftFieldName).forGetter(Pair::getFirst), codec.fieldOf(rightFieldName).forGetter(Pair::getSecond)).apply(instance, Pair::of);
++            return instance.group(codec.fieldOf(leftFieldName).forGetter(pair -> (P) pair.getFirst()), codec.fieldOf(rightFieldName).forGetter(pair -> (P) pair.getSecond())).apply(instance, Pair::of); // Gale - dev import deobfuscation fixes
+         }).comapFlatMap((pair) -> {
+             return combineFunction.apply((P)pair.getFirst(), (P)pair.getSecond());
+         }, (pair) -> {
+@@ -203,7 +203,7 @@ public class ExtraCodecs {
+             public <T> DataResult<Pair<A, T>> apply(DynamicOps<T> dynamicOps, T objectx, DataResult<Pair<A, T>> dataResult) {
+                 MutableObject<String> mutableObject = new MutableObject<>();
+                 Optional<Pair<A, T>> optional = dataResult.resultOrPartial(mutableObject::setValue);
+-                return optional.isPresent() ? dataResult : DataResult.error("(" + (String)mutableObject.getValue() + " -> using default)", Pair.of(object, object));
++                return optional.isPresent() ? dataResult : DataResult.error("(" + (String)mutableObject.getValue() + " -> using default)", Pair.of(object, (T) object)); // Gale - dev import deobfuscation fixes
+             }
+ 
+             public <T> DataResult<T> coApply(DynamicOps<T> dynamicOps, A objectx, DataResult<T> dataResult) {
+@@ -459,7 +459,7 @@ public class ExtraCodecs {
+ 
+     static record LazyInitializedCodec<A>(Supplier<Codec<A>> delegate) implements Codec<A> {
+         LazyInitializedCodec {
+-            supplier = Suppliers.memoize(supplier::get);
++            delegate = Suppliers.memoize(delegate::get); // Gale - dev import deobfuscation fixes
+         }
+ 
+         public <T> DataResult<Pair<A, T>> decode(DynamicOps<T> dynamicOps, T object) {
+diff --git a/src/main/java/net/minecraft/util/datafix/fixes/ChunkProtoTickListFix.java b/src/main/java/net/minecraft/util/datafix/fixes/ChunkProtoTickListFix.java
+index db8eed0070a6e9949d73e94e07fea589ace09fd4..d6de68b4b0edabf37ba551b91bbe6682895b2a82 100644
+--- a/src/main/java/net/minecraft/util/datafix/fixes/ChunkProtoTickListFix.java
++++ b/src/main/java/net/minecraft/util/datafix/fixes/ChunkProtoTickListFix.java
+@@ -17,6 +17,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
+ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+ import java.util.Collections;
+ import java.util.List;
++import java.util.Map;
+ import java.util.Optional;
+ import java.util.function.Function;
+ import java.util.function.Supplier;
+@@ -51,23 +52,27 @@ public class ChunkProtoTickListFix extends DataFix {
+                 Dynamic<?> dynamic = typedx.get(DSL.remainderFinder());
+                 MutableInt mutableInt = new MutableInt();
+                 Int2ObjectMap<Supplier<ChunkProtoTickListFix.PoorMansPalettedContainer>> int2ObjectMap = new Int2ObjectArrayMap<>();
+-                typedx.getOptionalTyped(opticFinder2).ifPresent((typed) -> {
+-                    typed.getAllTyped(opticFinder3).forEach((typedx) -> {
+-                        Dynamic<?> dynamic = typedx.get(DSL.remainderFinder());
+-                        int i = dynamic.get("Y").asInt(Integer.MAX_VALUE);
++                // Gale start - dev import deobfuscation fixes
++                typedx.getOptionalTyped(opticFinder2).ifPresent((typed2) -> {
++                    typed2.getAllTyped(opticFinder3).forEach((typedx2) -> {
++                        Dynamic<?> dynamic2 = typedx2.get(DSL.remainderFinder());
++                        int i = dynamic2.get("Y").asInt(Integer.MAX_VALUE);
++                        // Gale end - dev import deobfuscation fixes
+                         if (i != Integer.MAX_VALUE) {
+-                            if (typedx.getOptionalTyped(opticFinder5).isPresent()) {
++                            if (typedx2.getOptionalTyped(opticFinder5).isPresent()) { // Gale - dev import deobfuscation fixes
+                                 mutableInt.setValue(Math.min(i, mutableInt.getValue()));
+                             }
+ 
+-                            typedx.getOptionalTyped(opticFinder4).ifPresent((typed) -> {
++                            typedx2.getOptionalTyped(opticFinder4).ifPresent((typed3) -> { // Gale - dev import deobfuscation fixes
+                                 int2ObjectMap.put(i, Suppliers.memoize(() -> {
+-                                    List<? extends Dynamic<?>> list = typed.getOptionalTyped(opticFinder6).map((typedx) -> {
+-                                        return typedx.write().result().map((dynamic) -> {
+-                                            return dynamic.asList(Function.identity());
++                                    // Gale start - dev import deobfuscation fixes
++                                    List<? extends Dynamic<?>> list = typed.getOptionalTyped(opticFinder6).map((typedx3) -> {
++                                        return typedx3.write().result().map((dynamic3) -> {
++                                            return dynamic3.asList(Function.identity());
++                                            // Gale end - dev import deobfuscation fixes
+                                         }).orElse(Collections.emptyList());
+                                     }).orElse(Collections.emptyList());
+-                                    long[] ls = typed.get(DSL.remainderFinder()).get("data").asLongStream().toArray();
++                                    long[] ls = typed3.get(DSL.remainderFinder()).get("data").asLongStream().toArray(); // Gale - dev import deobfuscation fixes
+                                     return new ChunkProtoTickListFix.PoorMansPalettedContainer(list, ls);
+                                 }));
+                             });
+@@ -76,8 +81,10 @@ public class ChunkProtoTickListFix extends DataFix {
+                 });
+                 byte b = mutableInt.getValue().byteValue();
+                 typedx = typedx.update(DSL.remainderFinder(), (dynamicx) -> {
+-                    return dynamicx.update("yPos", (dynamic) -> {
+-                        return dynamic.createByte(b);
++                    // Gale start - dev import deobfuscation fixes
++                    return dynamicx.update("yPos", (dynamic2) -> {
++                        return dynamic2.createByte(b);
++                        // Gale end - dev import deobfuscation fixes
+                     });
+                 });
+                 if (!typedx.getOptionalTyped(opticFinder7).isPresent() && !dynamic.get("fluid_ticks").result().isPresent()) {
+@@ -144,7 +151,7 @@ public class ChunkProtoTickListFix extends DataFix {
+         int n = l >>> 4 & 15;
+         int o = l >>> 8 & 15;
+         String string = function.apply(supplier != null ? supplier.get().get(m, n, o) : null);
+-        return dynamic.createMap(ImmutableMap.builder().put(dynamic.createString("i"), dynamic.createString(string)).put(dynamic.createString("x"), dynamic.createInt(i * 16 + m)).put(dynamic.createString("y"), dynamic.createInt(j * 16 + n)).put(dynamic.createString("z"), dynamic.createInt(k * 16 + o)).put(dynamic.createString("t"), dynamic.createInt(0)).put(dynamic.createString("p"), dynamic.createInt(0)).build());
++        return dynamic.createMap((Map) ImmutableMap.builder().put(dynamic.createString("i"), dynamic.createString(string)).put(dynamic.createString("x"), dynamic.createInt(i * 16 + m)).put(dynamic.createString("y"), dynamic.createInt(j * 16 + n)).put(dynamic.createString("z"), dynamic.createInt(k * 16 + o)).put(dynamic.createString("t"), dynamic.createInt(0)).put(dynamic.createString("p"), dynamic.createInt(0)).build()); // Gale - dev import deobfuscation fixes
+     }
+ 
+     public static final class PoorMansPalettedContainer {
 diff --git a/src/main/java/net/minecraft/world/entity/monster/Zoglin.java b/src/main/java/net/minecraft/world/entity/monster/Zoglin.java
 index 5956a7759964f5e4939f062e93714fba64f53141..51ad507a3b625201ecca50bd92f8f089f3b4d60a 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/Zoglin.java
@@ -118,3 +221,131 @@ index ac75c54e897565e340b66823caeed92ba1d1641a..e44eec821eaa1cd77569814000d4aa36
      }
  
      @Override
+diff --git a/src/main/java/net/minecraft/world/level/levelgen/SurfaceRules.java b/src/main/java/net/minecraft/world/level/levelgen/SurfaceRules.java
+index daee1072171769d89783a7d7ef9e5692cb9fbc20..45b0706a48c4bf44923a2590f34913b7373de8f4 100644
+--- a/src/main/java/net/minecraft/world/level/levelgen/SurfaceRules.java
++++ b/src/main/java/net/minecraft/world/level/levelgen/SurfaceRules.java
+@@ -154,7 +154,7 @@ public class SurfaceRules {
+ 
+         @Override
+         public SurfaceRules.SurfaceRule apply(SurfaceRules.Context context) {
+-            return context.system::getBand;
++            return (x, y, z) -> context.system.getBand(x, y, z); // Gale - dev import deobfuscation fixes
+         }
+     }
+ 
+@@ -176,10 +176,10 @@ public class SurfaceRules {
+         }
+ 
+         @Override
+-        public SurfaceRules.Condition apply(final SurfaceRules.Context context) {
++        public SurfaceRules.Condition apply(final SurfaceRules.Context givenContext) { // Gale - dev import deobfuscation fixes
+             class BiomeCondition extends SurfaceRules.LazyYCondition {
+                 BiomeCondition() {
+-                    super(context);
++                    super(givenContext); // Gale - dev import deobfuscation fixes
+                 }
+ 
+                 @Override
+@@ -494,12 +494,14 @@ public class SurfaceRules {
+         }
+ 
+         @Override
+-        public SurfaceRules.Condition apply(final SurfaceRules.Context context) {
+-            final NormalNoise normalNoise = context.randomState.getOrCreateNoise(this.noise);
++        // Gale start - dev import deobfuscation fixes
++        public SurfaceRules.Condition apply(final SurfaceRules.Context givenContext) {
++            final NormalNoise normalNoise = givenContext.randomState.getOrCreateNoise(this.noise);
++            // Gale end - dev import deobfuscation fixes
+ 
+             class NoiseThresholdCondition extends SurfaceRules.LazyXZCondition {
+                 NoiseThresholdCondition() {
+-                    super(context);
++                    super(givenContext); // Gale - dev import deobfuscation fixes
+                 }
+ 
+                 @Override
+@@ -622,12 +624,12 @@ public class SurfaceRules {
+         }
+ 
+         @Override
+-        public SurfaceRules.Condition apply(final SurfaceRules.Context context) {
++        public SurfaceRules.Condition apply(final SurfaceRules.Context givenContext) { // Gale - dev import deobfuscation fixes
+             final boolean bl = this.surfaceType == CaveSurface.CEILING;
+ 
+             class StoneDepthCondition extends SurfaceRules.LazyYCondition {
+                 StoneDepthCondition() {
+-                    super(context);
++                    super(givenContext); // Gale - dev import deobfuscation fixes
+                 }
+ 
+                 @Override
+@@ -699,26 +701,32 @@ public class SurfaceRules {
+         }
+ 
+         @Override
+-        public SurfaceRules.Condition apply(final SurfaceRules.Context context) {
+-            final int i = this.trueAtAndBelow().resolveY(context.context);
+-            final int j = this.falseAtAndAbove().resolveY(context.context);
+-            final PositionalRandomFactory positionalRandomFactory = context.randomState.getOrCreateRandomFactory(this.randomName());
++        // Gale start - dev import deobfuscation fixes
++        public SurfaceRules.Condition apply(final SurfaceRules.Context givenContext) {
++            final int i = this.trueAtAndBelow().resolveY(givenContext.context);
++            final int j = this.falseAtAndAbove().resolveY(givenContext.context);
++            final PositionalRandomFactory positionalRandomFactory = givenContext.randomState.getOrCreateRandomFactory(this.randomName());
++            // Gale end - dev import deobfuscation fixes
+ 
+             class VerticalGradientCondition extends SurfaceRules.LazyYCondition {
+                 VerticalGradientCondition() {
+-                    super(context);
++                    super(givenContext); // Gale - dev import deobfuscation fixes
+                 }
+ 
+                 @Override
+                 protected boolean compute() {
+-                    int i = this.context.blockY;
+-                    if (i <= i) {
++                    // Gale start - dev import deobfuscation fixes
++                    int i2 = this.context.blockY;
++                    if (i2 <= i) {
++                        // Gale end - dev import deobfuscation fixes
+                         return true;
+-                    } else if (i >= j) {
++                    } else if (i2 >= j) { // Gale - dev import deobfuscation fixes
+                         return false;
+                     } else {
+-                        double d = Mth.map((double)i, (double)i, (double)j, 1.0D, 0.0D);
+-                        RandomSource randomSource = positionalRandomFactory.at(this.context.blockX, i, this.context.blockZ);
++                        // Gale start - dev import deobfuscation fixes
++                        double d = Mth.map((double)i2, (double)i, (double)j, 1.0D, 0.0D);
++                        RandomSource randomSource = positionalRandomFactory.at(this.context.blockX, i2, this.context.blockZ);
++                        // Gale end - dev import deobfuscation fixes
+                         return (double)randomSource.nextFloat() < d;
+                     }
+                 }
+@@ -739,10 +747,10 @@ public class SurfaceRules {
+         }
+ 
+         @Override
+-        public SurfaceRules.Condition apply(final SurfaceRules.Context context) {
++        public SurfaceRules.Condition apply(final SurfaceRules.Context givenContext) { // Gale - dev import deobfuscation fixes
+             class WaterCondition extends SurfaceRules.LazyYCondition {
+                 WaterCondition() {
+-                    super(context);
++                    super(givenContext); // Gale - dev import deobfuscation fixes
+                 }
+ 
+                 @Override
+@@ -766,10 +774,10 @@ public class SurfaceRules {
+         }
+ 
+         @Override
+-        public SurfaceRules.Condition apply(final SurfaceRules.Context context) {
++        public SurfaceRules.Condition apply(final SurfaceRules.Context givenContext) { // Gale - dev import deobfuscation fixes
+             class YCondition extends SurfaceRules.LazyYCondition {
+                 YCondition() {
+-                    super(context);
++                    super(givenContext); // Gale - dev import deobfuscation fixes
+                 }
+ 
+                 @Override

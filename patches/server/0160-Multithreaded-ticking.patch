@@ -7,10 +7,10 @@ License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index 39c4fe8fdd806b4b5bc3cb2dfdde9a29b11b386e..6188bfcffeded21563aa8eae0e3d135cc497e386 100644
+index 39c4fe8fdd806b4b5bc3cb2dfdde9a29b11b386e..231b38b1af45c9260a43e23745efb163de06d3f0 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-@@ -432,4 +432,20 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+@@ -432,4 +432,39 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
  
      }
  
@@ -19,6 +19,25 @@ index 39c4fe8fdd806b4b5bc3cb2dfdde9a29b11b386e..6188bfcffeded21563aa8eae0e3d135c
 +    public class Multithreading extends ConfigurationPart {
 +
 +        // Gale start - multithreaded ticking
++        /**
++         * If multithreading is enabled for any ticking steps, the order of the individual ticking steps for which
++         * multithreading is disabled may still be different from vanilla.
++         * <br>
++         * For example, instead of the following vanilla sequence:
++         * <ul>
++         *     <li>Tick the entities in world A</li>
++         *     <li>Tick the block entities in world A</li>
++         *     <li>Tick the entities in world B</li>
++         *     <il>Tick the block entities in world B</il>
++         * </ul>
++         * the following sequence may happen:
++         * <ul>
++         *     <li>Tick the entities in world A</li>
++         *     <li>Tick the entities in world B</li>
++         *     <li>Tick the block entities in world A</li>
++         *     <li>Tick the block entities in world B</li>
++         * </ul>
++         */
 +        public Ticking ticking;
 +        public class Ticking extends ConfigurationPart {
 +
@@ -185,17 +204,13 @@ index 0000000000000000000000000000000000000000..9408c7c6e6b60bd9d5153912a2d85585
 +}
 diff --git a/src/main/java/org/galemc/gale/tick/step/ServerTickStep.java b/src/main/java/org/galemc/gale/tick/step/ServerTickStep.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..538dad9bfa0eb982ef0d0ffb96bb8a6ef7d4ca38
+index 0000000000000000000000000000000000000000..f6a4f0ef64cf39e69a55a231c8a1cecaf930a40a
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/tick/step/ServerTickStep.java
-@@ -0,0 +1,26 @@
+@@ -0,0 +1,22 @@
 +// Gale - multithreaded ticking
 +
 +package org.galemc.gale.tick.step;
-+
-+import net.minecraft.server.level.ServerLevel;
-+
-+import java.util.function.Consumer;
 +
 +/**
 + * A {@link TickStep} that applies to the whole server (i.e. is run once per tick).

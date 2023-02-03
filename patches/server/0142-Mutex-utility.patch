@@ -8,15 +8,16 @@ Gale - https://galemc.org
 
 diff --git a/src/main/java/org/galemc/gale/concurrent/Mutex.java b/src/main/java/org/galemc/gale/concurrent/Mutex.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..e8ab6cd25909a848c1826824a0f04dc593a26be7
+index 0000000000000000000000000000000000000000..56dcc0ec470743ab458f725b8fa7f5b9536102ad
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/concurrent/Mutex.java
-@@ -0,0 +1,121 @@
+@@ -0,0 +1,122 @@
 +// Gale - mutex utility
 +
 +package org.galemc.gale.concurrent;
 +
 +import org.galemc.gale.executor.annotation.thread.AnyThreadSafe;
++import org.galemc.gale.executor.lock.CheckableLock;
 +import org.jetbrains.annotations.NotNull;
 +
 +import java.util.concurrent.TimeUnit;
@@ -36,7 +37,7 @@ index 0000000000000000000000000000000000000000..e8ab6cd25909a848c1826824a0f04dc5
 + * @author Martijn Muijsers
 + */
 +@AnyThreadSafe
-+public interface Mutex extends Lock, AutoCloseable {
++public interface Mutex extends CheckableLock, AutoCloseable {
 +
 +    void acquireUninterruptibly();
 +
@@ -128,17 +129,17 @@ index 0000000000000000000000000000000000000000..e8ab6cd25909a848c1826824a0f04dc5
 +     * Instantiates a new {@link Mutex} that we intend to use as a {@link Lock}, with a default implementation
 +     * that should be geared towards performance of the {@link Lock} methods.
 +     */
-+    static @NotNull Lock createLock() {
++    static @NotNull Mutex createLock() {
 +        return create();
 +    }
 +
 +}
 diff --git a/src/main/java/org/galemc/gale/concurrent/SemaphoreMutex.java b/src/main/java/org/galemc/gale/concurrent/SemaphoreMutex.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..2e31501d26b141729c80975e97a23b09653ba3bf
+index 0000000000000000000000000000000000000000..c310264afea6c81ec575bdf6aa5495ccb34d7ae4
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/concurrent/SemaphoreMutex.java
-@@ -0,0 +1,34 @@
+@@ -0,0 +1,39 @@
 +// Gale - mutex utility
 +
 +package org.galemc.gale.concurrent;
@@ -170,6 +171,11 @@ index 0000000000000000000000000000000000000000..2e31501d26b141729c80975e97a23b09
 +    @Override
 +    public Condition newCondition() {
 +        throw new UnsupportedOperationException("newCondition() is not implemented for SemaphoreMutex");
++    }
++
++    @Override
++    public boolean isLocked() {
++        return this.availablePermits() == 0;
 +    }
 +
 +}

@@ -307,7 +307,7 @@ index ba352013692b987518dd200d376fb6cf2c90da19..99fe51c3654bf5f978b6576290504c7b
  
      private void tickChunks() {
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index e7747b19685fd943d7fbefbfef656f8bb7c359f1..8dfbd2f0ad7d767f2bbe2de235fef0e04daaf5c8 100644
+index e7747b19685fd943d7fbefbfef656f8bb7c359f1..5472fac17f78f59c3e97ecac42f29092ce364e42 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
 @@ -23,7 +23,6 @@ import java.nio.file.Files;
@@ -475,7 +475,7 @@ index e7747b19685fd943d7fbefbfef656f8bb7c359f1..8dfbd2f0ad7d767f2bbe2de235fef0e0
          int i = this.getGameRules().getInt(GameRules.RULE_PLAYERS_SLEEPING_PERCENTAGE);
          long j;
  
-@@ -667,40 +782,156 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -667,40 +782,155 @@ public class ServerLevel extends Level implements WorldGenLevel {
                  this.resetWeatherCycle();
              }
          }
@@ -519,7 +519,7 @@ index e7747b19685fd943d7fbefbfef656f8bb7c359f1..8dfbd2f0ad7d767f2bbe2de235fef0e0
 +            this.tick_scheduledBlocksGameTime = this.getGameTime();
 +        });
 +    }
- 
++
 +    private Runnable tickStep_setIsDebug_create() {
 +        return this.wrapScheduledBlocksTickStep(() -> {
 +            this.tick_isDebug = this.isDebug();
@@ -539,7 +539,7 @@ index e7747b19685fd943d7fbefbfef656f8bb7c359f1..8dfbd2f0ad7d767f2bbe2de235fef0e0
 +            this.blockTicks.tick(this.tick_scheduledBlocksGameTime, 65536, this::tickBlock);
 +        });
 +    }
-+
+ 
 +    private Runnable tickStep_tickFluids_create() {
 +        return this.wrapScheduledBlocksTickStep(() -> {
 +            this.fluidTicks.tick(this.tick_scheduledBlocksGameTime, 65536, this::tickFluid);
@@ -609,7 +609,7 @@ index e7747b19685fd943d7fbefbfef656f8bb7c359f1..8dfbd2f0ad7d767f2bbe2de235fef0e0
 +    private Runnable wrapTickEntitiesTickStep(Runnable runnable) {
 +        return this.wrapDoEntityAndBlockEntityTickTickStep(() -> {
 +            // Gale end - split tick steps
-+            timings.tickEntities.startTiming(); // Spigot
+             timings.tickEntities.startTiming(); // Spigot
 +            // Gale start - split tick steps
 +            runnable.run();
 +            timings.tickEntities.stopTiming(); // Spigot
@@ -619,7 +619,6 @@ index e7747b19685fd943d7fbefbfef656f8bb7c359f1..8dfbd2f0ad7d767f2bbe2de235fef0e0
 +    private Runnable tickStep_tickDragonFight_create() {
 +        return this.wrapTickEntitiesTickStep(() -> {
 +            // Gale end - split tick steps
-             timings.tickEntities.startTiming(); // Spigot
              if (this.dragonFight != null) {
                  this.dragonFight.tick();
              }
@@ -641,7 +640,7 @@ index e7747b19685fd943d7fbefbfef656f8bb7c359f1..8dfbd2f0ad7d767f2bbe2de235fef0e0
              timings.entityTick.startTiming(); // Spigot
              this.entityTickList.forEach((entity) -> {
                  if (!entity.isRemoved()) {
-@@ -738,11 +969,15 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -738,11 +968,15 @@ public class ServerLevel extends Level implements WorldGenLevel {
                  }
              });
              timings.entityTick.stopTiming(); // Spigot
