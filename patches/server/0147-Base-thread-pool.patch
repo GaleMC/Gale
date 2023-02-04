@@ -1851,7 +1851,7 @@ index 78f53ee557276de85f0431ebcb146445b1f4fb92..6176867eea06c53882dcaacfbde0334b
  
          return ret;
 diff --git a/src/main/java/org/galemc/gale/concurrent/Mutex.java b/src/main/java/org/galemc/gale/concurrent/Mutex.java
-index 56dcc0ec470743ab458f725b8fa7f5b9536102ad..d01949290487dbe8806427af82c0505dce79f60d 100644
+index f7bedd5cbe9b48ac94f8cc228a17c8a54db7d7e9..129ac4f70f2e7f176517af1e46ea36c5144473a0 100644
 --- a/src/main/java/org/galemc/gale/concurrent/Mutex.java
 +++ b/src/main/java/org/galemc/gale/concurrent/Mutex.java
 @@ -20,7 +20,7 @@ import java.util.concurrent.locks.Lock;
@@ -3411,10 +3411,10 @@ index 0000000000000000000000000000000000000000..cf8e2b42ecfc8205af5b105e19975c3e
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/queue/ScheduledServerThreadTaskQueues.java b/src/main/java/org/galemc/gale/executor/queue/ScheduledServerThreadTaskQueues.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..3d1a54ad35887e87bf7ad8c75a1f5a9be65c1eb8
+index 0000000000000000000000000000000000000000..a763028deff9bc131b8208886bf2651373b1dbc3
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/queue/ScheduledServerThreadTaskQueues.java
-@@ -0,0 +1,283 @@
+@@ -0,0 +1,287 @@
 +// Gale - base thread pool
 +
 +package org.galemc.gale.executor.queue;
@@ -3508,8 +3508,9 @@ index 0000000000000000000000000000000000000000..3d1a54ad35887e87bf7ad8c75a1f5a9b
 +     * finished within the current tick if {@code tryNonCurrentTickQueuesAtAll} is false.
 +     */
 +    public static boolean hasTasks(boolean tryNonCurrentTickQueuesAtAll) {
-+        //noinspection StatementWithEmptyBody
-+        while (!readLock.tryLock());
++        while (!readLock.tryLock()) {
++            Thread.onSpinWait();
++        }
 +        try {
 +            // Try the queue most likely to contain tasks first
 +            if (firstQueueWithPotentialTasksIndex == 0 || tryNonCurrentTickQueuesAtAll) {
@@ -3596,8 +3597,9 @@ index 0000000000000000000000000000000000000000..3d1a54ad35887e87bf7ad8c75a1f5a9b
 +    }
 +
 +    public static int getTaskCount() {
-+        //noinspection StatementWithEmptyBody
-+        while (!readLock.tryLock());
++        while (!readLock.tryLock()) {
++            Thread.onSpinWait();
++        }
 +        try {
 +            int count = 0;
 +            for (Queue<?> queue : queues) {
@@ -3635,8 +3637,9 @@ index 0000000000000000000000000000000000000000..3d1a54ad35887e87bf7ad8c75a1f5a9b
 +            return;
 +        }
 +        // Paper end - anything that does try to post to main during watchdog crash, run on watchdog
-+        //noinspection StatementWithEmptyBody
-+        while (!readLock.tryLock());
++        while (!readLock.tryLock()) {
++            Thread.onSpinWait();
++        }
 +        try {
 +            //noinspection NonAtomicOperationOnVolatileField
 +            versionStamp++;
@@ -3658,8 +3661,9 @@ index 0000000000000000000000000000000000000000..3d1a54ad35887e87bf7ad8c75a1f5a9b
 +     * This moves the queues in {@link #queues}.
 +     */
 +    public static void shiftTasksForNextTick() {
-+        //noinspection StatementWithEmptyBody
-+        while (!writeLock.tryLock());
++        while (!writeLock.tryLock()) {
++            Thread.onSpinWait();
++        }
 +        try {
 +            //noinspection NonAtomicOperationOnVolatileField
 +            versionStamp++;

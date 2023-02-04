@@ -8,10 +8,10 @@ Gale - https://galemc.org
 
 diff --git a/src/main/java/org/galemc/gale/concurrent/Mutex.java b/src/main/java/org/galemc/gale/concurrent/Mutex.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..56dcc0ec470743ab458f725b8fa7f5b9536102ad
+index 0000000000000000000000000000000000000000..f7bedd5cbe9b48ac94f8cc228a17c8a54db7d7e9
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/concurrent/Mutex.java
-@@ -0,0 +1,122 @@
+@@ -0,0 +1,123 @@
 +// Gale - mutex utility
 +
 +package org.galemc.gale.concurrent;
@@ -78,8 +78,9 @@ index 0000000000000000000000000000000000000000..56dcc0ec470743ab458f725b8fa7f5b9
 +     * Acquires this mutex in the style of a spin lock: repeatedly calls {@link #tryAcquire()} until successful.
 +     */
 +    default void spinLock() {
-+        //noinspection StatementWithEmptyBody
-+        while (!this.tryAcquire());
++        while (!this.tryAcquire()) {
++            Thread.onSpinWait();
++        }
 +    }
 +
 +    /**

@@ -20,7 +20,7 @@ index 58b093bb1de78ee3b3b2ea364aa50474883f443a..7be34e5df2b6d33c1d7943c9c0b6fd06
              this.debugLogging(pos, false, sequence, "too far");
          } else if (pos.getY() >= worldHeight) {
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 7df5ea545c19ccc43f553a229722c3fd88adc3ec..68e0f2208c5f098042ebfad08301e3154e2a2152 100644
+index 4d7faeda716c5ac053cfb1d894f5a28e3a69f969..14ee62567ace6fc1becf4257761a811d2ab6f71d 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -250,7 +250,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic

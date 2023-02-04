@@ -96,7 +96,7 @@ index b13ef853419d2783d09b3e685b9b506a4ff5676e..7a7e87954868c3eb267d3255652d67d3
          this.level = world;
          this.id = nbt.getInt("Id");
 diff --git a/src/main/java/net/minecraft/world/level/Explosion.java b/src/main/java/net/minecraft/world/level/Explosion.java
-index d3ade2eb7c492cd8fdb24c78fa2886db8986fc09..b6e537dd77f2eda819b00962284f36546a2bd158 100644
+index 5c7f2be28fbb5d2f7b48c04bb862fb15440dda03..10336cef8316d41f49eeb7811b84f4eea90df246 100644
 --- a/src/main/java/net/minecraft/world/level/Explosion.java
 +++ b/src/main/java/net/minecraft/world/level/Explosion.java
 @@ -81,7 +81,7 @@ public class Explosion {

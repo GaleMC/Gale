@@ -13,7 +13,7 @@ As part of: Pufferfish (https://github.com/pufferfish-gg/Pufferfish)
 Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index d31f52ace6dd6a80adb639e1e50f4b547b23103d..9e8c1bb48b2453296cd235cc0c127032ebf73053 100644
+index 92fc01fb38130fc9c77e47e4b1db99f892d5459f..dce5cff1d85ca2dd642219ca2a1adfc2adbae4d6 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -2357,6 +2357,11 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic

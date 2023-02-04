@@ -265,7 +265,7 @@ index 540bc9500c35c0db719b00aa26f6fb3a1b08ed9f..f5bed0f18b2a3dbe7d52c1b83717298f
      int LARGE_MAX_STACK_SIZE = 64;
  
 diff --git a/src/main/java/net/minecraft/world/entity/vehicle/AbstractMinecartContainer.java b/src/main/java/net/minecraft/world/entity/vehicle/AbstractMinecartContainer.java
-index b8fb7b5a347298ada16bc8b818edf1863e3f6040..8de3aa9dae051ef12dc59e761ea8fcaf497bb01e 100644
+index cc74eeb45913fab03e85969957215d2811252a83..33801e0725f023d077dbd91a593453d8af367cc2 100644
 --- a/src/main/java/net/minecraft/world/entity/vehicle/AbstractMinecartContainer.java
 +++ b/src/main/java/net/minecraft/world/entity/vehicle/AbstractMinecartContainer.java
 @@ -27,7 +27,10 @@ import org.bukkit.inventory.InventoryHolder;

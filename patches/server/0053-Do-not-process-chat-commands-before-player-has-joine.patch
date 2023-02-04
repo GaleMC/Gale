@@ -25,7 +25,7 @@ index a07da939bb6b2dd0bd75cc74dd79493695035259..9d74ef6973f6a9e12861256aa7032f8d
      // CraftBukkit end
      public boolean isRealPlayer; // Paper
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 9e8c1bb48b2453296cd235cc0c127032ebf73053..63b54d47203d796b7dfeac2e6e04ce49b5a72ae5 100644
+index dce5cff1d85ca2dd642219ca2a1adfc2adbae4d6..16a8e3819258e3e42ade5f237e473765b3f8b3c7 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -2333,6 +2333,10 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
@@ -40,7 +40,7 @@ index 9e8c1bb48b2453296cd235cc0c127032ebf73053..63b54d47203d796b7dfeac2e6e04ce49
              Optional<LastSeenMessages> optional = this.unpackAndApplyLastSeen(acknowledgment);
  
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index f381bf9064be548a4a603e0042886d8a5e70ba5b..603d87fedf731498ebf516fdda3c785bd01bf830 100644
+index 4b754f6eae683248d7fe11d6d6cb168d5dd696a2..601b7cb73af55bdf8fd51c5f73e96a9656576cc2 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
 @@ -322,6 +322,8 @@ public abstract class PlayerList {

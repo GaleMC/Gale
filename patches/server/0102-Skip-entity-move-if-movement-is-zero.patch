@@ -13,7 +13,7 @@ As part of: VMP (https://github.com/RelativityMC/VMP-fabric)
 Licensed under: MIT (https://opensource.org/licenses/MIT)
 
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index c8665f26723d315e09a96ff9a7e4688ce131a3e7..bf3bdbdb4384f374419f00635280305f84ce078c 100644
+index 73824358e299c39fe7ea2d07d90ec1e25bb29f2f..7766e57fe4e15adb7b6b80bf9a5fd763ce1282c2 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -299,6 +299,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {

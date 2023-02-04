@@ -37,7 +37,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 diff --git a/src/main/java/net/minecraft/world/entity/item/FallingBlockEntity.java b/src/main/java/net/minecraft/world/entity/item/FallingBlockEntity.java
-index 72f1866226269396ba0f0c1be269e237925d9322..ea099989d633764489396a48d52db9f6023a20af 100644
+index eacb8a407fe99af2c13f23c12b5544696bda8890..df8487488bcce6a8ae4cd7c995ab61cae04acbb6 100644
 --- a/src/main/java/net/minecraft/world/entity/item/FallingBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/item/FallingBlockEntity.java
 @@ -130,7 +130,7 @@ public class FallingBlockEntity extends Entity {

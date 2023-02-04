@@ -7,7 +7,7 @@ License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 37bf4f356a23224fb5da949e8311c895c3529cf8..03befb9a39b7668ff5ec2e72ab68bbc0dd52f007 100644
+index d2a09822104c954f06f64ad2a63012e433088169..8d9e2573c6d9597699e74f19989dcde600a5fb61 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -2326,7 +2326,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic

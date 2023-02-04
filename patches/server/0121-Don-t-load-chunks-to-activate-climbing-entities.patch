@@ -7,7 +7,7 @@ License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 54dac74a5de4f967b3af7a63c8977d569a90157b..71a2f7d6f4f737cb5f553bd06e588383f211633d 100644
+index 0ed0635ef581705d07934b9b17a63a4c7e19f6e1..650a0f0ada672d050c1d1d52b33fe74dfa1ef5ed 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -4314,6 +4314,16 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
@@ -28,7 +28,7 @@ index 54dac74a5de4f967b3af7a63c8977d569a90157b..71a2f7d6f4f737cb5f553bd06e588383
          return this.chunkPosition;
      }
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index e9554db6c331beec32ce11bb6a939bb909b1a877..714863ce4d401887119a6eab49a6c0413edb889d 100644
+index 0cc1008b3db93487c8e0801895264683f6d2e439..87499e82e80a8b7d6d8ca6eeaa1819b74fcf1665 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
 @@ -1948,19 +1948,43 @@ public abstract class LivingEntity extends Entity {

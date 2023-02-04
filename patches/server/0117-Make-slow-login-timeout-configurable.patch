@@ -7,7 +7,7 @@ License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
-index 2ed3f42b1e487374287d033ac634a922a5ef37bd..af96c170c58553f4ce0554c9bd24fea2ad96ed01 100644
+index be73149535c5fd8914db99bb835f4cbb731b63be..9b924f0793d8231244c160a5bc7ac8e1a35bad34 100644
 --- a/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
 @@ -37,6 +37,7 @@ import net.minecraft.util.Crypt;
