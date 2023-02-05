@@ -41,10 +41,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index 9302502f59243fa254c88a7a8d513a2a65c17979..f5ed3fa20097bdd43a25c76b38353a23743bc9e5 100644
+index 70d375b9803b5b7a33aa02cc1554f6b857aa6613..e4284c16512bbabd25c538eb88bf81d7c5bef9ba 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -293,7 +293,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
+@@ -292,7 +292,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
          server.enablePlugins(org.bukkit.plugin.PluginLoadOrder.STARTUP);
          // CraftBukkit end
  

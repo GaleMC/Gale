@@ -32,10 +32,10 @@ index 4b279948e82a6dfd2f471ba698e361dcfe4499de..438e7d8ce4e1df13a6a5cc45075996be
  
      doFirst {
 diff --git a/src/main/java/org/bukkit/craftbukkit/Main.java b/src/main/java/org/bukkit/craftbukkit/Main.java
-index fab5d1c1531fa89113bef6d17df8437b0aec4582..7ec31bf30db664ade4ee4eaf22dccb4177f9262f 100644
+index fab5d1c1531fa89113bef6d17df8437b0aec4582..95d8715928a0ddccdabcb76090a3b5bdd143c5a5 100644
 --- a/src/main/java/org/bukkit/craftbukkit/Main.java
 +++ b/src/main/java/org/bukkit/craftbukkit/Main.java
-@@ -4,18 +4,19 @@ import java.io.File;
+@@ -4,18 +4,20 @@ import java.io.File;
  import java.io.IOException;
  import java.text.DateFormat;
  import java.text.SimpleDateFormat;
@@ -55,11 +55,12 @@ index fab5d1c1531fa89113bef6d17df8437b0aec4582..7ec31bf30db664ade4ee4eaf22dccb41
  import net.minecraft.world.level.lighting.LayerLightEventListener;
  import net.minecrell.terminalconsole.TerminalConsoleAppender; // Paper
 +import org.galemc.gale.executor.thread.BaseThread;
++import org.spigotmc.WatchdogThread;
 +import reactor.blockhound.BlockHound;
  
  public class Main {
      public static boolean useJline = true;
-@@ -48,6 +49,43 @@ public class Main {
+@@ -48,6 +50,49 @@ public class Main {
      // Gale end - include time in startup logs
  
      public static void main(String[] args) {
@@ -67,11 +68,15 @@ index fab5d1c1531fa89113bef6d17df8437b0aec4582..7ec31bf30db664ade4ee4eaf22dccb41
 +        if (Boolean.getBoolean("gale.detect.thread.blocks")) {
 +            printlnStartupInfoToSystemOut("Initializing blocking base thread detection...");
 +            try {
-+                var builder = BlockHound.builder()
-+                // Mark base threads as intended to be non-blocking
-+                builder.nonBlockingThreadPredicate(currentPredicate -> currentPredicate.or(thread -> thread instanceof BaseThread))
++                var builder = BlockHound.builder();
++                // Mark base threads as intended to be non-blocking (except the WatchdogThread, which obviously sleeps until needed)
++                builder.nonBlockingThreadPredicate(currentPredicate -> currentPredicate.or(thread -> thread instanceof BaseThread && !(thread instanceof WatchdogThread)));
 +                // Set the callback when a base thread blocks
 +                builder.blockingMethodCallback(blockingMethod -> {
++                    if (MinecraftServer.SERVER == null) {
++                        // Allow blocking before the server has finished initializing
++                        return;
++                    }
 +                    String message = "A base thread (" + Thread.currentThread() + ") started blocking:";
 +                    if (MinecraftServer.LOGGER != null) {
 +                        MinecraftServer.LOGGER.error(message);
@@ -88,7 +93,9 @@ index fab5d1c1531fa89113bef6d17df8437b0aec4582..7ec31bf30db664ade4ee4eaf22dccb41
 +                threadBlockingMethods.remove("onSpinWait");
 +                threadBlockingMethods.remove("yield");
 +                // Allow base threads to block in the intended way
-+                builder.allowBlockingCallsInside("org.galemc.gale.executor.thread.BaseThread", "waitUntilSignalled")
++                builder.allowBlockingCallsInside("org.galemc.gale.executor.thread.BaseThread", "waitUntilSignalled");
++                // Allow the ServerThread to block during initialization
++                builder.allowBlockingCallsInside("net.minecraft.server.dedicated.DedicatedServer", "initServer");
 +                // Install BlockHound
 +                builder.install();
 +                printlnStartupInfoToSystemOut("Blocking base thread detection is enabled.");

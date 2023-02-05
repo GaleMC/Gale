@@ -77,10 +77,10 @@ index 80f9e70d5c4330e079feccc9a4b1b5957c79ef45..e4955e8d04735b74007aae0bf3230281
      public static final long INVALID_CHUNK_KEY = getCoordinateKey(Integer.MAX_VALUE, Integer.MAX_VALUE);
  
 diff --git a/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java b/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java
-index 43cb69a7fc55f6b5db05158b5dba3637a664bd19..c5e05b115eb3f8b2d55c5aa2ffce8d86822becf2 100644
+index 52c413990fd8aaca72e371c3bc8f1f145a172abc..85f467b3cedef57b6b51f04eb34316d43e192d87 100644
 --- a/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java
 +++ b/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java
-@@ -64,6 +64,8 @@ public enum BaseTaskQueueTier {
+@@ -74,6 +74,8 @@ public enum BaseTaskQueueTier {
       * Execution of
       */
      ASYNC(new AbstractTaskQueue[]{

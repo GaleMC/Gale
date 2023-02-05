@@ -8,16 +8,15 @@ Gale - https://galemc.org
 
 diff --git a/src/main/java/org/galemc/gale/concurrent/Mutex.java b/src/main/java/org/galemc/gale/concurrent/Mutex.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..f7bedd5cbe9b48ac94f8cc228a17c8a54db7d7e9
+index 0000000000000000000000000000000000000000..649d2cfc1d73699302b4e5e64e9110e7681ae09c
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/concurrent/Mutex.java
-@@ -0,0 +1,123 @@
+@@ -0,0 +1,127 @@
 +// Gale - mutex utility
 +
 +package org.galemc.gale.concurrent;
 +
 +import org.galemc.gale.executor.annotation.thread.AnyThreadSafe;
-+import org.galemc.gale.executor.lock.CheckableLock;
 +import org.jetbrains.annotations.NotNull;
 +
 +import java.util.concurrent.TimeUnit;
@@ -34,7 +33,7 @@ index 0000000000000000000000000000000000000000..f7bedd5cbe9b48ac94f8cc228a17c8a5
 + * <br>
 + * This interface extends {@link AutoCloseable}, where {@link #close()} calls {@link #release()}.
 + *
-+ * @author Martijn Muijsers
++ * @author Martijn Muijsers under AGPL-3.0
 + */
 +@AnyThreadSafe
 +public interface Mutex extends CheckableLock, AutoCloseable {
@@ -134,10 +133,15 @@ index 0000000000000000000000000000000000000000..f7bedd5cbe9b48ac94f8cc228a17c8a5
 +        return create();
 +    }
 +
++    @Override
++    default boolean isHeldByCurrentThread() {
++        throw new UnsupportedOperationException("isHeldByCurrentThread() is not supported for Mutex, and is not implemented by the implementation " + this.getClass().getName() + " either");
++    }
++
 +}
 diff --git a/src/main/java/org/galemc/gale/concurrent/SemaphoreMutex.java b/src/main/java/org/galemc/gale/concurrent/SemaphoreMutex.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..c310264afea6c81ec575bdf6aa5495ccb34d7ae4
+index 0000000000000000000000000000000000000000..d31293a2a2151bc9fbdc6eb2175045b429fb4461
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/concurrent/SemaphoreMutex.java
 @@ -0,0 +1,39 @@
@@ -158,7 +162,7 @@ index 0000000000000000000000000000000000000000..c310264afea6c81ec575bdf6aa5495cc
 + * and throws {@link UnsupportedOperationException} for all {@link Lock} methods that do not have a default
 + * implementation in {@link Mutex}.
 + *
-+ * @author Martijn Muijsers
++ * @author Martijn Muijsers under AGPL-3.0
 + */
 +@AnyThreadSafe
 +@YieldFree

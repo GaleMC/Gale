@@ -8,16 +8,15 @@ Gale - https://galemc.org
 
 diff --git a/src/main/java/org/galemc/gale/concurrent/ThreadAwareNonReentrantLock.java b/src/main/java/org/galemc/gale/concurrent/ThreadAwareNonReentrantLock.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..1dd9d78f70fe586a9868e046e01ab512af036eeb
+index 0000000000000000000000000000000000000000..8c14d90d1a907adf994070cbe5d62f1fbfd8d9c8
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/concurrent/ThreadAwareNonReentrantLock.java
-@@ -0,0 +1,109 @@
+@@ -0,0 +1,113 @@
 +// Gale - thread-aware lock utility
 +
 +package org.galemc.gale.concurrent;
 +
 +import net.minecraft.server.MinecraftServer;
-+import org.galemc.gale.executor.lock.CheckableLock;
 +import org.jetbrains.annotations.NotNull;
 +import org.jetbrains.annotations.Nullable;
 +
@@ -118,6 +117,11 @@ index 0000000000000000000000000000000000000000..1dd9d78f70fe586a9868e046e01ab512
 +    @Override
 +    public boolean isLocked() {
 +        return this.innerLock.isLocked();
++    }
++
++    @Override
++    public boolean isHeldByCurrentThread() {
++        return this.innerLock.isHeldByCurrentThread();
 +    }
 +
 +}

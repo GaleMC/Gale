@@ -1352,7 +1352,7 @@ index f0a7a8df3caa2ea765bb0a87cfede71d0995d276..16f3475b059d2b6b85d2b342e84ab32d
              // CraftBukkit start
              TimeSkipEvent event = new TimeSkipEvent(worldserver.getWorld(), TimeSkipEvent.SkipReason.COMMAND, time);
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index eed9f125df46b616b7234a2d669971bc51bc231b..3056d66779d236071d52d731a1c4e56aad0746c5 100644
+index 5292616c846d495b1d7be040cecf47fb33412191..b49b2fe152b70c8020ba2edc48d46cc4fe8d525e 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 @@ -49,6 +49,7 @@ import net.minecraft.world.level.block.entity.SkullBlockEntity;
@@ -1372,6 +1372,20 @@ index eed9f125df46b616b7234a2d669971bc51bc231b..3056d66779d236071d52d731a1c4e56a
          super(options, worldLoader, thread, convertable_conversionsession, resourcepackrepository, worldstem, Proxy.NO_PROXY, datafixer, services, worldloadlistenerfactory);
          // CraftBukkit end
          this.settings = dedicatedserversettings;
+diff --git a/src/main/java/net/minecraft/server/level/ServerChunkCache.java b/src/main/java/net/minecraft/server/level/ServerChunkCache.java
+index df4db98618c6c9261b4ec8e2987c4ed26af4bd4b..83a57b9bc59063ed8299f98bc33e14b57f2ea0de 100644
+--- a/src/main/java/net/minecraft/server/level/ServerChunkCache.java
++++ b/src/main/java/net/minecraft/server/level/ServerChunkCache.java
+@@ -48,6 +48,9 @@ import net.minecraft.world.level.storage.DimensionDataStorage;
+ import net.minecraft.world.level.storage.LevelData;
+ import net.minecraft.world.level.storage.LevelStorageSource;
+ import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet; // Paper
++import org.galemc.gale.executor.lock.YieldingLock;
++import org.galemc.gale.executor.queue.BaseTaskQueues;
++import org.galemc.gale.executor.thread.AbstractYieldingThread;
+ 
+ public class ServerChunkCache extends ChunkSource {
+ 
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
 index 37e0b6212fec71ec9662e6be3b1e8bea487eb4a6..e7747b19685fd943d7fbefbfef656f8bb7c359f1 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
@@ -1850,32 +1864,6 @@ index 78f53ee557276de85f0431ebcb146445b1f4fb92..6176867eea06c53882dcaacfbde0334b
          });
  
          return ret;
-diff --git a/src/main/java/org/galemc/gale/concurrent/Mutex.java b/src/main/java/org/galemc/gale/concurrent/Mutex.java
-index f7bedd5cbe9b48ac94f8cc228a17c8a54db7d7e9..129ac4f70f2e7f176517af1e46ea36c5144473a0 100644
---- a/src/main/java/org/galemc/gale/concurrent/Mutex.java
-+++ b/src/main/java/org/galemc/gale/concurrent/Mutex.java
-@@ -20,7 +20,7 @@ import java.util.concurrent.locks.Lock;
-  * <br>
-  * This interface extends {@link AutoCloseable}, where {@link #close()} calls {@link #release()}.
-  *
-- * @author Martijn Muijsers
-+ * @author Martijn Muijsers under AGPL-3.0
-  */
- @AnyThreadSafe
- public interface Mutex extends CheckableLock, AutoCloseable {
-diff --git a/src/main/java/org/galemc/gale/concurrent/SemaphoreMutex.java b/src/main/java/org/galemc/gale/concurrent/SemaphoreMutex.java
-index c310264afea6c81ec575bdf6aa5495ccb34d7ae4..d31293a2a2151bc9fbdc6eb2175045b429fb4461 100644
---- a/src/main/java/org/galemc/gale/concurrent/SemaphoreMutex.java
-+++ b/src/main/java/org/galemc/gale/concurrent/SemaphoreMutex.java
-@@ -15,7 +15,7 @@ import java.util.concurrent.locks.Lock;
-  * and throws {@link UnsupportedOperationException} for all {@link Lock} methods that do not have a default
-  * implementation in {@link Mutex}.
-  *
-- * @author Martijn Muijsers
-+ * @author Martijn Muijsers under AGPL-3.0
-  */
- @AnyThreadSafe
- @YieldFree
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleConfigurations.java b/src/main/java/org/galemc/gale/configuration/GaleConfigurations.java
 index 9571aae593999d11b3908856b0295a7d6b588007..ed2841d3a6c6d90ad02266f38c0821bca4f549f1 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleConfigurations.java
@@ -2420,79 +2408,34 @@ index 0000000000000000000000000000000000000000..1d5bb1ba545200f954c886a2afb9d8ee
 +    public static final int length = VALUES.length;
 +
 +}
-diff --git a/src/main/java/org/galemc/gale/executor/annotation/Access.java b/src/main/java/org/galemc/gale/executor/annotation/Access.java
-index d07f68ff73a368c8f0da56152021a95474a601ca..50541414e1d91ff06d108d9b3fe64dcb4ad09668 100644
---- a/src/main/java/org/galemc/gale/executor/annotation/Access.java
-+++ b/src/main/java/org/galemc/gale/executor/annotation/Access.java
-@@ -27,13 +27,13 @@ public enum Access {
-     WRITE,
-     /**
-      * Both {@link #READ} and {@link #WRITE}: if the annotation is applied to a field, it holds for both access to
--     * the field's value, as well as modifications made to the field.
-+     * the field's value, and for modifications made to the field.
-      * <br>
-      * This may or may not extend to conceptual access and/or modifications.
-      *
-      * @see #READ
-      * @see #WRITE
-      */
--    READ_WRITE;
-+    READ_WRITE
- 
- }
-diff --git a/src/main/java/org/galemc/gale/executor/annotation/Guarded.java b/src/main/java/org/galemc/gale/executor/annotation/Guarded.java
-index 84a0bac98a382550c826e6adbecec1fe7be974a1..6f1d1960953daf7f6f61643f5165e9a0760a647e 100644
---- a/src/main/java/org/galemc/gale/executor/annotation/Guarded.java
-+++ b/src/main/java/org/galemc/gale/executor/annotation/Guarded.java
-@@ -24,7 +24,7 @@ import java.lang.annotation.Target;
-  * @author Martijn Muijsers under AGPL-3.0
-  */
- @Documented
--@Repeatable
-+@Repeatable(Guarded.Container.class)
- @Target({ElementType.FIELD, ElementType.METHOD, ElementType.TYPE})
- public @interface Guarded {
- 
-@@ -44,4 +44,12 @@ public @interface Guarded {
-      */
-     String except() default "";
- 
-+    @Documented
-+    @Target(ElementType.ANNOTATION_TYPE)
-+    @interface Container {
-+
-+        Guarded[] value();
-+
-+    }
-+
- }
 diff --git a/src/main/java/org/galemc/gale/executor/annotation/PotentiallyBlocking.java b/src/main/java/org/galemc/gale/executor/annotation/PotentiallyBlocking.java
-index 71f26852c96dea34ea07efe07f834f8262509957..d324c303245bcbedaaaab573803d73caff941901 100644
+index a4dc0ebe48fdd352387f06be42ff46fc11ee5822..d324c303245bcbedaaaab573803d73caff941901 100644
 --- a/src/main/java/org/galemc/gale/executor/annotation/PotentiallyBlocking.java
 +++ b/src/main/java/org/galemc/gale/executor/annotation/PotentiallyBlocking.java
-@@ -2,7 +2,7 @@
+@@ -2,6 +2,8 @@
  
  package org.galemc.gale.executor.annotation;
  
--import org.galemc.gale.executor.thread.BaseThread;
 +import org.galemc.gale.executor.thread.AbstractYieldingThread;
- 
++
  import java.lang.annotation.Documented;
  import java.lang.annotation.ElementType;
-@@ -19,7 +19,7 @@ import java.lang.annotation.Target;
-  * {@link PotentiallyBlocking}, {@link PotentiallyYielding} or {@link YieldFree} may all be used.
+ import java.lang.annotation.Target;
+@@ -15,6 +17,9 @@ import java.lang.annotation.Target;
   * <br>
-  * Methods that are potentially blocking, including those annotated with {@link PotentiallyBlocking}, must never
-- * be called on a {@link BaseThread}.
+  * In a method annotated with {@link PotentiallyBlocking}, fields and methods annotated with
+  * {@link PotentiallyBlocking}, {@link PotentiallyYielding} or {@link YieldFree} may all be used.
++ * <br>
++ * Methods that are potentially blocking, including those annotated with {@link PotentiallyBlocking}, must never
 + * be called on an {@link AbstractYieldingThread}.
   *
   * @author Martijn Muijsers under AGPL-3.0
   */
 diff --git a/src/main/java/org/galemc/gale/executor/annotation/PotentiallyYielding.java b/src/main/java/org/galemc/gale/executor/annotation/PotentiallyYielding.java
-index e87ee2612348fc559b21256cc7cadfc684f01f8e..7ff4e4ab43d316e319efb33b2dd365d679a58118 100644
+index 44b70d68ba6823ab72ea9af4b7774051785c0a2b..7ff4e4ab43d316e319efb33b2dd365d679a58118 100644
 --- a/src/main/java/org/galemc/gale/executor/annotation/PotentiallyYielding.java
 +++ b/src/main/java/org/galemc/gale/executor/annotation/PotentiallyYielding.java
-@@ -2,6 +2,9 @@
+@@ -2,13 +2,16 @@
  
  package org.galemc.gale.executor.annotation;
  
@@ -2502,6 +2445,14 @@ index e87ee2612348fc559b21256cc7cadfc684f01f8e..7ff4e4ab43d316e319efb33b2dd365d6
  import java.lang.annotation.Documented;
  import java.lang.annotation.ElementType;
  import java.lang.annotation.Target;
+ 
+ /**
+  * An annotation primarily for methods, identifying methods that do not block, but may yield to other tasks
+- * under certain circumstances.
++ * under certain circumstances, such as when attempting to acquire a {@link YieldingLock}.
+  * <br>
+  * When applied to a class, this annotation indicates it holds for all methods, both instance and static,
+  * belonging to the class, or any superclass thereof, or any inner or statically nested class of the class or
 @@ -16,6 +19,9 @@ import java.lang.annotation.Target;
   * <br>
   * In a method annotated with {@link PotentiallyYielding}, the only methods that can be called are those
@@ -2685,32 +2636,6 @@ index 0000000000000000000000000000000000000000..d27ee27a65635d0136c5c9e33925b640
 +    Access value() default Access.READ_WRITE;
 +
 +}
-diff --git a/src/main/java/org/galemc/gale/executor/lock/CheckableLock.java b/src/main/java/org/galemc/gale/executor/lock/CheckableLock.java
-new file mode 100644
-index 0000000000000000000000000000000000000000..995746e7f89481f885ea6e3965fc9a2f3f9e9498
---- /dev/null
-+++ b/src/main/java/org/galemc/gale/executor/lock/CheckableLock.java
-@@ -0,0 +1,20 @@
-+package org.galemc.gale.executor.lock;
-+
-+import org.galemc.gale.executor.annotation.YieldFree;
-+
-+import java.util.concurrent.locks.Lock;
-+
-+/**
-+ * A {@link Lock} that also provides an {@link #isLocked()} method.
-+ *
-+ * @author Martijn Muijsers under AGPL-3.0
-+ */
-+public interface CheckableLock extends Lock {
-+
-+    /**
-+     * @return Whether this lock is currently held.
-+     */
-+    @YieldFree
-+    boolean isLocked();
-+
-+}
 diff --git a/src/main/java/org/galemc/gale/executor/lock/MultipleWaitingBaseThreadsYieldingLock.java b/src/main/java/org/galemc/gale/executor/lock/MultipleWaitingBaseThreadsYieldingLock.java
 new file mode 100644
 index 0000000000000000000000000000000000000000..a248a9ea644a8bb4175da2e1903483ab6866bc48
@@ -2756,16 +2681,62 @@ index 0000000000000000000000000000000000000000..a248a9ea644a8bb4175da2e1903483ab
 +    }
 +
 +}
-diff --git a/src/main/java/org/galemc/gale/executor/lock/YieldingLock.java b/src/main/java/org/galemc/gale/executor/lock/YieldingLock.java
+diff --git a/src/main/java/org/galemc/gale/executor/lock/SingleWaitingBaseThreadYieldingLock.java b/src/main/java/org/galemc/gale/executor/lock/SingleWaitingBaseThreadYieldingLock.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..3ec790a7b19790731f70f59cc2bdb1919f26dd2d
+index 0000000000000000000000000000000000000000..686e16da8372085196d8f92adb881f82dd5c2947
 --- /dev/null
-+++ b/src/main/java/org/galemc/gale/executor/lock/YieldingLock.java
-@@ -0,0 +1,163 @@
++++ b/src/main/java/org/galemc/gale/executor/lock/SingleWaitingBaseThreadYieldingLock.java
+@@ -0,0 +1,39 @@
 +// Gale - base thread pool
 +
 +package org.galemc.gale.executor.lock;
 +
++import org.galemc.gale.executor.thread.BaseThread;
++
++import java.util.concurrent.atomic.AtomicInteger;
++import java.util.concurrent.locks.Lock;
++
++/**
++ * A {@link YieldingLock} for which one {@link BaseThread} may be waiting at any time.
++ *
++ * @author Martijn Muijsers under AGPL-3.0
++ */
++@SuppressWarnings("unused")
++public class SingleWaitingBaseThreadYieldingLock extends YieldingLock {
++
++    private volatile boolean hasWaitingThread = false;
++
++    public SingleWaitingBaseThreadYieldingLock(Lock innerLock) {
++        super(innerLock);
++    }
++
++    @Override
++    public void incrementWaitingThreads() {
++        hasWaitingThread = true;
++    }
++
++    @Override
++    public void decrementWaitingThreads() {
++        hasWaitingThread = false;
++    }
++
++    @Override
++    protected boolean hasWaitingThreads() {
++        return this.hasWaitingThread;
++    }
++
++}
+diff --git a/src/main/java/org/galemc/gale/executor/lock/YieldingLock.java b/src/main/java/org/galemc/gale/executor/lock/YieldingLock.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..799608befb739d051153b5321598ea87b50fd6bd
+--- /dev/null
++++ b/src/main/java/org/galemc/gale/executor/lock/YieldingLock.java
+@@ -0,0 +1,202 @@
++// Gale - base thread pool
++
++package org.galemc.gale.executor.lock;
++
++import org.galemc.gale.concurrent.CheckableLock;
 +import org.galemc.gale.executor.annotation.thread.AnyThreadSafe;
 +import org.galemc.gale.executor.annotation.PotentiallyYielding;
 +import org.galemc.gale.executor.annotation.YieldFree;
@@ -2808,6 +2779,13 @@ index 0000000000000000000000000000000000000000..3ec790a7b19790731f70f59cc2bdb191
 +     */
 +    private final @Nullable ReentrantLock innerReentrantLock;
 +
++    /**
++     * Whether the {@link #innerLock} can be truly 'held' as lock.
++     * Can be set to false via {@link #withCanNotBeHeld()} for locks that are not real, but
++     * merely use the {@link Lock} interface allow base threads to wait for them.
++     */
++    private boolean canBeHeld;
++
 +    public YieldingLock(Lock innerLock) {
 +        this.innerLock = innerLock;
 +        if (innerLock instanceof CheckableLock checkableLock) {
@@ -2829,7 +2807,17 @@ index 0000000000000000000000000000000000000000..3ec790a7b19790731f70f59cc2bdb191
 +    @YieldFree
 +    @Override
 +    public boolean tryLock() {
-+        return innerLock.tryLock();
++        if (innerLock.tryLock()) {
++            // Increment the YieldingLock count of the current thread
++            if (this.canBeHeld) {
++                @Nullable AbstractYieldingThread yieldingThread = AbstractYieldingThread.currentYieldingThread();
++                if (yieldingThread != null) {
++                    yieldingThread.incrementHeldYieldingLockCount();
++                }
++            }
++            return true;
++        }
++        return false;
 +    }
 +
 +    /**
@@ -2855,8 +2843,10 @@ index 0000000000000000000000000000000000000000..3ec790a7b19790731f70f59cc2bdb191
 +            yieldingThread.yieldUntil(null, this);
 +        }
 +        // Increment the YieldingLock count of the current thread
-+        if (yieldingThread != null) {
-+            yieldingThread.incrementHeldYieldingLockCount();
++        if (this.canBeHeld) {
++            if (yieldingThread != null) {
++                yieldingThread.incrementHeldYieldingLockCount();
++            }
 +        }
 +    }
 +
@@ -2867,9 +2857,11 @@ index 0000000000000000000000000000000000000000..3ec790a7b19790731f70f59cc2bdb191
 +    public void unlock() {
 +        this.innerLock.unlock();
 +        // Decrement the YieldingLock count of the current thread
-+        @Nullable AbstractYieldingThread yieldingThread = AbstractYieldingThread.currentYieldingThread();
-+        if (yieldingThread != null) {
-+            yieldingThread.decrementHeldYieldingLockCount();
++        if (this.canBeHeld) {
++            @Nullable AbstractYieldingThread yieldingThread = AbstractYieldingThread.currentYieldingThread();
++            if (yieldingThread != null) {
++                yieldingThread.decrementHeldYieldingLockCount();
++            }
 +        }
 +        // Potentially signal a thread that this lock has become available.
 +        // Another thread could also acquire the lock at this moment, so when we signal the thread we obtain below,
@@ -2906,6 +2898,11 @@ index 0000000000000000000000000000000000000000..3ec790a7b19790731f70f59cc2bdb191
 +        return this.innerCheckableLock != null ? this.innerCheckableLock.isLocked() : this.innerReentrantLock.isLocked();
 +    }
 +
++    @Override
++    public boolean isHeldByCurrentThread() {
++        return this.innerCheckableLock != null ? this.innerCheckableLock.isHeldByCurrentThread() : this.innerReentrantLock.isHeldByCurrentThread();
++    }
++
 +    /**
 +     * Increments the number of threads waiting for this lock to be released.
 +     */
@@ -2923,6 +2920,18 @@ index 0000000000000000000000000000000000000000..3ec790a7b19790731f70f59cc2bdb191
 +     */
 +    @YieldFree
 +    protected abstract boolean hasWaitingThreads();
++
++    /**
++     * Sets {@link #canBeHeld} to false.
++     * This should be called immediately after construction of this {@link YieldingLock}.
++     *
++     * @return This instance.
++     */
++    @YieldFree
++    public @NotNull YieldingLock withCanNotBeHeld() {
++        this.canBeHeld = false;
++        return this;
++    }
 +
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/queue/AbstractTaskQueue.java b/src/main/java/org/galemc/gale/executor/queue/AbstractTaskQueue.java
@@ -3026,10 +3035,10 @@ index 0000000000000000000000000000000000000000..552e82a33c59261b06911b479400a7b1
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/queue/AllLevelsScheduledTaskQueue.java b/src/main/java/org/galemc/gale/executor/queue/AllLevelsScheduledTaskQueue.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..bbe92d92f58d484084114da73003c345d00aac7e
+index 0000000000000000000000000000000000000000..2eb121798b2feb2a5ce5ebb60316660dbff87de3
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/queue/AllLevelsScheduledTaskQueue.java
-@@ -0,0 +1,127 @@
+@@ -0,0 +1,130 @@
 +// Gale - base thread pool
 +
 +package org.galemc.gale.executor.queue;
@@ -3086,6 +3095,9 @@ index 0000000000000000000000000000000000000000..bbe92d92f58d484084114da73003c345
 +
 +    @Override
 +    public boolean hasTasks() {
++        if (MinecraftServer.SERVER == null) {
++            return false;
++        }
 +        for (ServerLevel level : MinecraftServer.SERVER.getAllLevels()) {
 +            if (this.hasLevelTasks(level)) {
 +                return true;
@@ -3192,10 +3204,10 @@ index 0000000000000000000000000000000000000000..690979cb9b7ec3dedbd7d0c45d0c183a
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java b/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..cc5373e78657d04a43cb844c4fcd5f0f9cacf187
+index 0000000000000000000000000000000000000000..e4a0b3085cb22f25246010c43919129283a3b872
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java
-@@ -0,0 +1,115 @@
+@@ -0,0 +1,125 @@
 +// Gale - base thread pool
 +
 +package org.galemc.gale.executor.queue;
@@ -3204,6 +3216,7 @@ index 0000000000000000000000000000000000000000..cc5373e78657d04a43cb844c4fcd5f0f
 +import net.minecraft.server.MinecraftServer;
 +import net.minecraft.server.level.ServerLevel;
 +import net.minecraft.world.entity.Entity;
++import org.galemc.gale.executor.TaskSpan;
 +import org.galemc.gale.executor.thread.AssistThread;
 +import org.galemc.gale.executor.thread.ServerThread;
 +
@@ -3243,6 +3256,15 @@ index 0000000000000000000000000000000000000000..cc5373e78657d04a43cb844c4fcd5f0f
 +     * on any ticking thread, and additional queues would need to be added concerning a specific
 +     * subject (like an entity or chunk) with tasks that will be run on whichever ticking thread is the
 +     * ticking thread for that subject at the time of polling.
++     * <br>
++     * Note that a {@link ServerThread} can only yield to {@link TaskSpan#TINY} tasks
++     * (since there are no higher tiers, and threads can only yield to lower tiers when
++     * the task yielded to is{@link TaskSpan#TINY}.
++     * Yielding to other tasks in this same tier is somewhat risky, since this means that the tasks that were
++     * yielded to must assume that although they are running on the server thread, they may be running at
++     * some unknown point in execution of the main thread. Therefore, scheduling any {@link TaskSpan#TINY} tasks to
++     * a queue in this tier must be done with the utmost care that the task cannot disrupt, or be disrupted by,
++     * the surrounding code that yields to it.
 +     */
 +    SERVER(new AbstractTaskQueue[]{
 +        BaseTaskQueues.deferredToServerThread,
@@ -4141,22 +4163,30 @@ index 0000000000000000000000000000000000000000..fb4f9c047fc71a9a01aa47871254c6a9
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/thread/AbstractYieldingThread.java b/src/main/java/org/galemc/gale/executor/thread/AbstractYieldingThread.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..d1c305735488ee02e3d86c777ada068da955495b
+index 0000000000000000000000000000000000000000..24a30760982244fb0d3fa1933751a8286c27014c
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/thread/AbstractYieldingThread.java
-@@ -0,0 +1,68 @@
+@@ -0,0 +1,147 @@
 +// Gale - base thread pool
 +
 +package org.galemc.gale.executor.thread;
 +
++import net.minecraft.server.MinecraftServer;
++import org.galemc.gale.concurrent.CheckableLock;
++import org.galemc.gale.executor.annotation.PotentiallyYielding;
 +import org.galemc.gale.executor.annotation.thread.AnyThreadSafe;
 +import org.galemc.gale.executor.annotation.YieldFree;
 +import org.galemc.gale.executor.annotation.thread.ThisThreadOnly;
++import org.galemc.gale.executor.lock.SingleWaitingBaseThreadYieldingLock;
 +import org.galemc.gale.executor.lock.YieldingLock;
 +import org.jetbrains.annotations.NotNull;
 +import org.jetbrains.annotations.Nullable;
 +
++import java.util.concurrent.CompletableFuture;
++import java.util.concurrent.TimeUnit;
++import java.util.concurrent.locks.Condition;
 +import java.util.function.BooleanSupplier;
++import java.util.function.Consumer;
 +
 +/**
 + * An interface for threads that can yield to other tasks, for example upon encountering a {@link YieldingLock},
@@ -4191,7 +4221,78 @@ index 0000000000000000000000000000000000000000..d1c305735488ee02e3d86c777ada068d
 +    void decrementHeldYieldingLockCount();
 +
 +    @ThisThreadOnly
++    @PotentiallyYielding("this method is meant to yield")
 +    void yieldUntil(@Nullable BooleanSupplier stopCondition, @Nullable YieldingLock yieldingLock);
++
++    /**
++     * Calls {@link #yieldUntil(BooleanSupplier, YieldingLock)}, but creates a {@link YieldingLock}
++     * based on the given {@code future}, that causes this thread to be notified when the future is completed.
++     *
++     * @param autoCompletingLockConsumer An optional consumer that will be applied to the created {@link YieldingLock},
++     *                             so that {@link YieldingLock#unlock} can be called on it
++     *                             when the {@code stopCondition} becomes true.
++     */
++    @ThisThreadOnly
++    @PotentiallyYielding("this method is meant to yield")
++    default void yieldUntilFuture(@Nullable BooleanSupplier stopCondition, @NotNull CompletableFuture<?> future, @Nullable Consumer<YieldingLock> autoCompletingLockConsumer) {
++
++        /*
++        Here, we abuse the Lock interface to create a YieldingLock
++        that can be speculatively locked only while tasks for this blockable event loop are available,
++        or when the future has completed.
++         */
++        YieldingLock autoCompletingLock = new SingleWaitingBaseThreadYieldingLock(new CheckableLock() {
++
++            @Override
++            public boolean isLocked() {
++                return !stopCondition.getAsBoolean() && !future.isDone();
++            }
++
++            @Override
++            public boolean isHeldByCurrentThread() {
++                throw new UnsupportedOperationException("isHeldByCurrentThread() is not supported for a yieldUntilFuture lock");
++            }
++
++            @Override
++            public void lock() {
++                throw new UnsupportedOperationException("lock() is not supported for a yieldUntilFuture lock");
++            }
++
++            @Override
++            public void lockInterruptibly() {
++                throw new UnsupportedOperationException("lockInterruptibly() is not supported for a yieldUntilFuture lock");
++            }
++
++            @Override
++            public boolean tryLock() {
++                return !this.isLocked();
++            }
++
++            @Override
++            public boolean tryLock(long time, @NotNull TimeUnit unit) throws InterruptedException {
++                throw new UnsupportedOperationException("tryLock(long, TimeUnit) is not supported for a yieldUntilFuture lock");
++            }
++
++            @Override
++            public void unlock() {}
++
++            @NotNull
++            @Override
++            public Condition newCondition() {
++                throw new UnsupportedOperationException("newCondition() is not supported for a yieldUntilFuture lock");
++            }
++
++        }).withCanNotBeHeld();
++        if (autoCompletingLockConsumer != null) {
++            autoCompletingLockConsumer.accept(autoCompletingLock);
++        }
++        // Be properly notified when the future completes
++        future.thenRun(autoCompletingLock::unlock);
++
++        // Yield while necessary
++        this.yieldUntil(null, autoCompletingLock);
++
++    }
 +
 +    @ThisThreadOnly
 +    void runTasksUntil(@Nullable BooleanSupplier stopCondition, @Nullable YieldingLock yieldingLock);
@@ -4299,10 +4400,10 @@ index 0000000000000000000000000000000000000000..a5605765f6be0b75e5df5613e8b393b6
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/thread/BaseThread.java b/src/main/java/org/galemc/gale/executor/thread/BaseThread.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..633c1aeddca31f5fe95cc8c9ad54e6a2cf1b4ac1
+index 0000000000000000000000000000000000000000..1c7275dd53e29594d25c63d3df54311a300a08fb
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/thread/BaseThread.java
-@@ -0,0 +1,721 @@
+@@ -0,0 +1,719 @@
 +// Gale - base thread pool
 +
 +package org.galemc.gale.executor.thread;
@@ -4516,8 +4617,9 @@ index 0000000000000000000000000000000000000000..633c1aeddca31f5fe95cc8c9ad54e6a2
 +    }
 +
 +    /**
-+     * This method is based on {@link #signal}, and must be so, or {@link BaseThreadActivation} will get stuck
-+     * while choosing a thread to activate.
++     * This method is based on {@link #signal}.
++     * {@link #signal} must always return true if this method returns true;
++     * otherwise {@link BaseThreadActivation} will get stuck while choosing a thread to activate.
 +     *
 +     * @see #signal
 +     */
@@ -4533,10 +4635,6 @@ index 0000000000000000000000000000000000000000..633c1aeddca31f5fe95cc8c9ad54e6a2
 +            if (!this.mayBeStillWaitingButHasBeenSignalled) {
 +                return true;
 +            }
-+        } else if (this.isPollingTaskOrCheckingStopCondition) {
-+            if (!this.skipNextWait) {
-+                return true;
-+            }
 +        }
 +        return false;
 +    }
@@ -4550,8 +4648,6 @@ index 0000000000000000000000000000000000000000..633c1aeddca31f5fe95cc8c9ad54e6a2
 +     * <br>
 +     * Exactly one of {@code stopCondition} and {@code yieldingLock} must be non-null.
 +     */
-+    @ThisThreadOnly
-+    @PotentiallyYielding("this method is meant to yield")
 +    public final void yieldUntil(@Nullable BooleanSupplier stopCondition, @Nullable YieldingLock yieldingLock) {
 +        int oldYieldDepth = this.yieldDepth;
 +        int newYieldDepth = oldYieldDepth + 1;
@@ -4574,6 +4670,8 @@ index 0000000000000000000000000000000000000000..633c1aeddca31f5fe95cc8c9ad54e6a2
 +     * The above is the same as {@link #yieldUntil}, except it may be called in situations that is not 'yielding',
 +     * for instance the endless loop polling tasks performed by a n{@link AssistThread}. The difference with
 +     * {@link #yieldUntil} is that this method does not increment or decrement things the yield depth of this thread.
++     * <br>
++     * Exactly one of {@code stopCondition} or {@code yieldingLock} must be non-null.
 +     *
 +     * @see #yieldUntil
 +     */
@@ -4699,37 +4797,37 @@ index 0000000000000000000000000000000000000000..633c1aeddca31f5fe95cc8c9ad54e6a2
 +        for (var queue : tier.taskQueues) {
 +            Runnable task = tinyOnly ? queue.pollTiny(this) : queue.poll(this);
 +            if (task != null) {
-+                /*
-+                Check if the tier has run out of tasks for a span,
-+                in order to update BaseThreadActivation#thereMayBeTasks.
-+                 */
-+                for (int spanI = 0; spanI < TaskSpan.length; spanI++) {
-+                    TaskSpan span = TaskSpan.VALUES[spanI];
-+                    if (queue.canHaveTasks(span)) {
-+                        int oldTasks = BaseThreadActivation.thereMayBeTasks[tier.ordinal][spanI].get();
-+                        if (oldTasks > 0) {
-+                            if (!queue.hasTasks(span)) {
-+                                boolean tierHasNoTasksForSpan = true;
-+                                for (AbstractTaskQueue otherTierQueue : tier.taskQueues) {
-+                                    // We already know there are no tasks in this queue
-+                                    if (otherTierQueue == queue) {
-+                                        continue;
-+                                    }
-+                                    if (otherTierQueue.hasTasks(span)) {
-+                                        tierHasNoTasksForSpan = false;
-+                                        break;
-+                                    }
++                this.lastPolledTaskTier = tier;
++                return task;
++            }
++            /*
++            Check if the tier has run out of tasks for a span,
++            in order to update BaseThreadActivation#thereMayBeTasks.
++             */
++            for (int spanI = 0; spanI < TaskSpan.length; spanI++) {
++                TaskSpan span = TaskSpan.VALUES[spanI];
++                if (queue.canHaveTasks(span)) {
++                    int oldTasks = BaseThreadActivation.thereMayBeTasks[tier.ordinal][spanI].get();
++                    if (oldTasks > 0) {
++                        if (!queue.hasTasks(span)) {
++                            boolean tierHasNoTasksForSpan = true;
++                            for (AbstractTaskQueue otherTierQueue : tier.taskQueues) {
++                                // We already know there are no tasks in this queue
++                                if (otherTierQueue == queue) {
++                                    continue;
 +                                }
-+                                if (tierHasNoTasksForSpan) {
-+                                    // Set thereMayBeTasks to false, but only if it did not change in the meantime
-+                                    BaseThreadActivation.thereMayBeTasks[tier.ordinal][spanI].compareAndSet(oldTasks, 0);
++                                if (otherTierQueue.hasTasks(span)) {
++                                    tierHasNoTasksForSpan = false;
++                                    break;
 +                                }
++                            }
++                            if (tierHasNoTasksForSpan) {
++                                // Set thereMayBeTasks to false, but only if it did not change in the meantime
++                                BaseThreadActivation.thereMayBeTasks[tier.ordinal][spanI].compareAndSet(oldTasks, 0);
 +                            }
 +                        }
 +                    }
 +                }
-+                this.lastPolledTaskTier = tier;
-+                return task;
 +            }
 +        }
 +        return null;
@@ -4972,8 +5070,9 @@ index 0000000000000000000000000000000000000000..633c1aeddca31f5fe95cc8c9ad54e6a2
 +    @AnyThreadSafe
 +    @YieldFree
 +    public final boolean signal(@Nullable SignalReason reason) {
-+        //noinspection StatementWithEmptyBody
-+        while (!this.waitLock.tryLock()); // TODO Gale use a wait-free system here by using a sort of leave-a-message-at-the-door Atomic class system
++        while (!this.waitLock.tryLock()) { // TODO Gale use a wait-free system here by using a sort of leave-a-message-at-the-door Atomic class system
++            Thread.onSpinWait();
++        }
 +        try {
 +            if (this.isWaiting) {
 +                if (this.isNotActuallyWaitingYet) {
@@ -5497,16 +5596,18 @@ index 0000000000000000000000000000000000000000..77fe10e51b00115da520cfc211bf84ba
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/thread/pool/BaseThreadActivation.java b/src/main/java/org/galemc/gale/executor/thread/pool/BaseThreadActivation.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..ac1f646ed846ed6067f77e7526e2bd0a43bf6677
+index 0000000000000000000000000000000000000000..a22b63a15fcc737494454c0d91c35eef5bb21d9e
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/thread/pool/BaseThreadActivation.java
-@@ -0,0 +1,518 @@
+@@ -0,0 +1,552 @@
 +// Gale - base thread pool
 +
 +package org.galemc.gale.executor.thread.pool;
 +
 +import net.minecraft.server.MinecraftServer;
 +import org.galemc.gale.executor.TaskSpan;
++import org.galemc.gale.executor.annotation.YieldFree;
++import org.galemc.gale.executor.annotation.thread.AnyThreadSafe;
 +import org.galemc.gale.executor.lock.YieldingLock;
 +import org.galemc.gale.executor.queue.BaseTaskQueueTier;
 +import org.galemc.gale.executor.thread.BaseThread;
@@ -5527,6 +5628,8 @@ index 0000000000000000000000000000000000000000..ac1f646ed846ed6067f77e7526e2bd0a
 + *
 + * @author Martijn Muijsers under AGPL-3.0
 + */
++@AnyThreadSafe
++@YieldFree
 +public final class BaseThreadActivation {
 +
 +    private BaseThreadActivation() {}
@@ -5563,10 +5666,10 @@ index 0000000000000000000000000000000000000000..ac1f646ed846ed6067f77e7526e2bd0a
 +     * A re-usable array for use inside {@link #update()}.
 +     */
 +    @SuppressWarnings("unchecked")
-+    private static final List<BaseThread>[] threadsWaitingForLockForTier = new List[BaseTaskQueueTier.length];
++    private static final List<BaseThread>[] threadsWaitingForUnlockedLockForTier = new List[BaseTaskQueueTier.length];
 +    static {
 +        for (int tierI = 0; tierI < BaseTaskQueueTier.length; tierI++) {
-+            threadsWaitingForLockForTier[tierI] = new ArrayList<>();
++            threadsWaitingForUnlockedLockForTier[tierI] = new ArrayList<>();
 +        }
 +    }
 +
@@ -5705,7 +5808,7 @@ index 0000000000000000000000000000000000000000..ac1f646ed846ed6067f77e7526e2bd0a
 +     *         The following values that are never changed outside of {@link #update()}:
 +     *         <ul>
 +     *             <li>{@link #numberOfThreadsActiveForTier}</li>
-+     *             <li>{@link #threadsWaitingForLockForTier}</li>
++     *             <li>{@link #threadsWaitingForUnlockedLockForTier}</li>
 +     *             <li>{@link #numberOfThreadsActiveForLowerThanTier}</li>
 +     *             <li>{@link #numberOfThreadsActiveForHigherThanTier}</li>
 +     *             <li>{@link #numberOfThreadsIntendedToBeActiveForTier}</li>
@@ -5805,32 +5908,48 @@ index 0000000000000000000000000000000000000000..ac1f646ed846ed6067f77e7526e2bd0a
 +
 +            /*
 +            Compute for each tier, for how many threads
-+            the highest tier of any task on their stack is that tier.
++            the highest tier of any task on their stack is that tier,
++            and that are not waiting.
 +            Additionally, compute the threads for each tier that are waiting for some YieldingLock
-+            (threads with no tasks on their stack cannot be waiting for a YieldingLock).
++            (threads with no tasks on their stack cannot be waiting for a YieldingLock)
++            that can be unlocked.
 +            Additionally, compute the number of threads that are active (i.e. not waiting)
 +            but that are not executing a task (i.e. do not have any tasks on their stack).
 +             */
 +            Arrays.fill(numberOfThreadsActiveForTier, 0);
 +            for (int tierI = 0; tierI < BaseTaskQueueTier.length; tierI++) {
-+                threadsWaitingForLockForTier[tierI].clear();
++                threadsWaitingForUnlockedLockForTier[tierI].clear();
 +            }
 +            int activeAssistThreadsWithoutTask = 0;
 +            for (BaseThread thread : threads) {
 +                if (thread != null) {
 +                    BaseTaskQueueTier tier = thread.highestTierOfTaskOnStack;
-+                    if (tier == null) {
-+                        // The thread is doing nothing
-+                        if (thread.baseThreadIndex > 0 && !thread.isWaitingAndNeedsSignal()) {
-+                            // If it is doing nothing but not waiting, it is available to do anything
-+                            activeAssistThreadsWithoutTask++;
++                    // This value will be unused if tier is null, so we can safely use some dummy value like 1
++                    int tierOrdinal = thread.baseThreadIndex > 0 ? (tier == null ? -1 : tier.ordinal) : BaseTaskQueueTier.SERVER.ordinal;
++                    if (thread.isWaitingAndNeedsSignal()) {
++                        var lockWaitingFor = thread.lockWaitingFor;
++                        if (lockWaitingFor != null && !lockWaitingFor.isLocked()) {
++                            threadsWaitingForUnlockedLockForTier[tierOrdinal].add(thread);
 +                        }
 +                    } else {
-+                        numberOfThreadsActiveForTier[tier.ordinal]++;
-+                        if (thread.lockWaitingFor != null) {
-+                            threadsWaitingForLockForTier[tier.ordinal].add(thread);
++                        if (tier == null && thread.baseThreadIndex > 0) {
++                            /*
++                            ^ Note that assist threads are never waiting for a YieldingLock while they are doing nothing,
++                            so we can safely use 'else' below, but the server thread may be waiting for a YieldingLock
++                            while it has no highestTierOfTaskOnStack, because it reached a YieldingLock during its
++                            normal outer execution.
++                             */
++                            /*
++                            The thread is doing nothing:
++                            if it is also not waiting, it is available to start anything.
++                             */
++                            activeAssistThreadsWithoutTask++;
++                        } else {
++                            numberOfThreadsActiveForTier[tierOrdinal]++;
 +                        }
 +                    }
++                } else {
++                    numberOfThreadsActiveForTier[BaseTaskQueueTier.SERVER.ordinal]++;
 +                }
 +            }
 +
@@ -5858,11 +5977,16 @@ index 0000000000000000000000000000000000000000..ac1f646ed846ed6067f77e7526e2bd0a
 +            For each tier, compute the number of threads that should be active if there were tasks.
 +            This can then later be compared to the actual number of active threads for that tier.
 +             */
-+            for (int tierI = 0; tierI < BaseTaskQueueTier.length; tierI++) {
-+                numberOfThreadsIntendedToBeActiveForTier[tierI] = BaseThreadPool.targetParallelism - (tierI == 0 ? 0 : activeAssistThreadsWithoutTask) - numberOfThreadsActiveForHigherThanTier[tierI] - Math.min(numberOfThreadsActiveForLowerThanTier[tierI], BaseThreadPool.maxUndisturbedLowerTierThreadCount);
++            for (int tierI = 1; tierI < BaseTaskQueueTier.length; tierI++) {
++                numberOfThreadsIntendedToBeActiveForTier[tierI] = BaseThreadPool.targetParallelism - activeAssistThreadsWithoutTask - numberOfThreadsActiveForHigherThanTier[tierI] - Math.min(numberOfThreadsActiveForLowerThanTier[tierI], BaseThreadPool.maxUndisturbedLowerTierThreadCount);
 +            }
-+            // There can only be one active server thread
-+            numberOfThreadsIntendedToBeActiveForTier[0] = Math.min(numberOfThreadsIntendedToBeActiveForTier[0], 1);
++            /*
++            There must always be an attempt to have one active server thread.
++            The above computation would sometimes give 0 due to not wanting to disturb lower tiers,
++            which we don't care about for the server thread because it is always more important.
++            The above computation would also sometimes give a number higher than 1 which makes no sense.
++             */
++            numberOfThreadsIntendedToBeActiveForTier[0] = 1;
 +
 +            {
 +                final int finalActiveAssistThreadsWithoutTask = activeAssistThreadsWithoutTask;
@@ -5900,7 +6024,7 @@ index 0000000000000000000000000000000000000000..ac1f646ed846ed6067f77e7526e2bd0a
 +                            break;
 +                        }
 +                    }
-+                    if (thereAreTasks || !threadsWaitingForLockForTier[tierI].isEmpty()) {
++                    if (thereAreTasks || !threadsWaitingForUnlockedLockForTier[tierI].isEmpty()) {
 +
 +                        /*
 +                         * We attempt to wake up a thread that is sleeping,
@@ -5939,7 +6063,16 @@ index 0000000000000000000000000000000000000000..ac1f646ed846ed6067f77e7526e2bd0a
 +                            for (int threadI = tryThreadsStart; threadI < tryThreadsEnd; threadI++) {
 +                                BaseThread thread = threads[threadI];
 +                                if (thread != null) {
-+                                    if (thread.isWaitingAndNeedsSignal() && thread.canStartYieldingTasks) {
++                                    /*
++                                    Note that we only activate threads that can start yielding tasks
++                                    (it seems wasteful to take the effort to activate threads that can not).
++                                    or threads that are waiting for a lock that is not currently locked.
++                                    Note that for the server thread, if it cannot start yielding tasks,
++                                    there is never an alternative thread that can, so we also allow it,
++                                    as a special case.
++                                     */
++                                    @Nullable YieldingLock lockWaitingFor = thread.lockWaitingFor;
++                                    if (thread.isWaitingAndNeedsSignal() && (tierI == 0 || (lockWaitingFor != null && !lockWaitingFor.isLocked()) || thread.canStartYieldingTasks)) {
 +                                        /*
 +                                        Tasks of a certain tier may yield to tasks of the same or a higher
 +                                        tier, and they may also yield to tiny tasks of a lower tier.
@@ -5953,7 +6086,6 @@ index 0000000000000000000000000000000000000000..ac1f646ed846ed6067f77e7526e2bd0a
 +                                         */
 +                                        var highestTierOfTaskOnStack = thread.highestTierOfTaskOnStack;
 +                                        var highestTierOfTaskOnStackOrdinalOrLength = highestTierOfTaskOnStack == null ? BaseTaskQueueTier.length : highestTierOfTaskOnStack.ordinal;
-+                                        @Nullable YieldingLock lockWaitingFor = thread.lockWaitingFor;
 +                                        boolean isThreadWaitingForAvailableYieldingLock = lockWaitingFor != null && !lockWaitingFor.isLocked();
 +                                        if (isThreadWaitingForAvailableYieldingLock || highestTierOfTaskOnStack == null || highestTierOfTaskOnStack.ordinal >= tierI) {
 +                                            boolean isBestChoice = false;
@@ -5989,7 +6121,8 @@ index 0000000000000000000000000000000000000000..ac1f646ed846ed6067f77e7526e2bd0a
 +                            }
 +                            // Check if the thread still seems valid and attempt to activate it
 +                            BaseThread thread = threads[threadIToUpdate];
-+                            if (thread.isWaitingAndNeedsSignal() && thread.canStartYieldingTasks) {
++                            @Nullable YieldingLock lockWaitingFor = thread.lockWaitingFor;
++                            if (thread.isWaitingAndNeedsSignal() && (tierI == 0 || (lockWaitingFor != null && !lockWaitingFor.isLocked()) || thread.canStartYieldingTasks)) {
 +                                // Wake up the thread
 +                                if (thread.signal(thereAreTasks ? SignalReason.TASK : SignalReason.YIELDING_LOCK)) {
 +                                    // Do another update

@@ -25,7 +25,7 @@ index 01780a73ee9cc602951bdf568c17673c4c639f79..4b279948e82a6dfd2f471ba698e361dc
  // Gale end - hide irrelevant compilation warnings
  
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index 9c3ccbbd657d1605b8fabb6e01c11ff31f39a17e..1d1db89362b78ac34d46cdd71b9ab27404b98e48 100644
+index 9c3ccbbd657d1605b8fabb6e01c11ff31f39a17e..20ae254b1cd3d75781d1ea4b9859bf0ef92f173d 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 @@ -14,6 +14,8 @@ import java.util.Locale;
@@ -45,7 +45,7 @@ index 9c3ccbbd657d1605b8fabb6e01c11ff31f39a17e..1d1db89362b78ac34d46cdd71b9ab274
  import org.slf4j.Logger;
  
  // CraftBukkit start
-@@ -223,6 +226,21 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
+@@ -223,6 +226,20 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
          io.papermc.paper.brigadier.PaperBrigadierProviderImpl.INSTANCE.getClass(); // init PaperBrigadierProvider
          // Paper end
  
@@ -59,7 +59,6 @@ index 9c3ccbbd657d1605b8fabb6e01c11ff31f39a17e..1d1db89362b78ac34d46cdd71b9ab274
 +            LOGGER.warn("SIMD operations are available for your server, but are not configured!");
 +            LOGGER.warn("To enable additional optimizations, add \"--add-modules=jdk.incubator.vector\" to your startup flags, BEFORE the \"-jar\".");
 +            LOGGER.warn("If you have already added this flag, then SIMD operations are not supported on your JVM or CPU.");
-+            LOGGER.warn("Debug: Java: " + System.getProperty("java.version") + ", test run: " + SIMDDetection.testRun);
 +            LOGGER.warn("If you would like to disable this message, set simd.warn-if-disabled to false in gale-global.yml");
 +        }
 +        // Gale start - Pufferfish - SIMD support

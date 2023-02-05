@@ -1,0 +1,30 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Martijn Muijsers <martijnmuijsers@live.nl>
+Date: Sun, 5 Feb 2023 19:04:45 +0100
+Subject: [PATCH] Yielding ChunkTaskScheduler
+
+License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
+Gale - https://galemc.org
+
+diff --git a/src/main/java/io/papermc/paper/chunk/system/scheduling/ChunkTaskScheduler.java b/src/main/java/io/papermc/paper/chunk/system/scheduling/ChunkTaskScheduler.java
+index 79ef41d2bb30beee2355d1de3dc99c9e00d929d5..0b41ffacba43ba784450ec52b0a6e96ac5bd864b 100644
+--- a/src/main/java/io/papermc/paper/chunk/system/scheduling/ChunkTaskScheduler.java
++++ b/src/main/java/io/papermc/paper/chunk/system/scheduling/ChunkTaskScheduler.java
+@@ -22,6 +22,8 @@ import net.minecraft.world.level.chunk.ChunkAccess;
+ import net.minecraft.world.level.chunk.ChunkStatus;
+ import net.minecraft.world.level.chunk.LevelChunk;
+ import org.bukkit.Bukkit;
++import org.galemc.gale.executor.lock.MultipleWaitingBaseThreadsYieldingLock;
++import org.galemc.gale.executor.lock.YieldingLock;
+ import org.galemc.gale.executor.thread.pool.BaseThreadPool;
+ import org.slf4j.Logger;
+ import java.io.File;
+@@ -116,7 +118,7 @@ public final class ChunkTaskScheduler {
+ 
+     public final PrioritisedThreadedTaskQueue mainThreadExecutor = new PrioritisedThreadedTaskQueue(true); // Gale - base thread pool - private -> public, count delayed tasks
+ 
+-    final ReentrantLock schedulingLock = new ReentrantLock();
++    final YieldingLock schedulingLock = new MultipleWaitingBaseThreadsYieldingLock(new ReentrantLock()); // Gale - base thread pool - yielding ChunkTaskScheduler
+     public final ChunkHolderManager chunkHolderManager;
+ 
+     static {

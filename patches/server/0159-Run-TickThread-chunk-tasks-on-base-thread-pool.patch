@@ -83,7 +83,7 @@ index 84cc9397237fa0c17aa1012dfb5683c90eb6d3b8..f5c15d40094c2ddc6220b0595597d121
      final ReentrantLock schedulingLock = new ReentrantLock();
      public final ChunkHolderManager chunkHolderManager;
 diff --git a/src/main/java/org/galemc/gale/executor/queue/AllLevelsScheduledTaskQueue.java b/src/main/java/org/galemc/gale/executor/queue/AllLevelsScheduledTaskQueue.java
-index 2a42fa59fb09196959be66d58b67862902a5e17f..5a83bd0edb8f74b6603da9be79913f70cab5b50a 100644
+index c9ded5f30e5465c8e15719ac785797cf476474f1..2d5a6d60d87b34d03d2d8bbda6d92fddec86924a 100644
 --- a/src/main/java/org/galemc/gale/executor/queue/AllLevelsScheduledTaskQueue.java
 +++ b/src/main/java/org/galemc/gale/executor/queue/AllLevelsScheduledTaskQueue.java
 @@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
@@ -156,10 +156,10 @@ index 0000000000000000000000000000000000000000..117797c4ac2a81218e9f3e977467b62a
 +
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java b/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java
-index 27fee00edfa768679d7f998bc997f2d69c6d7ac5..9a908566ccdda9ca77e0f9236f674f17f79e9c40 100644
+index 152d3c9805365ff157e484e644b982febdcb6693..303bdcf41c7836c35bbe0fe00e0d14b5472df072 100644
 --- a/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java
 +++ b/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java
-@@ -50,7 +50,8 @@ public enum BaseTaskQueueTier {
+@@ -60,7 +60,8 @@ public enum BaseTaskQueueTier {
          BaseTaskQueues.deferredToServerThread,
          BaseTaskQueues.serverThreadTick,
          BaseTaskQueues.anyTickScheduledServerThread,

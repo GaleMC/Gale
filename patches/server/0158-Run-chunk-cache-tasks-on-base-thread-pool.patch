@@ -7,7 +7,7 @@ License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerChunkCache.java b/src/main/java/net/minecraft/server/level/ServerChunkCache.java
-index df4db98618c6c9261b4ec8e2987c4ed26af4bd4b..ba352013692b987518dd200d376fb6cf2c90da19 100644
+index 83a57b9bc59063ed8299f98bc33e14b57f2ea0de..2a0cbe5146eb444a8cb7ab4960904143af4456a7 100644
 --- a/src/main/java/net/minecraft/server/level/ServerChunkCache.java
 +++ b/src/main/java/net/minecraft/server/level/ServerChunkCache.java
 @@ -11,7 +11,6 @@ import java.util.Collections;
@@ -26,16 +26,34 @@ index df4db98618c6c9261b4ec8e2987c4ed26af4bd4b..ba352013692b987518dd200d376fb6cf
  import net.minecraft.server.level.progress.ChunkProgressListener;
  import net.minecraft.util.VisibleForDebug;
  import net.minecraft.util.thread.BlockableEventLoop;
-@@ -48,6 +48,8 @@ import net.minecraft.world.level.storage.DimensionDataStorage;
- import net.minecraft.world.level.storage.LevelData;
- import net.minecraft.world.level.storage.LevelStorageSource;
- import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet; // Paper
-+import org.galemc.gale.executor.queue.BaseTaskQueues;
-+import org.galemc.gale.executor.thread.pool.BaseThreadActivation;
+@@ -446,7 +446,7 @@ public class ServerChunkCache extends ChunkSource {
+                 // Paper end
+                 com.destroystokyo.paper.io.SyncLoadFinder.logSyncLoad(this.level, x1, z1); // Paper - sync load info
+                 this.level.timings.syncChunkLoad.startTiming(); // Paper
+-            chunkproviderserver_b.managedBlock(completablefuture::isDone);
++            chunkproviderserver_b.managedYield(completablefuture); // Gale - base thread pool
+                 io.papermc.paper.chunk.system.scheduling.ChunkTaskScheduler.popChunkWait(); // Paper - async chunk debug  // Paper - rewrite chunk system
+                 this.level.timings.syncChunkLoad.stopTiming(); // Paper
+             } // Paper
+@@ -489,7 +489,7 @@ public class ServerChunkCache extends ChunkSource {
+             ServerChunkCache.MainThreadExecutor chunkproviderserver_b = this.mainThreadProcessor;
  
- public class ServerChunkCache extends ChunkSource {
+             Objects.requireNonNull(completablefuture);
+-            chunkproviderserver_b.managedBlock(completablefuture::isDone);
++            chunkproviderserver_b.managedYield(completablefuture); // Gale - base thread pool
+         } else {
+             completablefuture = CompletableFuture.supplyAsync(() -> {
+                 return this.getChunkFutureMainThread(chunkX, chunkZ, leastStatus, create);
+@@ -973,6 +973,8 @@ public class ServerChunkCache extends ChunkSource {
  
-@@ -999,6 +1001,14 @@ public class ServerChunkCache extends ChunkSource {
+     public final class MainThreadExecutor extends BlockableEventLoop<Runnable> {
+ 
++        private @Nullable YieldingLock yieldingLockToNotifyOnNewTasks = null; // Gale - base thread pool
++
+         MainThreadExecutor(Level world) {
+             super("Chunk source main thread executor for " + world.dimension().location());
+         }
+@@ -1002,6 +1004,39 @@ public class ServerChunkCache extends ChunkSource {
              super.doRunTask(task);
          }
  
@@ -45,11 +63,62 @@ index df4db98618c6c9261b4ec8e2987c4ed26af4bd4b..ba352013692b987518dd200d376fb6cf
 +            super.tell(runnable);
 +            MinecraftServer.nextTimeAssumeWeMayHaveDelayedTasks = true;
 +            BaseTaskQueues.allLevelsScheduledChunkCache.newTaskWasAdded();
++            if (this.yieldingLockToNotifyOnNewTasks != null) {
++                this.yieldingLockToNotifyOnNewTasks.unlock();
++            }
 +        }
++
++        public void managedBlock(BooleanSupplier stopCondition) {
++            throw new UnsupportedOperationException("Cannot call " + this.getClass().getName() + ".managedBlock(BooleanSupplier), call managedYield(CompletableFuture) instead");
++        }
++
++        public void managedYield(CompletableFuture<?> future) {
++            if (!future.isDone()) {
++                ++this.blockingCount;
++                try {
++                    var currentThread = AbstractYieldingThread.currentYieldingThread();
++                    while (!future.isDone()) {
++                        if (!this.pollTask()) {
++                            currentThread.yieldUntilFuture(this::hasPendingTasks, future, autoCompletingLock -> this.yieldingLockToNotifyOnNewTasks = autoCompletingLock);
++                        }
++                    }
++                    this.yieldingLockToNotifyOnNewTasks = null;
++                } finally {
++                    --this.blockingCount;
++                }
++            }
++        }
++        // Gale end - base thread pool
 +
          @Override
          // CraftBukkit start - process pending Chunk loadCallback() and unloadCallback() after each run task
          public boolean pollTask() {
+diff --git a/src/main/java/net/minecraft/util/thread/BlockableEventLoop.java b/src/main/java/net/minecraft/util/thread/BlockableEventLoop.java
+index 392e7b4a89669f16b32043b65b69e6593d17f10e..6328c0254b585b3bc169dd2b5d0f25bfd67566d2 100644
+--- a/src/main/java/net/minecraft/util/thread/BlockableEventLoop.java
++++ b/src/main/java/net/minecraft/util/thread/BlockableEventLoop.java
+@@ -21,7 +21,7 @@ public abstract class BlockableEventLoop<R extends Runnable> implements Profiler
+     private final String name;
+     private static final Logger LOGGER = LogUtils.getLogger();
+     private final Queue<R> pendingRunnables = Queues.newConcurrentLinkedQueue();
+-    private int blockingCount;
++    protected int blockingCount; // Gale - base thread pool
+ 
+     protected BlockableEventLoop(String name) {
+         this.name = name;
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
+index 949feba1264bcafb8dc2dcecd0a566fea80a2ba0..9eae3862abb5f1d7755a8e777fd4bf9a6f8e321d 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
+@@ -470,7 +470,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
+                 list,
+                 true
+             );
+-            serverChunkCache.mainThreadProcessor.managedBlock(future::isDone);
++            serverChunkCache.mainThreadProcessor.managedYield(future); // Gale - base thread pool
+             if (chunkStatus == ChunkStatus.NOISE) {
+                 future.join().left().ifPresent(chunk -> net.minecraft.world.level.levelgen.Heightmap.primeHeightmaps(chunk, ChunkStatus.POST_FEATURES));
+             }
 diff --git a/src/main/java/org/galemc/gale/executor/queue/AllLevelsScheduledChunkCacheTaskQueue.java b/src/main/java/org/galemc/gale/executor/queue/AllLevelsScheduledChunkCacheTaskQueue.java
 new file mode 100644
 index 0000000000000000000000000000000000000000..60a3b6e935fcea6cf27c31e2b967bf3758283274
@@ -109,7 +178,7 @@ index 0000000000000000000000000000000000000000..60a3b6e935fcea6cf27c31e2b967bf37
 +
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/queue/AllLevelsScheduledTaskQueue.java b/src/main/java/org/galemc/gale/executor/queue/AllLevelsScheduledTaskQueue.java
-index bbe92d92f58d484084114da73003c345d00aac7e..2a42fa59fb09196959be66d58b67862902a5e17f 100644
+index 2eb121798b2feb2a5ce5ebb60316660dbff87de3..c9ded5f30e5465c8e15719ac785797cf476474f1 100644
 --- a/src/main/java/org/galemc/gale/executor/queue/AllLevelsScheduledTaskQueue.java
 +++ b/src/main/java/org/galemc/gale/executor/queue/AllLevelsScheduledTaskQueue.java
 @@ -12,7 +12,8 @@ import org.galemc.gale.executor.thread.pool.BaseThreadActivation;
@@ -123,10 +192,10 @@ index bbe92d92f58d484084114da73003c345d00aac7e..2a42fa59fb09196959be66d58b678629
   * All tasks provided by this queue must be yield-free.
   *
 diff --git a/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java b/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java
-index c5e05b115eb3f8b2d55c5aa2ffce8d86822becf2..27fee00edfa768679d7f998bc997f2d69c6d7ac5 100644
+index 85f467b3cedef57b6b51f04eb34316d43e192d87..152d3c9805365ff157e484e644b982febdcb6693 100644
 --- a/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java
 +++ b/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java
-@@ -49,7 +49,8 @@ public enum BaseTaskQueueTier {
+@@ -59,7 +59,8 @@ public enum BaseTaskQueueTier {
      SERVER(new AbstractTaskQueue[]{
          BaseTaskQueues.deferredToServerThread,
          BaseTaskQueues.serverThreadTick,

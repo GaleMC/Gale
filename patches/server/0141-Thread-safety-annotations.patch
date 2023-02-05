@@ -8,7 +8,7 @@ Gale - https://galemc.org
 
 diff --git a/src/main/java/org/galemc/gale/executor/annotation/Access.java b/src/main/java/org/galemc/gale/executor/annotation/Access.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..d07f68ff73a368c8f0da56152021a95474a601ca
+index 0000000000000000000000000000000000000000..50541414e1d91ff06d108d9b3fe64dcb4ad09668
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/annotation/Access.java
 @@ -0,0 +1,39 @@
@@ -41,22 +41,22 @@ index 0000000000000000000000000000000000000000..d07f68ff73a368c8f0da56152021a954
 +    WRITE,
 +    /**
 +     * Both {@link #READ} and {@link #WRITE}: if the annotation is applied to a field, it holds for both access to
-+     * the field's value, as well as modifications made to the field.
++     * the field's value, and for modifications made to the field.
 +     * <br>
 +     * This may or may not extend to conceptual access and/or modifications.
 +     *
 +     * @see #READ
 +     * @see #WRITE
 +     */
-+    READ_WRITE;
++    READ_WRITE
 +
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/annotation/Guarded.java b/src/main/java/org/galemc/gale/executor/annotation/Guarded.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..84a0bac98a382550c826e6adbecec1fe7be974a1
+index 0000000000000000000000000000000000000000..6f1d1960953daf7f6f61643f5165e9a0760a647e
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/annotation/Guarded.java
-@@ -0,0 +1,47 @@
+@@ -0,0 +1,55 @@
 +// Gale - thread-safety annotations
 +
 +package org.galemc.gale.executor.annotation;
@@ -83,7 +83,7 @@ index 0000000000000000000000000000000000000000..84a0bac98a382550c826e6adbecec1fe
 + * @author Martijn Muijsers under AGPL-3.0
 + */
 +@Documented
-+@Repeatable
++@Repeatable(Guarded.Container.class)
 +@Target({ElementType.FIELD, ElementType.METHOD, ElementType.TYPE})
 +public @interface Guarded {
 +
@@ -103,18 +103,24 @@ index 0000000000000000000000000000000000000000..84a0bac98a382550c826e6adbecec1fe
 +     */
 +    String except() default "";
 +
++    @Documented
++    @Target(ElementType.ANNOTATION_TYPE)
++    @interface Container {
++
++        Guarded[] value();
++
++    }
++
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/annotation/PotentiallyBlocking.java b/src/main/java/org/galemc/gale/executor/annotation/PotentiallyBlocking.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..71f26852c96dea34ea07efe07f834f8262509957
+index 0000000000000000000000000000000000000000..a4dc0ebe48fdd352387f06be42ff46fc11ee5822
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/annotation/PotentiallyBlocking.java
-@@ -0,0 +1,39 @@
+@@ -0,0 +1,34 @@
 +// Gale - thread-safety annotations
 +
 +package org.galemc.gale.executor.annotation;
-+
-+import org.galemc.gale.executor.thread.BaseThread;
 +
 +import java.lang.annotation.Documented;
 +import java.lang.annotation.ElementType;
@@ -129,9 +135,6 @@ index 0000000000000000000000000000000000000000..71f26852c96dea34ea07efe07f834f82
 + * <br>
 + * In a method annotated with {@link PotentiallyBlocking}, fields and methods annotated with
 + * {@link PotentiallyBlocking}, {@link PotentiallyYielding} or {@link YieldFree} may all be used.
-+ * <br>
-+ * Methods that are potentially blocking, including those annotated with {@link PotentiallyBlocking}, must never
-+ * be called on a {@link BaseThread}.
 + *
 + * @author Martijn Muijsers under AGPL-3.0
 + */
@@ -151,7 +154,7 @@ index 0000000000000000000000000000000000000000..71f26852c96dea34ea07efe07f834f82
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/annotation/PotentiallyYielding.java b/src/main/java/org/galemc/gale/executor/annotation/PotentiallyYielding.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..e87ee2612348fc559b21256cc7cadfc684f01f8e
+index 0000000000000000000000000000000000000000..44b70d68ba6823ab72ea9af4b7774051785c0a2b
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/annotation/PotentiallyYielding.java
 @@ -0,0 +1,35 @@
@@ -165,7 +168,7 @@ index 0000000000000000000000000000000000000000..e87ee2612348fc559b21256cc7cadfc6
 +
 +/**
 + * An annotation primarily for methods, identifying methods that do not block, but may yield to other tasks
-+ * under certain circumstances, such as when attempting to acquire a {@link YieldingLock}.
++ * under certain circumstances.
 + * <br>
 + * When applied to a class, this annotation indicates it holds for all methods, both instance and static,
 + * belonging to the class, or any superclass thereof, or any inner or statically nested class of the class or

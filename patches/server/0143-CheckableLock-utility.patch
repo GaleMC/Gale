@@ -1,0 +1,42 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Martijn Muijsers <martijnmuijsers@live.nl>
+Date: Sun, 5 Feb 2023 19:11:39 +0100
+Subject: [PATCH] CheckableLock utility
+
+License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
+Gale - https://galemc.org
+
+diff --git a/src/main/java/org/galemc/gale/concurrent/CheckableLock.java b/src/main/java/org/galemc/gale/concurrent/CheckableLock.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..749d8d8e2038554a21c2d879349d5189d86a8481
+--- /dev/null
++++ b/src/main/java/org/galemc/gale/concurrent/CheckableLock.java
+@@ -0,0 +1,28 @@
++// Gale - CheckableLock utility
++
++package org.galemc.gale.concurrent;
++
++import org.galemc.gale.executor.annotation.YieldFree;
++
++import java.util.concurrent.locks.Lock;
++
++/**
++ * A {@link Lock} that also provides an {@link #isLocked()} method.
++ *
++ * @author Martijn Muijsers under AGPL-3.0
++ */
++public interface CheckableLock extends Lock {
++
++    /**
++     * @return Whether this lock is currently held.
++     */
++    @YieldFree
++    boolean isLocked();
++
++    /**
++     * @return Whether this lock is currently held by the {@link Thread#currentThread}.
++     */
++    @YieldFree
++    boolean isHeldByCurrentThread();
++
++}
