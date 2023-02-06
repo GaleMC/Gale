@@ -4427,10 +4427,10 @@ index 0000000000000000000000000000000000000000..eab769d7319f26db1f4db9599a3c263c
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/thread/BaseThread.java b/src/main/java/org/galemc/gale/executor/thread/BaseThread.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..17ae524053949073fcdcbccc53327c42ba1903c6
+index 0000000000000000000000000000000000000000..f0bf8cfc28107d3f2421d033e45f1a88f8d86d5b
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/thread/BaseThread.java
-@@ -0,0 +1,722 @@
+@@ -0,0 +1,725 @@
 +// Gale - base thread pool
 +
 +package org.galemc.gale.executor.thread;
@@ -4715,6 +4715,9 @@ index 0000000000000000000000000000000000000000..17ae524053949073fcdcbccc53327c42
 +        to be released.
 +         */
 +        while (true) {
++            if (timeoutTime != null && System.nanoTime() - timeoutTime >= 0) {
++                break;
++            }
 +            if (stopCondition != null) {
 +                if (this == MinecraftServer.serverThread) {
 +                    MinecraftServer.currentManagedBlockStopConditionHasBecomeTrue = false;
