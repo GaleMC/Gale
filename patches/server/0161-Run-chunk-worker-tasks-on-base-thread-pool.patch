@@ -480,10 +480,10 @@ index f5c15d40094c2ddc6220b0595597d12103fcf425..79ef41d2bb30beee2355d1de3dc99c9e
      }
  
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 0019e5eefc4b638526a75dd3706a54033dd9b811..7ed820d2483bf6741a355b062f062a04866ba938 100644
+index 313d45dae086ac7c1bd0dd71540020c18a9e5d86..c14b593bd450d244209d17b637fe7c03a1f746f4 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -1069,6 +1069,10 @@ public abstract class MinecraftServer extends MinecraftServerBlockableEventLoop
+@@ -1070,6 +1070,10 @@ public abstract class MinecraftServer extends MinecraftServerBlockableEventLoop
              }
          }
  
@@ -507,10 +507,10 @@ index abdec5529763b77126494ae0c2be9b48de900bc1..35233587de14cf52da30324df89d9ec7
   * This class is a copy of {@link PrioritisedQueueExecutorThread}, with the notable difference
   * that it does not extend {@link Thread}, but may be instantiated on its own, as an agent representing
 diff --git a/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java b/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java
-index 303bdcf41c7836c35bbe0fe00e0d14b5472df072..e9b9d016309e8fac445b223b4412c479a5aca0e8 100644
+index 0035d638667c6e0707ecf3e3c040f0123f8e68d5..afd25cb20200baea7c62cf6b3081e19e4188997a 100644
 --- a/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java
 +++ b/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java
-@@ -73,7 +73,6 @@ public enum BaseTaskQueueTier {
+@@ -75,7 +75,6 @@ public enum BaseTaskQueueTier {
      /**
       * A tier for queues that contain general tasks that must be performed at some point in time,
       * asynchronously with respect to the {@link ServerThread} and the ticking of the server.
@@ -518,7 +518,7 @@ index 303bdcf41c7836c35bbe0fe00e0d14b5472df072..e9b9d016309e8fac445b223b4412c479
       */
      ASYNC(new AbstractTaskQueue[]{
          // The cleaner queue has high priority because it releases resources back to a pool, thereby saving memory
-@@ -84,7 +83,9 @@ public enum BaseTaskQueueTier {
+@@ -86,7 +85,9 @@ public enum BaseTaskQueueTier {
       * A tier for queues that contain tasks with the same considerations as {@link #ASYNC},
       * but with a low priority.
       */
@@ -545,16 +545,17 @@ index ed3ccf2e64539363a7be2d507c68c40b5913f75c..a12250e5aaed02995b7bf09a8018a93f
  }
 diff --git a/src/main/java/org/galemc/gale/executor/queue/ChunkWorkerTaskQueue.java b/src/main/java/org/galemc/gale/executor/queue/ChunkWorkerTaskQueue.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..6f78603c87517bb681ae473d0c72b75e23db6689
+index 0000000000000000000000000000000000000000..221f9e6f10c56c92e00fc8f41e09a977a7ed9e76
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/queue/ChunkWorkerTaskQueue.java
-@@ -0,0 +1,102 @@
+@@ -0,0 +1,106 @@
 +// Gale - base thread pool - chunk worker task queue
 +
 +package org.galemc.gale.executor.queue;
 +
 +import ca.spottedleaf.concurrentutil.executor.standard.PrioritisedQueueExecutorThread;
 +import io.papermc.paper.chunk.system.scheduling.ChunkTaskScheduler;
++import net.minecraft.server.level.ServerChunkCache;
 +import org.galemc.gale.executor.TaskSpan;
 +import org.galemc.gale.executor.annotation.YieldFree;
 +import org.galemc.gale.executor.annotation.thread.AnyThreadSafe;
@@ -620,8 +621,11 @@ index 0000000000000000000000000000000000000000..6f78603c87517bb681ae473d0c72b75e
 +        return () -> {
 +            var workerAgent = currentThread.getChunkWorkerAgent();
 +            ChunkTaskScheduler.workerThreads.activeThreads.add(workerAgent);
-+            workerAgent.pollTasks();
++            boolean performedTasks = workerAgent.pollTasks();
 +            ChunkTaskScheduler.workerThreads.activeThreads.remove(workerAgent);
++            if (performedTasks) {
++                ServerChunkCache.MainThreadExecutor.notifyOfCompletedChunkWorkerTasks();
++            }
 +        };
 +    }
 +

@@ -27,10 +27,10 @@ index 4b8da38db72d7ebc2d498ec3d711d3b30911096c..80f9e70d5c4330e079feccc9a4b1b595
          1, 1, 0L, TimeUnit.SECONDS,
          new LinkedBlockingQueue<>(),
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index ac12cabaf15bc3520ff74d09faa48a135c63f23c..0019e5eefc4b638526a75dd3706a54033dd9b811 100644
+index fe2892e20dcb0b76d30b81bca7a13e29a1c45723..313d45dae086ac7c1bd0dd71540020c18a9e5d86 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -1080,9 +1080,6 @@ public abstract class MinecraftServer extends MinecraftServerBlockableEventLoop
+@@ -1081,9 +1081,6 @@ public abstract class MinecraftServer extends MinecraftServerBlockableEventLoop
              MinecraftServer.LOGGER.error("Failed to unlock level {}", this.storageSource.getLevelId(), ioexception1);
          }
          // Spigot start
@@ -40,7 +40,7 @@ index ac12cabaf15bc3520ff74d09faa48a135c63f23c..0019e5eefc4b638526a75dd3706a5403
          if (org.spigotmc.SpigotConfig.saveUserCacheOnStopOnly) {
              MinecraftServer.LOGGER.info("Saving usercache.json");
              this.getProfileCache().save(false); // Paper
-@@ -1092,6 +1089,12 @@ public abstract class MinecraftServer extends MinecraftServerBlockableEventLoop
+@@ -1093,6 +1090,12 @@ public abstract class MinecraftServer extends MinecraftServerBlockableEventLoop
          LOGGER.info("Flushing Chunk IO");
          io.papermc.paper.chunk.system.io.RegionFileIOThread.close(true); // Paper // Paper - rewrite chunk system
          LOGGER.info("Closing Thread Pool");
@@ -54,10 +54,10 @@ index ac12cabaf15bc3520ff74d09faa48a135c63f23c..0019e5eefc4b638526a75dd3706a5403
          LOGGER.info("Closing Server");
          try {
 diff --git a/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java b/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java
-index e4a0b3085cb22f25246010c43919129283a3b872..52c413990fd8aaca72e371c3bc8f1f145a172abc 100644
+index 7e24854f1e727e5e40108c68933466d0845bdca1..fb185e7f6344f21ed861e56c137ce470e891e766 100644
 --- a/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java
 +++ b/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java
-@@ -73,7 +73,9 @@ public enum BaseTaskQueueTier {
+@@ -75,7 +75,9 @@ public enum BaseTaskQueueTier {
       * asynchronously with respect to the {@link ServerThread} and the ticking of the server.
       * Execution of
       */

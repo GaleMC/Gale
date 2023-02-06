@@ -7,18 +7,18 @@ License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 7ed820d2483bf6741a355b062f062a04866ba938..575f8ba79cf3547b837abb5957fed0aa29e1d0cf 100644
+index c14b593bd450d244209d17b637fe7c03a1f746f4..88f65137337cd5dcec80c09b80595270fec17eb3 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -154,7 +154,6 @@ import org.galemc.gale.executor.annotation.thread.OriginalServerThreadOnly;
- import org.galemc.gale.executor.queue.BaseTaskQueues;
+@@ -155,7 +155,6 @@ import org.galemc.gale.executor.queue.BaseTaskQueues;
  import org.galemc.gale.executor.queue.ScheduledServerThreadTaskQueues;
+ import org.galemc.gale.executor.thread.BaseThread;
  import org.galemc.gale.executor.thread.OriginalServerThread;
 -import org.galemc.gale.executor.thread.SignalReason;
  import org.galemc.gale.executor.thread.pool.BaseThreadActivation;
  import org.jetbrains.annotations.NotNull;
  import org.slf4j.Logger;
-@@ -1576,15 +1575,53 @@ public abstract class MinecraftServer extends MinecraftServerBlockableEventLoop
+@@ -1577,15 +1576,53 @@ public abstract class MinecraftServer extends MinecraftServerBlockableEventLoop
          co.aikar.timings.TimingsManager.FULL_SERVER_TICK.stopTimingFullServerTick(); // Paper // Gale - final timings calls
      }
  
@@ -73,7 +73,7 @@ index 7ed820d2483bf6741a355b062f062a04866ba938..575f8ba79cf3547b837abb5957fed0aa
          // CraftBukkit start
          // Run tasks that are waiting on processing
          MinecraftTimings.processQueueTimer.startTiming(); // Spigot
-@@ -1592,11 +1629,14 @@ public abstract class MinecraftServer extends MinecraftServerBlockableEventLoop
+@@ -1593,11 +1630,14 @@ public abstract class MinecraftServer extends MinecraftServerBlockableEventLoop
              this.processQueue.remove().run();
          }
          MinecraftTimings.processQueueTimer.stopTiming(); // Spigot
@@ -89,7 +89,7 @@ index 7ed820d2483bf6741a355b062f062a04866ba938..575f8ba79cf3547b837abb5957fed0aa
              final boolean doDaylight = world.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT);
              final long dayTime = world.getDayTime();
              long worldTime = world.getGameTime();
-@@ -1611,15 +1651,23 @@ public abstract class MinecraftServer extends MinecraftServerBlockableEventLoop
+@@ -1612,15 +1652,23 @@ public abstract class MinecraftServer extends MinecraftServerBlockableEventLoop
                      new ClientboundSetTimePacket(worldTime, playerTime, doDaylight);
                  entityplayer.connection.send(packet); // Add support for per player time
              }
@@ -115,7 +115,7 @@ index 7ed820d2483bf6741a355b062f062a04866ba938..575f8ba79cf3547b837abb5957fed0aa
  
              /* Drop global time updates
              if (this.tickCount % 20 == 0) {
-@@ -1629,16 +1677,28 @@ public abstract class MinecraftServer extends MinecraftServerBlockableEventLoop
+@@ -1630,16 +1678,28 @@ public abstract class MinecraftServer extends MinecraftServerBlockableEventLoop
              }
              // CraftBukkit end */
  
@@ -149,7 +149,7 @@ index 7ed820d2483bf6741a355b062f062a04866ba938..575f8ba79cf3547b837abb5957fed0aa
                  // Spigot Start
                  CrashReport crashreport;
                  try {
-@@ -1651,22 +1711,47 @@ public abstract class MinecraftServer extends MinecraftServerBlockableEventLoop
+@@ -1652,22 +1712,47 @@ public abstract class MinecraftServer extends MinecraftServerBlockableEventLoop
  
                  worldserver.fillReportDetails(crashreport);
                  throw new ReportedException(crashreport);
@@ -200,7 +200,7 @@ index 7ed820d2483bf6741a355b062f062a04866ba938..575f8ba79cf3547b837abb5957fed0aa
          for (int i = 0; i < this.tickables.size(); ++i) {
              ((Runnable) this.tickables.get(i)).run();
 diff --git a/src/main/java/net/minecraft/server/level/ServerChunkCache.java b/src/main/java/net/minecraft/server/level/ServerChunkCache.java
-index 2a0cbe5146eb444a8cb7ab4960904143af4456a7..aa49a3d3827128c7d4c7b424211f80abd7e2ff80 100644
+index f1aaf1cae3335f7c7340104cfd6dbc3dd62f6ab3..1d50e234955ae22f7ba32006757af3e78310ab8b 100644
 --- a/src/main/java/net/minecraft/server/level/ServerChunkCache.java
 +++ b/src/main/java/net/minecraft/server/level/ServerChunkCache.java
 @@ -630,23 +630,99 @@ public class ServerChunkCache extends ChunkSource {

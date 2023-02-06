@@ -83,7 +83,7 @@ index 84cc9397237fa0c17aa1012dfb5683c90eb6d3b8..f5c15d40094c2ddc6220b0595597d121
      final ReentrantLock schedulingLock = new ReentrantLock();
      public final ChunkHolderManager chunkHolderManager;
 diff --git a/src/main/java/org/galemc/gale/executor/queue/AllLevelsScheduledTaskQueue.java b/src/main/java/org/galemc/gale/executor/queue/AllLevelsScheduledTaskQueue.java
-index c9ded5f30e5465c8e15719ac785797cf476474f1..2d5a6d60d87b34d03d2d8bbda6d92fddec86924a 100644
+index c2acd36b3101042f39afe1436836078dcce2100d..36b844cfe3a3877496931ec739f6d5af84f32748 100644
 --- a/src/main/java/org/galemc/gale/executor/queue/AllLevelsScheduledTaskQueue.java
 +++ b/src/main/java/org/galemc/gale/executor/queue/AllLevelsScheduledTaskQueue.java
 @@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
@@ -97,7 +97,7 @@ index c9ded5f30e5465c8e15719ac785797cf476474f1..2d5a6d60d87b34d03d2d8bbda6d92fdd
   *
 diff --git a/src/main/java/org/galemc/gale/executor/queue/AllLevelsScheduledTickThreadChunkTaskQueue.java b/src/main/java/org/galemc/gale/executor/queue/AllLevelsScheduledTickThreadChunkTaskQueue.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..117797c4ac2a81218e9f3e977467b62a18e8136f
+index 0000000000000000000000000000000000000000..0e893e7fca1ae3831c3de3a8966e086616e1003c
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/queue/AllLevelsScheduledTickThreadChunkTaskQueue.java
 @@ -0,0 +1,54 @@
@@ -132,7 +132,7 @@ index 0000000000000000000000000000000000000000..117797c4ac2a81218e9f3e977467b62a
 +public final class AllLevelsScheduledTickThreadChunkTaskQueue extends AllLevelsScheduledTaskQueue {
 +
 +    AllLevelsScheduledTickThreadChunkTaskQueue() {
-+        super(TaskSpan.FREE, true); // TODO Gale could be TINY maybe? But probably not? Should check the type of tasks scheduled
++        super(TaskSpan.YIELDING, true);
 +    }
 +
 +    @Override
@@ -156,10 +156,10 @@ index 0000000000000000000000000000000000000000..117797c4ac2a81218e9f3e977467b62a
 +
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java b/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java
-index 152d3c9805365ff157e484e644b982febdcb6693..303bdcf41c7836c35bbe0fe00e0d14b5472df072 100644
+index 8465ce8de44d823aac4784fbc5183b9fc49b2825..0035d638667c6e0707ecf3e3c040f0123f8e68d5 100644
 --- a/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java
 +++ b/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java
-@@ -60,7 +60,8 @@ public enum BaseTaskQueueTier {
+@@ -62,7 +62,8 @@ public enum BaseTaskQueueTier {
          BaseTaskQueues.deferredToServerThread,
          BaseTaskQueues.serverThreadTick,
          BaseTaskQueues.anyTickScheduledServerThread,

@@ -7,7 +7,7 @@ License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerChunkCache.java b/src/main/java/net/minecraft/server/level/ServerChunkCache.java
-index 83a57b9bc59063ed8299f98bc33e14b57f2ea0de..2a0cbe5146eb444a8cb7ab4960904143af4456a7 100644
+index 83a57b9bc59063ed8299f98bc33e14b57f2ea0de..f1aaf1cae3335f7c7340104cfd6dbc3dd62f6ab3 100644
 --- a/src/main/java/net/minecraft/server/level/ServerChunkCache.java
 +++ b/src/main/java/net/minecraft/server/level/ServerChunkCache.java
 @@ -11,7 +11,6 @@ import java.util.Collections;
@@ -44,16 +44,26 @@ index 83a57b9bc59063ed8299f98bc33e14b57f2ea0de..2a0cbe5146eb444a8cb7ab4960904143
          } else {
              completablefuture = CompletableFuture.supplyAsync(() -> {
                  return this.getChunkFutureMainThread(chunkX, chunkZ, leastStatus, create);
-@@ -973,6 +973,8 @@ public class ServerChunkCache extends ChunkSource {
+@@ -973,6 +973,18 @@ public class ServerChunkCache extends ChunkSource {
  
      public final class MainThreadExecutor extends BlockableEventLoop<Runnable> {
  
-+        private @Nullable YieldingLock yieldingLockToNotifyOnNewTasks = null; // Gale - base thread pool
++        // Gale start - base thread pool
++        private static volatile boolean chunkWorkerTasksWereCompletedSinceLastDoChunkCacheTasksInYield;
++        public static @Nullable YieldingLock yieldingLockToNotifyForNewChunkCacheTasks;
++
++        public static void notifyOfCompletedChunkWorkerTasks() {
++            if (yieldingLockToNotifyForNewChunkCacheTasks != null) {
++                chunkWorkerTasksWereCompletedSinceLastDoChunkCacheTasksInYield = true;
++                yieldingLockToNotifyForNewChunkCacheTasks.unlock();
++            }
++        }
++        // Gale end - base thread pool
 +
          MainThreadExecutor(Level world) {
              super("Chunk source main thread executor for " + world.dimension().location());
          }
-@@ -1002,6 +1004,39 @@ public class ServerChunkCache extends ChunkSource {
+@@ -1002,6 +1014,40 @@ public class ServerChunkCache extends ChunkSource {
              super.doRunTask(task);
          }
  
@@ -63,8 +73,8 @@ index 83a57b9bc59063ed8299f98bc33e14b57f2ea0de..2a0cbe5146eb444a8cb7ab4960904143
 +            super.tell(runnable);
 +            MinecraftServer.nextTimeAssumeWeMayHaveDelayedTasks = true;
 +            BaseTaskQueues.allLevelsScheduledChunkCache.newTaskWasAdded();
-+            if (this.yieldingLockToNotifyOnNewTasks != null) {
-+                this.yieldingLockToNotifyOnNewTasks.unlock();
++            if (yieldingLockToNotifyForNewChunkCacheTasks != null) {
++                yieldingLockToNotifyForNewChunkCacheTasks.unlock();
 +            }
 +        }
 +
@@ -79,10 +89,11 @@ index 83a57b9bc59063ed8299f98bc33e14b57f2ea0de..2a0cbe5146eb444a8cb7ab4960904143
 +                    var currentThread = AbstractYieldingThread.currentYieldingThread();
 +                    while (!future.isDone()) {
 +                        if (!this.pollTask()) {
-+                            currentThread.yieldUntilFuture(this::hasPendingTasks, future, autoCompletingLock -> this.yieldingLockToNotifyOnNewTasks = autoCompletingLock);
++                            currentThread.yieldUntilFuture(() -> this.hasPendingTasks() || chunkWorkerTasksWereCompletedSinceLastDoChunkCacheTasksInYield, future, autoCompletingLock -> yieldingLockToNotifyForNewChunkCacheTasks = autoCompletingLock);
++                            chunkWorkerTasksWereCompletedSinceLastDoChunkCacheTasksInYield = false;
 +                        }
 +                    }
-+                    this.yieldingLockToNotifyOnNewTasks = null;
++                    yieldingLockToNotifyForNewChunkCacheTasks = null;
 +                } finally {
 +                    --this.blockingCount;
 +                }
@@ -121,7 +132,7 @@ index 949feba1264bcafb8dc2dcecd0a566fea80a2ba0..9eae3862abb5f1d7755a8e777fd4bf9a
              }
 diff --git a/src/main/java/org/galemc/gale/executor/queue/AllLevelsScheduledChunkCacheTaskQueue.java b/src/main/java/org/galemc/gale/executor/queue/AllLevelsScheduledChunkCacheTaskQueue.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..60a3b6e935fcea6cf27c31e2b967bf3758283274
+index 0000000000000000000000000000000000000000..fe2e06a827555d81a30697f8b08667692a3eeade
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/queue/AllLevelsScheduledChunkCacheTaskQueue.java
 @@ -0,0 +1,52 @@
@@ -154,7 +165,7 @@ index 0000000000000000000000000000000000000000..60a3b6e935fcea6cf27c31e2b967bf37
 +public final class AllLevelsScheduledChunkCacheTaskQueue extends AllLevelsScheduledTaskQueue {
 +
 +    AllLevelsScheduledChunkCacheTaskQueue() {
-+        super(TaskSpan.FREE, false); // TODO Gale could be TINY maybe? Should check the type of tasks scheduled
++        super(TaskSpan.YIELDING, false);
 +    }
 +
 +    @Override
@@ -178,7 +189,7 @@ index 0000000000000000000000000000000000000000..60a3b6e935fcea6cf27c31e2b967bf37
 +
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/queue/AllLevelsScheduledTaskQueue.java b/src/main/java/org/galemc/gale/executor/queue/AllLevelsScheduledTaskQueue.java
-index 2eb121798b2feb2a5ce5ebb60316660dbff87de3..c9ded5f30e5465c8e15719ac785797cf476474f1 100644
+index 657c3663ed54043e7e4e6660d34903ef746fd8e7..c2acd36b3101042f39afe1436836078dcce2100d 100644
 --- a/src/main/java/org/galemc/gale/executor/queue/AllLevelsScheduledTaskQueue.java
 +++ b/src/main/java/org/galemc/gale/executor/queue/AllLevelsScheduledTaskQueue.java
 @@ -12,7 +12,8 @@ import org.galemc.gale.executor.thread.pool.BaseThreadActivation;
@@ -192,10 +203,10 @@ index 2eb121798b2feb2a5ce5ebb60316660dbff87de3..c9ded5f30e5465c8e15719ac785797cf
   * All tasks provided by this queue must be yield-free.
   *
 diff --git a/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java b/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java
-index 85f467b3cedef57b6b51f04eb34316d43e192d87..152d3c9805365ff157e484e644b982febdcb6693 100644
+index f4adcdcad96b2748c60aecb8f5c25370ee6e8f5b..8465ce8de44d823aac4784fbc5183b9fc49b2825 100644
 --- a/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java
 +++ b/src/main/java/org/galemc/gale/executor/queue/BaseTaskQueueTier.java
-@@ -59,7 +59,8 @@ public enum BaseTaskQueueTier {
+@@ -61,7 +61,8 @@ public enum BaseTaskQueueTier {
      SERVER(new AbstractTaskQueue[]{
          BaseTaskQueues.deferredToServerThread,
          BaseTaskQueues.serverThreadTick,
