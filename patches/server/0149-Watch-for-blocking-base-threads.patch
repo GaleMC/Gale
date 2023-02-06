@@ -7,7 +7,7 @@ License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 4b279948e82a6dfd2f471ba698e361dcfe4499de..438e7d8ce4e1df13a6a5cc45075996be10b34c7b 100644
+index 00508c2b7a0aa9ecdd0c8709a559f26de17a0004..e01986477360b1dbe991af6667e726e8ac656246 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -15,6 +15,7 @@ dependencies {
@@ -18,7 +18,7 @@ index 4b279948e82a6dfd2f471ba698e361dcfe4499de..438e7d8ce4e1df13a6a5cc45075996be
      // Paper start
      implementation("org.jline:jline-terminal-jansi:3.21.0")
      implementation("net.minecrell:terminalconsoleappender:1.3.0")
-@@ -169,10 +170,12 @@ fun TaskContainer.registerRunTask(
+@@ -169,11 +170,13 @@ fun TaskContainer.registerRunTask(
      if (providers.gradleProperty("paper.runDisableWatchdog").getOrElse("false") == "true") {
          systemProperty("disable.watchdog", true)
      }
@@ -27,6 +27,7 @@ index 4b279948e82a6dfd2f471ba698e361dcfe4499de..438e7d8ce4e1df13a6a5cc45075996be
      val memoryGb = providers.gradleProperty("paper.runMemoryGb").getOrElse("2")
      val modifiedJvmArgs = jvmArgs ?: arrayListOf()
      modifiedJvmArgs.addAll(listOf("-Xms${memoryGb}G", "-Xmx${memoryGb}G"))
+     modifiedJvmArgs.add("--add-modules=jdk.incubator.vector") // Gale - Pufferfish - SIMD support
 +    modifiedJvmArgs.add("-XX:+AllowRedefinitionToAddDeleteMethods") // Gale - base thread pool - watch for blocking base threads
      jvmArgs = modifiedJvmArgs
  

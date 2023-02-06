@@ -13,7 +13,7 @@ As part of: Pufferfish (https://github.com/pufferfish-gg/Pufferfish)
 Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 01780a73ee9cc602951bdf568c17673c4c639f79..4b279948e82a6dfd2f471ba698e361dcfe4499de 100644
+index 01780a73ee9cc602951bdf568c17673c4c639f79..00508c2b7a0aa9ecdd0c8709a559f26de17a0004 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -62,6 +62,7 @@ tasks.withType<JavaCompile> {
@@ -24,6 +24,14 @@ index 01780a73ee9cc602951bdf568c17673c4c639f79..4b279948e82a6dfd2f471ba698e361dc
  }
  // Gale end - hide irrelevant compilation warnings
  
+@@ -172,6 +173,7 @@ fun TaskContainer.registerRunTask(
+     val memoryGb = providers.gradleProperty("paper.runMemoryGb").getOrElse("2")
+     val modifiedJvmArgs = jvmArgs ?: arrayListOf()
+     modifiedJvmArgs.addAll(listOf("-Xms${memoryGb}G", "-Xmx${memoryGb}G"))
++    modifiedJvmArgs.add("--add-modules=jdk.incubator.vector") // Gale - Pufferfish - SIMD support
+     jvmArgs = modifiedJvmArgs
+ 
+     doFirst {
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 index 9c3ccbbd657d1605b8fabb6e01c11ff31f39a17e..20ae254b1cd3d75781d1ea4b9859bf0ef92f173d 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
