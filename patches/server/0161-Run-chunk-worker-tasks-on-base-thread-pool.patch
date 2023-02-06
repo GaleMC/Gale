@@ -480,7 +480,7 @@ index f5c15d40094c2ddc6220b0595597d12103fcf425..79ef41d2bb30beee2355d1de3dc99c9e
      }
  
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 313d45dae086ac7c1bd0dd71540020c18a9e5d86..c14b593bd450d244209d17b637fe7c03a1f746f4 100644
+index c2930cc38d02fb62cf7b1a8bdde53753cb4bc64e..29c86b4ee9b147a7645f6577ce22b7a2e6f0b213 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -1070,6 +1070,10 @@ public abstract class MinecraftServer extends MinecraftServerBlockableEventLoop
@@ -489,7 +489,7 @@ index 313d45dae086ac7c1bd0dd71540020c18a9e5d86..c14b593bd450d244209d17b637fe7c03
  
 +        // Gale start - base thread pool - chunk worker task queue
 +        LOGGER.info("Waiting for chunk worker tasks to finish...");
-+        serverThread.runTasksUntil(() -> !BaseTaskQueues.chunkWorker.hasTasks(), null);
++        serverThread.runTasksUntil(null, () -> !BaseTaskQueues.chunkWorker.hasTasks(), null);
 +        // Gale end - base thread pool - chunk worker task queue
          this.saveAllChunks(false, true, false, true); // Paper - rewrite chunk system - move closing into here
  
@@ -545,10 +545,10 @@ index ed3ccf2e64539363a7be2d507c68c40b5913f75c..a12250e5aaed02995b7bf09a8018a93f
  }
 diff --git a/src/main/java/org/galemc/gale/executor/queue/ChunkWorkerTaskQueue.java b/src/main/java/org/galemc/gale/executor/queue/ChunkWorkerTaskQueue.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..221f9e6f10c56c92e00fc8f41e09a977a7ed9e76
+index 0000000000000000000000000000000000000000..9c36119b03ba9a20dc6994ef2d2704ebe9cc4800
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/queue/ChunkWorkerTaskQueue.java
-@@ -0,0 +1,106 @@
+@@ -0,0 +1,103 @@
 +// Gale - base thread pool - chunk worker task queue
 +
 +package org.galemc.gale.executor.queue;
@@ -621,11 +621,8 @@ index 0000000000000000000000000000000000000000..221f9e6f10c56c92e00fc8f41e09a977
 +        return () -> {
 +            var workerAgent = currentThread.getChunkWorkerAgent();
 +            ChunkTaskScheduler.workerThreads.activeThreads.add(workerAgent);
-+            boolean performedTasks = workerAgent.pollTasks();
++            workerAgent.pollTasks();
 +            ChunkTaskScheduler.workerThreads.activeThreads.remove(workerAgent);
-+            if (performedTasks) {
-+                ServerChunkCache.MainThreadExecutor.notifyOfCompletedChunkWorkerTasks();
-+            }
 +        };
 +    }
 +
@@ -656,7 +653,7 @@ index 0000000000000000000000000000000000000000..221f9e6f10c56c92e00fc8f41e09a977
 +
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/thread/BaseThread.java b/src/main/java/org/galemc/gale/executor/thread/BaseThread.java
-index 1c7275dd53e29594d25c63d3df54311a300a08fb..00a52c8c21ebfa95cfd3e6e9d9d76c5789ea6d83 100644
+index 17ae524053949073fcdcbccc53327c42ba1903c6..a01ce790927ff79071c582ca84d64207fd850dfa 100644
 --- a/src/main/java/org/galemc/gale/executor/thread/BaseThread.java
 +++ b/src/main/java/org/galemc/gale/executor/thread/BaseThread.java
 @@ -2,6 +2,8 @@
@@ -676,7 +673,7 @@ index 1c7275dd53e29594d25c63d3df54311a300a08fb..00a52c8c21ebfa95cfd3e6e9d9d76c57
  import org.jetbrains.annotations.Nullable;
  
  import java.util.concurrent.TimeUnit;
-@@ -696,6 +699,20 @@ public abstract class BaseThread extends Thread implements AbstractYieldingThrea
+@@ -699,6 +702,20 @@ public abstract class BaseThread extends Thread implements AbstractYieldingThrea
          }
      }
  

@@ -2163,7 +2163,7 @@ index 0000000000000000000000000000000000000000..e9d778a078bee6b6f1c21078c445b48f
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/MinecraftServerBlockableEventLoop.java b/src/main/java/org/galemc/gale/executor/MinecraftServerBlockableEventLoop.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..84aa4f8e3f823cedc8cf958663fa2168f29d1d9c
+index 0000000000000000000000000000000000000000..2da7a1a787bed2e03039796d56201870548ad0e4
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/MinecraftServerBlockableEventLoop.java
 @@ -0,0 +1,187 @@
@@ -2338,7 +2338,7 @@ index 0000000000000000000000000000000000000000..84aa4f8e3f823cedc8cf958663fa2168
 +            //noinspection NonAtomicOperationOnVolatileField
 +            ++blockingCount;
 +            try {
-+                MinecraftServer.serverThread.runTasksUntil(stopCondition, null);
++                MinecraftServer.serverThread.runTasksUntil(null, stopCondition, null);
 +            } finally {
 +                //noinspection NonAtomicOperationOnVolatileField
 +                --blockingCount;
@@ -2750,7 +2750,7 @@ index 0000000000000000000000000000000000000000..686e16da8372085196d8f92adb881f82
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/lock/YieldingLock.java b/src/main/java/org/galemc/gale/executor/lock/YieldingLock.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..799608befb739d051153b5321598ea87b50fd6bd
+index 0000000000000000000000000000000000000000..4b40afe88f166491f74f99bab96092d04e77fe02
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/lock/YieldingLock.java
 @@ -0,0 +1,202 @@
@@ -2862,7 +2862,7 @@ index 0000000000000000000000000000000000000000..799608befb739d051153b5321598ea87
 +                return;
 +            }
 +            // Otherwise, we yield to other tasks until the lock can be acquired
-+            yieldingThread.yieldUntil(null, this);
++            yieldingThread.yieldUntil(null, null, this);
 +        }
 +        // Increment the YieldingLock count of the current thread
 +        if (this.canBeHeld) {
@@ -4190,7 +4190,7 @@ index 0000000000000000000000000000000000000000..fb4f9c047fc71a9a01aa47871254c6a9
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/thread/AbstractYieldingThread.java b/src/main/java/org/galemc/gale/executor/thread/AbstractYieldingThread.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..24a30760982244fb0d3fa1933751a8286c27014c
+index 0000000000000000000000000000000000000000..fd4082f1d8fe558bbaaf3b17da18b361e34c81ed
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/thread/AbstractYieldingThread.java
 @@ -0,0 +1,147 @@
@@ -4249,7 +4249,7 @@ index 0000000000000000000000000000000000000000..24a30760982244fb0d3fa1933751a828
 +
 +    @ThisThreadOnly
 +    @PotentiallyYielding("this method is meant to yield")
-+    void yieldUntil(@Nullable BooleanSupplier stopCondition, @Nullable YieldingLock yieldingLock);
++    void yieldUntil(@Nullable Long timeoutTime, @Nullable BooleanSupplier stopCondition, @Nullable YieldingLock yieldingLock);
 +
 +    /**
 +     * Calls {@link #yieldUntil(BooleanSupplier, YieldingLock)}, but creates a {@link YieldingLock}
@@ -4261,7 +4261,7 @@ index 0000000000000000000000000000000000000000..24a30760982244fb0d3fa1933751a828
 +     */
 +    @ThisThreadOnly
 +    @PotentiallyYielding("this method is meant to yield")
-+    default void yieldUntilFuture(@Nullable BooleanSupplier stopCondition, @NotNull CompletableFuture<?> future, @Nullable Consumer<YieldingLock> autoCompletingLockConsumer) {
++    default void yieldUntilFuture(@Nullable Long timeoutTime, @Nullable BooleanSupplier stopCondition, @NotNull CompletableFuture<?> future, @Nullable Consumer<YieldingLock> autoCompletingLockConsumer) {
 +
 +        /*
 +        Here, we abuse the Lock interface to create a YieldingLock
@@ -4317,12 +4317,12 @@ index 0000000000000000000000000000000000000000..24a30760982244fb0d3fa1933751a828
 +        future.thenRun(autoCompletingLock::unlock);
 +
 +        // Yield while necessary
-+        this.yieldUntil(null, autoCompletingLock);
++        this.yieldUntil(timeoutTime, null, autoCompletingLock);
 +
 +    }
 +
 +    @ThisThreadOnly
-+    void runTasksUntil(@Nullable BooleanSupplier stopCondition, @Nullable YieldingLock yieldingLock);
++    void runTasksUntil(@Nullable Long timeoutTime, @Nullable BooleanSupplier stopCondition, @Nullable YieldingLock yieldingLock);
 +
 +    @AnyThreadSafe
 +    @YieldFree
@@ -4343,7 +4343,7 @@ index 0000000000000000000000000000000000000000..24a30760982244fb0d3fa1933751a828
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/thread/AssistThread.java b/src/main/java/org/galemc/gale/executor/thread/AssistThread.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..a5605765f6be0b75e5df5613e8b393b64f88fc3c
+index 0000000000000000000000000000000000000000..eab769d7319f26db1f4db9599a3c263c507641bd
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/thread/AssistThread.java
 @@ -0,0 +1,78 @@
@@ -4392,7 +4392,7 @@ index 0000000000000000000000000000000000000000..a5605765f6be0b75e5df5613e8b393b6
 +     */
 +    @ThisThreadOnly
 +    protected void runForever() {
-+        this.runTasksUntil(() -> false, null);
++        this.runTasksUntil(null, () -> false, null);
 +    }
 +
 +    /**
@@ -4427,10 +4427,10 @@ index 0000000000000000000000000000000000000000..a5605765f6be0b75e5df5613e8b393b6
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/thread/BaseThread.java b/src/main/java/org/galemc/gale/executor/thread/BaseThread.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..1c7275dd53e29594d25c63d3df54311a300a08fb
+index 0000000000000000000000000000000000000000..17ae524053949073fcdcbccc53327c42ba1903c6
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/thread/BaseThread.java
-@@ -0,0 +1,719 @@
+@@ -0,0 +1,722 @@
 +// Gale - base thread pool
 +
 +package org.galemc.gale.executor.thread;
@@ -4675,14 +4675,14 @@ index 0000000000000000000000000000000000000000..1c7275dd53e29594d25c63d3df54311a
 +     * <br>
 +     * Exactly one of {@code stopCondition} and {@code yieldingLock} must be non-null.
 +     */
-+    public final void yieldUntil(@Nullable BooleanSupplier stopCondition, @Nullable YieldingLock yieldingLock) {
++    public final void yieldUntil(@Nullable Long timeoutTime, @Nullable BooleanSupplier stopCondition, @Nullable YieldingLock yieldingLock) {
 +        int oldYieldDepth = this.yieldDepth;
 +        int newYieldDepth = oldYieldDepth + 1;
 +        this.yieldDepth = newYieldDepth;
 +        if (newYieldDepth == maximumYieldDepth) {
 +            this.updateCanStartYieldingTasks();
 +        }
-+        this.runTasksUntil(stopCondition, yieldingLock);
++        this.runTasksUntil(timeoutTime, stopCondition, yieldingLock);
 +        this.yieldDepth = oldYieldDepth;
 +        if (newYieldDepth == maximumYieldDepth) {
 +            this.updateCanStartYieldingTasks();
@@ -4691,7 +4691,8 @@ index 0000000000000000000000000000000000000000..1c7275dd53e29594d25c63d3df54311a
 +
 +    /**
 +     * This method will keep attempting to find a task to do, and execute it, and if none is found, start waiting
-+     * until signalled by {@link BaseThreadPool} or by a {@link YieldingLock}.
++     * until the {@code timeoutTime} is reached (which is compared to {@link System#nanoTime}),
++     * or the thread is signalled by {@link BaseThreadPool} or by a {@link YieldingLock}.
 +     * The loop is broken as soon as the stop condition becomes true, or the given lock is successfully acquired.
 +     * <br>
 +     * The above is the same as {@link #yieldUntil}, except it may be called in situations that is not 'yielding',
@@ -4704,7 +4705,8 @@ index 0000000000000000000000000000000000000000..1c7275dd53e29594d25c63d3df54311a
 +     */
 +    @ThisThreadOnly
 +    @PotentiallyYielding("may yield further if an executed task is potentially yielding")
-+    public final void runTasksUntil(@Nullable BooleanSupplier stopCondition, @Nullable YieldingLock yieldingLock) {
++    public final void runTasksUntil(@Nullable Long timeoutTime, @Nullable BooleanSupplier stopCondition, @Nullable YieldingLock yieldingLock) {
++        if (TickThread.isTickThread()) MinecraftServer.THREAD_DEBUG_LOGGER.ifPresent(it -> it.info("running tasks until"));
 +        this.isPollingTaskOrCheckingStopCondition = true;
 +
 +        /*
@@ -4798,7 +4800,7 @@ index 0000000000000000000000000000000000000000..1c7275dd53e29594d25c63d3df54311a
 +            or for the given yielding lock to be released. This is the only time we should ever block inside
 +            a potentially yielding procedure.
 +             */
-+            this.waitUntilSignalled(yieldingLock);
++            this.waitUntilSignalled(timeoutTime, yieldingLock);
 +
 +        }
 +
@@ -4928,12 +4930,13 @@ index 0000000000000000000000000000000000000000..1c7275dd53e29594d25c63d3df54311a
 +    /**
 +     * Starts waiting on something to do.
 +     *
++     * @param timeoutTime The maximum time to wait until (compared to {@link System#nanoTime}).
 +     * @param yieldingLock A {@link YieldingLock} to register with, or null if this thread is not waiting for
 +     *                     a yielding lock.
 +     */
 +    @ThisThreadOnly
 +    @PotentiallyBlocking
-+    private void waitUntilSignalled(@Nullable YieldingLock yieldingLock) {
++    private void waitUntilSignalled(@Nullable Long timeoutTime, @Nullable YieldingLock yieldingLock) {
 +
 +        // Remember whether we registered to wait with the lock, to unregister later
 +        // Register this thread with the lock if necessary
@@ -4999,57 +5002,57 @@ index 0000000000000000000000000000000000000000..1c7275dd53e29594d25c63d3df54311a
 +                    // Wait
 +                    try {
 +
-+                        /*
-+                        Check if we should wait with a timeout: this only happens if this thread is the server thread, in
-+                        which case we do not want to wait past the start of the next tick.
-+                         */
-+                        boolean waitedWithTimeout = false;
-+                        if (this == MinecraftServer.serverThread) {
-+                            // -1 indicates to not use a timeout (this value is not later set to any other negative value)
-+                            long waitForNanos = -1;
-+                            if (MinecraftServer.isWaitingUntilNextTick) {
-+                                /*
-+                                During waiting until the next tick, we wait until the next tick start.
-+                                If it already passed, we do not have to use a timeout, because we will be notified
-+                                when the stop condition becomes true.
-+                                 */
-+                                waitForNanos = MinecraftServer.nextTickStartNanoTime - System.nanoTime();
-+                                if (waitForNanos < 0) {
-+                                    waitForNanos = -1;
-+                                }
-+                            } else if (MinecraftServer.SERVER.isOversleep) {
-+                                /*
-+                                During this phase, MinecraftServer#mayHaveDelayedTasks() is checked, and we may not
-+                                be notified when it changes. Therefore, if the next tick start has not passed, we will
-+                                wait until then, but if it has, we wait for a short interval to make sure we keep
-+                                checking the stop condition (but not for longer than until the last time we can be
-+                                executing extra delayed tasks).
-+                                 */
-+                                waitForNanos = MinecraftServer.nextTickStartNanoTime - System.nanoTime();
-+                                if (waitForNanos < 0) {
-+                                    waitForNanos = Math.min(Math.max(0, MinecraftServer.delayedTasksMaxNextTickNanoTime - System.nanoTime()), SERVER_THREAD_WAIT_NANOS_DURING_OVERSLEEP_WITH_DELAYED_TASKS);
-+                                }
-+                            }
-+                            if (waitForNanos >= 0) {
-+                                // Set the last signal reason to null in case the timeout elapses without a signal
-+                                this.lastSignalReason = null;
-+                                // Wait, but at most for the determined time
-+                                waitedWithTimeout = true;
-+                                // Skip if the time is too short
-+                                if (waitForNanos >= SERVER_THREAD_WAIT_NANOS_MINIMUM) {
-+                                    //noinspection ResultOfMethodCallIgnored
-+                                    this.waitCondition.await(waitForNanos, TimeUnit.NANOSECONDS);
++                        // -1 indicates to not use a timeout (this value is not later set to any other negative value)
++                        long waitForNanos = -1;
++                        if (timeoutTime != null) {
++                            waitForNanos = Math.max(timeoutTime - System.nanoTime(), SERVER_THREAD_WAIT_NANOS_MINIMUM);
++                        } else {
++                            /*
++                            Check if we should wait with a tick-based timeout:
++                            this only happens if this thread is the server thread, in
++                            which case we do not want to wait past the start of the next tick.
++                             */
++                            if (this == MinecraftServer.serverThread) {
++                                if (MinecraftServer.isWaitingUntilNextTick) {
++                                    /*
++                                    During waiting until the next tick, we wait until the next tick start.
++                                    If it already passed, we do not have to use a timeout, because we will be notified
++                                    when the stop condition becomes true.
++                                     */
++                                    waitForNanos = MinecraftServer.nextTickStartNanoTime - System.nanoTime();
++                                    if (waitForNanos < 0) {
++                                        waitForNanos = -1;
++                                    }
++                                } else if (MinecraftServer.SERVER.isOversleep) {
++                                    /*
++                                    During this phase, MinecraftServer#mayHaveDelayedTasks() is checked, and we may not
++                                    be notified when it changes. Therefore, if the next tick start has not passed, we will
++                                    wait until then, but if it has, we wait for a short interval to make sure we keep
++                                    checking the stop condition (but not for longer than until the last time we can be
++                                    executing extra delayed tasks).
++                                     */
++                                    waitForNanos = MinecraftServer.nextTickStartNanoTime - System.nanoTime();
++                                    if (waitForNanos < 0) {
++                                        waitForNanos = Math.min(Math.max(0, MinecraftServer.delayedTasksMaxNextTickNanoTime - System.nanoTime()), SERVER_THREAD_WAIT_NANOS_DURING_OVERSLEEP_WITH_DELAYED_TASKS);
++                                    }
 +                                }
 +                            }
 +                        }
-+
-+                        /*
-+                        If we did not wait with a timeout, wait indefinitely. If this thread is the server thread,
-+                        and the intended start time of the next tick has already passed, but the stop condition to stop
-+                        running tasks is still not true, this thread must be signalled when a change in conditions causes
-+                        the stop condition to become true.
-+                         */
-+                        if (!waitedWithTimeout) {
++                        if (waitForNanos >= 0) {
++                            // Set the last signal reason to null in case the timeout elapses without a signal
++                            this.lastSignalReason = null;
++                            // Skip if the time is too short
++                            if (waitForNanos >= SERVER_THREAD_WAIT_NANOS_MINIMUM) {
++                                //noinspection ResultOfMethodCallIgnored
++                                this.waitCondition.await(waitForNanos, TimeUnit.NANOSECONDS);
++                            }
++                        } else {
++                            /*
++                            If we did not wait with a timeout, wait indefinitely. If this thread is the server thread,
++                            and the intended start time of the next tick has already passed, but the stop condition to stop
++                            running tasks is still not true, this thread must be signalled when a change in conditions causes
++                            the stop condition to become true.
++                             */
 +                            this.waitCondition.await();
 +                        }
 +
@@ -5301,7 +5304,7 @@ index 0000000000000000000000000000000000000000..a73aafc64dc60b57e2e5a91565e1aff6
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/thread/deferral/ServerThreadDeferral.java b/src/main/java/org/galemc/gale/executor/thread/deferral/ServerThreadDeferral.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..57f672f9f81aeb6ce0ef44fa47db80602b03a5d4
+index 0000000000000000000000000000000000000000..8c4855c931ccc285768eabcff9d1f2b752d45bf6
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/thread/deferral/ServerThreadDeferral.java
 @@ -0,0 +1,151 @@
@@ -5399,7 +5402,7 @@ index 0000000000000000000000000000000000000000..57f672f9f81aeb6ce0ef44fa47db8060
 +                }
 +                yieldingThread.signal(null);
 +            }, span);
-+            yieldingThread.yieldUntil(future::isDone, null);
++            yieldingThread.yieldUntil(null, future::isDone, null);
 +            return future.getNow(null);
 +        } else {
 +            // Block until the task completes

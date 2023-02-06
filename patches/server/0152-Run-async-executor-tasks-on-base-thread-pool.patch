@@ -27,7 +27,7 @@ index 4b8da38db72d7ebc2d498ec3d711d3b30911096c..80f9e70d5c4330e079feccc9a4b1b595
          1, 1, 0L, TimeUnit.SECONDS,
          new LinkedBlockingQueue<>(),
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index fe2892e20dcb0b76d30b81bca7a13e29a1c45723..313d45dae086ac7c1bd0dd71540020c18a9e5d86 100644
+index fe2892e20dcb0b76d30b81bca7a13e29a1c45723..c2930cc38d02fb62cf7b1a8bdde53753cb4bc64e 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -1081,9 +1081,6 @@ public abstract class MinecraftServer extends MinecraftServerBlockableEventLoop
@@ -47,7 +47,7 @@ index fe2892e20dcb0b76d30b81bca7a13e29a1c45723..313d45dae086ac7c1bd0dd71540020c1
 +        // Gale start - base thread pool - remove Paper async executor
 +        long startTime = Util.getMillis();
 +        LOGGER.info("Waiting 30 seconds for asynchronous tasks to finish...");
-+        serverThread.runTasksUntil(() -> Util.getMillis() - startTime >= 30 || !BaseTaskQueues.scheduledAsync.hasTasks(), null); // Paper
++        serverThread.runTasksUntil(null, () -> Util.getMillis() - startTime >= 30 || !BaseTaskQueues.scheduledAsync.hasTasks(), null); // Paper
 +        LOGGER.info("Shutting down IO executor...");
 +        // Gale end - base thread pool - remove Paper async executor
          Util.shutdownExecutors(); // Paper

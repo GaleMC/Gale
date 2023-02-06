@@ -7,7 +7,7 @@ License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerChunkCache.java b/src/main/java/net/minecraft/server/level/ServerChunkCache.java
-index 83a57b9bc59063ed8299f98bc33e14b57f2ea0de..f1aaf1cae3335f7c7340104cfd6dbc3dd62f6ab3 100644
+index 83a57b9bc59063ed8299f98bc33e14b57f2ea0de..5187fd95577afa4ddf4544206ec6bb467bcdce81 100644
 --- a/src/main/java/net/minecraft/server/level/ServerChunkCache.java
 +++ b/src/main/java/net/minecraft/server/level/ServerChunkCache.java
 @@ -11,7 +11,6 @@ import java.util.Collections;
@@ -44,26 +44,23 @@ index 83a57b9bc59063ed8299f98bc33e14b57f2ea0de..f1aaf1cae3335f7c7340104cfd6dbc3d
          } else {
              completablefuture = CompletableFuture.supplyAsync(() -> {
                  return this.getChunkFutureMainThread(chunkX, chunkZ, leastStatus, create);
-@@ -973,6 +973,18 @@ public class ServerChunkCache extends ChunkSource {
+@@ -973,6 +973,15 @@ public class ServerChunkCache extends ChunkSource {
  
      public final class MainThreadExecutor extends BlockableEventLoop<Runnable> {
  
 +        // Gale start - base thread pool
-+        private static volatile boolean chunkWorkerTasksWereCompletedSinceLastDoChunkCacheTasksInYield;
-+        public static @Nullable YieldingLock yieldingLockToNotifyForNewChunkCacheTasks;
-+
-+        public static void notifyOfCompletedChunkWorkerTasks() {
-+            if (yieldingLockToNotifyForNewChunkCacheTasks != null) {
-+                chunkWorkerTasksWereCompletedSinceLastDoChunkCacheTasksInYield = true;
-+                yieldingLockToNotifyForNewChunkCacheTasks.unlock();
-+            }
-+        }
++        /**
++         * The time interval for the server thread to yield when this executor is performing
++         * a {@link #managedYield} but failed to perform any other tasks from this executor itself.
++         */
++        private static final long MANAGED_YIELD_TIMEOUT_TIME = 50_000L;
++        private static @Nullable YieldingLock yieldingLockToNotifyForNewChunkCacheTasks;
 +        // Gale end - base thread pool
 +
          MainThreadExecutor(Level world) {
              super("Chunk source main thread executor for " + world.dimension().location());
          }
-@@ -1002,6 +1014,40 @@ public class ServerChunkCache extends ChunkSource {
+@@ -1002,6 +1011,40 @@ public class ServerChunkCache extends ChunkSource {
              super.doRunTask(task);
          }
  
@@ -89,8 +86,8 @@ index 83a57b9bc59063ed8299f98bc33e14b57f2ea0de..f1aaf1cae3335f7c7340104cfd6dbc3d
 +                    var currentThread = AbstractYieldingThread.currentYieldingThread();
 +                    while (!future.isDone()) {
 +                        if (!this.pollTask()) {
-+                            currentThread.yieldUntilFuture(() -> this.hasPendingTasks() || chunkWorkerTasksWereCompletedSinceLastDoChunkCacheTasksInYield, future, autoCompletingLock -> yieldingLockToNotifyForNewChunkCacheTasks = autoCompletingLock);
-+                            chunkWorkerTasksWereCompletedSinceLastDoChunkCacheTasksInYield = false;
++                            long timeoutTime = System.nanoTime() + MANAGED_YIELD_TIMEOUT_TIME;
++                            currentThread.yieldUntilFuture(timeoutTime, () -> this.hasPendingTasks(), future, autoCompletingLock -> yieldingLockToNotifyForNewChunkCacheTasks = autoCompletingLock);
 +                        }
 +                    }
 +                    yieldingLockToNotifyForNewChunkCacheTasks = null;
