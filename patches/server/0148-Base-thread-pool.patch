@@ -557,7 +557,7 @@ index 0c4c62674b4c7e8e3921c7eb3ef726759ac75075..40f20806cc06106b4aa8e708467dcea9
                  WorldLoader.InitConfig worldloader_c = Main.loadOrCreateConfig(dedicatedserversettings.getProperties(), convertable_conversionsession, flag, resourcepackrepository);
  
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index eb951c9fda85d9620d3038a3db22d578db45e878..fe2892e20dcb0b76d30b81bca7a13e29a1c45723 100644
+index eb951c9fda85d9620d3038a3db22d578db45e878..f423f6322b6cbb7b73074f84debc8333ad4e64b3 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -40,10 +40,8 @@ import java.util.Optional;
@@ -1205,7 +1205,7 @@ index eb951c9fda85d9620d3038a3db22d578db45e878..fe2892e20dcb0b76d30b81bca7a13e29
          newLevels.put(level.dimension(), level);
          this.levels = Collections.unmodifiableMap(newLevels);
 +        // Gale start - base thread pool - optimize server levels
-+        this.levelArray = newLevels.values().toArray(this.levelArray);
++        this.levelArray = newLevels.values().toArray(ServerLevel[]::new);
 +        for (int i = 0; i < this.levelArray.length; i++) {
 +            this.levelArray[i].serverLevelArrayIndex = i;
 +        }
@@ -1220,7 +1220,7 @@ index eb951c9fda85d9620d3038a3db22d578db45e878..fe2892e20dcb0b76d30b81bca7a13e29
          this.levels = Collections.unmodifiableMap(newLevels);
 +        // Gale start - base thread pool - optimize server levels
 +        level.serverLevelArrayIndex = -1;
-+        this.levelArray = newLevels.values().toArray(this.levelArray);
++        this.levelArray = newLevels.values().toArray(ServerLevel[]::new);
 +        for (int i = 0; i < this.levelArray.length; i++) {
 +            this.levelArray[i].serverLevelArrayIndex = i;
 +        }
