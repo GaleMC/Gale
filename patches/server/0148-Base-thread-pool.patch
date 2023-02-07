@@ -5675,10 +5675,10 @@ index 0000000000000000000000000000000000000000..77fe10e51b00115da520cfc211bf84ba
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/thread/pool/BaseThreadActivation.java b/src/main/java/org/galemc/gale/executor/thread/pool/BaseThreadActivation.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..20818236c21bc6f42642ddd788cbca38d0ca1051
+index 0000000000000000000000000000000000000000..ba9a1ffca55354a35bcc7b45227dddecd335da94
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/thread/pool/BaseThreadActivation.java
-@@ -0,0 +1,594 @@
+@@ -0,0 +1,648 @@
 +// Gale - base thread pool
 +
 +package org.galemc.gale.executor.thread.pool;
@@ -5701,6 +5701,7 @@ index 0000000000000000000000000000000000000000..20818236c21bc6f42642ddd788cbca38
 +import java.util.concurrent.atomic.AtomicBoolean;
 +import java.util.concurrent.atomic.AtomicInteger;
 +import java.util.concurrent.atomic.AtomicLong;
++import java.util.concurrent.atomic.AtomicReference;
 +
 +/**
 + * A class providing the static functionality needed to activate more threads in the {@link BaseThreadPool}
@@ -5728,9 +5729,19 @@ index 0000000000000000000000000000000000000000..20818236c21bc6f42642ddd788cbca38
 +    private static final AtomicLong nextAllowedFrequentSignalNewTasksTime = new AtomicLong(System.nanoTime() - 1L);
 +
 +    /**
++     * This value is not null while an update is ongoing.
++     *
 +     * @see #update()
 +     */
-+    static final AtomicBoolean isUpdateOngoing = new AtomicBoolean();
++    static final AtomicReference<Thread> updateOngoingOnThread = new AtomicReference();
++
++    /**
++     * Whether a non-{@link ServerThread} thread is ready to take over the {@link #update} call
++     * that is ongoing on a {@link ServerThread}.
++     *
++     * @see #callForUpdate()
++     */
++    private static final AtomicBoolean isNonServerThreadReadyToTakeOverUpdate = new AtomicBoolean();
 +
 +    /**
 +     * @see #update()
@@ -5854,7 +5865,8 @@ index 0000000000000000000000000000000000000000..20818236c21bc6f42642ddd788cbca38
 +     * that it will have to do another one.
 +     * <br>
 +     * Only one thread can be performing an update at a time.
-+     * If a second thread calls this method while an update is ongoing (signified by {@link #isUpdateOngoing}),
++     * If a second thread calls this method while an update is ongoing
++     * (signified by {@link #updateOngoingOnThread} being non-null),
 +     * the thread performing an update will perform another update after finishing the current one, due to the
 +     * second thread incrementing {@link #newUpdateCallsReceived}.
 +     * <br>
@@ -5881,7 +5893,7 @@ index 0000000000000000000000000000000000000000..20818236c21bc6f42642ddd788cbca38
 +     *         in the meta-handling of {@link #update()}, not in the activation of threads:
 +     *         <ul>
 +     *             <li>{@link #newUpdateCallsReceived}</li>
-+     *             <li>{@link #isUpdateOngoing}</li>
++     *             <li>{@link #updateOngoingOnThread}</li>
 +     *         </ul>
 +     *     </li>
 +     *     <li>
@@ -5903,10 +5915,35 @@ index 0000000000000000000000000000000000000000..20818236c21bc6f42642ddd788cbca38
 +     * </ul>
 +     */
 +    public static void callForUpdate() {
++        Thread currentThread = Thread.currentThread();
 +        // Make sure the updating thread repeats (must be set before evaluating isUpdateOngoing)
 +        newUpdateCallsReceived.incrementAndGet();
-+        // Start the update ourselves if not ongoing
-+        if (!isUpdateOngoing.get() && !isUpdateOngoing.getAndSet(true)) {
++        // Start the update ourselves if necessary
++        boolean amIServerThread = currentThread instanceof ServerThread;
++        boolean amIDoingUpdate = false;
++        // Start the update if not ongoing
++        if (updateOngoingOnThread.get() == null && updateOngoingOnThread.compareAndSet(null, currentThread)) {
++            amIDoingUpdate = true;
++        } else if (!amIServerThread) {
++            // Take over the update from the server thread if necessary
++            Thread updatePerformingThread = updateOngoingOnThread.get();
++            if (updatePerformingThread instanceof ServerThread) {
++                // Make sure we are the only thread ready to taking over from the server thread
++                if (!isNonServerThreadReadyToTakeOverUpdate.get() && !isNonServerThreadReadyToTakeOverUpdate.getAndSet(true)) {
++                    // Busy wait until the server thread has stopped updating
++                    while (updateOngoingOnThread.get() instanceof ServerThread) {
++                        Thread.onSpinWait();
++                    }
++                    // Start the update, if another thread did not already quickly claim it in the meantime
++                    if (updateOngoingOnThread.compareAndSet(null, currentThread)) {
++                        amIDoingUpdate = true;
++                    }
++                    isNonServerThreadReadyToTakeOverUpdate.set(false);
++                }
++            }
++        }
++
++        if (amIDoingUpdate) {
 +            // Perform an update
 +            do {
 +                try {
@@ -5920,13 +5957,23 @@ index 0000000000000000000000000000000000000000..20818236c21bc6f42642ddd788cbca38
 +                        update();
 +                    }
 +                } finally {
-+                    isUpdateOngoing.set(false);
++                    // Take actions to let another thread take over the update
++                    boolean isBeingTakenOver = amIServerThread && isNonServerThreadReadyToTakeOverUpdate.get();
++                    if (isBeingTakenOver) {
++                        // Make sure an iteration is performed
++                        newUpdateCallsReceived.incrementAndGet();
++                    }
++                    updateOngoingOnThread.set(null);
++                    if (isBeingTakenOver) {
++                        // Skip the loop checks
++                        break;
++                    }
 +                }
 +            /*
 +            If newUpdateCallsReceived is positive here, it was increased between it being set to 0 and
-+            isUpdateOngoing being set to false, so we must repeat.
++            updateOngoingOnThread being set to null, so we must repeat.
 +             */
-+            } while (newUpdateCallsReceived.get() > 0 && !isUpdateOngoing.get() && !isUpdateOngoing.getAndSet(true));
++            } while (newUpdateCallsReceived.get() > 0 && updateOngoingOnThread.get() == null && updateOngoingOnThread.compareAndSet(null, currentThread));
 +        }
 +    }
 +
@@ -5985,6 +6032,7 @@ index 0000000000000000000000000000000000000000..20818236c21bc6f42642ddd788cbca38
 +     */
 +    static void update() {
 +        MinecraftServer.THREAD_DEBUG_LOGGER.ifPresent(it -> it.info("update"));
++        boolean amIServerThread = Thread.currentThread() instanceof ServerThread;
 +        boolean madeChangesInLastIteration = false;
 +        int numberOfUpdateCallsAtStartOfLastIteration = -1;
 +        boolean isFirstIteration = true;
@@ -5996,6 +6044,12 @@ index 0000000000000000000000000000000000000000..20818236c21bc6f42642ddd788cbca38
 +        updateWhileNecessary:
 +        while (true) {
 +            MinecraftServer.THREAD_DEBUG_LOGGER.ifPresent(it -> it.info("iteration of update"));
++
++            // Let a non-server thread take over if needed
++            if (amIServerThread && isNonServerThreadReadyToTakeOverUpdate.get()) {
++                // All preparations for the take-over are performed in #callForUpdate
++                break;
++            }
 +
 +            // Break the loop if needed
 +            if (isFirstIteration) {
