@@ -378,10 +378,10 @@ index 949feba1264bcafb8dc2dcecd0a566fea80a2ba0..628c33ee1693c9c7f441ab4c8881c50a
              }
 diff --git a/src/main/java/org/galemc/gale/executor/ClosestChunkBlockableEventLoop.java b/src/main/java/org/galemc/gale/executor/ClosestChunkBlockableEventLoop.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..be593d86d8c7596e0866fbc8dc8e03636fa14399
+index 0000000000000000000000000000000000000000..819618b7d02f739e9423099961864698808d3a5d
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/ClosestChunkBlockableEventLoop.java
-@@ -0,0 +1,369 @@
+@@ -0,0 +1,448 @@
 +// Gale - base thread pool - chunk-sorted cache tasks
 +
 +package org.galemc.gale.executor;
@@ -397,6 +397,7 @@ index 0000000000000000000000000000000000000000..be593d86d8c7596e0866fbc8dc8e0363
 +import org.galemc.gale.executor.annotation.Guarded;
 +import org.galemc.gale.executor.annotation.YieldFree;
 +import org.galemc.gale.executor.annotation.thread.AnyThreadSafe;
++import org.galemc.gale.executor.thread.ServerThread;
 +import org.jetbrains.annotations.NotNull;
 +
 +import java.util.*;
@@ -513,6 +514,25 @@ index 0000000000000000000000000000000000000000..be593d86d8c7596e0866fbc8dc8e0363
 +    @Guarded(value = "#lock", fieldAccess = Access.WRITE)
 +    private volatile int pendingTaskCount = 0;
 +
++    /**
++     * An ordered list of chunks to update to a new distance, where each triple of elements in the array
++     * consists of the chunk x, chunk z, and new distance.
++     */
++    @Guarded(value = "#lock")
++    private int[] chunkDistanceUpdates = new int[0];
++
++    /**
++     * The number of chunk distance updates in {@link #chunkDistanceUpdates}.
++     */
++    @Guarded(value = "#lock")
++    private int chunkDistanceUpdateLength;
++
++    /**
++     * A flag indicating the server thread wants to add new chunk distance updates,
++     * but is waiting for the {@link #lock}.
++     */
++    private volatile boolean serverThreadWantsLockToAddChunkDistanceUpdates;
++
 +    public ClosestChunkBlockableEventLoop(String name) {
 +        super(name);
 +    }
@@ -544,6 +564,42 @@ index 0000000000000000000000000000000000000000..be593d86d8c7596e0866fbc8dc8e0363
 +        this.taskQueuePool.add(queue);
 +    }
 +
++    /**
++     * Processes all chunk update tasks in {@link #chunkDistanceUpdates}.
++     * <br>
++     * This method must only be called while {@link #lock} is held.
++     */
++    private void processChunkDistanceUpdates() {
++        boolean isNonServerThread = !(Thread.currentThread() instanceof ServerThread);
++        while (this.chunkDistanceUpdateLength > 0) {
++
++            // Let the server thread add new chunk distance updates
++            if (isNonServerThread && this.serverThreadWantsLockToAddChunkDistanceUpdates) {
++                this.lock.release();
++                while (this.serverThreadWantsLockToAddChunkDistanceUpdates) {
++                    Thread.onSpinWait();
++                }
++                this.lock.spinLock();
++            }
++
++            // Read the change
++            int chunkX = this.chunkDistanceUpdates[this.chunkDistanceUpdateLength * 3 - 3];
++            int chunkZ = this.chunkDistanceUpdates[this.chunkDistanceUpdateLength * 3 - 2];
++            int newDistance = this.chunkDistanceUpdates[this.chunkDistanceUpdateLength * 3 - 1];
++            this.chunkDistanceUpdateLength--;
++
++            // Apply the change
++            long packedXZ = getTightlyPackedXZ(chunkX, chunkZ);
++            int oldDistance = this.distancePerChunk.get(packedXZ);
++            long oldPackedXZWithDistance = getTightlyPackedXZWithDistance(packedXZ, oldDistance);
++            long newPackedXZWithDistance = getTightlyPackedXZWithDistance(packedXZ, newDistance);
++            this.distancePerChunk.put(packedXZ, newDistance);
++            this.chunkQueue.remove(oldPackedXZWithDistance);
++            this.chunkQueue.add(newPackedXZWithDistance);
++
++        }
++    }
++
 +    public void onChunkDistanceChange(int chunkX, int chunkZ, int newDistance) {
 +        /*
 +        Make sure the distance is in the range [0, 511].
@@ -552,16 +608,36 @@ index 0000000000000000000000000000000000000000..be593d86d8c7596e0866fbc8dc8e0363
 +         */
 +        int newDistanceWithinRange = newDistance < 0 || newDistance >= 512 ? 511 : newDistance;
 +        long packedXZ = getTightlyPackedXZ(chunkX, chunkZ);
-+        long newPackedXZWithDistance = getTightlyPackedXZWithDistance(packedXZ, newDistanceWithinRange);
-+        try (var ignored = this.lock.withSpinLock()) {
++        boolean setWantsToLock = false;
++        while (!this.lock.tryAcquire()) {
++            if (!setWantsToLock) {
++                setWantsToLock = true;
++                this.serverThreadWantsLockToAddChunkDistanceUpdates = true;
++            }
++            Thread.onSpinWait();
++        }
++        try {
++            if (setWantsToLock) {
++                this.serverThreadWantsLockToAddChunkDistanceUpdates = false;
++            }
++
++            // If we don't have tasks for this queue, we don't need the change
 +            int oldDistance = this.distancePerChunk.get(packedXZ);
 +            if (oldDistance == -1) {
 +                return;
 +            }
-+            this.distancePerChunk.put(packedXZ, newDistanceWithinRange);
-+            long oldPackedXZWithDistance = getTightlyPackedXZWithDistance(packedXZ, oldDistance);
-+            this.chunkQueue.remove(oldPackedXZWithDistance);
-+            this.chunkQueue.add(newPackedXZWithDistance);
++
++            // Schedule applying the change
++            this.chunkDistanceUpdateLength++;
++            if (this.chunkDistanceUpdates.length < this.chunkDistanceUpdateLength * 3) {
++                this.chunkDistanceUpdates = Arrays.copyOf(this.chunkDistanceUpdates, this.chunkDistanceUpdateLength * 6);
++            }
++            this.chunkDistanceUpdates[this.chunkDistanceUpdateLength * 3 - 3] = chunkX;
++            this.chunkDistanceUpdates[this.chunkDistanceUpdateLength * 3 - 2] = chunkZ;
++            this.chunkDistanceUpdates[this.chunkDistanceUpdateLength * 3 - 1] = newDistanceWithinRange;
++
++        } finally {
++            this.lock.release();
 +        }
 +    }
 +
@@ -665,6 +741,7 @@ index 0000000000000000000000000000000000000000..be593d86d8c7596e0866fbc8dc8e0363
 +        int computedDistance = this.areaMap.getNearestObjectDistance(chunkX, chunkZ);
 +        int computedDistanceInRange = computedDistance < 0 || computedDistance >= 512 ? 511 : computedDistance;
 +        try (var ignored = this.lock.withSpinLock()) {
++            this.processChunkDistanceUpdates();
 +            int distance = this.distancePerChunk.get(packedXZ);
 +            if (distance == -1) {
 +                distance = computedDistanceInRange;
@@ -709,6 +786,7 @@ index 0000000000000000000000000000000000000000..be593d86d8c7596e0866fbc8dc8e0363
 +    @Override
 +    protected void dropAllTasks() {
 +        try (var ignored = this.lock.withSpinLock()) {
++            this.chunkDistanceUpdateLength = 0;
 +            this.distancePerChunk.clear();
 +            this.tasksPerChunk.forEach(($, queue) -> this.recycleTaskQueue(queue));
 +            this.tasksPerChunk.clear();
@@ -724,6 +802,7 @@ index 0000000000000000000000000000000000000000..be593d86d8c7596e0866fbc8dc8e0363
 +        }
 +        R runnable;
 +        try (var ignored = this.lock.withSpinLock()) {
++            this.processChunkDistanceUpdates();
 +            if (this.chunkQueue.isEmpty()) {
 +                return false;
 +            }
