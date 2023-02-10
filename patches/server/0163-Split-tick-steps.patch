@@ -7,7 +7,7 @@ License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index c14b593bd450d244209d17b637fe7c03a1f746f4..88f65137337cd5dcec80c09b80595270fec17eb3 100644
+index 545f831b34fbaac1b698a90206e35a149f3606d6..fe702a042cb132987e5135d2ed855484f9cef686 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -155,7 +155,6 @@ import org.galemc.gale.executor.queue.BaseTaskQueues;
@@ -200,10 +200,10 @@ index c14b593bd450d244209d17b637fe7c03a1f746f4..88f65137337cd5dcec80c09b80595270
          for (int i = 0; i < this.tickables.size(); ++i) {
              ((Runnable) this.tickables.get(i)).run();
 diff --git a/src/main/java/net/minecraft/server/level/ServerChunkCache.java b/src/main/java/net/minecraft/server/level/ServerChunkCache.java
-index f1aaf1cae3335f7c7340104cfd6dbc3dd62f6ab3..1d50e234955ae22f7ba32006757af3e78310ab8b 100644
+index 9ee931a6442d3f18a7521704f39297af0d7af6d7..d4f99270c62cef94cc5ad5fc00f155c480722516 100644
 --- a/src/main/java/net/minecraft/server/level/ServerChunkCache.java
 +++ b/src/main/java/net/minecraft/server/level/ServerChunkCache.java
-@@ -630,23 +630,99 @@ public class ServerChunkCache extends ChunkSource {
+@@ -629,23 +629,99 @@ public class ServerChunkCache extends ChunkSource {
      }
      // CraftBukkit end
  
@@ -307,7 +307,7 @@ index f1aaf1cae3335f7c7340104cfd6dbc3dd62f6ab3..1d50e234955ae22f7ba32006757af3e7
  
      private void tickChunks() {
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index e7747b19685fd943d7fbefbfef656f8bb7c359f1..5472fac17f78f59c3e97ecac42f29092ce364e42 100644
+index 347e231b38d20e049dbb58bbd48a93baa799790c..da4c83d4bd84ad51c6990b09b265ff3aa53f1860 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
 @@ -23,7 +23,6 @@ import java.nio.file.Files;
