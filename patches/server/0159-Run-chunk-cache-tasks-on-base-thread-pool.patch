@@ -378,10 +378,10 @@ index 949feba1264bcafb8dc2dcecd0a566fea80a2ba0..628c33ee1693c9c7f441ab4c8881c50a
              }
 diff --git a/src/main/java/org/galemc/gale/executor/ClosestChunkBlockableEventLoop.java b/src/main/java/org/galemc/gale/executor/ClosestChunkBlockableEventLoop.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..819618b7d02f739e9423099961864698808d3a5d
+index 0000000000000000000000000000000000000000..43f7b3303140b19fa744f394dab15e8a5dafbaf7
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/ClosestChunkBlockableEventLoop.java
-@@ -0,0 +1,448 @@
+@@ -0,0 +1,559 @@
 +// Gale - base thread pool - chunk-sorted cache tasks
 +
 +package org.galemc.gale.executor;
@@ -399,6 +399,7 @@ index 0000000000000000000000000000000000000000..819618b7d02f739e9423099961864698
 +import org.galemc.gale.executor.annotation.thread.AnyThreadSafe;
 +import org.galemc.gale.executor.thread.ServerThread;
 +import org.jetbrains.annotations.NotNull;
++import org.jetbrains.annotations.Nullable;
 +
 +import java.util.*;
 +import java.util.concurrent.CompletableFuture;
@@ -486,7 +487,8 @@ index 0000000000000000000000000000000000000000..819618b7d02f739e9423099961864698
 +    /**
 +     * The last known distance for a chunk, by their {@linkplain #getTightlyPackedXZ(int, int) chunk key}.
 +     * <br>
-+     * Only contains values for chunks that have tasks.
++     * Only contains values for chunks that have tasks in {@link #tasksPerChunk}.
++     * Does not contain a value for the {@link #prepolledRunnable}.
 +     * For other tasks, the default return value of {@link Long2IntMap#get} is -1.
 +     */
 +    @Guarded("#lock")
@@ -533,6 +535,26 @@ index 0000000000000000000000000000000000000000..819618b7d02f739e9423099961864698
 +     */
 +    private volatile boolean serverThreadWantsLockToAddChunkDistanceUpdates;
 +
++    /**
++     * A pre-polled task to increase the speed of {@link #pollTask()} calls made by the server thread.
++     */
++    @Guarded("#lock")
++    private @Nullable R prepolledRunnable;
++
++    /**
++     * The value of {@link #getTightlyPackedXZ(int, int)} for the {@link #prepolledRunnable}, if it is not null.
++     * Otherwise, an arbitrary value.
++     */
++    @Guarded("#lock")
++    private @Nullable long prepolledRunnablePackedXZ;
++
++    /**
++     * The last known distance for the {@link #prepolledRunnable}, if it is not null.
++     * Otherwise, an arbitrary value.
++     */
++    @Guarded("#lock")
++    private @Nullable int prepolledRunnableDistance;
++
 +    public ClosestChunkBlockableEventLoop(String name) {
 +        super(name);
 +    }
@@ -570,11 +592,15 @@ index 0000000000000000000000000000000000000000..819618b7d02f739e9423099961864698
 +     * This method must only be called while {@link #lock} is held.
 +     */
 +    private void processChunkDistanceUpdates() {
++        boolean madeChangesSinceLastPrepoll = false;
 +        boolean isNonServerThread = !(Thread.currentThread() instanceof ServerThread);
 +        while (this.chunkDistanceUpdateLength > 0) {
 +
 +            // Let the server thread add new chunk distance updates
 +            if (isNonServerThread && this.serverThreadWantsLockToAddChunkDistanceUpdates) {
++                if (madeChangesSinceLastPrepoll) {
++                    this.preparePrepolledRunnable();
++                }
 +                this.lock.release();
 +                while (this.serverThreadWantsLockToAddChunkDistanceUpdates) {
 +                    Thread.onSpinWait();
@@ -590,13 +616,26 @@ index 0000000000000000000000000000000000000000..819618b7d02f739e9423099961864698
 +
 +            // Apply the change
 +            long packedXZ = getTightlyPackedXZ(chunkX, chunkZ);
++            // Apply the change to the pre-polled task
++            if (this.prepolledRunnablePackedXZ == packedXZ && this.prepolledRunnable != null) {
++                this.prepolledRunnableDistance = newDistance;
++            }
++            // If we don't have tasks for this queue, skip applying the change to the queue
 +            int oldDistance = this.distancePerChunk.get(packedXZ);
++            if (oldDistance == -1) {
++                return;
++            }
 +            long oldPackedXZWithDistance = getTightlyPackedXZWithDistance(packedXZ, oldDistance);
 +            long newPackedXZWithDistance = getTightlyPackedXZWithDistance(packedXZ, newDistance);
 +            this.distancePerChunk.put(packedXZ, newDistance);
 +            this.chunkQueue.remove(oldPackedXZWithDistance);
 +            this.chunkQueue.add(newPackedXZWithDistance);
 +
++            madeChangesSinceLastPrepoll = true;
++
++        }
++        if (madeChangesSinceLastPrepoll) {
++            this.preparePrepolledRunnable();
 +        }
 +    }
 +
@@ -638,6 +677,35 @@ index 0000000000000000000000000000000000000000..819618b7d02f739e9423099961864698
 +
 +        } finally {
 +            this.lock.release();
++        }
++    }
++
++    /**
++     * Sets {@link #prepolledRunnable} appropriately,
++     * potentially returning the previous value to the {@link #tasksPerChunk}.
++     * <br>
++     * This method must only be called while {@link #lock} is held.
++     */
++    private void preparePrepolledRunnable() {
++        if (this.prepolledRunnable == null) {
++            this.pollFromQueueIntoPrepolled();
++            return;
++        }
++        if (this.chunkQueue.isEmpty()) {
++            return;
++        }
++        long firstPackedXZWithDistanceInQueue = this.chunkQueue.firstLong();
++        int firstDistanceInQueue = unpackTightlyPackedDistance(firstPackedXZWithDistanceInQueue);
++        // Swap the pre-polled task if necessary
++        if (firstDistanceInQueue < this.prepolledRunnableDistance) {
++            // Return the pre-polled task to the queue
++            long packedXZWithDistance = getTightlyPackedXZWithDistance(this.prepolledRunnablePackedXZ, this.prepolledRunnableDistance);
++            this.tasksPerChunk.computeIfAbsent(this.prepolledRunnablePackedXZ, $ -> this.provisionTaskQueue()).add(this.prepolledRunnable);
++            this.chunkQueue.add(packedXZWithDistance);
++            this.distancePerChunk.putIfAbsent(this.prepolledRunnablePackedXZ, this.prepolledRunnableDistance);
++            this.prepolledRunnable = null;
++            // Set a new pre-polled task
++            this.pollFromQueueIntoPrepolled();
 +        }
 +    }
 +
@@ -741,17 +809,36 @@ index 0000000000000000000000000000000000000000..819618b7d02f739e9423099961864698
 +        int computedDistance = this.areaMap.getNearestObjectDistance(chunkX, chunkZ);
 +        int computedDistanceInRange = computedDistance < 0 || computedDistance >= 512 ? 511 : computedDistance;
 +        try (var ignored = this.lock.withSpinLock()) {
-+            this.processChunkDistanceUpdates();
-+            int distance = this.distancePerChunk.get(packedXZ);
-+            if (distance == -1) {
-+                distance = computedDistanceInRange;
-+                this.distancePerChunk.put(packedXZ, computedDistanceInRange);
++            if (this.prepolledRunnable == null && this.chunkQueue.isEmpty()) {
++                // Set the pre-polled runnable right away
++                this.prepolledRunnable = runnable;
++                this.prepolledRunnablePackedXZ = packedXZ;
++                this.prepolledRunnableDistance = computedDistanceInRange;
++            } else {
++                this.processChunkDistanceUpdates();
++                int distance = this.distancePerChunk.get(packedXZ);
++                if (distance == -1 && packedXZ == this.prepolledRunnablePackedXZ && this.prepolledRunnable != null) {
++                    // Use the value from the pre-polled task
++                    distance = this.prepolledRunnableDistance;
++                    // Keep it consistent with the queue
++                    this.distancePerChunk.put(packedXZ, computedDistanceInRange);
++                }
++                if (distance == -1) {
++                    // Set a known distance
++                    distance = computedDistanceInRange;
++                    this.distancePerChunk.put(packedXZ, computedDistanceInRange);
++                    // Keep it consistent with the pre-polled task
++                    if (this.prepolledRunnablePackedXZ == packedXZ) {
++                        this.prepolledRunnableDistance = computedDistanceInRange;
++                    }
++                }
++                long packedXZWithDistance = getTightlyPackedXZWithDistance(packedXZ, distance);
++                this.tasksPerChunk.computeIfAbsent(packedXZ, $ -> this.provisionTaskQueue()).add(runnable);
++                this.chunkQueue.add(packedXZWithDistance);
++                this.preparePrepolledRunnable();
 +            }
-+            long packedXZWithDistance = getTightlyPackedXZWithDistance(packedXZ, distance);
-+            this.tasksPerChunk.computeIfAbsent(packedXZ, $ -> this.provisionTaskQueue()).add(runnable);
 +            //noinspection NonAtomicOperationOnVolatileField
 +            this.pendingTaskCount++;
-+            this.chunkQueue.add(packedXZWithDistance);
 +        }
 +    }
 +
@@ -792,6 +879,36 @@ index 0000000000000000000000000000000000000000..819618b7d02f739e9423099961864698
 +            this.tasksPerChunk.clear();
 +            this.pendingTaskCount = 0;
 +            this.chunkQueue.clear();
++            this.prepolledRunnable = null;
++        }
++    }
++
++    /**
++     * Polls from the {@link #tasksPerChunk}, without checking {@link #prepolledRunnable},
++     * and stores the result in the {@link #prepolledRunnable}. If no task is polled, {@link #prepolledRunnable}
++     * is not modified (particularly, it is not cleared),
++     * so this task must only be called while {@link #prepolledRunnable} is null.
++     * <br>
++     * This method will not make a call to {@link #processChunkDistanceUpdates()}: if necessary, such a call
++     * must be made beforehand.
++     * <br>
++     * This method must only be called while {@link #lock} is held.
++     */
++    private void pollFromQueueIntoPrepolled() {
++        if (this.chunkQueue.isEmpty()) {
++            return;
++        }
++        long packedXZWithDistance = this.chunkQueue.firstLong();
++        long packedXZ = stripTightlyPackedDistance(packedXZWithDistance);
++        Queue<R> tasks = this.tasksPerChunk.get(packedXZ);
++        this.prepolledRunnable = tasks.poll();
++        this.prepolledRunnablePackedXZ = packedXZ;
++        this.prepolledRunnableDistance = unpackTightlyPackedDistance(packedXZWithDistance);
++        if (tasks.isEmpty()) {
++            this.distancePerChunk.remove(packedXZ);
++            this.recycleTaskQueue(tasks);
++            this.tasksPerChunk.remove(packedXZ);
++            this.chunkQueue.remove(packedXZWithDistance);
 +        }
 +    }
 +
@@ -803,28 +920,22 @@ index 0000000000000000000000000000000000000000..819618b7d02f739e9423099961864698
 +        R runnable;
 +        try (var ignored = this.lock.withSpinLock()) {
 +            this.processChunkDistanceUpdates();
-+            if (this.chunkQueue.isEmpty()) {
++            // Pre-poll a task if necessary
++            if (this.prepolledRunnable == null) {
++                this.pollFromQueueIntoPrepolled();
++            }
++            runnable = this.prepolledRunnable;
++            // If it is still null, there are no tasks
++            if (runnable == null) {
 +                return false;
 +            }
-+            long packedXZWithDistance = this.chunkQueue.firstLong();
-+            long packedXZ = stripTightlyPackedDistance(packedXZWithDistance);
-+            Queue<R> tasks = this.tasksPerChunk.get(packedXZ);
-+            runnable = tasks.peek();
-+            //noinspection DataFlowIssue
 +            if (this.blockingCount == 0 && !this.shouldRun(runnable)) {
 +                return false;
 +            }
-+            tasks.poll();
-+            if (tasks.isEmpty()) {
-+                this.distancePerChunk.remove(packedXZ);
-+                this.recycleTaskQueue(tasks);
-+                this.tasksPerChunk.remove(packedXZ);
-+                this.chunkQueue.remove(packedXZWithDistance);
-+            }
++            this.prepolledRunnable = null;
 +            //noinspection NonAtomicOperationOnVolatileField
 +            this.pendingTaskCount--;
 +        }
-+        //noinspection DataFlowIssue
 +        this.doRunTask(runnable);
 +        return true;
 +    }
@@ -889,7 +1000,7 @@ index 0000000000000000000000000000000000000000..fe2e06a827555d81a30697f8b0866769
 +
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/queue/AllLevelsScheduledTaskQueue.java b/src/main/java/org/galemc/gale/executor/queue/AllLevelsScheduledTaskQueue.java
-index 657c3663ed54043e7e4e6660d34903ef746fd8e7..c2acd36b3101042f39afe1436836078dcce2100d 100644
+index b4172f285fbed1f314891b2f729aa2dc27b9ab9b..ed642b13e95479d0ec98731a3f5b74cf2fb78f81 100644
 --- a/src/main/java/org/galemc/gale/executor/queue/AllLevelsScheduledTaskQueue.java
 +++ b/src/main/java/org/galemc/gale/executor/queue/AllLevelsScheduledTaskQueue.java
 @@ -12,7 +12,8 @@ import org.galemc.gale.executor.thread.pool.BaseThreadActivation;

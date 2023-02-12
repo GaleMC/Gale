@@ -2969,10 +2969,10 @@ index 0000000000000000000000000000000000000000..44b8bd5fd9a3ee2e484c81104523ba95
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/queue/AbstractTaskQueue.java b/src/main/java/org/galemc/gale/executor/queue/AbstractTaskQueue.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..552e82a33c59261b06911b479400a7b11965bbd6
+index 0000000000000000000000000000000000000000..633a9b7998b304057d1780b2a4a1f0bc7160c6f6
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/queue/AbstractTaskQueue.java
-@@ -0,0 +1,93 @@
+@@ -0,0 +1,102 @@
 +// Gale - base thread pool
 +
 +package org.galemc.gale.executor.queue;
@@ -3000,6 +3000,15 @@ index 0000000000000000000000000000000000000000..552e82a33c59261b06911b479400a7b1
 +     * @return A name that the queue can be identified by.
 +     */
 +    String getName();
++
++    /**
++     * @return Whether this queue can ever be polled from while yielding.
++     * <br>
++     * Some queues should not be yielded to, because they contain tasks that may take excessively long.
++     */
++    default boolean canBeYieldedTo() {
++        return true;
++    }
 +
 +    /**
 +     * @return Whether this queue has any tasks at all.
@@ -3068,7 +3077,7 @@ index 0000000000000000000000000000000000000000..552e82a33c59261b06911b479400a7b1
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/queue/AllLevelsScheduledTaskQueue.java b/src/main/java/org/galemc/gale/executor/queue/AllLevelsScheduledTaskQueue.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..657c3663ed54043e7e4e6660d34903ef746fd8e7
+index 0000000000000000000000000000000000000000..b4172f285fbed1f314891b2f729aa2dc27b9ab9b
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/queue/AllLevelsScheduledTaskQueue.java
 @@ -0,0 +1,133 @@
@@ -3193,7 +3202,7 @@ index 0000000000000000000000000000000000000000..657c3663ed54043e7e4e6660d34903ef
 +     * To be called when a new task has been added to the underlying storage of this queue.
 +     */
 +    public void newTaskWasAdded() {
-+        BaseThreadActivation.newTaskWasAdded(this.tier, this.span, onlyNotifyBaseThreadPoolOfNewTasksIfLastTimeIsTooLongAgo);
++        BaseThreadActivation.newTaskWasAdded(this.tier, this.span, true, onlyNotifyBaseThreadPoolOfNewTasksIfLastTimeIsTooLongAgo);
 +    }
 +
 +    @Override
@@ -4438,10 +4447,10 @@ index 0000000000000000000000000000000000000000..eab769d7319f26db1f4db9599a3c263c
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/thread/BaseThread.java b/src/main/java/org/galemc/gale/executor/thread/BaseThread.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..76ca22e30b41e4a39ed215cfb03c9a793eefcc09
+index 0000000000000000000000000000000000000000..4ec06cbff045bd42c1da5881cd0f2446cde39a7b
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/thread/BaseThread.java
-@@ -0,0 +1,760 @@
+@@ -0,0 +1,765 @@
 +// Gale - base thread pool
 +
 +package org.galemc.gale.executor.thread;
@@ -4853,6 +4862,11 @@ index 0000000000000000000000000000000000000000..76ca22e30b41e4a39ed215cfb03c9a79
 +    @YieldFree
 +    private @Nullable Runnable pollTaskFromTier(BaseTaskQueueTier tier, boolean tinyOnly) {
 +        for (var queue : tier.taskQueues) {
++            // Check whether we can not yield to the queue, if we are yielding
++            boolean canQueueBeYieldedTo = queue.canBeYieldedTo();
++            if (!canQueueBeYieldedTo && this.yieldDepth > 0) {
++                continue;
++            }
 +            Runnable task = tinyOnly ? queue.pollTiny(this) : queue.poll(this);
 +            if (task != null) {
 +                this.lastPolledTaskTier = tier;
@@ -4865,7 +4879,7 @@ index 0000000000000000000000000000000000000000..76ca22e30b41e4a39ed215cfb03c9a79
 +            for (int spanI = 0; spanI < TaskSpan.length; spanI++) {
 +                TaskSpan span = TaskSpan.VALUES[spanI];
 +                if (queue.canHaveTasks(span)) {
-+                    int oldTasks = BaseThreadActivation.thereMayBeTasks[tier.ordinal][spanI].get();
++                    int oldTasks = BaseThreadActivation.thereMayBeTasks[tier.ordinal][spanI][canQueueBeYieldedTo ? 1 : 0].get();
 +                    if (oldTasks > 0) {
 +                        if (!queue.hasTasks(span)) {
 +                            boolean tierHasNoTasksForSpan = true;
@@ -4881,7 +4895,7 @@ index 0000000000000000000000000000000000000000..76ca22e30b41e4a39ed215cfb03c9a79
 +                            }
 +                            if (tierHasNoTasksForSpan) {
 +                                // Set thereMayBeTasks to false, but only if it did not change in the meantime
-+                                BaseThreadActivation.thereMayBeTasks[tier.ordinal][spanI].compareAndSet(oldTasks, 0);
++                                BaseThreadActivation.thereMayBeTasks[tier.ordinal][spanI][canQueueBeYieldedTo ? 1 : 0].compareAndSet(oldTasks, 0);
 +                            }
 +                        }
 +                    }
@@ -5675,10 +5689,10 @@ index 0000000000000000000000000000000000000000..77fe10e51b00115da520cfc211bf84ba
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/thread/pool/BaseThreadActivation.java b/src/main/java/org/galemc/gale/executor/thread/pool/BaseThreadActivation.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..ba9a1ffca55354a35bcc7b45227dddecd335da94
+index 0000000000000000000000000000000000000000..65ad5020c5c5953c801fb6c31416e8658720e15f
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/thread/pool/BaseThreadActivation.java
-@@ -0,0 +1,648 @@
+@@ -0,0 +1,659 @@
 +// Gale - base thread pool
 +
 +package org.galemc.gale.executor.thread.pool;
@@ -5688,6 +5702,7 @@ index 0000000000000000000000000000000000000000..ba9a1ffca55354a35bcc7b45227dddec
 +import org.galemc.gale.executor.annotation.YieldFree;
 +import org.galemc.gale.executor.annotation.thread.AnyThreadSafe;
 +import org.galemc.gale.executor.lock.YieldingLock;
++import org.galemc.gale.executor.queue.AbstractTaskQueue;
 +import org.galemc.gale.executor.queue.BaseTaskQueueTier;
 +import org.galemc.gale.executor.thread.BaseThread;
 +import org.galemc.gale.executor.thread.ServerThread;
@@ -5780,19 +5795,22 @@ index 0000000000000000000000000000000000000000..ba9a1ffca55354a35bcc7b45227dddec
 +    private static final int[] numberOfThreadsIntendedToBeActiveForTier = new int[BaseTaskQueueTier.length];
 +
 +    /**
-+     * An array indicating per {@link BaseTaskQueueTier} (indexed by their {@link BaseTaskQueueTier#ordinal})
-+     * per {@link TaskSpan} (indexed by their {@link TaskSpan#ordinal}) whether there may be tasks
++     * An array indicating, per {@link BaseTaskQueueTier} (indexed by their {@link BaseTaskQueueTier#ordinal})
++     * per {@link TaskSpan} (indexed by their {@link TaskSpan#ordinal}) per whether for queues that allow being
++     * yielded to ({@link AbstractTaskQueue#canBeYieldedTo()}) (1) or not (0), whether there may be tasks
 +     * for that tier and span, indicated by whether the value is positive (indicating true) or 0 (indicating false).
 +     * It is always incremented before calling {@link #update()} due to new tasks being added.
 +     * If it is 0, it is certain that either there are no queued task for the tier, or
 +     * a task has just been added to the queue and this value has not yet been set to true, but will be due
 +     * to a {@link #newTaskWasAdded} call, which is then followed by a {@link #callForUpdate()} call.
 +     */
-+    public static final AtomicInteger[][] thereMayBeTasks = new AtomicInteger[BaseTaskQueueTier.length][TaskSpan.length];
++    public static final AtomicInteger[][][] thereMayBeTasks = new AtomicInteger[BaseTaskQueueTier.length][TaskSpan.length][2];
 +    static {
 +        for (int tierI = 0; tierI < BaseTaskQueueTier.length; tierI++) {
 +            for (int spanI = 0; spanI < TaskSpan.length; spanI++) {
-+                thereMayBeTasks[tierI][spanI] = new AtomicInteger();
++                for (int canBeYieldedTo = 0; canBeYieldedTo <= 1; canBeYieldedTo++) {
++                    thereMayBeTasks[tierI][spanI][canBeYieldedTo] = new AtomicInteger();
++                }
 +            }
 +        }
 +    }
@@ -5811,10 +5829,10 @@ index 0000000000000000000000000000000000000000..ba9a1ffca55354a35bcc7b45227dddec
 +    }
 +
 +    /**
-+     * @see #newTaskWasAdded(BaseTaskQueueTier, TaskSpan, boolean)
++     * @see #newTaskWasAdded(BaseTaskQueueTier, TaskSpan, boolean, boolean)
 +     */
 +    public static void newTaskWasAdded(BaseTaskQueueTier tier, TaskSpan span) {
-+        newTaskWasAdded(tier, span, false);
++        newTaskWasAdded(tier, span, true, false);
 +    }
 +
 +    /**
@@ -5831,9 +5849,9 @@ index 0000000000000000000000000000000000000000..ba9a1ffca55354a35bcc7b45227dddec
 +     * due to tasks it can poll being available, but then upon activation, acquiring a {@link YieldingLock} it was
 +     * waiting for instead.
 +     */
-+    public static void newTaskWasAdded(BaseTaskQueueTier tier, TaskSpan span, boolean onlyIfLastTimeIsTooLongAgo) {
++    public static void newTaskWasAdded(BaseTaskQueueTier tier, TaskSpan span, boolean canBeYieldedTo, boolean onlyIfLastTimeIsTooLongAgo) {
 +
-+        if (thereMayBeTasks[tier.ordinal][span.ordinal].getAndIncrement() == 0) {
++        if (thereMayBeTasks[tier.ordinal][span.ordinal][canBeYieldedTo ? 1 : 0].getAndIncrement() == 0) {
 +            // Always call update() if we just set the thereMayBeTasks value to true
 +            onlyIfLastTimeIsTooLongAgo = false;
 +        }
@@ -6013,7 +6031,7 @@ index 0000000000000000000000000000000000000000..ba9a1ffca55354a35bcc7b45227dddec
 +        if (isServerThread) {
 +            // The server thread can be activated whenever there are any non-yielding tasks
 +            for (TaskSpan span : TaskSpan.NON_YIELDING_VALUES) {
-+                if (thereMayBeTasks[BaseTaskQueueTier.SERVER.ordinal][span.ordinal].get() > 0) {
++                if (thereMayBeTasks[BaseTaskQueueTier.SERVER.ordinal][span.ordinal][0].get() + thereMayBeTasks[BaseTaskQueueTier.SERVER.ordinal][span.ordinal][1].get() > 0) {
 +                    return true;
 +                }
 +            }
@@ -6200,9 +6218,14 @@ index 0000000000000000000000000000000000000000..ba9a1ffca55354a35bcc7b45227dddec
 +                    thread), or if there is a thread already at this exact tier that is waiting for a YieldingLock.
 +                     */
 +                    boolean thereAreTasks = false;
++                    boolean thereAreOnlyTasksThatCanNotBeYieldedTo = false;
 +                    for (int spanI = 0; spanI < TaskSpan.length; spanI++) {
-+                        if (thereMayBeTasks[tierI][spanI].get() > 0) {
++                        if (thereMayBeTasks[tierI][spanI][1].get() > 0) {
 +                            thereAreTasks = true;
++                            break;
++                        } else if (thereMayBeTasks[tierI][spanI][0].get() > 0) {
++                            thereAreTasks = true;
++                            thereAreOnlyTasksThatCanNotBeYieldedTo = true;
 +                            break;
 +                        }
 +                    }
@@ -6262,28 +6285,30 @@ index 0000000000000000000000000000000000000000..ba9a1ffca55354a35bcc7b45227dddec
 +                                        var highestTierOfTaskOnStackOrdinalOrLength = highestTierOfTaskOnStack == null ? BaseTaskQueueTier.length : highestTierOfTaskOnStack.ordinal;
 +                                        boolean isThreadWaitingForAvailableYieldingLock = lockWaitingFor != null && !lockWaitingFor.isLocked() && lockWaitingFor.canBeSignalledFor;
 +                                        if (isThreadWaitingForAvailableYieldingLock || highestTierOfTaskOnStack == null || highestTierOfTaskOnStack.ordinal >= tierI) {
-+                                            boolean isBestChoice = false;
 +                                            int yieldDepth = thread.yieldDepth;
-+                                            int yieldPotential = thread.maximumYieldDepth - yieldDepth;
-+                                            if (threadIToUpdate == -1) {
-+                                                isBestChoice = true;
-+                                            } else if (isThreadWaitingForAvailableYieldingLock != threadIToUpdateIsWaitingForAvailableYieldingLock) {
-+                                                isBestChoice = isThreadWaitingForAvailableYieldingLock;
-+                                            } else if (threadIToUpdateYieldDepth == 0 && yieldDepth != 0) {
-+                                                isBestChoice = true;
-+                                            } else if (yieldDepth != 0) {
-+                                                if (yieldPotential > threadIToUpdateYieldPotential) {
++                                            if (!thereAreOnlyTasksThatCanNotBeYieldedTo || yieldDepth == 0) {
++                                                boolean isBestChoice = false;
++                                                int yieldPotential = thread.maximumYieldDepth - yieldDepth;
++                                                if (threadIToUpdate == -1) {
 +                                                    isBestChoice = true;
-+                                                } else if (highestTierOfTaskOnStackOrdinalOrLength > threadIToUpdateTierOrdinalOrLength) {
++                                                } else if (isThreadWaitingForAvailableYieldingLock != threadIToUpdateIsWaitingForAvailableYieldingLock) {
++                                                    isBestChoice = isThreadWaitingForAvailableYieldingLock;
++                                                } else if (threadIToUpdateYieldDepth == 0 && yieldDepth != 0) {
 +                                                    isBestChoice = true;
++                                                } else if (yieldDepth != 0) {
++                                                    if (yieldPotential > threadIToUpdateYieldPotential) {
++                                                        isBestChoice = true;
++                                                    } else if (highestTierOfTaskOnStackOrdinalOrLength > threadIToUpdateTierOrdinalOrLength) {
++                                                        isBestChoice = true;
++                                                    }
 +                                                }
-+                                            }
-+                                            if (isBestChoice) {
-+                                                threadIToUpdate = threadI;
-+                                                threadIToUpdateIsWaitingForAvailableYieldingLock = isThreadWaitingForAvailableYieldingLock;
-+                                                threadIToUpdateYieldDepth = yieldDepth;
-+                                                threadIToUpdateYieldPotential = yieldPotential;
-+                                                threadIToUpdateTierOrdinalOrLength = highestTierOfTaskOnStackOrdinalOrLength;
++                                                if (isBestChoice) {
++                                                    threadIToUpdate = threadI;
++                                                    threadIToUpdateIsWaitingForAvailableYieldingLock = isThreadWaitingForAvailableYieldingLock;
++                                                    threadIToUpdateYieldDepth = yieldDepth;
++                                                    threadIToUpdateYieldPotential = yieldPotential;
++                                                    threadIToUpdateTierOrdinalOrLength = highestTierOfTaskOnStackOrdinalOrLength;
++                                                }
 +                                            }
 +                                        }
 +                                    }

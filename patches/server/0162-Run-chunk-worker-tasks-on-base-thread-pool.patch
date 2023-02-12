@@ -545,17 +545,16 @@ index ed3ccf2e64539363a7be2d507c68c40b5913f75c..a12250e5aaed02995b7bf09a8018a93f
  }
 diff --git a/src/main/java/org/galemc/gale/executor/queue/ChunkWorkerTaskQueue.java b/src/main/java/org/galemc/gale/executor/queue/ChunkWorkerTaskQueue.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..9c36119b03ba9a20dc6994ef2d2704ebe9cc4800
+index 0000000000000000000000000000000000000000..0fac4a8b238636adb826a3d1a8db204042fb8098
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/queue/ChunkWorkerTaskQueue.java
-@@ -0,0 +1,103 @@
+@@ -0,0 +1,111 @@
 +// Gale - base thread pool - chunk worker task queue
 +
 +package org.galemc.gale.executor.queue;
 +
 +import ca.spottedleaf.concurrentutil.executor.standard.PrioritisedQueueExecutorThread;
 +import io.papermc.paper.chunk.system.scheduling.ChunkTaskScheduler;
-+import net.minecraft.server.level.ServerChunkCache;
 +import org.galemc.gale.executor.TaskSpan;
 +import org.galemc.gale.executor.annotation.YieldFree;
 +import org.galemc.gale.executor.annotation.thread.AnyThreadSafe;
@@ -585,6 +584,15 @@ index 0000000000000000000000000000000000000000..9c36119b03ba9a20dc6994ef2d2704eb
 +    @Override
 +    public String getName() {
 +        return "ChunkWorker";
++    }
++
++    @Override
++    public boolean canBeYieldedTo() {
++        /*
++        A single returned chunk worker task typically performs a loop that executes as many smaller tasks as possible,
++        and which may keep running for a long time.
++         */
++        return false;
 +    }
 +
 +    @Override
@@ -640,7 +648,7 @@ index 0000000000000000000000000000000000000000..9c36119b03ba9a20dc6994ef2d2704eb
 +     * To be called when a new task has been added to the underlying storage of this queue.
 +     */
 +    public void newTaskWasAdded() {
-+        BaseThreadActivation.newTaskWasAdded(this.tier, TaskSpan.YIELDING, true);
++        BaseThreadActivation.newTaskWasAdded(this.tier, TaskSpan.YIELDING, false, true);
 +    }
 +
 +    @Override
@@ -653,7 +661,7 @@ index 0000000000000000000000000000000000000000..9c36119b03ba9a20dc6994ef2d2704eb
 +
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/thread/BaseThread.java b/src/main/java/org/galemc/gale/executor/thread/BaseThread.java
-index 76ca22e30b41e4a39ed215cfb03c9a793eefcc09..f142f726663686ac475f64a1ffcbac145c08f5ae 100644
+index 4ec06cbff045bd42c1da5881cd0f2446cde39a7b..1a97a74e11a8c675980b3ec2e76b72057a203308 100644
 --- a/src/main/java/org/galemc/gale/executor/thread/BaseThread.java
 +++ b/src/main/java/org/galemc/gale/executor/thread/BaseThread.java
 @@ -2,6 +2,8 @@
@@ -673,7 +681,7 @@ index 76ca22e30b41e4a39ed215cfb03c9a793eefcc09..f142f726663686ac475f64a1ffcbac14
  import org.jetbrains.annotations.Nullable;
  
  import java.util.concurrent.TimeUnit;
-@@ -737,6 +740,20 @@ public abstract class BaseThread extends Thread implements AbstractYieldingThrea
+@@ -742,6 +745,20 @@ public abstract class BaseThread extends Thread implements AbstractYieldingThrea
          }
      }
  
