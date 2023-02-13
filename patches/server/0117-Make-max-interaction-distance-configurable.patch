@@ -20,7 +20,7 @@ index 58b093bb1de78ee3b3b2ea364aa50474883f443a..7be34e5df2b6d33c1d7943c9c0b6fd06
              this.debugLogging(pos, false, sequence, "too far");
          } else if (pos.getY() >= worldHeight) {
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 4d7faeda716c5ac053cfb1d894f5a28e3a69f969..14ee62567ace6fc1becf4257761a811d2ab6f71d 100644
+index aa11cb23ff5bbdc84bdbda2cad8826485e60e7f4..e000da425ba28330d1edcce3948d2becb39d2bd3 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -250,7 +250,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
@@ -55,7 +55,7 @@ index 4d7faeda716c5ac053cfb1d894f5a28e3a69f969..14ee62567ace6fc1becf4257761a811d
                  Vec3 vec3d2 = vec3d.subtract(vec3d1);
                  double d0 = 1.0000001D;
  
-@@ -2790,7 +2797,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -2796,7 +2803,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
                  return;
              }
  

@@ -45,7 +45,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 diff --git a/src/main/java/net/minecraft/world/entity/player/Player.java b/src/main/java/net/minecraft/world/entity/player/Player.java
-index 0efd68cfbcc3f6c1442bdc7163018f7640a06b20..23d3189b4d5c02254673d979cbaf1eda65d45e4b 100644
+index 2737390659c08ec55731cce036c268d236da8260..2dcdbcb6759ae6ff1e357722a49378294cf3325d 100644
 --- a/src/main/java/net/minecraft/world/entity/player/Player.java
 +++ b/src/main/java/net/minecraft/world/entity/player/Player.java
 @@ -114,6 +114,7 @@ import net.minecraft.world.phys.AABB;

@@ -20,7 +20,7 @@ index 896c3ff7ddb07f1f6f05f90e1e3fe7fb615071d4..1dfee2b857f2a37fa1bb9b8e16380996
      public DistanceTrackingAreaMap() {
          this(new PooledLinkedHashSets<>());
 diff --git a/src/main/java/io/papermc/paper/chunk/PlayerChunkLoader.java b/src/main/java/io/papermc/paper/chunk/PlayerChunkLoader.java
-index 0b060183429f4c72ec767075538477b4302bbf0d..cef1c544a7fb6897fb7d86f5f4e31f7ba21fd417 100644
+index e77972c4c264100ffdd824bfa2dac58dbbc6d678..b2e4fb69fd6564484e0ebd120ba87431c5c158e4 100644
 --- a/src/main/java/io/papermc/paper/chunk/PlayerChunkLoader.java
 +++ b/src/main/java/io/papermc/paper/chunk/PlayerChunkLoader.java
 @@ -718,7 +718,7 @@ public final class PlayerChunkLoader {
@@ -355,7 +355,7 @@ index bca581f2a192015f5461e5bf776234687e5ae9fc..b488cad0d22be10bfeff853ee56e09d4
                          return;
                      }
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
-index 949feba1264bcafb8dc2dcecd0a566fea80a2ba0..628c33ee1693c9c7f441ab4c8881c50acb50cb9f 100644
+index 9d7da4fcf4ab450b6f3d53a07c299884fe29cda0..5c407537b5b0d84031baf34802648eb04791d901 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
 @@ -362,7 +362,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {

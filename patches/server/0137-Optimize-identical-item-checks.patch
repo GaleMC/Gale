@@ -7,7 +7,7 @@ License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/net/minecraft/world/item/ItemStack.java b/src/main/java/net/minecraft/world/item/ItemStack.java
-index 3cc1096880deea3eb5f50e38f4757455606e28c8..6a5452d6210bcc268d933f0051f1ce65f6dff4a1 100644
+index 2255eaf65338443f0ec99227df0a1e64608ea525..f8963e239354020c8e08460058541ddbaa07798c 100644
 --- a/src/main/java/net/minecraft/world/item/ItemStack.java
 +++ b/src/main/java/net/minecraft/world/item/ItemStack.java
 @@ -706,14 +706,29 @@ public final class ItemStack {

@@ -41,13 +41,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index 70d375b9803b5b7a33aa02cc1554f6b857aa6613..e4284c16512bbabd25c538eb88bf81d7c5bef9ba 100644
+index afdd597c63703cca87b277f0b66786cd8f3bf9aa..5a92a8f24d3a6957cc3f8404bf3458f4c4058fb4 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -292,7 +292,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
-         server.enablePlugins(org.bukkit.plugin.PluginLoadOrder.STARTUP);
-         // CraftBukkit end
- 
+@@ -297,7 +297,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
+         String proxyFlavor = (io.papermc.paper.configuration.GlobalConfiguration.get().proxies.velocity.enabled) ? "Velocity" : "BungeeCord";
+         String proxyLink = (io.papermc.paper.configuration.GlobalConfiguration.get().proxies.velocity.enabled) ? "https://docs.papermc.io/velocity/security" : "http://www.spigotmc.org/wiki/firewall-guide/";
+         // Paper end
 -        if (!this.usesAuthentication()) {
 +        if (!"false".equalsIgnoreCase(System.getProperty("gale.log.warning.offline.mode")) && !this.usesAuthentication()) { // Gale - KeYi - do not log offline mode warning
              DedicatedServer.LOGGER.warn("**** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!");

@@ -30,7 +30,7 @@ index dc9d304257d86109c06ec9b7673d3ee27d5ee875..781fc0a92f73be73b9313e7bc4eeb2f2
                  pair("hardwarespecs", hardwareSpecsMap), // Gale - include hardware specs in timings
                  pair("runtime", runtimeBean.getUptime()),
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index f5ed3fa20097bdd43a25c76b38353a23743bc9e5..eed9f125df46b616b7234a2d669971bc51bc231b 100644
+index 5a92a8f24d3a6957cc3f8404bf3458f4c4058fb4..666114daf9e9a3f9f9e0779a3a40dfac09c80d60 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 @@ -49,6 +49,7 @@ import net.minecraft.world.level.block.entity.SkullBlockEntity;

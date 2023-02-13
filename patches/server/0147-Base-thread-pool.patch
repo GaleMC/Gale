@@ -7,7 +7,7 @@ License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/com/destroystokyo/paper/antixray/ChunkPacketBlockControllerAntiXray.java b/src/main/java/com/destroystokyo/paper/antixray/ChunkPacketBlockControllerAntiXray.java
-index 4f3670b2bdb8b1b252e9f074a6af56a018a8c465..aa7467c0ce302c27d77f0af032b81c4f8ef9408d 100644
+index cab91880a08c6fdc545804911d295e0f24f4d983..f8bf00ac23f8b86a5dab81668d595d4ad043f09f 100644
 --- a/src/main/java/com/destroystokyo/paper/antixray/ChunkPacketBlockControllerAntiXray.java
 +++ b/src/main/java/com/destroystokyo/paper/antixray/ChunkPacketBlockControllerAntiXray.java
 @@ -22,6 +22,7 @@ import net.minecraft.world.level.block.EntityBlock;
@@ -1366,7 +1366,7 @@ index f0a7a8df3caa2ea765bb0a87cfede71d0995d276..16f3475b059d2b6b85d2b342e84ab32d
              // CraftBukkit start
              TimeSkipEvent event = new TimeSkipEvent(worldserver.getWorld(), TimeSkipEvent.SkipReason.COMMAND, time);
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index 5292616c846d495b1d7be040cecf47fb33412191..b49b2fe152b70c8020ba2edc48d46cc4fe8d525e 100644
+index 666114daf9e9a3f9f9e0779a3a40dfac09c80d60..1141b3a88e2eb1baa705b4f781353df0305a7c85 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 @@ -49,6 +49,7 @@ import net.minecraft.world.level.block.entity.SkullBlockEntity;
@@ -1443,7 +1443,7 @@ index 37e0b6212fec71ec9662e6be3b1e8bea487eb4a6..e7747b19685fd943d7fbefbfef656f8b
                      for (Object o : worldData.cache.values() )
                      {
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 14ee62567ace6fc1becf4257761a811d2ab6f71d..f62da01d38533818de70761c82ffb959083e0811 100644
+index e000da425ba28330d1edcce3948d2becb39d2bd3..27b6cf330216bc6e41b67940ed6aa848e0251686 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -185,8 +185,9 @@ import net.minecraft.world.phys.shapes.BooleanOp;
@@ -1575,7 +1575,7 @@ index 14ee62567ace6fc1becf4257761a811d2ab6f71d..f62da01d38533818de70761c82ffb959
              return Optional.empty();
          } else if (this.player.isRemoved() || this.player.getChatVisibility() == ChatVisiblity.HIDDEN) { // CraftBukkit - dead men tell no tales
              this.send(new ClientboundSystemChatPacket(Component.translatable("chat.disabled.options").withStyle(ChatFormatting.RED), false));
-@@ -3290,7 +3288,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -3296,7 +3294,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
          // Paper start
          if (!org.bukkit.Bukkit.isPrimaryThread()) {
              if (recipeSpamPackets.addAndGet(io.papermc.paper.configuration.GlobalConfiguration.get().spamLimiter.recipeSpamIncrement) > io.papermc.paper.configuration.GlobalConfiguration.get().spamLimiter.recipeSpamLimit) {
@@ -1755,7 +1755,7 @@ index 83701fbfaa56a232593ee8f11a3afb8941238bfa..392e7b4a89669f16b32043b65b69e659
          this.execute(runnable);
      }
 diff --git a/src/main/java/net/minecraft/world/entity/projectile/Projectile.java b/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
-index 9948cc4c65d5681c171b38cdf7cf3e63a01e4364..cba854bdcab80ba411096ef4fd97e46861764d48 100644
+index 93f722537a6b479561d79ba2e980c50a324f9486..728f52999ea980ea2cef97ba80d3da96dffac7d8 100644
 --- a/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
 +++ b/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
 @@ -98,7 +98,7 @@ public abstract class Projectile extends Entity {
@@ -1799,7 +1799,7 @@ index e23fdd5ba09b50b7eef0ca4f36c5480779fba624..a7bb3275b2da8308696b18fb527514f9
              if (entity != null) {
                  return entity.getBukkitEntity();
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
-index 4cb0307935aa63d44aac55c80ee50be074d7913c..949feba1264bcafb8dc2dcecd0a566fea80a2ba0 100644
+index 54932d92b13b890b07f827c5f09bd137383d4ab5..9d7da4fcf4ab450b6f3d53a07c299884fe29cda0 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
 @@ -5,7 +5,6 @@ import com.google.common.base.Predicates;
@@ -1834,7 +1834,7 @@ index 4cb0307935aa63d44aac55c80ee50be074d7913c..949feba1264bcafb8dc2dcecd0a566fe
  
  public class CraftWorld extends CraftRegionAccessor implements World {
      public static final int CUSTOM_DIMENSION_OFFSET = 10;
-@@ -2356,11 +2354,11 @@ public class CraftWorld extends CraftRegionAccessor implements World {
+@@ -2372,11 +2370,11 @@ public class CraftWorld extends CraftRegionAccessor implements World {
          java.util.concurrent.CompletableFuture<Chunk> ret = new java.util.concurrent.CompletableFuture<>();
  
          io.papermc.paper.chunk.system.ChunkSystem.scheduleChunkLoad(this.getHandle(), x, z, gen, ChunkStatus.FULL, true, priority, (c) -> {

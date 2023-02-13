@@ -26,7 +26,7 @@ index 23dcdc71a8a6fd5472cdc1c22331b56c6bb3ded9..c3f88980f1ea2f7b04ad110494962725
              double d1 = (double) (center.y - maxRange);
              double d2 = (double) (center.x + maxRange);
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 285f99bdea5da7ff47889cdb55f94015ecaa3922..e6c2eff84ac596825a11574cf89956e70a344562 100644
+index ef0b6db4421a0c840e6381554a3db02298f33737..82dec221441ad4b76af0aebf788af801a275be64 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -391,7 +391,7 @@ public class ServerPlayer extends Player {
@@ -61,7 +61,7 @@ index 1ef089dbf83de35d875c00efdf468c397be56978..b9f5dc95f859acb8f8fd4739537485af
          }
  
 diff --git a/src/main/java/net/minecraft/world/entity/projectile/FishingHook.java b/src/main/java/net/minecraft/world/entity/projectile/FishingHook.java
-index 7f3a7a769afec8449547c26453112064b9bcb04a..3da68454b8114cd52554670280107d5b5b156eab 100644
+index 15fb5ee374b19366ebb23181896fb943e95819f0..a7ccb6ea2abfaca54ae174f3ec1926eb233abe25 100644
 --- a/src/main/java/net/minecraft/world/entity/projectile/FishingHook.java
 +++ b/src/main/java/net/minecraft/world/entity/projectile/FishingHook.java
 @@ -80,7 +80,7 @@ public class FishingHook extends Projectile {

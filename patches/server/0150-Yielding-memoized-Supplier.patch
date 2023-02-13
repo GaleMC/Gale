@@ -209,7 +209,7 @@ index 95ba37458e8154dbce6a8590508840d694fcbed1..24af3be284d5ed693ec932e53935a777
              this.triggerSlotListeners(i, itemstack, supplier);
              this.synchronizeSlotToRemote(i, itemstack, supplier);
 diff --git a/src/main/java/net/minecraft/world/item/HoneycombItem.java b/src/main/java/net/minecraft/world/item/HoneycombItem.java
-index 1f8b7b50c6aa24778d87821ae2ff4d019d176082..d63da08e75e25860e5ae54674d32f5b3ff421e22 100644
+index f0b720eafc538f97d788f89bd2f2e9da0ff84a19..d12020b2eca0130340436d38247f933f6b246f01 100644
 --- a/src/main/java/net/minecraft/world/item/HoneycombItem.java
 +++ b/src/main/java/net/minecraft/world/item/HoneycombItem.java
 @@ -16,12 +16,13 @@ import net.minecraft.world.level.block.Block;

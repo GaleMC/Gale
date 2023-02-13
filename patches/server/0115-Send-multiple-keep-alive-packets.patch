@@ -37,7 +37,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index f8ba64187acb6148f81b2c652813e6637c151bf0..4d7faeda716c5ac053cfb1d894f5a28e3a69f969 100644
+index c6ffef9960f82eed929400296de027e4e297b8e7..aa11cb23ff5bbdc84bdbda2cad8826485e60e7f4 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -7,6 +7,8 @@ import com.mojang.brigadier.StringReader;
@@ -91,7 +91,7 @@ index f8ba64187acb6148f81b2c652813e6637c151bf0..4d7faeda716c5ac053cfb1d894f5a28e
          if (this.keepAlivePending) {
              if (!this.processedDisconnect && elapsedTime >= KEEPALIVE_LIMIT) { // check keepalive limit, don't fire if already disconnected
                  ServerGamePacketListenerImpl.LOGGER.warn("{} was kicked due to keepalive timeout!", this.player.getScoreboardName()); // more info
-@@ -3466,6 +3487,16 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -3472,6 +3493,16 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
  
      @Override
      public void handleKeepAlive(ServerboundKeepAlivePacket packet) {

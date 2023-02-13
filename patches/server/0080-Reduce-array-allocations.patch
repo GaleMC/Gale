@@ -482,7 +482,7 @@ index 89aaa846d5cb1cfd8ccf634f85bdc4180013cfd0..f69ea29648b090334d98dd8f3ed71cf8
          return ret;
      }
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 8d9e2573c6d9597699e74f19989dcde600a5fb61..f8ba64187acb6148f81b2c652813e6637c151bf0 100644
+index 8d537d9822fd88ec92acf57cf76e903678a12301..c6ffef9960f82eed929400296de027e4e297b8e7 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -28,6 +28,8 @@ import java.util.function.UnaryOperator;
@@ -544,7 +544,7 @@ index 8d9e2573c6d9597699e74f19989dcde600a5fb61..f8ba64187acb6148f81b2c652813e663
              return;
          }
          // Paper end
-@@ -3264,7 +3262,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -3270,7 +3268,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
          // Paper start
          if (!org.bukkit.Bukkit.isPrimaryThread()) {
              if (recipeSpamPackets.addAndGet(io.papermc.paper.configuration.GlobalConfiguration.get().spamLimiter.recipeSpamIncrement) > io.papermc.paper.configuration.GlobalConfiguration.get().spamLimiter.recipeSpamLimit) {
@@ -766,7 +766,7 @@ index 71a36cf9b976443cca9ab63cd0eb23253f638562..201b0e1b25d0773bbcf9c1ed69fd888a
  
          for (int j = 0; j < i; ++j) {
 diff --git a/src/main/java/net/minecraft/world/item/ItemStack.java b/src/main/java/net/minecraft/world/item/ItemStack.java
-index 6860096cb8c0deecc9c1d87543d1128fb95fd2d4..7626dfea095023343f041e0c5b6d0117873c1236 100644
+index 31eed67d07097c7eb1b06547a9f556bcc709d96c..561e0b938cbd52e4f4bacb2c903465efd8c0eadf 100644
 --- a/src/main/java/net/minecraft/world/item/ItemStack.java
 +++ b/src/main/java/net/minecraft/world/item/ItemStack.java
 @@ -977,7 +977,7 @@ public final class ItemStack {
