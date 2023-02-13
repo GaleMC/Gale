@@ -7,7 +7,7 @@ License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 977edc4adb5414e83d289cca295baa6bfbadaa52..ebe3f85542004002713dd327e8a423f2570695ed 100644
+index bfcdae815faa1fc326b80fb317d3046bd05b85f5..0bdb5eeebde6aa8a7d0b3d8dd29ea93f2db859bb 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -77,7 +77,7 @@ tasks.jar {
@@ -244,7 +244,7 @@ index cdefb2025eedea7e204d70d568adaf1c1ec4c03c..3997a7fec43e05b455644b4d58c68995
                  // (async tasks must live with race-conditions if they attempt to cancel between these few lines of code)
              }
 diff --git a/src/main/java/org/bukkit/craftbukkit/util/CraftMagicNumbers.java b/src/main/java/org/bukkit/craftbukkit/util/CraftMagicNumbers.java
-index 17336102d37a5ab05c3b3c93fcf46961d0ffa7e2..f5a7bbf467ce765ecf8ccc9e157bd51bbed72452 100644
+index daeaa30cdd64f5cb775304e82f2390684c02a9d3..58397008c783c6802f846110ee405bb5f8ba2851 100644
 --- a/src/main/java/org/bukkit/craftbukkit/util/CraftMagicNumbers.java
 +++ b/src/main/java/org/bukkit/craftbukkit/util/CraftMagicNumbers.java
 @@ -433,7 +433,7 @@ public final class CraftMagicNumbers implements UnsafeValues {

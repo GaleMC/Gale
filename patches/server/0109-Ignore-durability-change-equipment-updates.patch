@@ -26,7 +26,7 @@ index 25829f5b2675e1eafef5f5a0e40db8a4bbc80ba4..0cc1008b3db93487c8e0801895264683
  
      private void handleHandSwap(Map<EquipmentSlot, ItemStack> equipmentChanges) {
 diff --git a/src/main/java/net/minecraft/world/item/ItemStack.java b/src/main/java/net/minecraft/world/item/ItemStack.java
-index 7626dfea095023343f041e0c5b6d0117873c1236..3cc1096880deea3eb5f50e38f4757455606e28c8 100644
+index 561e0b938cbd52e4f4bacb2c903465efd8c0eadf..2255eaf65338443f0ec99227df0a1e64608ea525 100644
 --- a/src/main/java/net/minecraft/world/item/ItemStack.java
 +++ b/src/main/java/net/minecraft/world/item/ItemStack.java
 @@ -721,10 +721,22 @@ public final class ItemStack {

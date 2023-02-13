@@ -13,7 +13,7 @@ As part of: EmpireCraft (https://github.com/starlis/empirecraft)
 Licensed under: MIT (https://opensource.org/licenses/MIT)
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index a07da939bb6b2dd0bd75cc74dd79493695035259..9d74ef6973f6a9e12861256aa7032f8d746a97f5 100644
+index 8a548616885149fe23763b3b2cd46dc8323e5803..c5984ad4d12fec9310156a7b7c7beddd3dc0ba57 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -261,6 +261,7 @@ public class ServerPlayer extends Player {
@@ -25,7 +25,7 @@ index a07da939bb6b2dd0bd75cc74dd79493695035259..9d74ef6973f6a9e12861256aa7032f8d
      // CraftBukkit end
      public boolean isRealPlayer; // Paper
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index dce5cff1d85ca2dd642219ca2a1adfc2adbae4d6..16a8e3819258e3e42ade5f237e473765b3f8b3c7 100644
+index 619b5572b06e663824e38eaf29b477e8f9f86dda..8d14c710dbae635f0bf2c359ba1b2c144c95f536 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -2333,6 +2333,10 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic

@@ -1,0 +1,28 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Martijn Muijsers <martijnmuijsers@live.nl>
+Date: Mon, 13 Feb 2023 20:59:49 +0100
+Subject: [PATCH] Use default Java installation for development runs
+
+License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+Gale - https://galemc.org
+
+diff --git a/build.gradle.kts b/build.gradle.kts
+index e8187f4b88f89eee3fd675bbfdfb78534769c63f..9f42ad14bd477a265f0c7f1fda5bc39a69970ed7 100644
+--- a/build.gradle.kts
++++ b/build.gradle.kts
+@@ -149,6 +149,15 @@ fun TaskContainer.registerRunTask(
+     name: String,
+     block: JavaExec.() -> Unit
+ ): TaskProvider<JavaExec> = register<JavaExec>(name) {
++    // Gale start - use default Java installation for development runs
++    java {
++        toolchain {
++            languageVersion.set(JavaLanguageVersion.of(System.getProperty("java.version").run {
++                substring(0, indexOf('.')).toInt().coerceAtLeast(17)
++            }))
++        }
++    }
++    // Gale end - use default Java installation for development runs
+     group = "paper"
+     mainClass.set("org.bukkit.craftbukkit.Main")
+     standardInput = System.`in`

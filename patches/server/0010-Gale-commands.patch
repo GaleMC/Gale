@@ -13,7 +13,7 @@ As part of: Paper (https://github.com/PaperMC/Paper)
 Licensed under: MIT (https://opensource.org/licenses/MIT)
 
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index 98f00bdc85ade95ccbfaa1999c70ac650192345d..9c3ccbbd657d1605b8fabb6e01c11ff31f39a17e 100644
+index b98fb8afdadbda47db5924299d90082edf3ca1b4..985f1a50438b325e33fba5d07e26519171504aab 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 @@ -45,6 +45,7 @@ import net.minecraft.world.level.GameRules;

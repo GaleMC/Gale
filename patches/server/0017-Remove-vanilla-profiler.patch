@@ -811,7 +811,7 @@ index 4b1b828b72a8ddef240d005fc514ae0a54b22982..e8658ed3784444991c5a6c8f03d2a5e0
  
                  while (iterator.hasNext()) {
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 7d6d3c8556033d289fdadc489e73fba478fce41a..a07da939bb6b2dd0bd75cc74dd79493695035259 100644
+index 9160725f031c9698a00229c3dfa19d39b4a826c1..8a548616885149fe23763b3b2cd46dc8323e5803 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -1149,7 +1149,6 @@ public class ServerPlayer extends Player {
@@ -840,7 +840,7 @@ index 7d6d3c8556033d289fdadc489e73fba478fce41a..a07da939bb6b2dd0bd75cc74dd794936
                  this.connection.send(new ClientboundPlayerAbilitiesPacket(this.getAbilities()));
                  playerlist.sendLevelInfo(this, worldserver);
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 3472f7f9b98d6d9c9f6465872803ef17fa67486d..547cc76d2086a658cbf667dcd6e47227a0a26b7b 100644
+index 9b0b42add71172bd154226e51d62cebd8de3542e..c3c048ec2c8be72e0f5494f423bfafbd9b572b88 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -390,7 +390,6 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
