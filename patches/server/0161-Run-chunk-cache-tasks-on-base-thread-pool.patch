@@ -378,10 +378,10 @@ index 9d7da4fcf4ab450b6f3d53a07c299884fe29cda0..5c407537b5b0d84031baf34802648eb0
              }
 diff --git a/src/main/java/org/galemc/gale/executor/ClosestChunkBlockableEventLoop.java b/src/main/java/org/galemc/gale/executor/ClosestChunkBlockableEventLoop.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..43f7b3303140b19fa744f394dab15e8a5dafbaf7
+index 0000000000000000000000000000000000000000..0ad8052c42c98e64dfe872d01bebc004ec0f9867
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/ClosestChunkBlockableEventLoop.java
-@@ -0,0 +1,559 @@
+@@ -0,0 +1,565 @@
 +// Gale - base thread pool - chunk-sorted cache tasks
 +
 +package org.galemc.gale.executor;
@@ -895,12 +895,18 @@ index 0000000000000000000000000000000000000000..43f7b3303140b19fa744f394dab15e8a
 +     * This method must only be called while {@link #lock} is held.
 +     */
 +    private void pollFromQueueIntoPrepolled() {
-+        if (this.chunkQueue.isEmpty()) {
-+            return;
-+        }
-+        long packedXZWithDistance = this.chunkQueue.firstLong();
-+        long packedXZ = stripTightlyPackedDistance(packedXZWithDistance);
-+        Queue<R> tasks = this.tasksPerChunk.get(packedXZ);
++        long packedXZWithDistance;
++        long packedXZ;
++        Queue<R> tasks;
++        do {
++            if (this.chunkQueue.isEmpty()) {
++                return;
++            }
++            packedXZWithDistance = this.chunkQueue.firstLong();
++            packedXZ = stripTightlyPackedDistance(packedXZWithDistance);
++            tasks = this.tasksPerChunk.get(packedXZ);
++            // Hot-fix for when tasks is null, but this *should* not be happening (but it currently happens sometimes)
++        } while (tasks == null || tasks.isEmpty());
 +        this.prepolledRunnable = tasks.poll();
 +        this.prepolledRunnablePackedXZ = packedXZ;
 +        this.prepolledRunnableDistance = unpackTightlyPackedDistance(packedXZWithDistance);
