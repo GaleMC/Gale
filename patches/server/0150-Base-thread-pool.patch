@@ -6354,10 +6354,10 @@ index 0000000000000000000000000000000000000000..65ad5020c5c5953c801fb6c31416e865
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/thread/pool/BaseThreadPool.java b/src/main/java/org/galemc/gale/executor/thread/pool/BaseThreadPool.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..5e361715fabbbdeb3600a7c618a67872fbb3376f
+index 0000000000000000000000000000000000000000..07285dac8bc99f0af7702f61765e3311a317f708
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/thread/pool/BaseThreadPool.java
-@@ -0,0 +1,219 @@
+@@ -0,0 +1,218 @@
 +// Gale - base thread pool
 +
 +package org.galemc.gale.executor.thread.pool;
@@ -6367,7 +6367,6 @@ index 0000000000000000000000000000000000000000..5e361715fabbbdeb3600a7c618a67872
 +import org.galemc.gale.executor.thread.AssistThread;
 +import org.galemc.gale.executor.thread.BaseThread;
 +import org.galemc.gale.executor.thread.ServerThread;
-+import org.galemc.gale.util.CPUCoresEstimation;
 +import org.jetbrains.annotations.NotNull;
 +import org.jetbrains.annotations.Nullable;
 +
@@ -6511,7 +6510,7 @@ index 0000000000000000000000000000000000000000..5e361715fabbbdeb3600a7c618a67872
 +     * Creates a new {@link AssistThread}, adds it to this pool and starts it.
 +     * <br>
 +     * Must only be called from within {@link BaseThreadActivation#update()} while
-+     * {@link BaseThreadActivation#isUpdateOngoing} is true.
++     * {@link BaseThreadActivation#updateOngoingOnThread} is not null.
 +     */
 +    public static void addAssistThread() {
 +        int oldThreadsLength = assistThreads.length;
@@ -6538,7 +6537,7 @@ index 0000000000000000000000000000000000000000..5e361715fabbbdeb3600a7c618a67872
 +     * Note that the {@link ServerThread} at index 0 may be null if {@link MinecraftServer#isConstructed} is false.
 +     * <br>
 +     * Must only be called from within {@link BaseThreadActivation#update()} while
-+     * {@link BaseThreadActivation#isUpdateOngoing} is true.
++     * {@link BaseThreadActivation#updateOngoingOnThread} is not null.
 +     */
 +    static @Nullable BaseThread @NotNull [] getBaseThreads() {
 +        // Store in a non-local volatile
