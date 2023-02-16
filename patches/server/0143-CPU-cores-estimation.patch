@@ -55,7 +55,7 @@ index 5a92a8f24d3a6957cc3f8404bf3458f4c4058fb4..666114daf9e9a3f9f9e0779a3a40dfac
          // Attempt to detect vectorization
          try {
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index b9a799997e3475117ab91d7f3edb5f2f243a9f6b..e23fdd5ba09b50b7eef0ca4f36c5480779fba624 100644
+index 3b64d9a7c3f759ba871c196296a1993751b93472..dc5020580d1a26f1fcb31af2fd272e5d8bcaa480 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 @@ -254,6 +254,8 @@ import org.bukkit.scoreboard.Criteria;
@@ -68,14 +68,14 @@ index b9a799997e3475117ab91d7f3edb5f2f243a9f6b..e23fdd5ba09b50b7eef0ca4f36c54807
  import org.yaml.snakeyaml.constructor.SafeConstructor;
  import org.yaml.snakeyaml.error.MarkedYAMLException;
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index 48f6e114a3ead68d72f27f9d5572eacbc7613ac3..7a3111603c75105769cf0fc3ff3c5ee6d45b57e5 100644
+index 48f6e114a3ead68d72f27f9d5572eacbc7613ac3..1eab552f981e65c29add81718a2ed47e68f9c07d 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 @@ -185,6 +185,7 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
          public boolean unrecognizedRecipes = false; // Gale - Purpur - do not log unrecognized recipes
          public boolean legacyMaterialInitialization = false; // Gale - Purpur - do not log legacy Material initialization
          public boolean playerLoginLocations = true; // Gale - JettPack - make logging login location configurable
-+        public boolean cpuCoresEstimation = true; // Gale - CPU cores estimation
++        public boolean cpuCoresEstimation = false; // Gale - CPU cores estimation
  
          public Chat chat;
          public class Chat extends ConfigurationPart {

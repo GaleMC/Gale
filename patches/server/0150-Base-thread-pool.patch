@@ -1892,7 +1892,7 @@ index 9571aae593999d11b3908856b0295a7d6b588007..ed2841d3a6c6d90ad02266f38c0821bc
              }
          } catch (Exception ex) {
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index 7a3111603c75105769cf0fc3ff3c5ee6d45b57e5..39c4fe8fdd806b4b5bc3cb2dfdde9a29b11b386e 100644
+index 1eab552f981e65c29add81718a2ed47e68f9c07d..2b723eaf400b102d3b21151f532cca1b45e17951 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 @@ -2,11 +2,14 @@
@@ -6354,7 +6354,7 @@ index 0000000000000000000000000000000000000000..65ad5020c5c5953c801fb6c31416e865
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/thread/pool/BaseThreadPool.java b/src/main/java/org/galemc/gale/executor/thread/pool/BaseThreadPool.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..36c9faaf2d431dbc5a173a3821752725b497dd6c
+index 0000000000000000000000000000000000000000..5e361715fabbbdeb3600a7c618a67872fbb3376f
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/thread/pool/BaseThreadPool.java
 @@ -0,0 +1,219 @@
@@ -6410,7 +6410,7 @@ index 0000000000000000000000000000000000000000..36c9faaf2d431dbc5a173a3821752725
 +     * <br>
 +     * The value is currently automatically determined according to the following table:
 +     * <table>
-+     *     <tr><th>system cores</th><th>cores spared</th></tr>
++     *     <tr><th>system threads</th><th>threads spared</th></tr>
 +     *     <tr><td>&#8804; 3</td><td>0</td></tr>
 +     *     <tr><td>[4, 14]</td><td>1</td></tr>
 +     *     <tr><td>[15, 23]</td><td>2</td></tr>
@@ -6425,7 +6425,7 @@ index 0000000000000000000000000000000000000000..36c9faaf2d431dbc5a173a3821752725
 +     *     <tr><td>[233, 274]</td><td>11</td></tr>
 +     *     <tr><td>&#8805; 275</td><td>12</td></tr>
 +     * </table>
-+     * Then <code>target parallelism = system cores - cores spared</code>.
++     * Then <code>target parallelism = system threads - threads spared</code>.
 +     * <br>
 +     * The computed value above can be overridden using the {@link #targetParallelismEnvironmentVariable}.
 +     */
@@ -6436,36 +6436,36 @@ index 0000000000000000000000000000000000000000..36c9faaf2d431dbc5a173a3821752725
 +        if (parallelismByEnvironmentVariable >= 0) {
 +            targetParallelismBeforeSetAtLeastOne = parallelismByEnvironmentVariable;
 +        } else {
-+            int systemCores = CPUCoresEstimation.get();
-+            int coresSpared;
-+            if (systemCores <= 3) {
-+                coresSpared = 0;
-+            } else if (systemCores <= 14) {
-+                coresSpared = 1;
-+            } else if (systemCores <= 23) {
-+                coresSpared = 2;
-+            } else if (systemCores <= 37) {
-+                coresSpared = 3;
-+            } else if (systemCores <= 54) {
-+                coresSpared = 4;
-+            } else if (systemCores <= 74) {
-+                coresSpared = 5;
-+            } else if (systemCores <= 99) {
-+                coresSpared = 6;
-+            } else if (systemCores <= 127) {
-+                coresSpared = 7;
-+            } else if (systemCores <= 158) {
-+                coresSpared = 8;
-+            } else if (systemCores <= 193) {
-+                coresSpared = 9;
-+            } else if (systemCores <= 232) {
-+                coresSpared = 10;
-+            } else if (systemCores <= 274) {
-+                coresSpared = 11;
++            int systemThreads = Runtime.getRuntime().availableProcessors();
++            int threadsSpared;
++            if (systemThreads <= 3) {
++                threadsSpared = 0;
++            } else if (systemThreads <= 14) {
++                threadsSpared = 1;
++            } else if (systemThreads <= 23) {
++                threadsSpared = 2;
++            } else if (systemThreads <= 37) {
++                threadsSpared = 3;
++            } else if (systemThreads <= 54) {
++                threadsSpared = 4;
++            } else if (systemThreads <= 74) {
++                threadsSpared = 5;
++            } else if (systemThreads <= 99) {
++                threadsSpared = 6;
++            } else if (systemThreads <= 127) {
++                threadsSpared = 7;
++            } else if (systemThreads <= 158) {
++                threadsSpared = 8;
++            } else if (systemThreads <= 193) {
++                threadsSpared = 9;
++            } else if (systemThreads <= 232) {
++                threadsSpared = 10;
++            } else if (systemThreads <= 274) {
++                threadsSpared = 11;
 +            } else {
-+                coresSpared = 12;
++                threadsSpared = 12;
 +            }
-+            targetParallelismBeforeSetAtLeastOne = systemCores - coresSpared;
++            targetParallelismBeforeSetAtLeastOne = systemThreads - threadsSpared;
 +        }
 +        targetParallelism = Math.max(1, targetParallelismBeforeSetAtLeastOne);
 +    }
