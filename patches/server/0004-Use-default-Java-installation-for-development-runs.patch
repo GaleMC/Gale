@@ -7,10 +7,10 @@ License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index e8187f4b88f89eee3fd675bbfdfb78534769c63f..9f42ad14bd477a265f0c7f1fda5bc39a69970ed7 100644
+index 3a8f82fdbecb34b32054cd5bdd30759f5ecab7fa..172644d99e3632a3c5f0fdb5d1d847f2796b4230 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
-@@ -149,6 +149,15 @@ fun TaskContainer.registerRunTask(
+@@ -150,6 +150,15 @@ fun TaskContainer.registerRunTask(
      name: String,
      block: JavaExec.() -> Unit
  ): TaskProvider<JavaExec> = register<JavaExec>(name) {
