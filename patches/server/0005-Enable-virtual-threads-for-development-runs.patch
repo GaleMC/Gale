@@ -7,7 +7,7 @@ License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 172644d99e3632a3c5f0fdb5d1d847f2796b4230..595957438cc6321d11d1178a74846397b7d30aaa 100644
+index 172644d99e3632a3c5f0fdb5d1d847f2796b4230..f3b0a2d1a8675013f3af0ed03bc6df12b2be88e2 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -182,6 +182,10 @@ fun TaskContainer.registerRunTask(
@@ -16,7 +16,7 @@ index 172644d99e3632a3c5f0fdb5d1d847f2796b4230..595957438cc6321d11d1178a74846397
      modifiedJvmArgs.addAll(listOf("-Xms${memoryGb}G", "-Xmx${memoryGb}G"))
 +    // Gale start - enable virtual threads for development runs
 +    modifiedJvmArgs.add("--enable-preview")
-+    modifiedJvmArgs.addAll(listOf("--add-opens", "java.base/java.lang=ALL-UNNAMED"))
++    modifiedJvmArgs.addAll(listOf("--add-opens=java.base/java.lang=ALL-UNNAMED"))
 +    // Gale end - enable virtual threads for development runs
      jvmArgs = modifiedJvmArgs
  

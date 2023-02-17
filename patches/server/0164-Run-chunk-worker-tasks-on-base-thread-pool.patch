@@ -661,7 +661,7 @@ index 0000000000000000000000000000000000000000..0fac4a8b238636adb826a3d1a8db2040
 +
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/thread/BaseThread.java b/src/main/java/org/galemc/gale/executor/thread/BaseThread.java
-index 4ec06cbff045bd42c1da5881cd0f2446cde39a7b..1a97a74e11a8c675980b3ec2e76b72057a203308 100644
+index cb1731f8c00f30a18aa042eaabc7f429fcaf9e2a..ce46283459ee5d9af9d8edd88d11322e354ffeae 100644
 --- a/src/main/java/org/galemc/gale/executor/thread/BaseThread.java
 +++ b/src/main/java/org/galemc/gale/executor/thread/BaseThread.java
 @@ -2,6 +2,8 @@
@@ -673,15 +673,15 @@ index 4ec06cbff045bd42c1da5881cd0f2446cde39a7b..1a97a74e11a8c675980b3ec2e76b7205
  import io.papermc.paper.util.TickThread;
  import net.minecraft.server.MinecraftServer;
  import org.galemc.gale.executor.TaskSpan;
-@@ -16,6 +18,7 @@ import org.galemc.gale.executor.lock.YieldingLock;
- import org.galemc.gale.executor.queue.AbstractTaskQueue;
+@@ -17,6 +19,7 @@ import org.galemc.gale.executor.queue.AbstractTaskQueue;
  import org.galemc.gale.executor.queue.BaseTaskQueueTier;
+ import org.galemc.gale.executor.thread.platform.SignalReason;
  import org.galemc.gale.executor.thread.pool.*;
 +import org.jetbrains.annotations.NotNull;
  import org.jetbrains.annotations.Nullable;
  
  import java.util.concurrent.TimeUnit;
-@@ -742,6 +745,20 @@ public abstract class BaseThread extends Thread implements AbstractYieldingThrea
+@@ -743,6 +746,20 @@ public abstract class BaseThread extends Thread implements AbstractYieldingThrea
          }
      }
  

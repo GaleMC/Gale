@@ -492,7 +492,7 @@ index 27d4aa45e585842c04491839826d405d6f447f0e..0a54e07db5a55b6170650c070bb19e07
              engine.execute(() -> { // Paper - Fix preemptive player kick on a server shutdown.
                  packetProcessing.push(listener); // Paper - detailed watchdog information
 diff --git a/src/main/java/net/minecraft/server/Main.java b/src/main/java/net/minecraft/server/Main.java
-index 0c4c62674b4c7e8e3921c7eb3ef726759ac75075..40f20806cc06106b4aa8e708467dcea94d23c83e 100644
+index 0c4c62674b4c7e8e3921c7eb3ef726759ac75075..748f24b9b09e56ed3e755b06648a9f2c21b7ee06 100644
 --- a/src/main/java/net/minecraft/server/Main.java
 +++ b/src/main/java/net/minecraft/server/Main.java
 @@ -1,27 +1,22 @@
@@ -526,15 +526,16 @@ index 0c4c62674b4c7e8e3921c7eb3ef726759ac75075..40f20806cc06106b4aa8e708467dcea9
  import net.minecraft.SharedConstants;
  import net.minecraft.Util;
  import net.minecraft.commands.Commands;
-@@ -57,6 +52,7 @@ import net.minecraft.world.level.storage.LevelStorageSource;
+@@ -57,6 +52,8 @@ import net.minecraft.world.level.storage.LevelStorageSource;
  import net.minecraft.world.level.storage.LevelSummary;
  import net.minecraft.world.level.storage.PrimaryLevelData;
  import net.minecraft.world.level.storage.WorldData;
 +import org.galemc.gale.executor.queue.BaseTaskQueueTier;
++import org.galemc.gale.util.VirtualThreads;
  import org.slf4j.Logger;
  
  // CraftBukkit start
-@@ -64,7 +60,7 @@ import com.google.common.base.Charsets;
+@@ -64,7 +61,7 @@ import com.google.common.base.Charsets;
  import com.mojang.bridge.game.PackType;
  import java.io.InputStreamReader;
  import java.util.concurrent.atomic.AtomicReference;
@@ -543,7 +544,37 @@ index 0c4c62674b4c7e8e3921c7eb3ef726759ac75075..40f20806cc06106b4aa8e708467dcea9
  import org.bukkit.configuration.file.YamlConfiguration;
  // CraftBukkit end
  
-@@ -228,6 +224,12 @@ public class Main {
+@@ -170,6 +167,29 @@ public class Main {
+             }
+             // Paper end
+ 
++            // Gale start - base thread pool - inform if virtual threads are not available
++            if (!VirtualThreads.areVirtualThreadsEnabled) {
++                int majorVersion;
++                try {
++                    String version = System.getProperty("java.version");
++                    majorVersion = Integer.parseInt(version.substring(0, version.indexOf('.')));
++                } catch (Throwable ignored) {
++                    /*
++                    If we cannot determine the major version,
++                    just print a virtual thread warning instead of a version warning.
++                     */
++                    majorVersion = -1;
++                }
++                if (majorVersion == -1 || majorVersion >= VirtualThreads.minimumJavaMajorVersion) {
++                    Main.LOGGER.warn("Virtual threads are not enabled@");
++                    Main.LOGGER.warn("To enable additional powerful optimizations, add \"--enable-preview --add-opens=java.base/java.lang=ALL-UNNAMED\" to your startup flags, BEFORE the \"-jar\".");
++                } else {
++                    Main.LOGGER.warn("You are using Java " + majorVersion + ".");
++                    Main.LOGGER.warn("It is strongly recommended to run Gale with Java " + VirtualThreads.minimumJavaMajorVersion + " or higher to enable additional powerful optimizations.");
++                }
++            }
++            // Gale end - base thread pool - inform if virtual threads are not available
++
+             org.spigotmc.SpigotConfig.disabledAdvancements = spigotConfiguration.getStringList("advancements.disabled"); // Paper - fix SPIGOT-5885, must be set early in init
+             // Paper start - fix SPIGOT-5824
+             File file;
+@@ -228,6 +248,12 @@ public class Main {
  
              WorldStem worldstem;
  
@@ -3773,7 +3804,7 @@ index 0000000000000000000000000000000000000000..a763028deff9bc131b8208886bf26513
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/queue/SimpleTaskQueue.java b/src/main/java/org/galemc/gale/executor/queue/SimpleTaskQueue.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..2c910f89f1056d00e5e4a2d832cdd4be4b7527b4
+index 0000000000000000000000000000000000000000..fa9f7f248a46fa7a4a778e06320164df9cafe3b2
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/queue/SimpleTaskQueue.java
 @@ -0,0 +1,253 @@
@@ -3789,7 +3820,7 @@ index 0000000000000000000000000000000000000000..2c910f89f1056d00e5e4a2d832cdd4be
 +import org.galemc.gale.executor.annotation.YieldFree;
 +import org.galemc.gale.executor.thread.BaseThread;
 +import org.galemc.gale.executor.thread.pool.BaseThreadActivation;
-+import org.galemc.gale.executor.thread.SignalReason;
++import org.galemc.gale.executor.thread.platform.SignalReason;
 +import org.jetbrains.annotations.NotNull;
 +import org.jetbrains.annotations.Nullable;
 +
@@ -4210,10 +4241,10 @@ index 0000000000000000000000000000000000000000..fb4f9c047fc71a9a01aa47871254c6a9
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/thread/AbstractYieldingThread.java b/src/main/java/org/galemc/gale/executor/thread/AbstractYieldingThread.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..fd4082f1d8fe558bbaaf3b17da18b361e34c81ed
+index 0000000000000000000000000000000000000000..9fa8e04e3053d832ef7817344f10eb450c538284
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/thread/AbstractYieldingThread.java
-@@ -0,0 +1,147 @@
+@@ -0,0 +1,145 @@
 +// Gale - base thread pool
 +
 +package org.galemc.gale.executor.thread;
@@ -4221,8 +4252,6 @@ index 0000000000000000000000000000000000000000..fd4082f1d8fe558bbaaf3b17da18b361
 +import net.minecraft.server.MinecraftServer;
 +import org.galemc.gale.concurrent.CheckableLock;
 +import org.galemc.gale.executor.annotation.PotentiallyYielding;
-+import org.galemc.gale.executor.annotation.thread.AnyThreadSafe;
-+import org.galemc.gale.executor.annotation.YieldFree;
 +import org.galemc.gale.executor.annotation.thread.ThisThreadOnly;
 +import org.galemc.gale.executor.lock.SingleWaitingBaseThreadYieldingLock;
 +import org.galemc.gale.executor.lock.YieldingLock;
@@ -4272,7 +4301,7 @@ index 0000000000000000000000000000000000000000..fd4082f1d8fe558bbaaf3b17da18b361
 +    void yieldUntil(@Nullable Long timeoutTime, @Nullable BooleanSupplier stopCondition, @Nullable YieldingLock yieldingLock);
 +
 +    /**
-+     * Calls {@link #yieldUntil(BooleanSupplier, YieldingLock)}, but creates a {@link YieldingLock}
++     * Calls {@link #yieldUntil(Long, BooleanSupplier, YieldingLock)}, but creates a {@link YieldingLock}
 +     * based on the given {@code future}, that causes this thread to be notified when the future is completed.
 +     *
 +     * @param autoCompletingLockConsumer An optional consumer that will be applied to the created {@link YieldingLock},
@@ -4447,10 +4476,10 @@ index 0000000000000000000000000000000000000000..eab769d7319f26db1f4db9599a3c263c
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/thread/BaseThread.java b/src/main/java/org/galemc/gale/executor/thread/BaseThread.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..4ec06cbff045bd42c1da5881cd0f2446cde39a7b
+index 0000000000000000000000000000000000000000..cb1731f8c00f30a18aa042eaabc7f429fcaf9e2a
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/thread/BaseThread.java
-@@ -0,0 +1,765 @@
+@@ -0,0 +1,766 @@
 +// Gale - base thread pool
 +
 +package org.galemc.gale.executor.thread;
@@ -4468,6 +4497,7 @@ index 0000000000000000000000000000000000000000..4ec06cbff045bd42c1da5881cd0f2446
 +import org.galemc.gale.executor.lock.YieldingLock;
 +import org.galemc.gale.executor.queue.AbstractTaskQueue;
 +import org.galemc.gale.executor.queue.BaseTaskQueueTier;
++import org.galemc.gale.executor.thread.platform.SignalReason;
 +import org.galemc.gale.executor.thread.pool.*;
 +import org.jetbrains.annotations.Nullable;
 +
@@ -5299,47 +5329,19 @@ index 0000000000000000000000000000000000000000..7d58d995d8e74cd5f51f85f123166bf8
 +    }
 +
 +}
-diff --git a/src/main/java/org/galemc/gale/executor/thread/SignalReason.java b/src/main/java/org/galemc/gale/executor/thread/SignalReason.java
-new file mode 100644
-index 0000000000000000000000000000000000000000..436b0a8249290d833472da58ec01f9690be2fb95
---- /dev/null
-+++ b/src/main/java/org/galemc/gale/executor/thread/SignalReason.java
-@@ -0,0 +1,23 @@
-+// Gale - base thread pool
-+
-+package org.galemc.gale.executor.thread;
-+
-+import org.galemc.gale.executor.lock.YieldingLock;
-+
-+/**
-+ * A reason of a call to {@link SignallableThread#signal}.
-+ *
-+ * @author Martijn Muijsers under AGPL-3.0
-+ */
-+public enum SignalReason {
-+
-+    /**
-+     * A task that the signalled thread could poll and start is available.
-+     */
-+    TASK,
-+    /**
-+     * The {@link YieldingLock} that the signalled thread was waiting for was released.
-+     */
-+    YIELDING_LOCK
-+
-+}
 diff --git a/src/main/java/org/galemc/gale/executor/thread/SignallableThread.java b/src/main/java/org/galemc/gale/executor/thread/SignallableThread.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..a73aafc64dc60b57e2e5a91565e1aff612da6703
+index 0000000000000000000000000000000000000000..d9b2a445dd320979741fd659b1692eeec3c841f8
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/thread/SignallableThread.java
-@@ -0,0 +1,31 @@
+@@ -0,0 +1,32 @@
 +// Gale - base thread pool
 +
 +package org.galemc.gale.executor.thread;
 +
 +import org.galemc.gale.executor.annotation.thread.AnyThreadSafe;
 +import org.galemc.gale.executor.annotation.YieldFree;
++import org.galemc.gale.executor.thread.platform.SignalReason;
 +import org.jetbrains.annotations.Nullable;
 +
 +/**
@@ -5687,9 +5689,39 @@ index 0000000000000000000000000000000000000000..77fe10e51b00115da520cfc211bf84ba
 +    };
 +
 +}
+diff --git a/src/main/java/org/galemc/gale/executor/thread/platform/SignalReason.java b/src/main/java/org/galemc/gale/executor/thread/platform/SignalReason.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..c41824669e66f719d37ab5539fe6ab7f994a003f
+--- /dev/null
++++ b/src/main/java/org/galemc/gale/executor/thread/platform/SignalReason.java
+@@ -0,0 +1,24 @@
++// Gale - base thread pool
++
++package org.galemc.gale.executor.thread.platform;
++
++import org.galemc.gale.executor.lock.YieldingLock;
++import org.galemc.gale.executor.thread.SignallableThread;
++
++/**
++ * A reason of a call to {@link SignallableThread#signal}.
++ *
++ * @author Martijn Muijsers under AGPL-3.0
++ */
++public enum SignalReason {
++
++    /**
++     * A task that the signalled thread could poll and start is available.
++     */
++    TASK,
++    /**
++     * The {@link YieldingLock} that the signalled thread was waiting for was released.
++     */
++    YIELDING_LOCK
++
++}
 diff --git a/src/main/java/org/galemc/gale/executor/thread/pool/BaseThreadActivation.java b/src/main/java/org/galemc/gale/executor/thread/pool/BaseThreadActivation.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..65ad5020c5c5953c801fb6c31416e8658720e15f
+index 0000000000000000000000000000000000000000..ef6dc61f22ef4ab28da3213163fbc8b5479cfc16
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/thread/pool/BaseThreadActivation.java
 @@ -0,0 +1,659 @@
@@ -5706,7 +5738,7 @@ index 0000000000000000000000000000000000000000..65ad5020c5c5953c801fb6c31416e865
 +import org.galemc.gale.executor.queue.BaseTaskQueueTier;
 +import org.galemc.gale.executor.thread.BaseThread;
 +import org.galemc.gale.executor.thread.ServerThread;
-+import org.galemc.gale.executor.thread.SignalReason;
++import org.galemc.gale.executor.thread.platform.SignalReason;
 +import org.jetbrains.annotations.NotNull;
 +import org.jetbrains.annotations.Nullable;
 +

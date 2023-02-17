@@ -13,7 +13,7 @@ As part of: Pufferfish (https://github.com/pufferfish-gg/Pufferfish)
 Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 21dde8d45c98fc57b97d847908c011808d2e3b85..a82ce4dfde0a81a85def5e3e5b09ba3a15aa73bc 100644
+index b7cac76808d22a4f8e389c0f476e2825404b6e59..ef633f7d1d48f8c2447c7d191f31ec646d641dca 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -63,6 +63,7 @@ tasks.withType<JavaCompile> {
@@ -26,7 +26,7 @@ index 21dde8d45c98fc57b97d847908c011808d2e3b85..a82ce4dfde0a81a85def5e3e5b09ba3a
  
 @@ -186,6 +187,7 @@ fun TaskContainer.registerRunTask(
      modifiedJvmArgs.add("--enable-preview")
-     modifiedJvmArgs.addAll(listOf("--add-opens", "java.base/java.lang=ALL-UNNAMED"))
+     modifiedJvmArgs.addAll(listOf("--add-opens=java.base/java.lang=ALL-UNNAMED"))
      // Gale end - enable virtual threads for development runs
 +    modifiedJvmArgs.add("--add-modules=jdk.incubator.vector") // Gale - Pufferfish - SIMD support
      jvmArgs = modifiedJvmArgs

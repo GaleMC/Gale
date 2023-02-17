@@ -8,10 +8,10 @@ Gale - https://galemc.org
 
 diff --git a/src/main/java/org/galemc/gale/util/VirtualThreads.java b/src/main/java/org/galemc/gale/util/VirtualThreads.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..9f5a194ffcdce678212ccc0e800ff1fe6aa208c8
+index 0000000000000000000000000000000000000000..0ae0cde2ed65939f84d0f843e2c2b89beb76ed3f
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/util/VirtualThreads.java
-@@ -0,0 +1,139 @@
+@@ -0,0 +1,144 @@
 +// Gale - virtual threads utility
 +
 +package org.galemc.gale.util;
@@ -34,6 +34,11 @@ index 0000000000000000000000000000000000000000..9f5a194ffcdce678212ccc0e800ff1fe
 +public final class VirtualThreads {
 +
 +    private VirtualThreads() {}
++
++    /**
++     * The minimum major version of Java that is known to support using virtual threads.
++     */
++    public static final int minimumJavaMajorVersion = 19;
 +
 +    /**
 +     * The {@link Thread#ofVirtual()} method, obtained via Reflection,
