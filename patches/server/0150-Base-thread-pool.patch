@@ -4241,17 +4241,18 @@ index 0000000000000000000000000000000000000000..fb4f9c047fc71a9a01aa47871254c6a9
 +}
 diff --git a/src/main/java/org/galemc/gale/executor/thread/AbstractYieldingThread.java b/src/main/java/org/galemc/gale/executor/thread/AbstractYieldingThread.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..9fa8e04e3053d832ef7817344f10eb450c538284
+index 0000000000000000000000000000000000000000..a21091bdee3521f4c37ed67cf6db72ac4bdf7a50
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/executor/thread/AbstractYieldingThread.java
-@@ -0,0 +1,145 @@
+@@ -0,0 +1,146 @@
 +// Gale - base thread pool
 +
 +package org.galemc.gale.executor.thread;
 +
-+import net.minecraft.server.MinecraftServer;
 +import org.galemc.gale.concurrent.CheckableLock;
 +import org.galemc.gale.executor.annotation.PotentiallyYielding;
++import org.galemc.gale.executor.annotation.YieldFree;
++import org.galemc.gale.executor.annotation.thread.AnyThreadSafe;
 +import org.galemc.gale.executor.annotation.thread.ThisThreadOnly;
 +import org.galemc.gale.executor.lock.SingleWaitingBaseThreadYieldingLock;
 +import org.galemc.gale.executor.lock.YieldingLock;
