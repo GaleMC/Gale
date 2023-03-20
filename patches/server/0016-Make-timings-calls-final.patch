@@ -7,10 +7,10 @@ License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 3898e8a92edca52bc7d4e9ac061e24baceaec608..dae9146b50ad430c815877a81cfe1111a42ccc80 100644
+index 0455ab74ec39d93ec72a2aa40e952de5369c1faa..9000dc3498ea22ef379908eb3c997467ffba82b4 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -1385,7 +1385,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1384,7 +1384,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
      public void onServerExit() {}
  
      public void tickServer(BooleanSupplier shouldKeepTicking) {
@@ -19,12 +19,12 @@ index 3898e8a92edca52bc7d4e9ac061e24baceaec608..dae9146b50ad430c815877a81cfe1111
          long i = Util.getNanos();
  
          // Paper start - move oversleep into full server tick
-@@ -1469,7 +1469,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
-         this.frameTimer.logFrameDuration(i1 - i);
+@@ -1450,7 +1450,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+         this.frameTimer.logFrameDuration(k - i);
          this.profiler.pop();
          org.spigotmc.WatchdogThread.tick(); // Spigot
 -        co.aikar.timings.TimingsManager.FULL_SERVER_TICK.stopTiming(); // Paper
 +        co.aikar.timings.TimingsManager.FULL_SERVER_TICK.stopTimingFullServerTick(); // Paper // Gale - final timings calls
      }
  
-     public void tickChildren(BooleanSupplier shouldKeepTicking) {
+     private ServerStatus buildServerStatus() {

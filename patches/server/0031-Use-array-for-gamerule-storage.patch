@@ -31,18 +31,18 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 diff --git a/src/main/java/net/minecraft/world/level/GameRules.java b/src/main/java/net/minecraft/world/level/GameRules.java
-index 663c1d8c1611af915a1bae733920dd75ad73feb1..19bdb2c717718f074ab2b4c5fb934ea29dd80c53 100644
+index edd2c9d0cf5a81c779011cb4215d496a8987b784..6a21a12694d7c9277e1661dfcd1fd143fd5ebcfb 100644
 --- a/src/main/java/net/minecraft/world/level/GameRules.java
 +++ b/src/main/java/net/minecraft/world/level/GameRules.java
-@@ -98,6 +98,7 @@ public class GameRules {
-     public static final GameRules.Key<GameRules.BooleanValue> RULE_LAVA_SOURCE_CONVERSION = GameRules.register("lavaSourceConversion", GameRules.Category.UPDATES, GameRules.BooleanValue.create(false));
+@@ -100,6 +100,7 @@ public class GameRules {
      public static final GameRules.Key<GameRules.BooleanValue> RULE_GLOBAL_SOUND_EVENTS = GameRules.register("globalSoundEvents", GameRules.Category.MISC, GameRules.BooleanValue.create(true));
+     public static final GameRules.Key<GameRules.BooleanValue> RULE_DO_VINES_SPREAD = GameRules.register("doVinesSpread", GameRules.Category.UPDATES, GameRules.BooleanValue.create(true));
      private final Map<GameRules.Key<?>, GameRules.Value<?>> rules;
 +    private final GameRules.Value<?>[] gameruleArray; // Gale - Airplane - use array for gamerule storage
  
      private static <T extends GameRules.Value<T>> GameRules.Key<T> register(String name, GameRules.Category category, GameRules.Type<T> type) {
          GameRules.Key<T> gamerules_gamerulekey = new GameRules.Key<>(name, category);
-@@ -116,17 +117,33 @@ public class GameRules {
+@@ -118,17 +119,33 @@ public class GameRules {
      }
  
      public GameRules() {
@@ -79,7 +79,7 @@ index 663c1d8c1611af915a1bae733920dd75ad73feb1..19bdb2c717718f074ab2b4c5fb934ea2
      }
  
      public CompoundTag createTag() {
-@@ -185,6 +202,10 @@ public class GameRules {
+@@ -187,6 +204,10 @@ public class GameRules {
      }
  
      public static final class Key<T extends GameRules.Value<T>> {

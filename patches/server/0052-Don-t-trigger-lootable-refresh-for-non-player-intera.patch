@@ -13,10 +13,10 @@ As part of: EmpireCraft (https://github.com/starlis/empirecraft)
 Licensed under: MIT (https://opensource.org/licenses/MIT)
 
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/RandomizableContainerBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/RandomizableContainerBlockEntity.java
-index 2175ed0c05a92d89db1cdae6983674efc4a8be08..0c7b222176f521d0c9c056c67622b8df81d967bc 100644
+index a05f7c8815d564bf1b95b6ce35ca2ac71ec84c9f..6e75f5696a6bc56a26578dba518920ac9b069427 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/RandomizableContainerBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/RandomizableContainerBlockEntity.java
-@@ -69,6 +69,7 @@ public abstract class RandomizableContainerBlockEntity extends BaseContainerBloc
+@@ -70,6 +70,7 @@ public abstract class RandomizableContainerBlockEntity extends BaseContainerBloc
      }
  
      public void unpackLootTable(@Nullable Player player) {

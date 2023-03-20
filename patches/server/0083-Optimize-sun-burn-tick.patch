@@ -13,7 +13,7 @@ As part of: JettPack (https://gitlab.com/Titaniumtown/JettPack)
 Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index cd705a59d63eaaf090c63f5c3d088db3cb1afa16..73824358e299c39fe7ea2d07d90ec1e25bb29f2f 100644
+index bd16880ba0efc2f3232431ac0a8df3c49915bafb..25f3cf277c0a23fd885d9920e0fd9d4b5f522b84 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -290,7 +290,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
@@ -25,12 +25,12 @@ index cd705a59d63eaaf090c63f5c3d088db3cb1afa16..73824358e299c39fe7ea2d07d90ec1e2
      public BlockPos blockPosition; // Gale - Pufferfish - optimize entity coordinate key - private -> public
      private ChunkPos chunkPosition;
      private Vec3 deltaMovement;
-@@ -1867,9 +1867,17 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -1872,9 +1872,17 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
      /** @deprecated */
      @Deprecated
      public float getLightLevelDependentMagicValue() {
--        return this.level.hasChunkAt(this.getBlockX(), this.getBlockZ()) ? this.level.getLightLevelDependentMagicValue(new BlockPos(this.getX(), this.getEyeY(), this.getZ())) : 0.0F;
-+        return this.level.getLightLevelDependentMagicValue(new BlockPos(this.getX(), this.getEyeY(), this.getZ())); // Gale - JettPack - optimize sun burn tick - allow passing BlockPos to getLightLevelDependentMagicValue
+-        return this.level.hasChunkAt(this.getBlockX(), this.getBlockZ()) ? this.level.getLightLevelDependentMagicValue(BlockPos.containing(this.getX(), this.getEyeY(), this.getZ())) : 0.0F;
++        return this.level.getLightLevelDependentMagicValue(BlockPos.containing(this.getX(), this.getEyeY(), this.getZ())); // Gale - JettPack - optimize sun burn tick - allow passing BlockPos to getLightLevelDependentMagicValue
      }
  
 +    // Gale start - JettPack - optimize sun burn tick - allow passing BlockPos to getLightLevelDependentMagicValue
@@ -45,10 +45,10 @@ index cd705a59d63eaaf090c63f5c3d088db3cb1afa16..73824358e299c39fe7ea2d07d90ec1e2
          this.absMoveTo(x, y, z);
          this.setYRot(yaw % 360.0F);
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index 2e98c0ad3776ec4bf71e686e856a8c445ee95b9b..27fc50571305132c86497fcb1d5b1bb514610a4e 100644
+index 728ecec837e9d9051bcf3533d63d5f179d34c81c..f2eca869a9301c8e6536396f55fd5dc871a3dfbc 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
-@@ -1643,13 +1643,29 @@ public abstract class Mob extends LivingEntity {
+@@ -1669,13 +1669,29 @@ public abstract class Mob extends LivingEntity implements Targeting {
  
      }
  
@@ -60,11 +60,11 @@ index 2e98c0ad3776ec4bf71e686e856a8c445ee95b9b..27fc50571305132c86497fcb1d5b1bb5
      public boolean isSunBurnTick() {
          if (this.level.isDay() && !this.level.isClientSide) {
 -            float f = this.getLightLevelDependentMagicValue();
--            BlockPos blockposition = new BlockPos(this.getX(), this.getEyeY(), this.getZ());
+-            BlockPos blockposition = BlockPos.containing(this.getX(), this.getEyeY(), this.getZ());
 +            // Gale start - JettPack - optimize sun burn tick - optimizations and cache eye blockpos
 +            int positionHashCode = this.position.hashCode();
 +            if (this.cached_position_hashcode != positionHashCode) {
-+                this.cached_eye_blockpos = new BlockPos(this.getX(), this.getEyeY(), this.getZ());
++                this.cached_eye_blockpos = BlockPos.containing(this.getX(), this.getEyeY(), this.getZ());
 +                this.cached_position_hashcode = positionHashCode;
 +            }
 +

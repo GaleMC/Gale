@@ -7,7 +7,7 @@ License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index ef633f7d1d48f8c2447c7d191f31ec646d641dca..e80a3bc48dfae7fcb22a9f4403a1fd8ef7852a58 100644
+index fddbb312444fdc561c3795076c2874c195f29473..112a27b70079516887707d89d40f1bad16ac2a57 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -15,6 +15,7 @@ dependencies {
@@ -25,8 +25,8 @@ index ef633f7d1d48f8c2447c7d191f31ec646d641dca..e80a3bc48dfae7fcb22a9f4403a1fd8e
 +    systemProperty("gale.detect.thread.blocks", true) // Gale - base thread pool - watch for blocking base threads
  
      val memoryGb = providers.gradleProperty("paper.runMemoryGb").getOrElse("2")
-     val modifiedJvmArgs = jvmArgs ?: arrayListOf()
-@@ -188,6 +190,7 @@ fun TaskContainer.registerRunTask(
+     minHeapSize = "${memoryGb}G"
+@@ -189,6 +191,7 @@ fun TaskContainer.registerRunTask(
      modifiedJvmArgs.addAll(listOf("--add-opens=java.base/java.lang=ALL-UNNAMED"))
      // Gale end - enable virtual threads for development runs
      modifiedJvmArgs.add("--add-modules=jdk.incubator.vector") // Gale - Pufferfish - SIMD support
@@ -35,10 +35,10 @@ index ef633f7d1d48f8c2447c7d191f31ec646d641dca..e80a3bc48dfae7fcb22a9f4403a1fd8e
  
      doFirst {
 diff --git a/src/main/java/org/bukkit/craftbukkit/Main.java b/src/main/java/org/bukkit/craftbukkit/Main.java
-index fab5d1c1531fa89113bef6d17df8437b0aec4582..95d8715928a0ddccdabcb76090a3b5bdd143c5a5 100644
+index 7c38d14671b8a9a671deece654d2f89426b26081..b3ff28d9cac66ae076179b861fd4735e4ecb279b 100644
 --- a/src/main/java/org/bukkit/craftbukkit/Main.java
 +++ b/src/main/java/org/bukkit/craftbukkit/Main.java
-@@ -4,18 +4,20 @@ import java.io.File;
+@@ -4,16 +4,21 @@ import java.io.File;
  import java.io.IOException;
  import java.text.DateFormat;
  import java.text.SimpleDateFormat;
@@ -53,17 +53,18 @@ index fab5d1c1531fa89113bef6d17df8437b0aec4582..95d8715928a0ddccdabcb76090a3b5bd
  import java.util.logging.Logger;
  import joptsimple.OptionParser;
  import joptsimple.OptionSet;
+ import joptsimple.util.PathConverter;
 +import net.minecraft.server.MinecraftServer;
- import net.minecraft.util.ExceptionCollector;
- import net.minecraft.world.level.lighting.LayerLightEventListener;
- import net.minecrell.terminalconsole.TerminalConsoleAppender; // Paper
++import net.minecraft.util.ExceptionCollector;
++import net.minecraft.world.level.lighting.LayerLightEventListener;
++import net.minecrell.terminalconsole.TerminalConsoleAppender; // Paper
 +import org.galemc.gale.executor.thread.BaseThread;
 +import org.spigotmc.WatchdogThread;
 +import reactor.blockhound.BlockHound;
  
  public class Main {
      public static boolean useJline = true;
-@@ -48,6 +50,49 @@ public class Main {
+@@ -46,6 +51,49 @@ public class Main {
      // Gale end - include time in startup logs
  
      public static void main(String[] args) {

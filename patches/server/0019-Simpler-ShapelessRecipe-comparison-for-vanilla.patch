@@ -37,10 +37,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 diff --git a/src/main/java/net/minecraft/world/item/crafting/ShapelessRecipe.java b/src/main/java/net/minecraft/world/item/crafting/ShapelessRecipe.java
-index e7c06d98532160499f2610f69de27e30a326b16f..548f960a4cb3f0f023534c6ba22cbd5e48d863c4 100644
+index f4f3f3a19d3cadaef1ae1a47daa68251a983dcf2..04f8e7709c52654241ff5f9403e2d58e42b47550 100644
 --- a/src/main/java/net/minecraft/world/item/crafting/ShapelessRecipe.java
 +++ b/src/main/java/net/minecraft/world/item/crafting/ShapelessRecipe.java
-@@ -26,8 +26,15 @@ public class ShapelessRecipe implements CraftingRecipe {
+@@ -27,8 +27,15 @@ public class ShapelessRecipe implements CraftingRecipe {
      final CraftingBookCategory category;
      final ItemStack result;
      final NonNullList<Ingredient> ingredients;
@@ -56,7 +56,7 @@ index e7c06d98532160499f2610f69de27e30a326b16f..548f960a4cb3f0f023534c6ba22cbd5e
          this.id = id;
          this.group = group;
          this.category = category;
-@@ -81,6 +88,28 @@ public class ShapelessRecipe implements CraftingRecipe {
+@@ -82,6 +89,28 @@ public class ShapelessRecipe implements CraftingRecipe {
      }
  
      public boolean matches(CraftingContainer inventory, Level world) {

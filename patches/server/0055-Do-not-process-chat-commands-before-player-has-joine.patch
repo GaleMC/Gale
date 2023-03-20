@@ -13,10 +13,10 @@ As part of: EmpireCraft (https://github.com/starlis/empirecraft)
 Licensed under: MIT (https://opensource.org/licenses/MIT)
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 8a548616885149fe23763b3b2cd46dc8323e5803..c5984ad4d12fec9310156a7b7c7beddd3dc0ba57 100644
+index 3c92e6fb78cce27572709cd767fb191f9107e0eb..2dcab455bdc6b0742cd2322062678aa7cd173c79 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-@@ -261,6 +261,7 @@ public class ServerPlayer extends Player {
+@@ -267,6 +267,7 @@ public class ServerPlayer extends Player {
      public boolean joining = true;
      public boolean sentListPacket = false;
      public boolean supressTrackerForLogin = false; // Paper
@@ -25,25 +25,25 @@ index 8a548616885149fe23763b3b2cd46dc8323e5803..c5984ad4d12fec9310156a7b7c7beddd
      // CraftBukkit end
      public boolean isRealPlayer; // Paper
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 619b5572b06e663824e38eaf29b477e8f9f86dda..8d14c710dbae635f0bf2c359ba1b2c144c95f536 100644
+index 1c5263a8b93e2a62f6cb43abc96f84583da8cf54..81fbaea23646bab3c8d6425d284a1a1bd1579095 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -2333,6 +2333,10 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
-         } else if (this.player.isRemoved() || this.player.getChatVisibility() == ChatVisiblity.HIDDEN) { // CraftBukkit - dead men tell no tales
-             this.send(new ClientboundSystemChatPacket(Component.translatable("chat.disabled.options").withStyle(ChatFormatting.RED), false));
-             return Optional.empty();
-+            // Gale start - EMC - do not process chat/commands before player has joined
-+        } else if (!player.didPlayerJoinEvent) {
-+            return Optional.empty();
-+            // Gale end - EMC - do not process chat/commands before player has joined
-         } else {
-             Optional<LastSeenMessages> optional = this.unpackAndApplyLastSeen(acknowledgment);
- 
+@@ -2328,6 +2328,10 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+             if (this.player.isRemoved() || this.player.getChatVisibility() == ChatVisiblity.HIDDEN) { // CraftBukkit - dead men tell no tales
+                 this.send(new ClientboundSystemChatPacket(PaperAdventure.asAdventure(Component.translatable("chat.disabled.options").withStyle(ChatFormatting.RED)), false)); // Paper - Adventure
+                 return Optional.empty();
++                // Gale start - EMC - do not process chat/commands before player has joined
++            } else if (!player.didPlayerJoinEvent) {
++                return Optional.empty();
++                // Gale end - EMC - do not process chat/commands before player has joined
+             } else {
+                 this.player.resetLastActionTime();
+                 return optional;
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index 4b754f6eae683248d7fe11d6d6cb168d5dd696a2..601b7cb73af55bdf8fd51c5f73e96a9656576cc2 100644
+index c0c14766adaac855112f85a203a6163b8adfdded..804ca4ab8539a9319704628ed53d6ccca654d8e3 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
-@@ -322,6 +322,8 @@ public abstract class PlayerList {
+@@ -328,6 +328,8 @@ public abstract class PlayerList {
              return;
          }
  

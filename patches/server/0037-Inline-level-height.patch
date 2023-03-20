@@ -31,10 +31,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 diff --git a/src/main/java/net/minecraft/world/level/Level.java b/src/main/java/net/minecraft/world/level/Level.java
-index 860d398c2228b14000dcf8bf2460e7c2eaa56739..70a4cabf3cc5a1d2fb4db462374f8d3aaf17487e 100644
+index 67de286dd6a569da9f8b36a4c7bd673830c17a2b..901bd7f723b2c57ee5bbff0735fd6b47947f4383 100644
 --- a/src/main/java/net/minecraft/world/level/Level.java
 +++ b/src/main/java/net/minecraft/world/level/Level.java
-@@ -268,6 +268,15 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
+@@ -272,6 +272,15 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
  
      public abstract ResourceKey<LevelStem> getTypeKey();
  
@@ -47,10 +47,10 @@ index 860d398c2228b14000dcf8bf2460e7c2eaa56739..70a4cabf3cc5a1d2fb4db462374f8d3a
 +    @Override public final int getHeight() { return this.height; }
 +    // Gale end - Airplane - inline level height
 +
-     protected Level(WritableLevelData worlddatamutable, ResourceKey<Level> resourcekey, Holder<DimensionType> holder, boolean flag, boolean flag1, long i, int j, org.bukkit.generator.ChunkGenerator gen, org.bukkit.generator.BiomeProvider biomeProvider, org.bukkit.World.Environment env, java.util.function.Function<org.spigotmc.SpigotWorldConfig, io.papermc.paper.configuration.WorldConfiguration> paperWorldConfigCreator, java.util.function.Function<org.spigotmc.SpigotWorldConfig, GaleWorldConfiguration> galeWorldConfigCreator, java.util.concurrent.Executor executor) { // Paper - Async-Anti-Xray - Pass executor // Gale - Gale configuration // Gale - Purpur - remove vanilla profiler
+     protected Level(WritableLevelData worlddatamutable, ResourceKey<Level> resourcekey, RegistryAccess iregistrycustom, Holder<DimensionType> holder, boolean flag, boolean flag1, long i, int j, org.bukkit.generator.ChunkGenerator gen, org.bukkit.generator.BiomeProvider biomeProvider, org.bukkit.World.Environment env, java.util.function.Function<org.spigotmc.SpigotWorldConfig, io.papermc.paper.configuration.WorldConfiguration> paperWorldConfigCreator, java.util.function.Function<org.spigotmc.SpigotWorldConfig, GaleWorldConfiguration> galeWorldConfigCreator, java.util.concurrent.Executor executor) { // Paper - Async-Anti-Xray - Pass executor // Gale - Gale configuration // Gale - Purpur - remove vanilla profiler
          this.spigotConfig = new org.spigotmc.SpigotWorldConfig(((net.minecraft.world.level.storage.PrimaryLevelData) worlddatamutable).getLevelName()); // Spigot
          this.paperConfig = paperWorldConfigCreator.apply(this.spigotConfig); // Paper
-@@ -290,6 +299,13 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
+@@ -294,6 +303,13 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
          });
          final DimensionType dimensionmanager = (DimensionType) holder.value();
  

@@ -64,10 +64,10 @@ index d95c3b14c06421c03c99f84efb3a5319200f8a57..8ed18a158a13dceca7cd342125c09e52
              boolean flag1 = level.ticksPerSpawnCategory.getLong(org.bukkit.entity.SpawnCategory.ANIMAL) != 0L && worlddata.getGameTime() % level.ticksPerSpawnCategory.getLong(org.bukkit.entity.SpawnCategory.ANIMAL) == 0L; // CraftBukkit
  
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index b8c4a0177b69dc3f79560e7ca5e80e681c73f698..afdc242861a05acfade89e01dfeaad0fa9a13e0a 100644
+index 866213a1d3f2d1817cfd2798e92f2b512aef8840..8a1e9fe9f88ce551a0944103f061638804acb5f7 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
-@@ -772,6 +772,8 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -770,6 +770,8 @@ public class ServerLevel extends Level implements WorldGenLevel {
      private final BlockPos.MutableBlockPos chunkTickMutablePosition = new BlockPos.MutableBlockPos();
      // Paper end
  
@@ -76,7 +76,7 @@ index b8c4a0177b69dc3f79560e7ca5e80e681c73f698..afdc242861a05acfade89e01dfeaad0f
      public void tickChunk(LevelChunk chunk, int randomTickSpeed) {
          ChunkPos chunkcoordintpair = chunk.getPos();
          boolean flag = this.isRaining();
-@@ -779,7 +781,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -777,7 +779,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
          int k = chunkcoordintpair.getMinBlockZ();
          final BlockPos.MutableBlockPos blockposition = this.chunkTickMutablePosition; // Paper - use mutable to reduce allocation rate, final to force compile fail on change
  
@@ -85,7 +85,7 @@ index b8c4a0177b69dc3f79560e7ca5e80e681c73f698..afdc242861a05acfade89e01dfeaad0f
              blockposition.set(this.findLightningTargetAround(this.getBlockRandomPos(j, 0, k, 15))); // Paper
              if (this.isRainingAt(blockposition)) {
                  DifficultyInstance difficultydamagescaler = this.getCurrentDifficultyAt(blockposition);
-@@ -808,7 +810,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -806,7 +808,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
  
          int l;
  
@@ -95,7 +95,7 @@ index b8c4a0177b69dc3f79560e7ca5e80e681c73f698..afdc242861a05acfade89e01dfeaad0f
              this.getRandomBlockPosition(j, 0, k, 15, blockposition);
              int normalY = chunk.getHeight(Heightmap.Types.MOTION_BLOCKING, blockposition.getX() & 15, blockposition.getZ() & 15) + 1;
 diff --git a/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java b/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java
-index 40e0c951604875ce96b200561cbbf51bab97e188..bca581f2a192015f5461e5bf776234687e5ae9fc 100644
+index d46ca5eb581bdf4b64bdb875a93238ef6343090c..8e76062dc8f9411bc2b8b76b14d21ae6aa738a3a 100644
 --- a/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java
 +++ b/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java
 @@ -87,6 +87,18 @@ public class LevelChunk extends ChunkAccess {

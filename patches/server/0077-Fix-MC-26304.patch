@@ -13,7 +13,7 @@ As part of: Mirai (https://github.com/etil2jz/Mirai)
 Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
-index 0bab2693b91d5bab222c7db8bc6965ccde954003..4b56e5113136039cf2714ea71f0c51bebae3ab39 100644
+index c57efcb9a79337ec791e4e8f6671612f0a82b441..efb3570aa66d13438133b43b9e58d308edb5a478 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
 @@ -6,6 +6,7 @@ import javax.annotation.Nullable;
@@ -23,8 +23,8 @@ index 0bab2693b91d5bab222c7db8bc6965ccde954003..4b56e5113136039cf2714ea71f0c51be
 +import net.minecraft.core.registries.BuiltInRegistries;
  import net.minecraft.nbt.CompoundTag;
  import net.minecraft.network.chat.Component;
- import net.minecraft.world.ContainerHelper;
-@@ -48,6 +49,7 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
+ import net.minecraft.world.Container;
+@@ -49,6 +50,7 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
      public static final int DATA_BREW_TIME = 0;
      public static final int DATA_FUEL_USES = 1;
      public static final int NUM_DATA_VALUES = 2;
@@ -32,7 +32,7 @@ index 0bab2693b91d5bab222c7db8bc6965ccde954003..4b56e5113136039cf2714ea71f0c51be
      private NonNullList<ItemStack> items;
      public int brewTime;
      private boolean[] lastPotionCount;
-@@ -300,6 +302,22 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
+@@ -301,6 +303,22 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
          ContainerHelper.loadAllItems(nbt, this.items);
          this.brewTime = nbt.getShort("BrewTime");
          this.fuel = nbt.getByte("Fuel");
@@ -55,7 +55,7 @@ index 0bab2693b91d5bab222c7db8bc6965ccde954003..4b56e5113136039cf2714ea71f0c51be
      }
  
      @Override
-@@ -308,6 +326,18 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
+@@ -309,6 +327,18 @@ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements
          nbt.putShort("BrewTime", (short) this.brewTime);
          ContainerHelper.saveAllItems(nbt, this.items);
          nbt.putByte("Fuel", (byte) this.fuel);

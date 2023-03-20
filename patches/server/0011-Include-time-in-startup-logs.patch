@@ -7,7 +7,7 @@ License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/org/bukkit/craftbukkit/Main.java b/src/main/java/org/bukkit/craftbukkit/Main.java
-index 190e17eb28d166aedee06e9578561ba402d1b6d2..fab5d1c1531fa89113bef6d17df8437b0aec4582 100644
+index d51650d3e37eb76a0cf991e95d28a552aa567af9..7c38d14671b8a9a671deece654d2f89426b26081 100644
 --- a/src/main/java/org/bukkit/craftbukkit/Main.java
 +++ b/src/main/java/org/bukkit/craftbukkit/Main.java
 @@ -2,6 +2,7 @@ package org.bukkit.craftbukkit;
@@ -18,7 +18,7 @@ index 190e17eb28d166aedee06e9578561ba402d1b6d2..fab5d1c1531fa89113bef6d17df8437b
  import java.text.SimpleDateFormat;
  import java.util.Arrays;
  import java.util.Calendar;
-@@ -26,6 +27,26 @@ public class Main {
+@@ -24,6 +25,26 @@ public class Main {
      }
      // Paper end
  
@@ -45,7 +45,7 @@ index 190e17eb28d166aedee06e9578561ba402d1b6d2..fab5d1c1531fa89113bef6d17df8437b
      public static void main(String[] args) {
          // Paper start
          final String warnWhenLegacyFormattingDetected = String.join(".", "net", "kyori", "adventure", "text", "warnWhenLegacyFormattingDetected");
-@@ -292,13 +313,13 @@ public class Main {
+@@ -299,13 +320,13 @@ public class Main {
                      String javaInfo = "Java " + runtimeMX.getSpecVersion() + " (" + runtimeMX.getVmName() + " " + runtimeMX.getVmVersion() + ")";
                      String osInfo = "Host: " + osMX.getName() + " " + osMX.getVersion() + " (" + osMX.getArch() + ")";
  

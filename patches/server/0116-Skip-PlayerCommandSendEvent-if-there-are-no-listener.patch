@@ -37,10 +37,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 diff --git a/src/main/java/net/minecraft/commands/Commands.java b/src/main/java/net/minecraft/commands/Commands.java
-index 6f7b5884a82cd3a3483fbbd478c0e92987f0d833..c7083450b3466d80611b5efdac78b31ac2e70cf5 100644
+index 28d78c5d593302d8fe376686db6402cafa5ccb86..1a28f9b348a24448bd4a327e1bf0dfab4dc301f5 100644
 --- a/src/main/java/net/minecraft/commands/Commands.java
 +++ b/src/main/java/net/minecraft/commands/Commands.java
-@@ -418,6 +418,7 @@ public class Commands {
+@@ -447,6 +447,7 @@ public class Commands {
      private void runSync(ServerPlayer player, Collection<String> bukkit, RootCommandNode<SharedSuggestionProvider> rootcommandnode) {
          // Paper end - Async command map building
          new com.destroystokyo.paper.event.brigadier.AsyncPlayerSendCommandsEvent<CommandSourceStack>(player.getBukkitEntity(), (RootCommandNode) rootcommandnode, false).callEvent(); // Paper
@@ -48,7 +48,7 @@ index 6f7b5884a82cd3a3483fbbd478c0e92987f0d833..c7083450b3466d80611b5efdac78b31a
          PlayerCommandSendEvent event = new PlayerCommandSendEvent(player.getBukkitEntity(), new LinkedHashSet<>(bukkit));
          event.getPlayer().getServer().getPluginManager().callEvent(event);
  
-@@ -428,6 +429,7 @@ public class Commands {
+@@ -457,6 +458,7 @@ public class Commands {
              }
          }
          // CraftBukkit end

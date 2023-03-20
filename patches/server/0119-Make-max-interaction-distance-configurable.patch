@@ -7,7 +7,7 @@ License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayerGameMode.java b/src/main/java/net/minecraft/server/level/ServerPlayerGameMode.java
-index 58b093bb1de78ee3b3b2ea364aa50474883f443a..7be34e5df2b6d33c1d7943c9c0b6fd065b010c34 100644
+index 0a3eb5e929c605d9eb7369de8ade8b49951f5d37..adb72105dc98c9052ced2288362f58aa9f298237 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayerGameMode.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayerGameMode.java
 @@ -173,7 +173,7 @@ public class ServerPlayerGameMode {
@@ -20,10 +20,10 @@ index 58b093bb1de78ee3b3b2ea364aa50474883f443a..7be34e5df2b6d33c1d7943c9c0b6fd06
              this.debugLogging(pos, false, sequence, "too far");
          } else if (pos.getY() >= worldHeight) {
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index aa11cb23ff5bbdc84bdbda2cad8826485e60e7f4..e000da425ba28330d1edcce3948d2becb39d2bd3 100644
+index 15611b8970b6cfb733a9f733d64d75c9934b65f7..25a8d3a1302c36f46eb3e0f9a5a532a329165fd7 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -250,7 +250,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -252,7 +252,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
  
      static final Logger LOGGER = LogUtils.getLogger();
      private static final int LATENCY_CHECK_INTERVAL = 15000;
@@ -32,7 +32,7 @@ index aa11cb23ff5bbdc84bdbda2cad8826485e60e7f4..e000da425ba28330d1edcce3948d2bec
      private static final int NO_BLOCK_UPDATES_TO_ACK = -1;
      private static final int TRACKED_MESSAGE_DISCONNECT_THRESHOLD = 4096;
      private static final Component CHAT_VALIDATION_FAILED = Component.translatable("multiplayer.disconnect.chat_validation_failed");
-@@ -347,6 +347,13 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -349,6 +349,13 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
      }
      // CraftBukkit end
  
@@ -46,7 +46,7 @@ index aa11cb23ff5bbdc84bdbda2cad8826485e60e7f4..e000da425ba28330d1edcce3948d2bec
      @Override
      public void tick() {
          if (this.ackBlockChangesUpTo > -1) {
-@@ -1968,7 +1975,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -1958,7 +1965,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
              BlockPos blockposition = movingobjectpositionblock.getBlockPos();
              Vec3 vec3d1 = Vec3.atCenterOf(blockposition);
  
@@ -55,12 +55,12 @@ index aa11cb23ff5bbdc84bdbda2cad8826485e60e7f4..e000da425ba28330d1edcce3948d2bec
                  Vec3 vec3d2 = vec3d.subtract(vec3d1);
                  double d0 = 1.0000001D;
  
-@@ -2796,7 +2803,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
-                 return;
-             }
+@@ -2810,7 +2817,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
  
--            if (entity.distanceToSqr(this.player.getEyePosition()) < ServerGamePacketListenerImpl.MAX_INTERACTION_DISTANCE) {
-+            if (entity.distanceToSqr(this.player.getEyePosition()) < ServerGamePacketListenerImpl.getMaxInteractionDistanceSquared(this.player.level)) { // Gale - make max interaction distance configurable
+             AABB axisalignedbb = entity.getBoundingBox();
+ 
+-            if (axisalignedbb.distanceToSqr(this.player.getEyePosition()) < ServerGamePacketListenerImpl.MAX_INTERACTION_DISTANCE) {
++            if (axisalignedbb.distanceToSqr(this.player.getEyePosition()) < ServerGamePacketListenerImpl.getMaxInteractionDistanceSquared(this.player.level)) { // Gale - make max interaction distance configurable
                  packet.dispatch(new ServerboundInteractPacket.Handler() {
                      private void performInteraction(InteractionHand enumhand, ServerGamePacketListenerImpl.EntityInteraction playerconnection_a, PlayerInteractEntityEvent event) { // CraftBukkit
                          ItemStack itemstack = ServerGamePacketListenerImpl.this.player.getItemInHand(enumhand);

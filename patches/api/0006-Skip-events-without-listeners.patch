@@ -13,31 +13,26 @@ As part of: JettPack (https://gitlab.com/Titaniumtown/JettPack)
 Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 
 diff --git a/src/main/java/org/bukkit/plugin/SimplePluginManager.java b/src/main/java/org/bukkit/plugin/SimplePluginManager.java
-index b012ce40d82389c29d1b841ff685425ac10a7f9e..7903554958f567c7b566a47fa4b49852a837898e 100644
+index 2b8308989fce7f8a16907f8711b362e671fdbfb6..623c683563a5fb5dcf3b8478873ef2a27307b289 100644
 --- a/src/main/java/org/bukkit/plugin/SimplePluginManager.java
 +++ b/src/main/java/org/bukkit/plugin/SimplePluginManager.java
-@@ -653,6 +653,14 @@ public final class SimplePluginManager implements PluginManager {
-      */
-     @Override
-     public void callEvent(@NotNull Event event) {
+@@ -633,6 +633,19 @@ public final class SimplePluginManager implements PluginManager {
+         HandlerList handlers = event.getHandlers();
+         RegisteredListener[] listeners = handlers.getRegisteredListeners();
+ 
 +        // Gale start - JettPack - skip events without listeners
-+        HandlerList handlers = event.getHandlers();
-+        RegisteredListener[] listeners = handlers.getRegisteredListeners();
 +        if (listeners.length == 0) {
 +            return;
 +        }
 +        // Gale end - JettPack - skip events without listeners
 +
-         // Paper - replace callEvent by merging to below method
-         if (event.isAsynchronous() && server.isPrimaryThread()) {
-             throw new IllegalStateException(event.getEventName() + " may only be triggered asynchronously.");
-@@ -660,9 +668,6 @@ public final class SimplePluginManager implements PluginManager {
-             throw new IllegalStateException(event.getEventName() + " may only be triggered synchronously.");
-         }
- 
--        HandlerList handlers = event.getHandlers();
--        RegisteredListener[] listeners = handlers.getRegisteredListeners();
--
++        // Paper - replace callEvent by merging to below method
++        if (event.isAsynchronous() && server.isPrimaryThread()) {
++            throw new IllegalStateException(event.getEventName() + " may only be triggered asynchronously.");
++        } else if (!event.isAsynchronous() && !server.isPrimaryThread() && !server.isStopping() ) {
++            throw new IllegalStateException(event.getEventName() + " may only be triggered synchronously.");
++        }
++
          for (RegisteredListener registration : listeners) {
              if (!registration.getPlugin().isEnabled()) {
                  continue;

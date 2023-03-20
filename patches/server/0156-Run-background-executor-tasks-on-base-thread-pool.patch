@@ -7,7 +7,7 @@ License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/net/minecraft/Util.java b/src/main/java/net/minecraft/Util.java
-index 5ef58831a857fd8aa4ac30147762dc17d773a53e..6b109d92dec227d4a91a455caf596beb112a8351 100644
+index 4c90a6ee734451fe404b2255d21090b669da1aa1..0ddacb31f037feac052c5019f19bea49b43af942 100644
 --- a/src/main/java/net/minecraft/Util.java
 +++ b/src/main/java/net/minecraft/Util.java
 @@ -26,9 +26,6 @@ import java.net.URL;
@@ -29,12 +29,13 @@ index 5ef58831a857fd8aa4ac30147762dc17d773a53e..6b109d92dec227d4a91a455caf596beb
  import java.util.concurrent.LinkedBlockingQueue;
  import java.util.concurrent.TimeUnit;
  import java.util.concurrent.atomic.AtomicInteger;
-@@ -67,11 +62,11 @@ import java.util.stream.Stream;
+@@ -67,12 +62,12 @@ import java.util.stream.Stream;
  import javax.annotation.Nullable;
  import net.minecraft.resources.ResourceLocation;
  import net.minecraft.server.Bootstrap;
 -import net.minecraft.util.Mth;
  import net.minecraft.util.RandomSource;
+ import net.minecraft.util.SingleKeyCache;
  import net.minecraft.util.TimeSource;
  import net.minecraft.util.datafix.DataFixers;
  import net.minecraft.world.level.block.state.properties.Property;
@@ -42,18 +43,16 @@ index 5ef58831a857fd8aa4ac30147762dc17d773a53e..6b109d92dec227d4a91a455caf596beb
  import org.slf4j.Logger;
  
  public class Util {
-@@ -79,8 +74,8 @@ public class Util {
+@@ -80,7 +75,7 @@ public class Util {
      private static final int DEFAULT_MAX_THREADS = 255;
      private static final String MAX_THREADS_SYSTEM_PROPERTY = "max.bg.threads";
      private static final AtomicInteger WORKER_COUNT = new AtomicInteger(1);
--    private static final ExecutorService BOOTSTRAP_EXECUTOR = makeExecutor("Bootstrap", -2); // Paper - add -2 priority
 -    private static final ExecutorService BACKGROUND_EXECUTOR = makeExecutor("Main", -1); // Paper - add -1 priority
 +    private static final ExecutorService BACKGROUND_EXECUTOR = BaseTaskQueues.scheduledAsync.yieldingExecutor; // Gale - base thread pool - remove background executor
-+    private static final ExecutorService BOOTSTRAP_EXECUTOR = BACKGROUND_EXECUTOR; // Gale - Patina - remove bootstrap executor
      // Paper start - don't submit BLOCKING PROFILE LOOKUPS to the world gen thread
      public static final ExecutorService PROFILE_EXECUTOR = Executors.newFixedThreadPool(2, new java.util.concurrent.ThreadFactory() {
  
-@@ -219,7 +214,6 @@ public class Util {
+@@ -215,7 +210,6 @@ public class Util {
      }
  
      public static void shutdownExecutors() {

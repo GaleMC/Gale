@@ -28,10 +28,10 @@ but is so much cheaper than the suffocation check that it's worth
 keeping it.
 
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index e68eef2c5c8d3aea186beb5997122b8371fa11ae..6b1fb422d68f3b83fef66a8af997b2140f1d0897 100644
+index db64a50dd929d64418cfd81176377b3a1d5d1acc..5629a2f7f0806475b5cc661894f5a915a08d9f15 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-@@ -400,7 +400,10 @@ public abstract class LivingEntity extends Entity {
+@@ -395,7 +395,10 @@ public abstract class LivingEntity extends Entity implements Attackable {
              boolean flag = this instanceof net.minecraft.world.entity.player.Player;
  
              if (!this.level.isClientSide) {
@@ -40,10 +40,10 @@ index e68eef2c5c8d3aea186beb5997122b8371fa11ae..6b1fb422d68f3b83fef66a8af997b214
 +                long checkStuckInWallInterval = this.level.galeConfig().smallOptimizations.reducedIntervals.checkStuckInWall;
 +                if ((checkStuckInWallInterval <= 1 || (tickCount % checkStuckInWallInterval == 0 && couldPossiblyBeHurt(1.0F))) && this.isInWall()) {
 +                    // Gale end - Pufferfish - reduce in wall checks
-                     this.hurt(DamageSource.IN_WALL, 1.0F);
+                     this.hurt(this.damageSources().inWall(), 1.0F);
                  } else if (flag && !this.level.getWorldBorder().isWithinBounds(this.getBoundingBox())) {
                      double d0 = this.level.getWorldBorder().getDistanceToBorder(this) + this.level.getWorldBorder().getDamageSafeZone();
-@@ -1324,6 +1327,15 @@ public abstract class LivingEntity extends Entity {
+@@ -1318,6 +1321,15 @@ public abstract class LivingEntity extends Entity implements Attackable {
          return this.getHealth() <= 0.0F;
      }
  

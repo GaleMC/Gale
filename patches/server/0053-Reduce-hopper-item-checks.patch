@@ -17,12 +17,12 @@ Licensed under: MIT (https://opensource.org/licenses/MIT)
 Only do an item "suck in" action once per second
 
 diff --git a/src/main/java/net/minecraft/world/entity/item/ItemEntity.java b/src/main/java/net/minecraft/world/entity/item/ItemEntity.java
-index 893eb4904df79a5fc629a0fc7a0c018548eeffb1..7b0374b6e22105e59b29995983a6ac50268c722e 100644
+index 036d7d29d7c85390b9658ddd70f17447648c265a..b77d112f74046cd35f17bada00a22402cb716482 100644
 --- a/src/main/java/net/minecraft/world/entity/item/ItemEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/item/ItemEntity.java
-@@ -10,11 +10,13 @@ import net.minecraft.world.entity.Entity;
- import net.minecraft.world.entity.EntityType;
+@@ -15,11 +15,13 @@ import net.minecraft.world.entity.EntityType;
  import net.minecraft.world.entity.MoverType;
+ import net.minecraft.world.entity.TraceableEntity;
  import net.minecraft.world.entity.player.Player;
 +import net.minecraft.world.entity.vehicle.MinecartHopper;
  import net.minecraft.world.item.Item;
@@ -32,9 +32,9 @@ index 893eb4904df79a5fc629a0fc7a0c018548eeffb1..7b0374b6e22105e59b29995983a6ac50
  import net.minecraft.world.level.gameevent.GameEvent;
 +import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
- import net.minecraft.Util;
  import net.minecraft.core.BlockPos;
-@@ -199,11 +201,31 @@ public class ItemEntity extends Entity {
+ import net.minecraft.nbt.CompoundTag;
+@@ -208,11 +210,31 @@ public class ItemEntity extends Entity implements TraceableEntity {
                  }
                  // CraftBukkit end
                  this.discard();
@@ -66,7 +66,7 @@ index 893eb4904df79a5fc629a0fc7a0c018548eeffb1..7b0374b6e22105e59b29995983a6ac50
      // Spigot start - copied from above
      @Override
      public void inactiveTick() {
-@@ -223,7 +245,13 @@ public class ItemEntity extends Entity {
+@@ -232,7 +254,13 @@ public class ItemEntity extends Entity implements TraceableEntity {
              }
              // CraftBukkit end
              this.discard();
@@ -81,18 +81,18 @@ index 893eb4904df79a5fc629a0fc7a0c018548eeffb1..7b0374b6e22105e59b29995983a6ac50
      // Spigot end
  
 diff --git a/src/main/java/net/minecraft/world/entity/vehicle/MinecartHopper.java b/src/main/java/net/minecraft/world/entity/vehicle/MinecartHopper.java
-index 70f1916185b79bbb9f033f4ef8119d7b17a13ef8..eb12e78d3bf504cd0d641753934491733bfafdf6 100644
+index 1b8f22805af87dc08e0dea9fd93a5f93c0b05107..36c2da765ef520d0cbe239892b8234b81b1b8012 100644
 --- a/src/main/java/net/minecraft/world/entity/vehicle/MinecartHopper.java
 +++ b/src/main/java/net/minecraft/world/entity/vehicle/MinecartHopper.java
-@@ -22,6 +22,7 @@ public class MinecartHopper extends AbstractMinecartContainer implements Hopper
+@@ -17,6 +17,7 @@ import net.minecraft.world.level.block.state.BlockState;
+ 
+ public class MinecartHopper extends AbstractMinecartContainer implements Hopper {
      private boolean enabled = true;
-     public int cooldownTime = -1;
-     private final BlockPos lastPosition = BlockPos.ZERO;
 +    public int pickupImmunity = 0; // Gale - EMC - reduce hopper item checks
  
      public MinecartHopper(EntityType<? extends MinecartHopper> type, Level world) {
          super(type, world);
-@@ -159,4 +160,12 @@ public class MinecartHopper extends AbstractMinecartContainer implements Hopper
+@@ -132,4 +133,12 @@ public class MinecartHopper extends AbstractMinecartContainer implements Hopper
      }
      // Paper end
  
@@ -106,12 +106,12 @@ index 70f1916185b79bbb9f033f4ef8119d7b17a13ef8..eb12e78d3bf504cd0d64175393449173
 +
  }
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/Hopper.java b/src/main/java/net/minecraft/world/level/block/entity/Hopper.java
-index 6a1405a8630e90db3b5a3c9152259ba6f5f0c784..f55af1cadca08a426d9b4741ae3f1c32c31d8fa3 100644
+index a05acf709735b40ca86f978508c63a86065fd405..3752b4ba7fb0d680d4b4a61bf44d54d5ab11815c 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/Hopper.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/Hopper.java
-@@ -16,6 +16,8 @@ public interface Hopper extends Container {
- 
-     default net.minecraft.core.BlockPos getBlockPosition() { return new net.minecraft.core.BlockPos(getLevelX(), getLevelY(), getLevelZ()); } // Paper
+@@ -14,6 +14,8 @@ public interface Hopper extends Container {
+         return SUCK;
+     }
  
 +    long getAndIncrementAttemptCounter(); // Gale - EMC - reduce hopper item checks
 +
@@ -119,10 +119,10 @@ index 6a1405a8630e90db3b5a3c9152259ba6f5f0c784..f55af1cadca08a426d9b4741ae3f1c32
  
      double getLevelY();
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java
-index 877e07c62a6235670c756edef3eebb385bccccd4..3b5b3750265ea72d6d0c33c7261f0dab9fea2413 100644
+index b925173cba818e740f490e5b9f21ffafb043a217..81ad831d878c303efe62cc0f9b24f55bc0d5b1d7 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java
-@@ -10,6 +10,7 @@ import net.minecraft.core.Direction;
+@@ -11,6 +11,7 @@ import net.minecraft.core.Direction;
  import net.minecraft.core.NonNullList;
  import net.minecraft.nbt.CompoundTag;
  import net.minecraft.network.chat.Component;
@@ -130,7 +130,7 @@ index 877e07c62a6235670c756edef3eebb385bccccd4..3b5b3750265ea72d6d0c33c7261f0dab
  import net.minecraft.world.CompoundContainer;
  import net.minecraft.world.Container;
  import net.minecraft.world.ContainerHelper;
-@@ -495,7 +496,7 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
+@@ -501,7 +502,7 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
                  }
                  // Paper end
              });
@@ -139,15 +139,15 @@ index 877e07c62a6235670c756edef3eebb385bccccd4..3b5b3750265ea72d6d0c33c7261f0dab
              Iterator iterator = HopperBlockEntity.getItemsAtAndAbove(world, hopper).iterator();
  
              ItemEntity entityitem;
-@@ -510,6 +511,7 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
+@@ -516,6 +517,7 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
  
              return true;
          }
 +        return false; // Gale - EMC - reduce hopper item checks
      }
  
-     // Paper - method unused as logic is inlined above
-@@ -728,6 +730,31 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
+     @io.papermc.paper.annotation.DoNotUse // Paper - method unused as logic is inlined above
+@@ -805,6 +807,31 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
          return !first.is(second.getItem()) ? false : (first.getDamageValue() != second.getDamageValue() ? false : (first.getCount() > first.getMaxStackSize() ? false : ItemStack.tagMatches(first, second)));
      }
  

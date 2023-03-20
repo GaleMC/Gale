@@ -7,13 +7,13 @@ License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 7ed5c129d24d56dd90083c5a52721d359f617159..3a8f82fdbecb34b32054cd5bdd30759f5ecab7fa 100644
+index 337003cf37ee544903c0800f7118dbd5c5a40a63..0b3f1508c2d461a11cf26e9e298e15e3650daccf 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -56,6 +56,16 @@ dependencies {
  }
  
- val craftbukkitPackageVersion = "1_19_R2" // Paper
+ val craftbukkitPackageVersion = "1_19_R3" // Paper
 +
 +// Gale start - hide irrelevant compilation warnings
 +tasks.withType<JavaCompile> {

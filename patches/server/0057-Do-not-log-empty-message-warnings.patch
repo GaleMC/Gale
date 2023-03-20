@@ -7,10 +7,10 @@ License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 8d14c710dbae635f0bf2c359ba1b2c144c95f536..ffaebc09f523d9400ed13eded9f0c39ac650ba22 100644
+index 81fbaea23646bab3c8d6425d284a1a1bd1579095..a6af613e91015dc3b9ec31f9c0ff57072e3ab40f 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -183,6 +183,7 @@ import net.minecraft.world.phys.shapes.BooleanOp;
+@@ -185,6 +185,7 @@ import net.minecraft.world.phys.shapes.BooleanOp;
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
  import org.bukkit.craftbukkit.util.permissions.CraftDefaultPermissions;
@@ -18,7 +18,7 @@ index 8d14c710dbae635f0bf2c359ba1b2c144c95f536..ffaebc09f523d9400ed13eded9f0c39a
  import org.galemc.gale.configuration.GaleGlobalConfiguration;
  import org.slf4j.Logger;
  
-@@ -2546,7 +2547,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -2540,7 +2541,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
          // CraftBukkit start
          String s = message.signedContent();
          if (s.isEmpty()) {

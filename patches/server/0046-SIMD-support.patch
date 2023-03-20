@@ -13,7 +13,7 @@ As part of: Pufferfish (https://github.com/pufferfish-gg/Pufferfish)
 Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index b7cac76808d22a4f8e389c0f476e2825404b6e59..ef633f7d1d48f8c2447c7d191f31ec646d641dca 100644
+index f6bc72697ca7e7cf4b573a95492a2278b7dcb6a0..fddbb312444fdc561c3795076c2874c195f29473 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -63,6 +63,7 @@ tasks.withType<JavaCompile> {
@@ -24,7 +24,7 @@ index b7cac76808d22a4f8e389c0f476e2825404b6e59..ef633f7d1d48f8c2447c7d191f31ec64
  }
  // Gale end - hide irrelevant compilation warnings
  
-@@ -186,6 +187,7 @@ fun TaskContainer.registerRunTask(
+@@ -187,6 +188,7 @@ fun TaskContainer.registerRunTask(
      modifiedJvmArgs.add("--enable-preview")
      modifiedJvmArgs.addAll(listOf("--add-opens=java.base/java.lang=ALL-UNNAMED"))
      // Gale end - enable virtual threads for development runs

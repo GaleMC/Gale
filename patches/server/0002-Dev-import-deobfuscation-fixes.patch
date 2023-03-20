@@ -7,7 +7,7 @@ License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/net/minecraft/server/network/TextFilterClient.java b/src/main/java/net/minecraft/server/network/TextFilterClient.java
-index e0c6783071b1a6ff841842f8a88a990d0fe83180..4b3d2280326c7eeda4952c36edff141cbff90e16 100644
+index 1b617a64f2f7a48a8b505ee87b61a040b80d8cc6..92f56e29ffb7386cbbf7893c000ff330eb997ba5 100644
 --- a/src/main/java/net/minecraft/server/network/TextFilterClient.java
 +++ b/src/main/java/net/minecraft/server/network/TextFilterClient.java
 @@ -98,38 +98,44 @@ public class TextFilterClient implements AutoCloseable {
@@ -93,10 +93,10 @@ index 50a9f33aa31e9273c7c52d4bb2b02f0f884f7ba5..19779298b2b2ecbe30f9308dad1d8037
              });
              return Collections.unmodifiableCollection(list);
 diff --git a/src/main/java/net/minecraft/util/ExtraCodecs.java b/src/main/java/net/minecraft/util/ExtraCodecs.java
-index 0e30e20eca4dfd7c9b3f1ec49333cff809ab1b8a..7591002e07271389f9ac8decea25747c0cd8a213 100644
+index cf64c2bed790da41a2e524e75d60a069765f035a..57fae84be749bd4a61a0c700a5cefce7122643e6 100644
 --- a/src/main/java/net/minecraft/util/ExtraCodecs.java
 +++ b/src/main/java/net/minecraft/util/ExtraCodecs.java
-@@ -174,7 +174,7 @@ public class ExtraCodecs {
+@@ -228,7 +228,7 @@ public class ExtraCodecs {
              return ImmutableList.of(leftFunction.apply(pair), rightFunction.apply(pair));
          });
          Codec<I> codec3 = RecordCodecBuilder.<Pair>create((instance) -> {
@@ -105,16 +105,16 @@ index 0e30e20eca4dfd7c9b3f1ec49333cff809ab1b8a..7591002e07271389f9ac8decea25747c
          }).comapFlatMap((pair) -> {
              return combineFunction.apply((P)pair.getFirst(), (P)pair.getSecond());
          }, (pair) -> {
-@@ -203,7 +203,7 @@ public class ExtraCodecs {
-             public <T> DataResult<Pair<A, T>> apply(DynamicOps<T> dynamicOps, T objectx, DataResult<Pair<A, T>> dataResult) {
-                 MutableObject<String> mutableObject = new MutableObject<>();
+@@ -259,7 +259,7 @@ public class ExtraCodecs {
                  Optional<Pair<A, T>> optional = dataResult.resultOrPartial(mutableObject::setValue);
--                return optional.isPresent() ? dataResult : DataResult.error("(" + (String)mutableObject.getValue() + " -> using default)", Pair.of(object, object));
-+                return optional.isPresent() ? dataResult : DataResult.error("(" + (String)mutableObject.getValue() + " -> using default)", Pair.of(object, (T) object)); // Gale - dev import deobfuscation fixes
+                 return optional.isPresent() ? dataResult : DataResult.error(() -> {
+                     return "(" + (String)mutableObject.getValue() + " -> using default)";
+-                }, Pair.of(object, object));
++                }, Pair.of(object, (T) object)); // Gale - dev import deobfuscation fixes
              }
  
              public <T> DataResult<T> coApply(DynamicOps<T> dynamicOps, A objectx, DataResult<T> dataResult) {
-@@ -459,7 +459,7 @@ public class ExtraCodecs {
+@@ -542,7 +542,7 @@ public class ExtraCodecs {
  
      static record LazyInitializedCodec<A>(Supplier<Codec<A>> delegate) implements Codec<A> {
          LazyInitializedCodec {

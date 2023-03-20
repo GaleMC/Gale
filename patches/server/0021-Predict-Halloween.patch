@@ -7,7 +7,7 @@ License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/net/minecraft/world/entity/ambient/Bat.java b/src/main/java/net/minecraft/world/entity/ambient/Bat.java
-index 320c558bbe80d4bbc641e895ec43cfa2b45e8d70..bf62750c31ffba6c2aa4f6d17c1c71c62385e584 100644
+index f5efdf59617d43de18a2267351fa784c0be3ae83..c1d6ba5bddf5a473ba746975fd323ea90b60ee8d 100644
 --- a/src/main/java/net/minecraft/world/entity/ambient/Bat.java
 +++ b/src/main/java/net/minecraft/world/entity/ambient/Bat.java
 @@ -1,6 +1,6 @@
@@ -18,7 +18,7 @@ index 320c558bbe80d4bbc641e895ec43cfa2b45e8d70..bf62750c31ffba6c2aa4f6d17c1c71c6
  import java.time.temporal.ChronoField;
  import javax.annotation.Nullable;
  import net.minecraft.core.BlockPos;
-@@ -256,12 +256,62 @@ public class Bat extends AmbientCreature {
+@@ -251,12 +251,62 @@ public class Bat extends AmbientCreature {
          }
      }
  

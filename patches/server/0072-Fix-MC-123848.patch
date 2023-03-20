@@ -37,10 +37,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 diff --git a/src/main/java/net/minecraft/world/entity/decoration/ItemFrame.java b/src/main/java/net/minecraft/world/entity/decoration/ItemFrame.java
-index 428523feaa4f30260e32ba03937e88200246c693..29afe1f873c9c87fe5a83f22025cf7f773c4cf2c 100644
+index 30aec9dff249ae629b22318e52902361a9fa4099..c58fab79c9425a56cd9ffdfa81e4ea97d5dff941 100644
 --- a/src/main/java/net/minecraft/world/entity/decoration/ItemFrame.java
 +++ b/src/main/java/net/minecraft/world/entity/decoration/ItemFrame.java
-@@ -283,6 +283,16 @@ public class ItemFrame extends HangingEntity {
+@@ -287,6 +287,16 @@ public class ItemFrame extends HangingEntity {
          }
      }
  

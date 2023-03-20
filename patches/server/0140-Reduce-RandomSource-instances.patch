@@ -13,7 +13,7 @@ As part of: Patina (https://github.com/PatinaMC/Patina)
 Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 
 diff --git a/src/main/java/net/minecraft/server/commands/SpreadPlayersCommand.java b/src/main/java/net/minecraft/server/commands/SpreadPlayersCommand.java
-index 23dcdc71a8a6fd5472cdc1c22331b56c6bb3ded9..c3f88980f1ea2f7b04ad110494962725274d25a4 100644
+index 0f094a337a7cc94b203a27e657d138749728c911..14d7223ee4552f6714945d40c29bda3f516d81d6 100644
 --- a/src/main/java/net/minecraft/server/commands/SpreadPlayersCommand.java
 +++ b/src/main/java/net/minecraft/server/commands/SpreadPlayersCommand.java
 @@ -65,7 +65,7 @@ public class SpreadPlayersCommand {
@@ -26,10 +26,10 @@ index 23dcdc71a8a6fd5472cdc1c22331b56c6bb3ded9..c3f88980f1ea2f7b04ad110494962725
              double d1 = (double) (center.y - maxRange);
              double d2 = (double) (center.x + maxRange);
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index ef0b6db4421a0c840e6381554a3db02298f33737..82dec221441ad4b76af0aebf788af801a275be64 100644
+index 37b6064586452c46c1417510c4130fbaeb2694db..aee10fe735b4ccbafbd92908890989b6b8b3685d 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-@@ -391,7 +391,7 @@ public class ServerPlayer extends Player {
+@@ -397,7 +397,7 @@ public class ServerPlayer extends Player {
              long l = k * k;
              int i1 = l > 2147483647L ? Integer.MAX_VALUE : (int) l;
              int j1 = this.getCoprime(i1);
@@ -38,7 +38,7 @@ index ef0b6db4421a0c840e6381554a3db02298f33737..82dec221441ad4b76af0aebf788af801
  
              for (int l1 = 0; l1 < i1; ++l1) {
                  int i2 = (k1 + j1 * l1) % i1;
-@@ -428,7 +428,7 @@ public class ServerPlayer extends Player {
+@@ -434,7 +434,7 @@ public class ServerPlayer extends Player {
              long l = k * k;
              int i1 = l > 2147483647L ? Integer.MAX_VALUE : (int) l;
              int j1 = this.getCoprime(i1);
@@ -61,7 +61,7 @@ index 1ef089dbf83de35d875c00efdf468c397be56978..b9f5dc95f859acb8f8fd4739537485af
          }
  
 diff --git a/src/main/java/net/minecraft/world/entity/projectile/FishingHook.java b/src/main/java/net/minecraft/world/entity/projectile/FishingHook.java
-index 15fb5ee374b19366ebb23181896fb943e95819f0..a7ccb6ea2abfaca54ae174f3ec1926eb233abe25 100644
+index d77410588a1c10d8ac902f21a8bd7e35f74fecd2..c27fdfb845eca7ffea0f7b829ed5fbddfd37e1fc 100644
 --- a/src/main/java/net/minecraft/world/entity/projectile/FishingHook.java
 +++ b/src/main/java/net/minecraft/world/entity/projectile/FishingHook.java
 @@ -80,7 +80,7 @@ public class FishingHook extends Projectile {
@@ -74,7 +74,7 @@ index 15fb5ee374b19366ebb23181896fb943e95819f0..a7ccb6ea2abfaca54ae174f3ec1926eb
          this.currentState = FishingHook.FishHookState.FLYING;
          this.noCulling = true;
 diff --git a/src/main/java/net/minecraft/world/entity/raid/Raid.java b/src/main/java/net/minecraft/world/entity/raid/Raid.java
-index b13ef853419d2783d09b3e685b9b506a4ff5676e..7a7e87954868c3eb267d3255652d67d34f7b04d2 100644
+index 246584452eb01b168d2372e1ccc4b357b63891df..9d8ed30c7fac6e72d9678ca163189b93eaa4f3ff 100644
 --- a/src/main/java/net/minecraft/world/entity/raid/Raid.java
 +++ b/src/main/java/net/minecraft/world/entity/raid/Raid.java
 @@ -111,7 +111,7 @@ public class Raid {
@@ -96,7 +96,7 @@ index b13ef853419d2783d09b3e685b9b506a4ff5676e..7a7e87954868c3eb267d3255652d67d3
          this.level = world;
          this.id = nbt.getInt("Id");
 diff --git a/src/main/java/net/minecraft/world/level/Explosion.java b/src/main/java/net/minecraft/world/level/Explosion.java
-index 5c7f2be28fbb5d2f7b48c04bb862fb15440dda03..10336cef8316d41f49eeb7811b84f4eea90df246 100644
+index aa6ea4ebaa6777815f3a2245f260c5e58a7a3b21..52fb1e0f43caca93d77bf398eb759b36b84ebaec 100644
 --- a/src/main/java/net/minecraft/world/level/Explosion.java
 +++ b/src/main/java/net/minecraft/world/level/Explosion.java
 @@ -81,7 +81,7 @@ public class Explosion {
@@ -109,7 +109,7 @@ index 5c7f2be28fbb5d2f7b48c04bb862fb15440dda03..10336cef8316d41f49eeb7811b84f4ee
          this.hitPlayers = Maps.newHashMap();
          this.level = world;
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/TheEndGatewayBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/TheEndGatewayBlockEntity.java
-index 2a596cc374206a85bb692f5e09ee2dd83cf6d1b1..74686aa52113fcd0cbd5531e4161f6a1993dba60 100644
+index c86dea3e38d72929a4970334e3cc4e93e353c598..b618e615d9ccb9b2a29b4067d47dbbb66acf3cda 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/TheEndGatewayBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/TheEndGatewayBlockEntity.java
 @@ -361,7 +361,7 @@ public class TheEndGatewayBlockEntity extends TheEndPortalBlockEntity {

@@ -45,10 +45,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 diff --git a/src/main/java/net/minecraft/world/entity/player/Player.java b/src/main/java/net/minecraft/world/entity/player/Player.java
-index 2737390659c08ec55731cce036c268d236da8260..2dcdbcb6759ae6ff1e357722a49378294cf3325d 100644
+index 512df472a5eca2017b8eb92b8cc6283936a1098a..7b0dbfaab5951aaf09c36bc5112d953585f0098a 100644
 --- a/src/main/java/net/minecraft/world/entity/player/Player.java
 +++ b/src/main/java/net/minecraft/world/entity/player/Player.java
-@@ -114,6 +114,7 @@ import net.minecraft.world.phys.AABB;
+@@ -116,6 +116,7 @@ import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Scoreboard;
@@ -56,7 +56,7 @@ index 2737390659c08ec55731cce036c268d236da8260..2dcdbcb6759ae6ff1e357722a4937829
  import org.slf4j.Logger;
  import org.bukkit.craftbukkit.entity.CraftHumanEntity;
  import org.bukkit.craftbukkit.event.CraftEventFactory;
-@@ -282,19 +283,24 @@ public abstract class Player extends LivingEntity {
+@@ -285,19 +286,24 @@ public abstract class Player extends LivingEntity {
          this.moveCloak();
          if (!this.level.isClientSide) {
              this.foodData.tick(this);

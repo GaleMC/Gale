@@ -13,10 +13,10 @@ As part of: Pufferfish (https://github.com/pufferfish-gg/Pufferfish)
 Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index d3ada447bc1e83627b112886ed229bb2b50bd1f1..619b5572b06e663824e38eaf29b477e8f9f86dda 100644
+index f8e333288e7629a59c05e07bf754b2ed565d0aec..1c5263a8b93e2a62f6cb43abc96f84583da8cf54 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -2357,6 +2357,11 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -2351,6 +2351,11 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
      }
  
      private boolean updateChatOrder(Instant timestamp) {

@@ -7,10 +7,10 @@ License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/io/papermc/paper/adventure/ChatProcessor.java b/src/main/java/io/papermc/paper/adventure/ChatProcessor.java
-index 309fe1162db195c7c3c94d785d6aa2700e42b08a..e50b9ba2a711e6d05393b833342090bcfda2c93f 100644
+index 4d9bc4a62ebae0f3707900503576c64733de639f..37cec44082a4bf7be2ee238729aedb10cc19ea3f 100644
 --- a/src/main/java/io/papermc/paper/adventure/ChatProcessor.java
 +++ b/src/main/java/io/papermc/paper/adventure/ChatProcessor.java
-@@ -42,6 +42,7 @@ import org.bukkit.event.player.PlayerChatEvent;
+@@ -43,6 +43,7 @@ import org.bukkit.event.player.PlayerChatEvent;
  import org.checkerframework.checker.nullness.qual.NonNull;
  import org.checkerframework.checker.nullness.qual.Nullable;
  import org.checkerframework.framework.qual.DefaultQualifier;
@@ -18,7 +18,7 @@ index 309fe1162db195c7c3c94d785d6aa2700e42b08a..e50b9ba2a711e6d05393b833342090bc
  
  import static net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection;
  
-@@ -352,7 +353,7 @@ public final class ChatProcessor {
+@@ -353,7 +354,7 @@ public final class ChatProcessor {
  
          private void sendToServer(final ChatType.Bound chatType, final @Nullable Function<Audience, net.minecraft.network.chat.Component> msgFunction) {
              final PlayerChatMessage toConsoleMessage = msgFunction == null ? ChatProcessor.this.message : ChatProcessor.this.message.withUnsignedContent(msgFunction.apply(ChatProcessor.this.server.console));
@@ -28,10 +28,10 @@ index 309fe1162db195c7c3c94d785d6aa2700e42b08a..e50b9ba2a711e6d05393b833342090bc
      }
  
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index 601b7cb73af55bdf8fd51c5f73e96a9656576cc2..3725f8ff144123ce2898cd5de2a128a067e43ce4 100644
+index 804ca4ab8539a9319704628ed53d6ccca654d8e3..e8299ed2eaae287379136f5331434bc354d58ebd 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
-@@ -100,6 +100,7 @@ import net.minecraft.world.scores.Objective;
+@@ -101,6 +101,7 @@ import net.minecraft.world.scores.Objective;
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Scoreboard; // Paper
  import net.minecraft.world.scores.Team;
@@ -39,12 +39,12 @@ index 601b7cb73af55bdf8fd51c5f73e96a9656576cc2..3725f8ff144123ce2898cd5de2a128a0
  import org.slf4j.Logger;
  
  // CraftBukkit start
-@@ -1380,7 +1381,7 @@ public abstract class PlayerList {
+@@ -1389,7 +1390,7 @@ public abstract class PlayerList {
          // Paper end
          boolean flag = this.verifyChatTrusted(message);
  
--        this.server.logChatMessage((unsignedFunction == null ? Component.literal(message.signedContent()) : unsignedFunction.apply(this.server.console)), params, flag ? null : "Not Secure"); // Paper
-+        this.server.logChatMessage((unsignedFunction == null ? Component.literal(message.signedContent()) : unsignedFunction.apply(this.server.console)), params, flag || !GaleGlobalConfiguration.get().logToConsole.chat.notSecureMarker ? null : "Not Secure"); // Paper // Gale - do not log Not Secure marker
+-        this.server.logChatMessage((unsignedFunction == null ? message.decoratedContent() : unsignedFunction.apply(this.server.console)), params, flag ? null : "Not Secure"); // Paper
++        this.server.logChatMessage((unsignedFunction == null ? message.decoratedContent() : unsignedFunction.apply(this.server.console)), params, flag || !GaleGlobalConfiguration.get().logToConsole.chat.notSecureMarker ? null : "Not Secure"); // Paper // Gale - do not log Not Secure marker
          OutgoingChatMessage outgoingchatmessage = OutgoingChatMessage.create(message);
          boolean flag1 = false;
  

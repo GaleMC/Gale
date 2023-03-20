@@ -7,10 +7,10 @@ License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 545f831b34fbaac1b698a90206e35a149f3606d6..fe702a042cb132987e5135d2ed855484f9cef686 100644
+index 346e8127aa9ce26bf18935163ba268a74429072f..cc31a64f97edd1c5e7b95703d7c60d80bfd177c8 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -155,7 +155,6 @@ import org.galemc.gale.executor.queue.BaseTaskQueues;
+@@ -156,7 +156,6 @@ import org.galemc.gale.executor.queue.BaseTaskQueues;
  import org.galemc.gale.executor.queue.ScheduledServerThreadTaskQueues;
  import org.galemc.gale.executor.thread.BaseThread;
  import org.galemc.gale.executor.thread.OriginalServerThread;
@@ -18,8 +18,8 @@ index 545f831b34fbaac1b698a90206e35a149f3606d6..fe702a042cb132987e5135d2ed855484
  import org.galemc.gale.executor.thread.pool.BaseThreadActivation;
  import org.jetbrains.annotations.NotNull;
  import org.slf4j.Logger;
-@@ -1577,15 +1576,53 @@ public abstract class MinecraftServer extends MinecraftServerBlockableEventLoop
-         co.aikar.timings.TimingsManager.FULL_SERVER_TICK.stopTimingFullServerTick(); // Paper // Gale - final timings calls
+@@ -1585,16 +1584,54 @@ public abstract class MinecraftServer extends MinecraftServerBlockableEventLoop
+         }
      }
  
 +    // Gale start - split tick steps
@@ -56,6 +56,7 @@ index 545f831b34fbaac1b698a90206e35a149f3606d6..fe702a042cb132987e5135d2ed855484
          MinecraftTimings.bukkitSchedulerTimer.startTiming(); // Spigot // Paper
          this.server.getScheduler().mainThreadHeartbeat(this.tickCount); // CraftBukkit
          MinecraftTimings.bukkitSchedulerTimer.stopTiming(); // Spigot // Paper
+         io.papermc.paper.adventure.providers.ClickCallbackProviderImpl.CALLBACK_MANAGER.handleQueue(this.tickCount); // Paper
 +        // Gale start - split tick steps
 +    }
 +
@@ -73,7 +74,7 @@ index 545f831b34fbaac1b698a90206e35a149f3606d6..fe702a042cb132987e5135d2ed855484
          // CraftBukkit start
          // Run tasks that are waiting on processing
          MinecraftTimings.processQueueTimer.startTiming(); // Spigot
-@@ -1593,11 +1630,14 @@ public abstract class MinecraftServer extends MinecraftServerBlockableEventLoop
+@@ -1602,11 +1639,14 @@ public abstract class MinecraftServer extends MinecraftServerBlockableEventLoop
              this.processQueue.remove().run();
          }
          MinecraftTimings.processQueueTimer.stopTiming(); // Spigot
@@ -89,7 +90,7 @@ index 545f831b34fbaac1b698a90206e35a149f3606d6..fe702a042cb132987e5135d2ed855484
              final boolean doDaylight = world.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT);
              final long dayTime = world.getDayTime();
              long worldTime = world.getGameTime();
-@@ -1612,15 +1652,23 @@ public abstract class MinecraftServer extends MinecraftServerBlockableEventLoop
+@@ -1621,15 +1661,23 @@ public abstract class MinecraftServer extends MinecraftServerBlockableEventLoop
                      new ClientboundSetTimePacket(worldTime, playerTime, doDaylight);
                  entityplayer.connection.send(packet); // Add support for per player time
              }
@@ -109,13 +110,13 @@ index 545f831b34fbaac1b698a90206e35a149f3606d6..fe702a042cb132987e5135d2ed855484
 +    public final void tickStep_updateEvents(ServerLevel worldserver) {
 +        // Gale end - split tick steps
              worldserver.hasPhysicsEvent =  org.bukkit.event.block.BlockPhysicsEvent.getHandlerList().getRegisteredListeners().length > 0; // Paper
-             worldserver.hasEntityMoveEvent =  io.papermc.paper.event.entity.EntityMoveEvent.getHandlerList().getRegisteredListeners().length > 0; // Paper
              net.minecraft.world.level.block.entity.HopperBlockEntity.skipHopperEvents = worldserver.paperConfig().hopper.disableMoveEvent || org.bukkit.event.inventory.InventoryMoveItemEvent.getHandlerList().getRegisteredListeners().length == 0; // Paper
+             worldserver.hasEntityMoveEvent =  io.papermc.paper.event.entity.EntityMoveEvent.getHandlerList().getRegisteredListeners().length > 0; // Paper
 +    } // Gale - split tick steps
  
              /* Drop global time updates
              if (this.tickCount % 20 == 0) {
-@@ -1630,16 +1678,28 @@ public abstract class MinecraftServer extends MinecraftServerBlockableEventLoop
+@@ -1639,16 +1687,28 @@ public abstract class MinecraftServer extends MinecraftServerBlockableEventLoop
              }
              // CraftBukkit end */
  
@@ -149,7 +150,7 @@ index 545f831b34fbaac1b698a90206e35a149f3606d6..fe702a042cb132987e5135d2ed855484
                  // Spigot Start
                  CrashReport crashreport;
                  try {
-@@ -1652,22 +1712,47 @@ public abstract class MinecraftServer extends MinecraftServerBlockableEventLoop
+@@ -1661,22 +1721,47 @@ public abstract class MinecraftServer extends MinecraftServerBlockableEventLoop
  
                  worldserver.fillReportDetails(crashreport);
                  throw new ReportedException(crashreport);
@@ -307,7 +308,7 @@ index 9ee931a6442d3f18a7521704f39297af0d7af6d7..d4f99270c62cef94cc5ad5fc00f155c4
  
      private void tickChunks() {
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index 347e231b38d20e049dbb58bbd48a93baa799790c..da4c83d4bd84ad51c6990b09b265ff3aa53f1860 100644
+index 195544a9f308511b86e20ed16ad73c68e60abfc2..9d0d450fec629513bf810a2789eafe1883531e0b 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
 @@ -23,7 +23,6 @@ import java.nio.file.Files;
@@ -335,7 +336,7 @@ index 347e231b38d20e049dbb58bbd48a93baa799790c..da4c83d4bd84ad51c6990b09b265ff3a
  import org.bukkit.event.world.TimeSkipEvent;
  // CraftBukkit end
  import it.unimi.dsi.fastutil.ints.IntArrayList; // Paper
-@@ -633,7 +629,101 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -631,7 +627,101 @@ public class ServerLevel extends Level implements WorldGenLevel {
          return this.structureManager;
      }
  
@@ -437,7 +438,7 @@ index 347e231b38d20e049dbb58bbd48a93baa799790c..da4c83d4bd84ad51c6990b09b265ff3a
          // Paper start - optimise checkDespawn
          this.playersAffectingSpawning.clear();
          for (ServerPlayer player : this.players) {
-@@ -641,10 +731,35 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -639,10 +729,35 @@ public class ServerLevel extends Level implements WorldGenLevel {
                  this.playersAffectingSpawning.add(player);
              }
          }
@@ -475,7 +476,7 @@ index 347e231b38d20e049dbb58bbd48a93baa799790c..da4c83d4bd84ad51c6990b09b265ff3a
          int i = this.getGameRules().getInt(GameRules.RULE_PLAYERS_SLEEPING_PERCENTAGE);
          long j;
  
-@@ -667,40 +782,155 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -665,40 +780,155 @@ public class ServerLevel extends Level implements WorldGenLevel {
                  this.resetWeatherCycle();
              }
          }
@@ -640,7 +641,7 @@ index 347e231b38d20e049dbb58bbd48a93baa799790c..da4c83d4bd84ad51c6990b09b265ff3a
              timings.entityTick.startTiming(); // Spigot
              this.entityTickList.forEach((entity) -> {
                  if (!entity.isRemoved()) {
-@@ -738,11 +968,15 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -736,11 +966,15 @@ public class ServerLevel extends Level implements WorldGenLevel {
                  }
              });
              timings.entityTick.stopTiming(); // Spigot

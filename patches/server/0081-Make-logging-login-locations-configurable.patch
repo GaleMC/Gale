@@ -13,10 +13,10 @@ As part of: JettPack (https://gitlab.com/Titaniumtown/JettPack)
 Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index 3725f8ff144123ce2898cd5de2a128a067e43ce4..f86c3b75b4b5f2d159d91c61e77dfcc3d60a8311 100644
+index e8299ed2eaae287379136f5331434bc354d58ebd..9fed88164c5e3173e206e145ffbafa16e349d674 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
-@@ -459,7 +459,13 @@ public abstract class PlayerList {
+@@ -466,7 +466,13 @@ public abstract class PlayerList {
          }
          // Paper end
          // CraftBukkit - Moved from above, added world

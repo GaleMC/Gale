@@ -33,7 +33,7 @@ LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRA
 IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 diff --git a/src/main/java/net/minecraft/server/network/ServerHandshakePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerHandshakePacketListenerImpl.java
-index e7ff7ad3bf4dd17fdd34202ec3aef8e9512bc36d..8e68d1373a519cc12bf83de6aadcb24cbbd34af6 100644
+index 8f52acc03943b18f87b3b2581066496a254b1156..f3bbfb472b9be083dd1f1a317b90dda5c3c4f851 100644
 --- a/src/main/java/net/minecraft/server/network/ServerHandshakePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerHandshakePacketListenerImpl.java
 @@ -1,10 +1,11 @@
@@ -49,7 +49,7 @@ index e7ff7ad3bf4dd17fdd34202ec3aef8e9512bc36d..8e68d1373a519cc12bf83de6aadcb24c
  import net.minecraft.network.protocol.handshake.ClientIntentionPacket;
  import net.minecraft.network.protocol.handshake.ServerHandshakePacketListener;
  import net.minecraft.network.protocol.login.ClientboundLoginDisconnectPacket;
-@@ -12,7 +13,8 @@ import net.minecraft.server.MinecraftServer;
+@@ -13,7 +14,8 @@ import net.minecraft.server.MinecraftServer;
  
  // CraftBukkit start
  import java.net.InetAddress;
@@ -59,7 +59,7 @@ index e7ff7ad3bf4dd17fdd34202ec3aef8e9512bc36d..8e68d1373a519cc12bf83de6aadcb24c
  // CraftBukkit end
  
  public class ServerHandshakePacketListenerImpl implements ServerHandshakePacketListener {
-@@ -23,7 +25,7 @@ public class ServerHandshakePacketListenerImpl implements ServerHandshakePacketL
+@@ -24,7 +26,7 @@ public class ServerHandshakePacketListenerImpl implements ServerHandshakePacketL
      static final java.util.regex.Pattern PROP_PATTERN = java.util.regex.Pattern.compile("\\w{0,16}");
      // Spigot end
      // CraftBukkit start - add fields
@@ -68,7 +68,7 @@ index e7ff7ad3bf4dd17fdd34202ec3aef8e9512bc36d..8e68d1373a519cc12bf83de6aadcb24c
      private static int throttleCounter = 0;
      // CraftBukkit end
      private static final Component IGNORE_STATUS_REASON = Component.literal("Ignoring status request");
-@@ -50,7 +52,7 @@ public class ServerHandshakePacketListenerImpl implements ServerHandshakePacketL
+@@ -51,7 +53,7 @@ public class ServerHandshakePacketListenerImpl implements ServerHandshakePacketL
                      InetAddress address = ((java.net.InetSocketAddress) this.connection.getRemoteAddress()).getAddress();
  
                      synchronized (ServerHandshakePacketListenerImpl.throttleTracker) {
@@ -77,7 +77,7 @@ index e7ff7ad3bf4dd17fdd34202ec3aef8e9512bc36d..8e68d1373a519cc12bf83de6aadcb24c
                              ServerHandshakePacketListenerImpl.throttleTracker.put(address, currentTime);
                              Component chatmessage = io.papermc.paper.adventure.PaperAdventure.asVanilla(io.papermc.paper.configuration.GlobalConfiguration.get().messages.kick.connectionThrottle); // Paper - Configurable connection throttle kick message
                              this.connection.send(new ClientboundLoginDisconnectPacket(chatmessage));
-@@ -64,13 +66,7 @@ public class ServerHandshakePacketListenerImpl implements ServerHandshakePacketL
+@@ -65,13 +67,7 @@ public class ServerHandshakePacketListenerImpl implements ServerHandshakePacketL
                              ServerHandshakePacketListenerImpl.throttleCounter = 0;
  
                              // Cleanup stale entries

@@ -7,10 +7,10 @@ License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/net/minecraft/world/Container.java b/src/main/java/net/minecraft/world/Container.java
-index f5bed0f18b2a3dbe7d52c1b83717298fa5acf561..5f5347ea42ea589ef3d5da88b88cc45a810e9426 100644
+index 0d22bce549c46d686ab3402a1cad87307d0e1c00..35d7737b195b3207e45a670636aed977d5d6c4a6 100644
 --- a/src/main/java/net/minecraft/world/Container.java
 +++ b/src/main/java/net/minecraft/world/Container.java
-@@ -118,6 +118,20 @@ public interface Container extends Clearable {
+@@ -126,6 +126,20 @@ public interface Container extends Clearable {
          });
      }
  
@@ -212,7 +212,7 @@ index 75dc06a3041bfdfb08c914eb50cfa282ae9eb2fe..53b0519bbc5d52490040eaf0fe449648
          } else {
              brain.eraseMemory(MemoryModuleType.SECONDARY_JOB_SITE);
 diff --git a/src/main/java/net/minecraft/world/entity/npc/Villager.java b/src/main/java/net/minecraft/world/entity/npc/Villager.java
-index a4029cd16d964cd3a58f9f6e8471fbdf07de578b..825cdb927925a35a53e399ee647ea0738e67a5c9 100644
+index cf865df0763ebbe9ebbe74f32b0863e2636de63f..583f8bbb242305bf1bf825e254209108fd323ad4 100644
 --- a/src/main/java/net/minecraft/world/entity/npc/Villager.java
 +++ b/src/main/java/net/minecraft/world/entity/npc/Villager.java
 @@ -88,6 +88,7 @@ import net.minecraft.world.item.trading.MerchantOffers;
@@ -234,7 +234,7 @@ index a4029cd16d964cd3a58f9f6e8471fbdf07de578b..825cdb927925a35a53e399ee647ea073
      private static final int MAX_GOSSIP_TOPICS = 10;
      private static final int GOSSIP_COOLDOWN = 1200;
      private static final int GOSSIP_DECAY_INTERVAL = 24000;
-@@ -896,7 +898,28 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
+@@ -908,7 +910,28 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
      public boolean wantsToPickUp(ItemStack stack) {
          Item item = stack.getItem();
  

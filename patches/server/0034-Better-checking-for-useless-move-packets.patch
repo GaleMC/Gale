@@ -31,20 +31,20 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerEntity.java b/src/main/java/net/minecraft/server/level/ServerEntity.java
-index 190e9761087baec5827d722a8281f0ffb6798341..590b756842f5f9d1c2f0aed6517f9b46e3dc74db 100644
+index b7fd8e70413c38923d0719aff803449e392383ac..48adbfbb8a55f6719c92a1fe83c64d87f1b236d5 100644
 --- a/src/main/java/net/minecraft/server/level/ServerEntity.java
 +++ b/src/main/java/net/minecraft/server/level/ServerEntity.java
-@@ -170,6 +170,7 @@ public class ServerEntity {
-                     boolean flag4 = k < -32768L || k > 32767L || l < -32768L || l > 32767L || i1 < -32768L || i1 > 32767L;
+@@ -185,6 +185,7 @@ public class ServerEntity {
+                     boolean flag6 = k < -32768L || k > 32767L || l < -32768L || l > 32767L || i1 < -32768L || i1 > 32767L;
  
-                     if (!flag4 && this.teleportDelay <= 400 && !this.wasRiding && this.wasOnGround == this.entity.isOnGround() && !(io.papermc.paper.configuration.GlobalConfiguration.get().collisions.sendFullPosForHardCollidingEntities && this.entity.hardCollides())) { // Paper - send full pos for hard colliding entities to prevent collision problems due to desync
+                     if (!flag6 && this.teleportDelay <= 400 && !this.wasRiding && this.wasOnGround == this.entity.isOnGround() && !(io.papermc.paper.configuration.GlobalConfiguration.get().collisions.sendFullPosForHardCollidingEntities && this.entity.hardCollides())) { // Paper - send full pos for hard colliding entities to prevent collision problems due to desync
 +                        if (flag2 || flag3 || this.entity instanceof AbstractArrow) { // Gale - Airplane - better checking for useless move packets
                          if ((!flag2 || !flag3) && !(this.entity instanceof AbstractArrow)) {
                              if (flag2) {
                                  packet1 = new ClientboundMoveEntityPacket.Pos(this.entity.getId(), (short) ((int) k), (short) ((int) l), (short) ((int) i1), this.entity.isOnGround());
-@@ -179,6 +180,7 @@ public class ServerEntity {
-                         } else {
-                             packet1 = new ClientboundMoveEntityPacket.PosRot(this.entity.getId(), (short) ((int) k), (short) ((int) l), (short) ((int) i1), (byte) i, (byte) j, this.entity.isOnGround());
+@@ -198,6 +199,7 @@ public class ServerEntity {
+                             flag4 = true;
+                             flag5 = true;
                          }
 +                        } // Gale - Airplane - better checking for useless move packets
                      } else {

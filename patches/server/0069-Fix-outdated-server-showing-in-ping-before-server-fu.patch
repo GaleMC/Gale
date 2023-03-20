@@ -38,14 +38,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 diff --git a/src/main/java/net/minecraft/server/network/ServerStatusPacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerStatusPacketListenerImpl.java
-index 0725c39d9cbec3282f93975a0ae76f060f70d86d..c222fc336c997fea2204a7960055aa706605dc22 100644
+index 2c13147bc063a09bb7907d6f90c3a1e811a09eb1..38ba786b86de87a3e407e50b4cde40456200936f 100644
 --- a/src/main/java/net/minecraft/server/network/ServerStatusPacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerStatusPacketListenerImpl.java
-@@ -152,6 +152,7 @@ public class ServerStatusPacketListenerImpl implements ServerStatusPacketListene
+@@ -153,6 +153,10 @@ public class ServerStatusPacketListenerImpl implements ServerStatusPacketListene
              this.connection.send(new ClientboundStatusResponsePacket(ping));
              // CraftBukkit end
              */
-+            if (this.server.getStatus().getVersion() == null) return; // Gale - Purpur - fix 'outdated server' showing in ping before server fully boots - do not respond to pings before we know the protocol version
-             com.destroystokyo.paper.network.StandardPaperServerListPingEventImpl.processRequest(this.server, this.connection);
++            // Gale start - Purpur - fix 'outdated server' showing in ping before server fully boots - do not respond to pings before we know the protocol version
++            var version = MinecraftServer.getServer().getStatus().version();
++            if (version == null || version.isEmpty()) return;
++            // Gale end - Purpur - fix 'outdated server' showing in ping before server fully boots - do not respond to pings before we know the protocol version
+             com.destroystokyo.paper.network.StandardPaperServerListPingEventImpl.processRequest(MinecraftServer.getServer(), this.connection);
              // Paper end
          }

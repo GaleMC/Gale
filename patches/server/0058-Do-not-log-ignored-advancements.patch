@@ -37,10 +37,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 diff --git a/src/main/java/net/minecraft/server/PlayerAdvancements.java b/src/main/java/net/minecraft/server/PlayerAdvancements.java
-index a0c19503aabab5378d672a30163d35a5ba05b6c1..5ba0a756d45350dcda3caa5518c9a47a4de06f14 100644
+index 26888ebd38280de92e41dd8006d2b24e874afe26..c953f7f2f125985eeec9563a22f9188cc979cd36 100644
 --- a/src/main/java/net/minecraft/server/PlayerAdvancements.java
 +++ b/src/main/java/net/minecraft/server/PlayerAdvancements.java
-@@ -47,6 +47,7 @@ import net.minecraft.server.level.ServerPlayer;
+@@ -43,6 +43,7 @@ import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.server.players.PlayerList;
  import net.minecraft.util.datafix.DataFixTypes;
  import net.minecraft.world.level.GameRules;
@@ -48,12 +48,12 @@ index a0c19503aabab5378d672a30163d35a5ba05b6c1..5ba0a756d45350dcda3caa5518c9a47a
  import org.slf4j.Logger;
  
  public class PlayerAdvancements {
-@@ -183,7 +184,7 @@ public class PlayerAdvancements {
+@@ -147,7 +148,7 @@ public class PlayerAdvancements {
                          if (advancement == null) {
                              // CraftBukkit start
                              if (entry.getKey().getNamespace().equals("minecraft")) {
--                                PlayerAdvancements.LOGGER.warn("Ignored advancement '{}' in progress file {} - it doesn't exist anymore?", entry.getKey(), this.file);
-+                                if (GaleGlobalConfiguration.get().logToConsole.ignoredAdvancements) PlayerAdvancements.LOGGER.warn("Ignored advancement '{}' in progress file {} - it doesn't exist anymore?", entry.getKey(), this.file); // Gale - Purpur - do not log ignored advancements
+-                                PlayerAdvancements.LOGGER.warn("Ignored advancement '{}' in progress file {} - it doesn't exist anymore?", entry.getKey(), this.playerSavePath);
++                                if (GaleGlobalConfiguration.get().logToConsole.ignoredAdvancements) PlayerAdvancements.LOGGER.warn("Ignored advancement '{}' in progress file {} - it doesn't exist anymore?", entry.getKey(), this.playerSavePath); // Gale - Purpur - do not log ignored advancements
                              }
                              // CraftBukkit end
                          } else {

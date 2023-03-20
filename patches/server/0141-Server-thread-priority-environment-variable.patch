@@ -7,7 +7,7 @@ License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 14324218723ed43f34a2ce5de9b51cb40d7bf667..eb951c9fda85d9620d3038a3db22d578db45e878 100644
+index aee8904a5de902bd70a668f1b983e07e94d29b82..9102dd3291a022214e84fba8e436174ee6fe6f0a 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -194,6 +194,8 @@ import co.aikar.timings.MinecraftTimings; // Paper
@@ -19,7 +19,7 @@ index 14324218723ed43f34a2ce5de9b51cb40d7bf667..eb951c9fda85d9620d3038a3db22d578
      private static MinecraftServer SERVER; // Paper
      public static final Logger LOGGER = LogUtils.getLogger();
      public static final String VANILLA_BRAND = "vanilla";
-@@ -317,7 +319,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -320,7 +322,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          S s0 = serverFactory.apply(thread); // CraftBukkit - decompile error
  
          atomicreference.set(s0);

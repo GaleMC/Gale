@@ -7,10 +7,10 @@ License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/io/papermc/paper/util/MCUtil.java b/src/main/java/io/papermc/paper/util/MCUtil.java
-index 4b8da38db72d7ebc2d498ec3d711d3b30911096c..80f9e70d5c4330e079feccc9a4b1b5957c79ef45 100644
+index 157f74bbbac8cbbed37c4fcc339b3b3c06d06bbe..cd614c55aa3f9a014c2a073abf803888e082c8d4 100644
 --- a/src/main/java/io/papermc/paper/util/MCUtil.java
 +++ b/src/main/java/io/papermc/paper/util/MCUtil.java
-@@ -57,14 +57,7 @@ import java.util.function.Consumer;
+@@ -58,14 +58,7 @@ import java.util.function.Consumer;
  import java.util.function.Supplier;
  
  public final class MCUtil {
@@ -27,10 +27,10 @@ index 4b8da38db72d7ebc2d498ec3d711d3b30911096c..80f9e70d5c4330e079feccc9a4b1b595
          1, 1, 0L, TimeUnit.SECONDS,
          new LinkedBlockingQueue<>(),
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index f423f6322b6cbb7b73074f84debc8333ad4e64b3..77e39c713a4d022f05ac71e27abd9799587356f0 100644
+index b7e231978f15ebc60fa9a8a4df369f96cfcf3966..560e94eefea7f3c243ccdb26344979c44c270b30 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -1081,9 +1081,6 @@ public abstract class MinecraftServer extends MinecraftServerBlockableEventLoop
+@@ -1084,9 +1084,6 @@ public abstract class MinecraftServer extends MinecraftServerBlockableEventLoop
              MinecraftServer.LOGGER.error("Failed to unlock level {}", this.storageSource.getLevelId(), ioexception1);
          }
          // Spigot start
@@ -40,7 +40,7 @@ index f423f6322b6cbb7b73074f84debc8333ad4e64b3..77e39c713a4d022f05ac71e27abd9799
          if (org.spigotmc.SpigotConfig.saveUserCacheOnStopOnly) {
              MinecraftServer.LOGGER.info("Saving usercache.json");
              this.getProfileCache().save(false); // Paper
-@@ -1093,6 +1090,12 @@ public abstract class MinecraftServer extends MinecraftServerBlockableEventLoop
+@@ -1096,6 +1093,12 @@ public abstract class MinecraftServer extends MinecraftServerBlockableEventLoop
          LOGGER.info("Flushing Chunk IO");
          io.papermc.paper.chunk.system.io.RegionFileIOThread.close(true); // Paper // Paper - rewrite chunk system
          LOGGER.info("Closing Thread Pool");

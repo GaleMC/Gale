@@ -7,15 +7,10 @@ License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/io/papermc/paper/util/MCUtil.java b/src/main/java/io/papermc/paper/util/MCUtil.java
-index 80f9e70d5c4330e079feccc9a4b1b5957c79ef45..e4955e8d04735b74007aae0bf323028137e34466 100644
+index cd614c55aa3f9a014c2a073abf803888e082c8d4..2f1a8580a9b2321ec736008ade93d74c13f0392c 100644
 --- a/src/main/java/io/papermc/paper/util/MCUtil.java
 +++ b/src/main/java/io/papermc/paper/util/MCUtil.java
-@@ -2,12 +2,10 @@ package io.papermc.paper.util;
- 
- import com.destroystokyo.paper.profile.CraftPlayerProfile;
- import com.destroystokyo.paper.profile.PlayerProfile;
--import com.google.common.util.concurrent.ThreadFactoryBuilder;
- import com.google.gson.JsonArray;
+@@ -8,7 +8,6 @@ import com.google.gson.JsonArray;
  import com.google.gson.JsonObject;
  import com.google.gson.internal.Streams;
  import com.google.gson.stream.JsonWriter;
@@ -23,7 +18,7 @@ index 80f9e70d5c4330e079feccc9a4b1b5957c79ef45..e4955e8d04735b74007aae0bf3230281
  import it.unimi.dsi.fastutil.objects.ObjectRBTreeSet;
  import java.lang.ref.Cleaner;
  import it.unimi.dsi.fastutil.objects.ReferenceArrayList;
-@@ -17,16 +15,11 @@ import net.minecraft.server.MinecraftServer;
+@@ -18,16 +17,11 @@ import net.minecraft.server.MinecraftServer;
  import net.minecraft.nbt.CompoundTag;
  import net.minecraft.network.chat.Component;
  import net.minecraft.server.level.ChunkHolder;
@@ -40,7 +35,7 @@ index 80f9e70d5c4330e079feccc9a4b1b5957c79ef45..e4955e8d04735b74007aae0bf3230281
  import net.minecraft.world.level.chunk.ChunkStatus;
  import org.apache.commons.lang.exception.ExceptionUtils;
  import com.mojang.authlib.GameProfile;
-@@ -34,7 +27,6 @@ import org.bukkit.Location;
+@@ -35,7 +29,6 @@ import org.bukkit.Location;
  import org.bukkit.block.BlockFace;
  import org.bukkit.craftbukkit.CraftWorld;
  import org.bukkit.craftbukkit.util.Waitable;
@@ -48,7 +43,7 @@ index 80f9e70d5c4330e079feccc9a4b1b5957c79ef45..e4955e8d04735b74007aae0bf3230281
  import org.galemc.gale.executor.queue.BaseTaskQueues;
  
  import javax.annotation.Nonnull;
-@@ -43,11 +35,8 @@ import java.io.*;
+@@ -44,11 +37,8 @@ import java.io.*;
  import java.nio.charset.StandardCharsets;
  import java.util.List;
  import java.util.Queue;
@@ -60,7 +55,7 @@ index 80f9e70d5c4330e079feccc9a4b1b5957c79ef45..e4955e8d04735b74007aae0bf3230281
  import java.util.concurrent.Executor;
  import java.util.concurrent.TimeUnit;
  import java.util.concurrent.TimeoutException;
-@@ -58,14 +47,7 @@ import java.util.function.Supplier;
+@@ -59,14 +49,7 @@ import java.util.function.Supplier;
  
  public final class MCUtil {
      public static final Executor asyncExecutor = BaseTaskQueues.scheduledAsync.yieldingExecutor; // Gale - base thread pool - remove Paper async executor
