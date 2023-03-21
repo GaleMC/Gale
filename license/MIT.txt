@@ -1,5 +1,5 @@
 Below is the MIT License (MIT),
-which applies only to parts of Gale specifically and explicitly released under MIT.
+which applies only to parts of Gale that are specifically and explicitly released under MIT.
 
 MIT License
 
