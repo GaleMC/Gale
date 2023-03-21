@@ -12,29 +12,31 @@ plugins {
 }
 
 if (!file(".git").exists()) {
+    // Gale start - build changes
     val errorText = """
         
         =====================[ ERROR ]=====================
-         The Paper project directory is not a properly cloned Git repository.
+         The Gale project directory is not a properly cloned Git repository.
          
-         In order to build Paper from source you must clone
-         the Paper repository using Git, not download a code
+         In order to build Gale from source you must clone
+         the Gale repository using Git, not download a code
          zip from GitHub.
          
-         Built Paper jars are available for download at
-         https://papermc.io/downloads
+         Built Gale jars are available for download at
+         https://github.com/GaleMC/Gale/actions
          
          See https://github.com/PaperMC/Paper/blob/master/CONTRIBUTING.md
-         for further information on building and modifying Paper.
+         for further information on building and modifying Paper forks.
         ===================================================
     """.trimIndent()
+    // Gale end - build changes
     error(errorText)
 }
 
 rootProject.name = "gale" // Gale - build changes
 
-for (name in listOf("Gale-API", "Gale-Server")) { // Gale - build changes
-    val projName = name.toLowerCase(Locale.ENGLISH)
+for (name in listOf("gale-api", "gale-server")) { // Gale - build changes
+    val projName = name.lowercase(Locale.ENGLISH)
     include(projName)
     findProject(":$projName")!!.projectDir = file(name)
 }
