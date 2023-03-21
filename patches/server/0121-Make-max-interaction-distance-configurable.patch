@@ -65,7 +65,7 @@ index 15611b8970b6cfb733a9f733d64d75c9934b65f7..25a8d3a1302c36f46eb3e0f9a5a532a3
                      private void performInteraction(InteractionHand enumhand, ServerGamePacketListenerImpl.EntityInteraction playerconnection_a, PlayerInteractEntityEvent event) { // CraftBukkit
                          ItemStack itemstack = ServerGamePacketListenerImpl.this.player.getItemInHand(enumhand);
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index 6ec49abd285e1e2c06842b4c25ca3bb262996452..b63b05f2af042c60977b97184a3e0f7ae17683f5 100644
+index 49ac6d7d324707b86364b393123ad695cfbe28e2..a16c549ee1715c24acb93d17da396355e16e9158 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 @@ -275,7 +275,7 @@ public class GaleWorldConfiguration extends ConfigurationPart {
@@ -77,7 +77,7 @@ index 6ec49abd285e1e2c06842b4c25ca3bb262996452..b63b05f2af042c60977b97184a3e0f7a
  
          // Gale start - variable entity wake-up duration
          /**
-@@ -294,6 +294,20 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+@@ -298,6 +298,20 @@ public class GaleWorldConfiguration extends ConfigurationPart {
          public boolean arrowMovementResetsDespawnCounter = true; // Gale - Purpur - make arrow movement resetting despawn counter configurable
          public boolean hideFlamesOnEntitiesWithFireResistance = false; // Gale - Slice - hide flames on entities with fire resistance
  
@@ -98,7 +98,7 @@ index 6ec49abd285e1e2c06842b4c25ca3bb262996452..b63b05f2af042c60977b97184a3e0f7a
          public Fixes fixes;
          public class Fixes extends ConfigurationPart {
  
-@@ -328,6 +342,11 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+@@ -332,6 +346,11 @@ public class GaleWorldConfiguration extends ConfigurationPart {
  
          }
  

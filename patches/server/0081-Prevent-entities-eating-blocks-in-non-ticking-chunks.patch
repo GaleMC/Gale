@@ -59,10 +59,10 @@ index 80aa539f7c6a6ee44338de084cdcdf5fb4ef996a..cb8fc8a88c14d2374a0bbe35aa1c2056
              return EatBlockGoal.IS_TALL_GRASS.test(this.level.getBlockState(blockposition)) ? true : this.level.getBlockState(blockposition.below()).is(Blocks.GRASS_BLOCK);
          }
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index 9e6f389748706a41f3115db19041b55f70614d0c..f50b467b991d7a00030ec589e96026d0a7413e21 100644
+index 37b2bf8dd458b5d8f5dcd2f5b7fd960590be116a..c3b2afdb0f35f5cee1bb85e5c64f8638d1dd0886 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-@@ -270,7 +270,9 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+@@ -274,7 +274,9 @@ public class GaleWorldConfiguration extends ConfigurationPart {
           */
          public double entityWakeUpDurationRatioStandardDeviation = 0.2;
          // Gale end - variable entity wake-up duration

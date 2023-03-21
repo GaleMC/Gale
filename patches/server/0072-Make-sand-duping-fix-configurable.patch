@@ -59,10 +59,10 @@ index ce2c3c146ef64400e00084bd2245d2b87a67fbc2..2496b14c3a284d5a2f80a42e6cc23830
              }
              // Paper end - fix sand duping
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index 378d6f8eb10404e687080e0c306aae26e204967a..98eb5d1d32a93a7800d0d97401018e3ae7f8366f 100644
+index 7355c828ab66c23d878e4981be9e44c7d0b13d63..913d113519e28878bbf768d44f1b5bf76c42cd9d 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-@@ -270,6 +270,13 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+@@ -274,6 +274,13 @@ public class GaleWorldConfiguration extends ConfigurationPart {
           */
          public double entityWakeUpDurationRatioStandardDeviation = 0.2;
          // Gale end - variable entity wake-up duration

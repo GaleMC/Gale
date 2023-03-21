@@ -65,10 +65,10 @@ index 6558b0d4bea99948fdc2b51751f3cfdc239d4b67..bedb5b8ee24817a494455f17e1f32b42
              }
  
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index 41f0e3a2da3ec4a2d516dbe6b5332b701cd0f3a1..249cbffd6933f696b595189d73fb00735ca7abe5 100644
+index 9f8dd7a0113a9723758d0a9779f7f0dd4ec749cf..aa704ab1f64d0a8572b81e6e41bdb419fba2e4fc 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-@@ -276,7 +276,7 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+@@ -280,7 +280,7 @@ public class GaleWorldConfiguration extends ConfigurationPart {
  
              public boolean sandDuping = true; // Gale - Purpur - make sand duping fix configurable
              public boolean keepMooshroomRotationAfterShearing = true; // Gale - Purpur - fix cow rotation when shearing mooshroom
@@ -77,7 +77,7 @@ index 41f0e3a2da3ec4a2d516dbe6b5332b701cd0f3a1..249cbffd6933f696b595189d73fb0073
              // Gale start - Purpur - fix MC-238526
              @Setting("mc-238526")
              public boolean mc238526 = false;
-@@ -287,6 +287,11 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+@@ -291,6 +291,11 @@ public class GaleWorldConfiguration extends ConfigurationPart {
              public boolean mc123848 = false;
              // Gale end - Purpur - fix MC-123848
  

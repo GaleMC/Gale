@@ -58,10 +58,10 @@ index 30aec9dff249ae629b22318e52902361a9fa4099..c58fab79c9425a56cd9ffdfa81e4ea97
          // Paper start - fix MC-252817 (green map markers do not disappear)
          this.getFramedMapIdFromItem(itemstack).ifPresent((i) -> {
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index eab771bf7cdefb3cec1c138bb35c21055313bcc3..7940eac6d2df583d2b61cb872671ac20a952cce7 100644
+index 78e9ea40795ad55b948d6ecc6747e4eb5834eba4..aa544ed67ed9db995556d8771417decb5a4d0e82 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-@@ -281,6 +281,11 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+@@ -285,6 +285,11 @@ public class GaleWorldConfiguration extends ConfigurationPart {
              public boolean mc238526 = false;
              // Gale end - Purpur - fix MC-238526
  

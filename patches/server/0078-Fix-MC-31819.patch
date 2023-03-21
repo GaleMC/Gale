@@ -35,10 +35,10 @@ index 2b02800666b358159c8ecb63208a14855f90657b..9e7b5b876ec7aa90bf46afa6992fc59e
          if (!this.abilities.invulnerable) {
              if (!this.level.isClientSide) {
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index ab223d1b3174d18ffc1bbba7f9f13d66b6c29429..07fea98c1d8c4cc23bfac368a2e236c775d3691a 100644
+index 899aa60e2c20c4d973777d4f82f524e2fb902c93..aab67ad8212bdc5a8afe9b1a9634bde3f78eb496 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-@@ -297,6 +297,11 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+@@ -301,6 +301,11 @@ public class GaleWorldConfiguration extends ConfigurationPart {
              public boolean mc110386 = true;
              // Gale end - Mirai - fix MC-110386
  

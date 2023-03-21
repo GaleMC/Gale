@@ -64,10 +64,10 @@ index 68a5ee85e64802e4509ba0d184fc0ceb3cbe2d11..8ee1a0626e5a6c0ad19a25b8f476a2e1
                      entitycow.setPersistenceRequired();
                  }
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index 7940eac6d2df583d2b61cb872671ac20a952cce7..41f0e3a2da3ec4a2d516dbe6b5332b701cd0f3a1 100644
+index aa544ed67ed9db995556d8771417decb5a4d0e82..9f8dd7a0113a9723758d0a9779f7f0dd4ec749cf 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-@@ -275,7 +275,8 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+@@ -279,7 +279,8 @@ public class GaleWorldConfiguration extends ConfigurationPart {
          public class Fixes extends ConfigurationPart {
  
              public boolean sandDuping = true; // Gale - Purpur - make sand duping fix configurable
