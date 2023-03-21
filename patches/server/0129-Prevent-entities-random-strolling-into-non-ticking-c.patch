@@ -36,11 +36,11 @@ index 216929c838446c3c14d9b9906ffa625ef35fcbc8..f9e0cf073abf3e0ffcedd4418a66c310
              } else {
                  this.wantedX = vec3.x;
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index adf0489fac2798325123d42fd35a8b9b6865aa0b..cc25c05262929b946cf696a1df0f24a50508db5e 100644
+index 67cb63fc4f8cb59d5c3951955e65207528260311..ec2038b4bd980d12109f5dbe9423613dc7e48cd1 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-@@ -307,6 +307,7 @@ public class GaleWorldConfiguration extends ConfigurationPart {
-     public class GameplayMechanics extends ConfigurationPart.Post {
+@@ -320,6 +320,7 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+         // Gale end - variable entity wake-up duration
  
          public boolean entitiesCanEatBlocksInNonTickingChunks = false; // Gale - Purpur - prevent entities eating blocks in non-ticking chunks
 +        public boolean entitiesCanRandomStrollIntoNonTickingChunks = true; // Gale - MultiPaper - prevent entities random strolling into non-ticking chunks

@@ -65,17 +65,19 @@ index 15611b8970b6cfb733a9f733d64d75c9934b65f7..25a8d3a1302c36f46eb3e0f9a5a532a3
                      private void performInteraction(InteractionHand enumhand, ServerGamePacketListenerImpl.EntityInteraction playerconnection_a, PlayerInteractEntityEvent event) { // CraftBukkit
                          ItemStack itemstack = ServerGamePacketListenerImpl.this.player.getItemInHand(enumhand);
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index b18bc70c5ada1124e63cdbe8d75adf058a34bd4f..a3fb445c105a0335bd3360122d39aea93ea2de59 100644
+index 6ec49abd285e1e2c06842b4c25ca3bb262996452..b63b05f2af042c60977b97184a3e0f7ae17683f5 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-@@ -275,12 +275,26 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+@@ -275,7 +275,7 @@ public class GaleWorldConfiguration extends ConfigurationPart {
      }
  
      public GameplayMechanics gameplayMechanics;
 -    public class GameplayMechanics extends ConfigurationPart {
 +    public class GameplayMechanics extends ConfigurationPart.Post {
  
-         public boolean entitiesCanEatBlocksInNonTickingChunks = false; // Gale - Purpur - prevent entities eating blocks in non-ticking chunks
+         // Gale start - variable entity wake-up duration
+         /**
+@@ -294,6 +294,20 @@ public class GaleWorldConfiguration extends ConfigurationPart {
          public boolean arrowMovementResetsDespawnCounter = true; // Gale - Purpur - make arrow movement resetting despawn counter configurable
          public boolean hideFlamesOnEntitiesWithFireResistance = false; // Gale - Slice - hide flames on entities with fire resistance
  
@@ -96,7 +98,7 @@ index b18bc70c5ada1124e63cdbe8d75adf058a34bd4f..a3fb445c105a0335bd3360122d39aea9
          public Fixes fixes;
          public class Fixes extends ConfigurationPart {
  
-@@ -315,6 +329,11 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+@@ -328,6 +342,11 @@ public class GaleWorldConfiguration extends ConfigurationPart {
  
          }
  

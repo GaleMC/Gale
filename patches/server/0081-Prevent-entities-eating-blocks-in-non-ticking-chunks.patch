@@ -59,13 +59,15 @@ index 80aa539f7c6a6ee44338de084cdcdf5fb4ef996a..cb8fc8a88c14d2374a0bbe35aa1c2056
              return EatBlockGoal.IS_TALL_GRASS.test(this.level.getBlockState(blockposition)) ? true : this.level.getBlockState(blockposition.below()).is(Blocks.GRASS_BLOCK);
          }
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index f623518450d1d750b81b84da936282c2df949b7d..6bc83bfe35c52d314fde725c672de6971d8a86c5 100644
+index 9e6f389748706a41f3115db19041b55f70614d0c..f50b467b991d7a00030ec589e96026d0a7413e21 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-@@ -258,6 +258,8 @@ public class GaleWorldConfiguration extends ConfigurationPart {
-     public GameplayMechanics gameplayMechanics;
-     public class GameplayMechanics extends ConfigurationPart {
- 
+@@ -270,7 +270,9 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+          */
+         public double entityWakeUpDurationRatioStandardDeviation = 0.2;
+         // Gale end - variable entity wake-up duration
+-        
++
 +        public boolean entitiesCanEatBlocksInNonTickingChunks = false; // Gale - Purpur - prevent entities eating blocks in non-ticking chunks
 +
          public Fixes fixes;

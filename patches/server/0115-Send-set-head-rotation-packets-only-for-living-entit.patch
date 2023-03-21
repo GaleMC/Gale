@@ -27,7 +27,7 @@ index 834b497053f4fa20cf94c00e1ee2db4838bdf233..b79e302cf4e0eae858e2322b5b260282
  
          if (this.entity instanceof LivingEntity) {
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index 61d1cf5008da9969a08fcd3257f19c4d5c46ff16..b18bc70c5ada1124e63cdbe8d75adf058a34bd4f 100644
+index 5246237d49be75f3113791126e6ae9c94cc06972..6ec49abd285e1e2c06842b4c25ca3bb262996452 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 @@ -64,6 +64,8 @@ public class GaleWorldConfiguration extends ConfigurationPart {
