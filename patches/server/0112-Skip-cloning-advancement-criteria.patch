@@ -1,0 +1,27 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Martijn Muijsers <martijnmuijsers@live.nl>
+Date: Wed, 30 Nov 2022 16:54:28 +0100
+Subject: [PATCH] Skip cloning advancement criteria
+
+License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+Gale - https://galemc.org
+
+This patch is based on the following patch:
+"Skip cloning loot parameters" [sic]
+By: etil2jz <81570777+etil2jz@users.noreply.github.com>
+As part of: Mirai (https://github.com/etil2jz/Mirai)
+Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+
+diff --git a/src/main/java/net/minecraft/advancements/Advancement.java b/src/main/java/net/minecraft/advancements/Advancement.java
+index 31ef13a708db2e4a664b30090a562eb6e4597bab..2220a078fd8c1016c92150aa6d33ca6d3e08a97f 100644
+--- a/src/main/java/net/minecraft/advancements/Advancement.java
++++ b/src/main/java/net/minecraft/advancements/Advancement.java
+@@ -45,7 +45,7 @@ public class Advancement {
+     public Advancement(ResourceLocation id, @Nullable Advancement parent, @Nullable DisplayInfo display, AdvancementRewards rewards, Map<String, Criterion> criteria, String[][] requirements) {
+         this.id = id;
+         this.display = display;
+-        this.criteria = ImmutableMap.copyOf(criteria);
++        this.criteria = criteria; // Gale - Mirai - skip cloning advancement criteria
+         this.parent = parent;
+         this.rewards = rewards;
+         this.requirements = requirements;

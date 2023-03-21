@@ -1,0 +1,75 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Martijn Muijsers <martijnmuijsers@live.nl>
+Date: Thu, 24 Nov 2022 23:15:49 +0100
+Subject: [PATCH] Reduce villager item re-pickup
+
+License: MIT (https://opensource.org/licenses/MIT)
+Gale - https://galemc.org
+
+This patch is based on the following patch:
+"Slow down villager pickup of thrown items"
+By: Aikar <aikar@aikar.co>
+As part of: EmpireCraft (https://github.com/starlis/empirecraft)
+Licensed under: MIT (https://opensource.org/licenses/MIT)
+
+* EmpireCraft description *
+
+Helps 1.8 Farms let hoppers pick it up before Villager
+due to our hopper changes
+
+diff --git a/src/main/java/net/minecraft/world/entity/ai/behavior/BehaviorUtils.java b/src/main/java/net/minecraft/world/entity/ai/behavior/BehaviorUtils.java
+index d81f7eecb8204a974da14a75d1a7a23a6c071112..3bff137413f12df37f1b77d68991e653c6267861 100644
+--- a/src/main/java/net/minecraft/world/entity/ai/behavior/BehaviorUtils.java
++++ b/src/main/java/net/minecraft/world/entity/ai/behavior/BehaviorUtils.java
+@@ -21,6 +21,7 @@ import net.minecraft.world.entity.ai.memory.NearestVisibleLivingEntities;
+ import net.minecraft.world.entity.ai.memory.WalkTarget;
+ import net.minecraft.world.entity.ai.util.DefaultRandomPos;
+ import net.minecraft.world.entity.item.ItemEntity;
++import net.minecraft.world.entity.npc.Villager;
+ import net.minecraft.world.item.Item;
+ import net.minecraft.world.item.ItemStack;
+ import net.minecraft.world.item.ProjectileWeaponItem;
+@@ -101,7 +102,16 @@ public class BehaviorUtils {
+ 
+         vec3d2 = vec3d2.normalize().multiply(velocityFactor.x, velocityFactor.y, velocityFactor.z);
+         entityitem.setDeltaMovement(vec3d2);
+-        entityitem.setDefaultPickUpDelay();
++        // Gale start - EMC - reduce villager item re-pickup
++        if (entity instanceof Villager) {
++            int repickupDelay = entity.level.galeConfig().smallOptimizations.reducedIntervals.villagerItemRepickup;
++            if (repickupDelay <= -1) {
++                entityitem.setDefaultPickUpDelay();
++            } else {
++                entityitem.pickupDelay = repickupDelay;
++            }
++        }
++        // Gale end - EMC - reduce villager item re-pickup
+         // CraftBukkit start
+         org.bukkit.event.entity.EntityDropItemEvent event = new org.bukkit.event.entity.EntityDropItemEvent(entity.getBukkitEntity(), (org.bukkit.entity.Item) entityitem.getBukkitEntity());
+         entityitem.level.getCraftServer().getPluginManager().callEvent(event);
+diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
+index 0f2f14b0612f764a2780bc244c89db548997b2c1..be563b466b9b9312254596ea3b8e116b28cf250c 100644
+--- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
++++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
+@@ -236,6 +236,21 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+ 
+             }
+ 
++            // Gale start - EMC - reduce villager item re-pickup
++            /**
++             * The minimum delay of picking up items that were dropped by villagers.
++             * This prevents villagers picking up farmed items before hoppers do in certain farm designs, that would
++             * otherwise be broken by the {@link CheckNearbyItem.Hopper#interval} mechanic, and also reduces lag from
++             * villagers continuously throwing many items at each other when their inventories are full.
++             * Any value < 0 uses the default pickup delay of items.
++             * <ul>
++             *     <li><i>Default</i>: 100 (5 seconds)</li>
++             *     <li><i>Vanilla</i>: -1</li>
++             * </ul>
++             */
++            public int villagerItemRepickup = 100;
++            // Gale end - EMC - reduce villager item re-pickup
++
+         }
+ 
+     }
