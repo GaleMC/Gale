@@ -119,7 +119,7 @@ index a05acf709735b40ca86f978508c63a86065fd405..3752b4ba7fb0d680d4b4a61bf44d54d5
  
      double getLevelY();
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java
-index b925173cba818e740f490e5b9f21ffafb043a217..81ad831d878c303efe62cc0f9b24f55bc0d5b1d7 100644
+index b925173cba818e740f490e5b9f21ffafb043a217..c4208b01d4bfb02eed09949e31821cd8e40b6eca 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java
 @@ -11,6 +11,7 @@ import net.minecraft.core.Direction;
@@ -130,7 +130,15 @@ index b925173cba818e740f490e5b9f21ffafb043a217..81ad831d878c303efe62cc0f9b24f55b
  import net.minecraft.world.CompoundContainer;
  import net.minecraft.world.Container;
  import net.minecraft.world.ContainerHelper;
-@@ -501,7 +502,7 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
+@@ -20,6 +21,7 @@ import net.minecraft.world.entity.Entity;
+ import net.minecraft.world.entity.EntitySelector;
+ import net.minecraft.world.entity.item.ItemEntity;
+ import net.minecraft.world.entity.player.Player;
++import net.minecraft.world.entity.vehicle.MinecartHopper;
+ import net.minecraft.world.inventory.AbstractContainerMenu;
+ import net.minecraft.world.inventory.HopperMenu;
+ import net.minecraft.world.item.ItemStack;
+@@ -501,7 +503,7 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
                  }
                  // Paper end
              });
@@ -139,7 +147,7 @@ index b925173cba818e740f490e5b9f21ffafb043a217..81ad831d878c303efe62cc0f9b24f55b
              Iterator iterator = HopperBlockEntity.getItemsAtAndAbove(world, hopper).iterator();
  
              ItemEntity entityitem;
-@@ -516,6 +517,7 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
+@@ -516,6 +518,7 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
  
              return true;
          }
@@ -147,7 +155,7 @@ index b925173cba818e740f490e5b9f21ffafb043a217..81ad831d878c303efe62cc0f9b24f55b
      }
  
      @io.papermc.paper.annotation.DoNotUse // Paper - method unused as logic is inlined above
-@@ -805,6 +807,31 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
+@@ -805,6 +808,31 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
          return !first.is(second.getItem()) ? false : (first.getDamageValue() != second.getDamageValue() ? false : (first.getCount() > first.getMaxStackSize() ? false : ItemStack.tagMatches(first, second)));
      }
  

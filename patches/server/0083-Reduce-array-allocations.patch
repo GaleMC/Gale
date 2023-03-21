@@ -889,10 +889,10 @@ index 2a786c9fd29dc2139cf487fa645cd43345d60167..ea427d38452dddcd1ab67b4699554289
      private static final int[] SLOTS_FOR_SIDES = new int[]{1};
      public static final int DATA_LIT_DURATION = 1;
 diff --git a/src/main/java/net/minecraft/world/level/storage/PlayerDataStorage.java b/src/main/java/net/minecraft/world/level/storage/PlayerDataStorage.java
-index 36af81f0957d17e170d229059c66f4eb4539dfeb..ddf11cf359bf621e88c93fc43739af424faf65e3 100644
+index 36af81f0957d17e170d229059c66f4eb4539dfeb..d6693314e7814763bf216d62ccf6c2211e8f5341 100644
 --- a/src/main/java/net/minecraft/world/level/storage/PlayerDataStorage.java
 +++ b/src/main/java/net/minecraft/world/level/storage/PlayerDataStorage.java
-@@ -4,12 +4,12 @@ import com.mojang.datafixers.DataFixer;
+@@ -4,12 +4,13 @@ import com.mojang.datafixers.DataFixer;
  import com.mojang.logging.LogUtils;
  import java.io.File;
  import javax.annotation.Nullable;
@@ -901,13 +901,13 @@ index 36af81f0957d17e170d229059c66f4eb4539dfeb..ddf11cf359bf621e88c93fc43739af42
  import net.minecraft.Util;
  import net.minecraft.nbt.CompoundTag;
  import net.minecraft.nbt.NbtIo;
--import net.minecraft.nbt.NbtUtils;
+ import net.minecraft.nbt.NbtUtils;
  import net.minecraft.server.level.ServerPlayer;
 -import net.minecraft.util.datafix.DataFixTypes;
  import net.minecraft.world.entity.player.Player;
  import org.slf4j.Logger;
  
-@@ -119,7 +119,7 @@ public class PlayerDataStorage {
+@@ -119,7 +120,7 @@ public class PlayerDataStorage {
          String[] astring = this.playerDir.list();
  
          if (astring == null) {

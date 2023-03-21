@@ -1458,6 +1458,22 @@ index cfa904d42734d0fb0c1ed8b18f4d8bc131027962..ef584de97ba678176ab9bf61365d97ca
          super.customServerAiStep();
      }
  
+diff --git a/src/main/java/net/minecraft/world/entity/animal/sniffer/Sniffer.java b/src/main/java/net/minecraft/world/entity/animal/sniffer/Sniffer.java
+index c6949c7ec0766bda07324a6f004b29cbd37d0f1f..b7e248b9589a52f561bddacdbdf873cdfec290b4 100644
+--- a/src/main/java/net/minecraft/world/entity/animal/sniffer/Sniffer.java
++++ b/src/main/java/net/minecraft/world/entity/animal/sniffer/Sniffer.java
+@@ -435,11 +435,8 @@ public class Sniffer extends Animal {
+ 
+     @Override
+     protected void customServerAiStep() {
+-        this.level.getProfiler().push("snifferBrain");
+         this.getBrain().tick((ServerLevel) this.level, this);
+-        this.level.getProfiler().popPush("snifferActivityUpdate");
+         SnifferAi.updateActivity(this);
+-        this.level.getProfiler().pop();
+         super.customServerAiStep();
+     }
+ 
 diff --git a/src/main/java/net/minecraft/world/entity/monster/Zoglin.java b/src/main/java/net/minecraft/world/entity/monster/Zoglin.java
 index 51ad507a3b625201ecca50bd92f8f089f3b4d60a..818d1f09b63ad0df9e3fae059a05801571a5606d 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/Zoglin.java
