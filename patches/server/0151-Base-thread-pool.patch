@@ -1618,7 +1618,7 @@ index 25a8d3a1302c36f46eb3e0f9a5a532a329165fd7..1268cc3bb5106241df9af63230b6f13a
              }
          }
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index d4323c23f58acda56fe270f34c2eb4658fec0b55..37aa57b425564ba436f202d0ff3709764a5dab05 100644
+index 4c53d20b593a734c6bb82c94f0ec51af21f3a32e..996f4debc4e5fd2aa6097a0d9769481b9bad70b9 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
 @@ -15,7 +15,6 @@ import java.net.SocketAddress;
@@ -1641,15 +1641,6 @@ index d4323c23f58acda56fe270f34c2eb4658fec0b55..37aa57b425564ba436f202d0ff370976
  import net.minecraft.server.dedicated.DedicatedServer;
  import net.minecraft.server.level.ServerLevel;
  import net.minecraft.server.level.ServerPlayer;
-@@ -256,7 +255,7 @@ public abstract class PlayerList {
- 
-         // Gale start - MultiPaper - do not place player in world if kicked before being spawned in
-         if (!connection.isConnected() || player.quitReason != null) {
--            pendingPlayers.remove(player.getUUID(), player);
-+            /*pendingPlayers.remove(player.getUUID(), player);*/ // Gale - base thread pool - this patch was removed from Paper but might be useful later
-             return;
-         }
-         // Gale end - MultiPaper - do not place player in world if kicked before being spawned in
 @@ -297,6 +296,58 @@ public abstract class PlayerList {
          player.getRecipeBook().sendInitialRecipeBook(player);
          this.updateEntireScoreboard(worldserver1.getScoreboard(), player);
