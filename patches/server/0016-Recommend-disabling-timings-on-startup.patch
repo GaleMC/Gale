@@ -31,26 +31,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-index 811a35412b5cba79287195762e7a205eca6aa442..66512a1385b7b907763a82bdb52661c3b0821ba7 100644
+index 811a35412b5cba79287195762e7a205eca6aa442..a8d263c55974fb49259590851d4a2d0981d02129 100644
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-@@ -7,6 +7,7 @@ import net.kyori.adventure.text.Component;
- import net.kyori.adventure.text.format.NamedTextColor;
- import net.minecraft.network.protocol.Packet;
- import net.minecraft.network.protocol.game.ServerboundPlaceRecipePacket;
-+import org.bukkit.Bukkit;
- import org.checkerframework.checker.nullness.qual.Nullable;
- import org.spongepowered.configurate.objectmapping.ConfigSerializable;
- import org.spongepowered.configurate.objectmapping.meta.Comment;
-@@ -16,6 +17,7 @@ import org.spongepowered.configurate.objectmapping.meta.Setting;
- import java.util.List;
- import java.util.Map;
- import java.util.Objects;
-+import java.util.logging.Level;
- 
- @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal", "FieldMayBeFinal", "NotNullFieldNotInitialized", "InnerClassMayBeStatic"})
- public class GlobalConfiguration extends ConfigurationPart {
-@@ -50,7 +52,10 @@ public class GlobalConfiguration extends ConfigurationPart {
+@@ -50,7 +50,10 @@ public class GlobalConfiguration extends ConfigurationPart {
      public Timings timings;
  
      public class Timings extends ConfigurationPart.Post {
@@ -62,7 +46,7 @@ index 811a35412b5cba79287195762e7a205eca6aa442..66512a1385b7b907763a82bdb52661c3
          public boolean verbose = true;
          public String url = "https://timin.gs/"; // Gale - use timin.gs by default
          public boolean serverNamePrivacy = false;
-@@ -64,6 +69,13 @@ public class GlobalConfiguration extends ConfigurationPart {
+@@ -64,6 +67,13 @@ public class GlobalConfiguration extends ConfigurationPart {
  
          @Override
          public void postProcess() {
