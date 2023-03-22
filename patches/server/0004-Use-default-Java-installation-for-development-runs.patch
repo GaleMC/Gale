@@ -7,7 +7,7 @@ License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 9c65dd95153ffa1f2ffafb52b28c0912bbc46766..ed232200841977a988814849e4068315710cbe0a 100644
+index 0b3f1508c2d461a11cf26e9e298e15e3650daccf..1f7d0aa2d36b59c23a04e94dc117da987bc1a0b2 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -150,6 +150,15 @@ fun TaskContainer.registerRunTask(

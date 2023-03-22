@@ -13,7 +13,7 @@ As part of: Pufferfish (https://github.com/pufferfish-gg/Pufferfish)
 Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index e71c29541c2ceaf49a256f2648ac15cf832bb629..bee1ab6d6f0ce42ac98e9c47ee69f3ea1f874097 100644
+index 7d3b8f3c7616b5db72a6fccb51e5543a0e096125..394b5044090c1c7b00b30036e4b8be4a6ac58ed1 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -63,6 +63,7 @@ tasks.withType<JavaCompile> {
@@ -24,14 +24,14 @@ index e71c29541c2ceaf49a256f2648ac15cf832bb629..bee1ab6d6f0ce42ac98e9c47ee69f3ea
  }
  // Gale end - hide irrelevant compilation warnings
  
-@@ -188,6 +189,7 @@ fun TaskContainer.registerRunTask(
-     modifiedJvmArgs.add("--enable-preview")
-     modifiedJvmArgs.addAll(listOf("--add-opens=java.base/java.lang=ALL-UNNAMED"))
+@@ -186,6 +187,7 @@ fun TaskContainer.registerRunTask(
+     jvmArgs("--enable-preview")
+     jvmArgs("--add-opens=java.base/java.lang=ALL-UNNAMED")
      // Gale end - enable virtual threads for development runs
-+    modifiedJvmArgs.add("--add-modules=jdk.incubator.vector") // Gale - Pufferfish - SIMD support
-     jvmArgs = modifiedJvmArgs
-     // Gale end - modify JVM args for development runs
++    jvmArgs("--add-modules=jdk.incubator.vector") // Gale - Pufferfish - SIMD support
  
+     doFirst {
+         workingDir.mkdirs()
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 index 985f1a50438b325e33fba5d07e26519171504aab..54458601bbda3a4142c09f717e3b87a079ce096f 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java

@@ -7,7 +7,7 @@ License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 0b4f6466a01fe114a265068c2b4664d5ad4d71e6..e71c29541c2ceaf49a256f2648ac15cf832bb629 100644
+index 6394d18f32d190e4eee34c40c1aa9ffe65662e6b..7d3b8f3c7616b5db72a6fccb51e5543a0e096125 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -78,7 +78,7 @@ tasks.jar {

@@ -7,7 +7,7 @@ License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index bee1ab6d6f0ce42ac98e9c47ee69f3ea1f874097..bb7cb64ccf87508110325c1cae30ca56d036bd90 100644
+index 394b5044090c1c7b00b30036e4b8be4a6ac58ed1..4d16889cb85e2397e2f72d1ff3541ce8fe9a6bb5 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -15,6 +15,7 @@ dependencies {
@@ -26,14 +26,14 @@ index bee1ab6d6f0ce42ac98e9c47ee69f3ea1f874097..bb7cb64ccf87508110325c1cae30ca56
  
      val memoryGb = providers.gradleProperty("paper.runMemoryGb").getOrElse("2")
      minHeapSize = "${memoryGb}G"
-@@ -190,6 +192,7 @@ fun TaskContainer.registerRunTask(
-     modifiedJvmArgs.addAll(listOf("--add-opens=java.base/java.lang=ALL-UNNAMED"))
+@@ -188,6 +190,7 @@ fun TaskContainer.registerRunTask(
+     jvmArgs("--add-opens=java.base/java.lang=ALL-UNNAMED")
      // Gale end - enable virtual threads for development runs
-     modifiedJvmArgs.add("--add-modules=jdk.incubator.vector") // Gale - Pufferfish - SIMD support
-+    modifiedJvmArgs.add("-XX:+AllowRedefinitionToAddDeleteMethods") // Gale - base thread pool - watch for blocking base threads
-     jvmArgs = modifiedJvmArgs
-     // Gale end - modify JVM args for development runs
+     jvmArgs("--add-modules=jdk.incubator.vector") // Gale - Pufferfish - SIMD support
++    jvmArgs("-XX:+AllowRedefinitionToAddDeleteMethods") // Gale - base thread pool - watch for blocking base threads
  
+     doFirst {
+         workingDir.mkdirs()
 diff --git a/src/main/java/org/bukkit/craftbukkit/Main.java b/src/main/java/org/bukkit/craftbukkit/Main.java
 index 7c38d14671b8a9a671deece654d2f89426b26081..b3ff28d9cac66ae076179b861fd4735e4ecb279b 100644
 --- a/src/main/java/org/bukkit/craftbukkit/Main.java
