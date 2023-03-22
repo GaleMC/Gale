@@ -7,7 +7,7 @@ License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 394b5044090c1c7b00b30036e4b8be4a6ac58ed1..4d16889cb85e2397e2f72d1ff3541ce8fe9a6bb5 100644
+index 394b5044090c1c7b00b30036e4b8be4a6ac58ed1..0f0895ca1faa1e4bbd96614b497efd6a6ced5e00 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -15,6 +15,7 @@ dependencies {
@@ -22,7 +22,7 @@ index 394b5044090c1c7b00b30036e4b8be4a6ac58ed1..4d16889cb85e2397e2f72d1ff3541ce8
      if (providers.gradleProperty("paper.runDisableWatchdog").getOrElse("false") == "true") {
          systemProperty("disable.watchdog", true)
      }
-+    systemProperty("gale.detect.thread.blocks", true) // Gale - base thread pool - watch for blocking base threads
++    //systemProperty("gale.detect.thread.blocks", true) // Gale - base thread pool - watch for blocking base threads
  
      val memoryGb = providers.gradleProperty("paper.runMemoryGb").getOrElse("2")
      minHeapSize = "${memoryGb}G"
