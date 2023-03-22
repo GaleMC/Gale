@@ -59,7 +59,7 @@ index fa56cd09102a89692b42f1d14257990508c5c720..fac07dda413002c12276131efbe4ee38
          setListData(vector);
      }
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 9f9e2e03ad62649e69a1dc628966b73802665c49..c727b4fa39a7598c23ccc05add204e1b3a001436 100644
+index 7e4cb5c0c8cf9e75a709f18d170fc2ff658d9357..bfaab8a9bdde515db9694b7b504fe272835b5f14 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -1036,6 +1036,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
@@ -79,11 +79,25 @@ index 9f9e2e03ad62649e69a1dc628966b73802665c49..c727b4fa39a7598c23ccc05add204e1b
                      tps5.add(currentTps, diff);
                      tps15.add(currentTps, diff);
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index ffd6decc34a5fc30893a958f7ab6bd0273fba1a8..899d37d717de53ce49ebe8fb808633398eee19d3 100644
+index ffd6decc34a5fc30893a958f7ab6bd0273fba1a8..d7eb2077192b028c901d7a7d7bd3a9ea6c28c529 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-@@ -2715,6 +2715,13 @@ public final class CraftServer implements Server {
+@@ -2713,8 +2713,27 @@ public final class CraftServer implements Server {
+         };
+     }
  
++    // Gale start - Purpur - 5 second TPS average
++    @Override
++    public double[] getTPSIncluding5SecondAverage() {
++        return new double[] {
++            net.minecraft.server.MinecraftServer.getServer().tps5s.getAverage(),
++            net.minecraft.server.MinecraftServer.getServer().tps1.getAverage(),
++            net.minecraft.server.MinecraftServer.getServer().tps5.getAverage(),
++            net.minecraft.server.MinecraftServer.getServer().tps15.getAverage()
++        };
++    }
++    // Gale end - Purpur - 5 second TPS average
++
      // Gale start - specific interval TPS API
  
 +    // Gale start - Purpur - 5 second TPS average
@@ -97,10 +111,17 @@ index ffd6decc34a5fc30893a958f7ab6bd0273fba1a8..899d37d717de53ce49ebe8fb80863339
      public double get1MinuteTPSAverage() {
          return net.minecraft.server.MinecraftServer.getServer().tps1.getAverage();
 diff --git a/src/main/java/org/spigotmc/TicksPerSecondCommand.java b/src/main/java/org/spigotmc/TicksPerSecondCommand.java
-index 9bede6a26c08ede063c7a38f1149c811df14b258..29e27dd3c8908956f2708a3562e69e4f35b26249 100644
+index 9bede6a26c08ede063c7a38f1149c811df14b258..98479976ca48cf7e84789ee79faab50d0ef6ba6d 100644
 --- a/src/main/java/org/spigotmc/TicksPerSecondCommand.java
 +++ b/src/main/java/org/spigotmc/TicksPerSecondCommand.java
-@@ -31,7 +31,7 @@ public class TicksPerSecondCommand extends Command
+@@ -25,13 +25,13 @@ public class TicksPerSecondCommand extends Command
+         }
+ 
+         // Paper start - Further improve tick handling
+-        double[] tps = org.bukkit.Bukkit.getTPS();
++        double[] tps = org.bukkit.Bukkit.getTPSIncluding5SecondAverage(); // Gale - Purpur - 5 second TPS average
+         String[] tpsAvg = new String[tps.length];
+ 
          for ( int i = 0; i < tps.length; i++) {
              tpsAvg[i] = TicksPerSecondCommand.format( tps[i] );
          }

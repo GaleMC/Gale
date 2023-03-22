@@ -6,6 +6,48 @@ Subject: [PATCH] Specific interval TPS API
 License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 Gale - https://galemc.org
 
+diff --git a/src/main/java/org/bukkit/Bukkit.java b/src/main/java/org/bukkit/Bukkit.java
+index ac9b690fcccb60b587e5345f12f1383afd0a73a1..e9ff914c9e602887c433c3aa7aab5a170dd31f17 100644
+--- a/src/main/java/org/bukkit/Bukkit.java
++++ b/src/main/java/org/bukkit/Bukkit.java
+@@ -2072,6 +2072,37 @@ public final class Bukkit {
+         return server.getTPS();
+     }
+ 
++    // Gale start - specific interval TPS API
++
++    /**
++     * Gets the average server TPS over the last 1 minute
++     *
++     * @return the average server TPS over the last 1 minute
++     */
++    public static double get1MinuteTPSAverage() {
++        return server.get1MinuteTPSAverage();
++    }
++
++    /**
++     * Gets the average server TPS over the last 5 minutes
++     *
++     * @return the average server TPS over the last 5 minutes
++     */
++    public static double get5MinuteTPSAverage() {
++        return server.get5MinuteTPSAverage();
++    }
++
++    /**
++     * Gets the average server TPS over the last 15 minutes
++     *
++     * @return the average server TPS over the last 15 minutes
++     */
++    public static double get15MinuteTPSAverage() {
++        return server.get15MinuteTPSAverage();
++    }
++
++    // Gale end - specific interval TPS API
++
+     /**
+      * Get a sample of the servers last tick times (in nanos)
+      *
 diff --git a/src/main/java/org/bukkit/Server.java b/src/main/java/org/bukkit/Server.java
 index aec6ef7197ed8caec451954727c1f7149491d3f9..7d0baa4306fecb79d069a7f5aed81e12a80a1f0e 100644
 --- a/src/main/java/org/bukkit/Server.java
