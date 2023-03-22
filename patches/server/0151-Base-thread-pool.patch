@@ -370,7 +370,7 @@ index 49019b4a9bc4e634d54a9b0acaf9229a5c896f85..6aae3b36bfe3ffc630cd7af250633de3
 +
  }
 diff --git a/src/main/java/io/papermc/paper/configuration/Configurations.java b/src/main/java/io/papermc/paper/configuration/Configurations.java
-index cf6d50218769e3fecd12dbde70a03b5042feddf4..9d8ee965f7dcd0f416b7aa8368e34b911edef6b0 100644
+index 80a8362c299d02c26781f06be5b8ee6cada8efbe..ffd46f3fd23ee4f1ba550b4d9a5e9a6ad2f9590e 100644
 --- a/src/main/java/io/papermc/paper/configuration/Configurations.java
 +++ b/src/main/java/io/papermc/paper/configuration/Configurations.java
 @@ -322,7 +322,7 @@ public abstract class Configurations<G, W> {
@@ -383,7 +383,7 @@ index cf6d50218769e3fecd12dbde70a03b5042feddf4..9d8ee965f7dcd0f416b7aa8368e34b91
          }
          return global;
 diff --git a/src/main/java/io/papermc/paper/configuration/PaperConfigurations.java b/src/main/java/io/papermc/paper/configuration/PaperConfigurations.java
-index a82be9c7226348b6c8ed5edfa8dd8262b4f49f07..47a3580caef45ffe71446c247d4e06e332b2fda2 100644
+index 1376290026401424619f95dead7fca63681b3994..760601de028536aec142d195aa875ae59edd8e41 100644
 --- a/src/main/java/io/papermc/paper/configuration/PaperConfigurations.java
 +++ b/src/main/java/io/papermc/paper/configuration/PaperConfigurations.java
 @@ -289,7 +289,7 @@ public class PaperConfigurations extends Configurations<GlobalConfiguration, Wor
@@ -590,7 +590,7 @@ index b46e64bbfe4530917ff941292464acf71c7fab60..5b9e0bf7c0915e49208fa18c46b5ba2b
                  WorldLoader.InitConfig worldloader_c = Main.loadOrCreateConfig(dedicatedserversettings.getProperties(), convertable_conversionsession, flag, resourcepackrepository);
  
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 1df5c36ba713134fdb8dc643ea1df66c4f818125..30d848a13cc53bbe1ca1bcd497b2d2d5cb8a278d 100644
+index 672f4acdb43dca3714e26b47a7b8269d0de829ad..b9dfe7aa02d8ac8b254f857756385605e3a98a2c 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -41,10 +41,8 @@ import java.util.Optional;
@@ -1316,9 +1316,9 @@ index 1df5c36ba713134fdb8dc643ea1df66c4f818125..30d848a13cc53bbe1ca1bcd497b2d2d5
      public int getCompressionThreshold() {
          return 256;
      }
-@@ -2035,7 +2152,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -2034,7 +2151,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+             this.resources.managers.updateRegistryTags(this.registryAccess());
              net.minecraft.world.item.alchemy.PotionBrewing.reload(); // Paper
-             new io.papermc.paper.event.server.ServerResourcesReloadedEvent(cause).callEvent(); // Paper
              // Paper start
 -            if (Thread.currentThread() != this.serverThread) {
 +            if (Thread.currentThread() != serverThread) { // Gale - base thread pool
