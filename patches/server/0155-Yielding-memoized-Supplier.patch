@@ -7,7 +7,7 @@ License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/io/papermc/paper/configuration/PaperConfigurations.java b/src/main/java/io/papermc/paper/configuration/PaperConfigurations.java
-index 47a3580caef45ffe71446c247d4e06e332b2fda2..0b7d6bdd9d0543a4b37abfdd67c9fda4688134de 100644
+index 760601de028536aec142d195aa875ae59edd8e41..4753d4b489724d5b2681ac1c9f3736f08bfafbd2 100644
 --- a/src/main/java/io/papermc/paper/configuration/PaperConfigurations.java
 +++ b/src/main/java/io/papermc/paper/configuration/PaperConfigurations.java
 @@ -41,6 +41,7 @@ import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;

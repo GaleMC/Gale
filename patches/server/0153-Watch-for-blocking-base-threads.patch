@@ -35,7 +35,7 @@ index 394b5044090c1c7b00b30036e4b8be4a6ac58ed1..0f0895ca1faa1e4bbd96614b497efd6a
      doFirst {
          workingDir.mkdirs()
 diff --git a/src/main/java/org/bukkit/craftbukkit/Main.java b/src/main/java/org/bukkit/craftbukkit/Main.java
-index 7c38d14671b8a9a671deece654d2f89426b26081..b3ff28d9cac66ae076179b861fd4735e4ecb279b 100644
+index 185ad2527449bddfcf031ef6e3ae0ea6d39edf0e..3e97a50514f4b4ce1711c5813762782eb9da3ddf 100644
 --- a/src/main/java/org/bukkit/craftbukkit/Main.java
 +++ b/src/main/java/org/bukkit/craftbukkit/Main.java
 @@ -4,16 +4,21 @@ import java.io.File;

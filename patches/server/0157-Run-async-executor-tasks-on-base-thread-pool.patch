@@ -27,7 +27,7 @@ index 157f74bbbac8cbbed37c4fcc339b3b3c06d06bbe..cd614c55aa3f9a014c2a073abf803888
          1, 1, 0L, TimeUnit.SECONDS,
          new LinkedBlockingQueue<>(),
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 30d848a13cc53bbe1ca1bcd497b2d2d5cb8a278d..d301399b47626a6196e89b76110d9305f1a4beeb 100644
+index b9dfe7aa02d8ac8b254f857756385605e3a98a2c..1c2020b366d2da3a054fbdaab2dd5734e6dbb315 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -1084,9 +1084,6 @@ public abstract class MinecraftServer extends MinecraftServerBlockableEventLoop

@@ -7,10 +7,10 @@ License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/io/papermc/paper/world/ThreadedWorldUpgrader.java b/src/main/java/io/papermc/paper/world/ThreadedWorldUpgrader.java
-index 513833c2ea23df5b079d157bc5cb89d5c9754c0b..5320a366924e2ab6b60e5563ca58eb0ae6323d21 100644
+index c13df3a375f416273c6a26f5f77624c1f34a918c..ccab7e0d529a9909410da4301db037bf4b0f02f0 100644
 --- a/src/main/java/io/papermc/paper/world/ThreadedWorldUpgrader.java
 +++ b/src/main/java/io/papermc/paper/world/ThreadedWorldUpgrader.java
-@@ -7,25 +7,21 @@ import net.minecraft.nbt.CompoundTag;
+@@ -7,17 +7,16 @@ import net.minecraft.nbt.CompoundTag;
  import net.minecraft.resources.ResourceKey;
  import net.minecraft.util.worldupdate.WorldUpgrader;
  import net.minecraft.world.level.ChunkPos;
@@ -30,15 +30,7 @@ index 513833c2ea23df5b079d157bc5cb89d5c9754c0b..5320a366924e2ab6b60e5563ca58eb0a
  import java.io.File;
  import java.io.IOException;
  import java.text.DecimalFormat;
- import java.util.Optional;
- import java.util.concurrent.ExecutorService;
--import java.util.concurrent.Executors;
--import java.util.concurrent.ThreadFactory;
--import java.util.concurrent.atomic.AtomicInteger;
- import java.util.concurrent.atomic.AtomicLong;
- import java.util.function.Supplier;
- 
-@@ -46,6 +42,10 @@ public class ThreadedWorldUpgrader {
+@@ -47,6 +46,10 @@ public class ThreadedWorldUpgrader {
          this.dimensionType = dimensionType;
          this.worldName = worldName;
          this.worldDir = worldDir;
@@ -49,7 +41,7 @@ index 513833c2ea23df5b079d157bc5cb89d5c9754c0b..5320a366924e2ab6b60e5563ca58eb0a
          this.threadPool = Executors.newFixedThreadPool(Math.max(1, threads), new ThreadFactory() {
              private final AtomicInteger threadCounter = new AtomicInteger();
  
-@@ -61,6 +61,7 @@ public class ThreadedWorldUpgrader {
+@@ -62,6 +65,7 @@ public class ThreadedWorldUpgrader {
                  return ret;
              }
          });
@@ -57,10 +49,10 @@ index 513833c2ea23df5b079d157bc5cb89d5c9754c0b..5320a366924e2ab6b60e5563ca58eb0a
          this.dataFixer = dataFixer;
          this.generatorKey = generatorKey;
          this.removeCaches = removeCaches;
-@@ -98,17 +99,22 @@ public class ThreadedWorldUpgrader {
- 
-             this.threadPool.execute(new ConvertTask(info, regionPos.x >> 5, regionPos.z >> 5));
+@@ -121,17 +125,22 @@ public class ThreadedWorldUpgrader {
+             // Gale end - instantly continue on world upgrade finish
          }
+         finalExpectedChunks[0] = expectedChunks; // Gale - instantly continue on world upgrade finish
 -        this.threadPool.shutdown();
  
          final DecimalFormat format = new DecimalFormat("#0.00");
@@ -79,6 +71,6 @@ index 513833c2ea23df5b079d157bc5cb89d5c9754c0b..5320a366924e2ab6b60e5563ca58eb0a
 +            }
 +            // Gale end - base thread pool - remove world upgrade executors - wait for task completion instead of thread pool termination
 +
-             try {
-                 Thread.sleep(1000L);
-             } catch (final InterruptedException ignore) {}
+             // Gale start - instantly continue on world upgrade finish
+             while (!finishLock.tryLock()) {
+                 Thread.onSpinWait();

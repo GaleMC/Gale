@@ -1,0 +1,79 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Martijn Muijsers <martijnmuijsers@live.nl>
+Date: Fri, 24 Mar 2023 09:16:33 +0100
+Subject: [PATCH] Instantly continue on world upgrade finish
+
+License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+Gale - https://galemc.org
+
+diff --git a/src/main/java/io/papermc/paper/world/ThreadedWorldUpgrader.java b/src/main/java/io/papermc/paper/world/ThreadedWorldUpgrader.java
+index 513833c2ea23df5b079d157bc5cb89d5c9754c0b..c13df3a375f416273c6a26f5f77624c1f34a918c 100644
+--- a/src/main/java/io/papermc/paper/world/ThreadedWorldUpgrader.java
++++ b/src/main/java/io/papermc/paper/world/ThreadedWorldUpgrader.java
+@@ -25,6 +25,7 @@ import java.util.Optional;
+ import java.util.concurrent.ExecutorService;
+ import java.util.concurrent.Executors;
+ import java.util.concurrent.ThreadFactory;
++import java.util.concurrent.TimeUnit;
+ import java.util.concurrent.atomic.AtomicInteger;
+ import java.util.concurrent.atomic.AtomicLong;
+ import java.util.function.Supplier;
+@@ -88,7 +89,12 @@ public class ThreadedWorldUpgrader {
+                 new ChunkStorage(regionFolder.toPath(), this.dataFixer, false), this.removeCaches, this.dimensionType, this.generatorKey);
+ 
+         long expectedChunks = (long)regionFiles.length * (32L * 32L);
++        // Gale start - instantly continue on world upgrade finish
++        final long[] finalExpectedChunks = {-1L};
+ 
++        var finishLock = new java.util.concurrent.locks.ReentrantLock();
++        var finishCondition = finishLock.newCondition();
++        // Gale end - instantly continue on world upgrade finish
+         for (final File regionFile : regionFiles) {
+             final ChunkPos regionPos = RegionFileStorage.getRegionFileCoordinates(regionFile.toPath());
+             if (regionPos == null) {
+@@ -96,8 +102,25 @@ public class ThreadedWorldUpgrader {
+                 continue;
+             }
+ 
+-            this.threadPool.execute(new ConvertTask(info, regionPos.x >> 5, regionPos.z >> 5));
++            // Gale start - instantly continue on world upgrade finish
++            Runnable taskWithNotification = () -> {
++                new ConvertTask(info, regionPos.x >> 5, regionPos.z >> 5).run();
++                final long current = info.convertedChunks.get();
++                if (current == finalExpectedChunks[0]) {
++                    while (!finishLock.tryLock()) {
++                        Thread.onSpinWait();
++                    }
++                    try {
++                        finishCondition.signal();
++                    } finally {
++                        finishLock.unlock();
++                    }
++                }
++            };
++            this.threadPool.execute(taskWithNotification);
++            // Gale end - instantly continue on world upgrade finish
+         }
++        finalExpectedChunks[0] = expectedChunks; // Gale - instantly continue on world upgrade finish
+         this.threadPool.shutdown();
+ 
+         final DecimalFormat format = new DecimalFormat("#0.00");
+@@ -109,9 +132,16 @@ public class ThreadedWorldUpgrader {
+ 
+             LOGGER.info("{}% completed ({} / {} chunks)...", format.format((double)current / (double)expectedChunks * 100.0), current, expectedChunks);
+ 
++            // Gale start - instantly continue on world upgrade finish
++            while (!finishLock.tryLock()) {
++                Thread.onSpinWait();
++            }
+             try {
+-                Thread.sleep(1000L);
+-            } catch (final InterruptedException ignore) {}
++                finishCondition.await(1000L, TimeUnit.MILLISECONDS);
++            } catch (final InterruptedException ignore) {} finally {
++                finishLock.unlock();
++            }
++            // Gale end - instantly continue on world upgrade finish
+         }
+ 
+         final long end = System.nanoTime();

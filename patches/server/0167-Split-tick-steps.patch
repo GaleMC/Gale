@@ -7,7 +7,7 @@ License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 4f73bbb49ff96adeb3b9ba245c2f32c9cb97df1d..dad347675f45922254f8b26efb2cce7461411928 100644
+index d9e07fd59e4f0bb006cadd022b2086fc65f5eacf..0782da72420e6988728a699af420fd17e5828e06 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -156,7 +156,6 @@ import org.galemc.gale.executor.queue.BaseTaskQueues;
