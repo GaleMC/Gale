@@ -50,7 +50,7 @@ Additional thanks and friendly greetings go out to the following forks and other
 * [JettPack](https://gitlab.com/Titaniumtown/JettPack)
 * [Lithium](https://github.com/CaffeineMC/lithium-fabric)
 * [VMP](https://github.com/RelativityMC/VMP-fabric)
-* [C2ME](https://github.com/RelativityMC/C2ME-fabric).
+* [C2ME](https://github.com/RelativityMC/C2ME-fabric)
 * [MultiPaper](https://github.com/MultiPaper/MultiPaper)
 * [Patina](https://github.com/PatinaMC/Patina)
 * MCMT ([Fabric](https://github.com/himekifee/MCMTFabric), [Forge](https://github.com/jediminer543/JMT-MCMT))
