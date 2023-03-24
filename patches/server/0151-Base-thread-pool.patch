@@ -492,7 +492,7 @@ index d2f0a0755317f5fa9a1ccf7db346aa77fd287d80..79c55f3ce482d251c768b5b802e52b59
              engine.execute(() -> { // Paper - Fix preemptive player kick on a server shutdown.
                  packetProcessing.push(listener); // Paper - detailed watchdog information
 diff --git a/src/main/java/net/minecraft/server/Main.java b/src/main/java/net/minecraft/server/Main.java
-index b46e64bbfe4530917ff941292464acf71c7fab60..5b9e0bf7c0915e49208fa18c46b5ba2b2ec37f83 100644
+index b46e64bbfe4530917ff941292464acf71c7fab60..5a502c70df11a996c7ef702d9caa160666ce5783 100644
 --- a/src/main/java/net/minecraft/server/Main.java
 +++ b/src/main/java/net/minecraft/server/Main.java
 @@ -1,12 +1,10 @@
@@ -564,7 +564,7 @@ index b46e64bbfe4530917ff941292464acf71c7fab60..5b9e0bf7c0915e49208fa18c46b5ba2b
 +                    majorVersion = -1;
 +                }
 +                if (majorVersion == -1 || majorVersion >= VirtualThreads.minimumJavaMajorVersion) {
-+                    Main.LOGGER.warn("Virtual threads are not enabled@");
++                    Main.LOGGER.warn("Virtual threads are not enabled");
 +                    Main.LOGGER.warn("To enable additional powerful optimizations, add \"--enable-preview --add-opens=java.base/java.lang=ALL-UNNAMED\" to your startup flags, BEFORE the \"-jar\".");
 +                } else {
 +                    Main.LOGGER.warn("You are using Java " + majorVersion + ".");
@@ -1792,7 +1792,7 @@ index 64f6555372ba5c97891fd6742f51fa6680c690a2..9582050566c5afc4e0fc40f5d74b653e
                      final Entity entity = level.getEntity(this.ownerUUID);
                      if (entity != null) {
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index 931fcce46f3941af772416f39229ed4abc7f8301..8605f089a40c56f52f1d2df28af0704677623671 100644
+index 7fe27e79b71117a3cea8fa041689ec5467dcd70f..49ec0bd654e063b21d9673a17ed3df9b9e7f2242 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 @@ -963,7 +963,7 @@ public final class CraftServer implements Server {
