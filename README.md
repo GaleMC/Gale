@@ -9,13 +9,13 @@
 
 ## About
 
-Gale is a fork of [Paper](https://github.com/PaperMC/Paper). It provides slightly higher performance.
-The project is in open alpha. We do not recommend running it on your production server. While some servers have been running Gale for over a month without issues, problems may still occur in unforeseen circumstances.
+Gale is a fork of [Paper](https://github.com/PaperMC/Paper). It is intended to provide strong performance.
+The project is in open alpha.
 
 ## Current features
 
 * **Faster threading system**\
-  Gale comes with a custom threading system, which makes terrain generation 2-3x faster on most systems!
+  Gale comes with a custom threading system, that immediately makes terrain generation 2-3x faster than Paper on most systems! Try it for yourself and see.
 * **Micro-optimizations**\
   A number of micro-optimizations that do not change game mechanics from other projects, such as [Airplane](https://github.com/TECHNOVE/Airplane) and [Lithium](https://github.com/CaffeineMC/lithium-fabric), are also included. Every included optimization has been carefully tested and reviewed line-by-line; faulty or risky optimizations will not be added.
 * **Fixes and options**\
