@@ -476,17 +476,10 @@ index 0000000000000000000000000000000000000000..1ed9ecedba4b1daaf35c1a5b5c7aa524
 +
 +}
 diff --git a/src/main/java/org/spigotmc/WatchdogThread.java b/src/main/java/org/spigotmc/WatchdogThread.java
-index e9fa7faaa4451e36b3908cbcbbe0baf213abde96..832f1ee4fb11c981bd109510eb908d7c7ef91bd4 100644
+index e9fa7faaa4451e36b3908cbcbbe0baf213abde96..f29e48fc653affca2338d842a1a4972c5fa67f01 100644
 --- a/src/main/java/org/spigotmc/WatchdogThread.java
 +++ b/src/main/java/org/spigotmc/WatchdogThread.java
-@@ -1,5 +1,6 @@
- package org.spigotmc;
- 
-+import java.awt.print.Paper;
- import java.lang.management.ManagementFactory;
- import java.lang.management.MonitorInfo;
- import java.lang.management.ThreadInfo;
-@@ -155,14 +156,20 @@ public final class WatchdogThread extends io.papermc.paper.util.TickThread // Pa
+@@ -155,14 +155,20 @@ public final class WatchdogThread extends io.papermc.paper.util.TickThread // Pa
                  if (isLongTimeout) {
                  // Paper end
                  log.log( Level.SEVERE, "------------------------------" );
@@ -510,7 +503,7 @@ index e9fa7faaa4451e36b3908cbcbbe0baf213abde96..832f1ee4fb11c981bd109510eb908d7c
                  //
                  if ( net.minecraft.world.level.Level.lastPhysicsProblem != null )
                  {
-@@ -185,12 +192,18 @@ public final class WatchdogThread extends io.papermc.paper.util.TickThread // Pa
+@@ -185,12 +191,18 @@ public final class WatchdogThread extends io.papermc.paper.util.TickThread // Pa
                  // Paper end
                  } else
                  {
@@ -531,7 +524,7 @@ index e9fa7faaa4451e36b3908cbcbbe0baf213abde96..832f1ee4fb11c981bd109510eb908d7c
                  io.papermc.paper.chunk.system.scheduling.ChunkTaskScheduler.dumpAllChunkLoadInfo(isLongTimeout); // Paper // Paper - rewrite chunk system
                  this.dumpTickingInfo(); // Paper - log detailed tick information
                  WatchdogThread.dumpThread( ManagementFactory.getThreadMXBean().getThreadInfo( MinecraftServer.getServer().serverThread.getId(), Integer.MAX_VALUE ), log );
-@@ -206,7 +219,13 @@ public final class WatchdogThread extends io.papermc.paper.util.TickThread // Pa
+@@ -206,7 +218,13 @@ public final class WatchdogThread extends io.papermc.paper.util.TickThread // Pa
                      WatchdogThread.dumpThread( thread, log );
                  }
                  } else {

@@ -6616,17 +6616,10 @@ index 3112a8695639c402e9d18710acbc11cff5611e9c..7b38565b8699bd083c2114981feb2202
              }
              console.server.reloadCount++;
 diff --git a/src/main/java/org/spigotmc/WatchdogThread.java b/src/main/java/org/spigotmc/WatchdogThread.java
-index 832f1ee4fb11c981bd109510eb908d7c7ef91bd4..bcb144ec4a836b8b32f60726bcbee218a4f62742 100644
+index f29e48fc653affca2338d842a1a4972c5fa67f01..bcb144ec4a836b8b32f60726bcbee218a4f62742 100644
 --- a/src/main/java/org/spigotmc/WatchdogThread.java
 +++ b/src/main/java/org/spigotmc/WatchdogThread.java
-@@ -1,6 +1,5 @@
- package org.spigotmc;
- 
--import java.awt.print.Paper;
- import java.lang.management.ManagementFactory;
- import java.lang.management.MonitorInfo;
- import java.lang.management.ThreadInfo;
-@@ -8,12 +7,13 @@ import java.util.logging.Level;
+@@ -7,12 +7,13 @@ import java.util.logging.Level;
  import java.util.logging.Logger;
  import net.minecraft.server.MinecraftServer;
  import org.bukkit.Bukkit;
@@ -6642,7 +6635,7 @@ index 832f1ee4fb11c981bd109510eb908d7c7ef91bd4..bcb144ec4a836b8b32f60726bcbee218
      private long timeoutTime;
      private boolean restart;
      private final long earlyWarningEvery; // Paper - Timeout time for just printing a dump but not restarting
-@@ -206,7 +206,7 @@ public final class WatchdogThread extends io.papermc.paper.util.TickThread // Pa
+@@ -205,7 +206,7 @@ public final class WatchdogThread extends io.papermc.paper.util.TickThread // Pa
                  log.log( Level.SEVERE, "Server thread dump (Look for plugins here before reporting to Gale!):" ); // Paper // Gale - branding changes
                  io.papermc.paper.chunk.system.scheduling.ChunkTaskScheduler.dumpAllChunkLoadInfo(isLongTimeout); // Paper // Paper - rewrite chunk system
                  this.dumpTickingInfo(); // Paper - log detailed tick information
