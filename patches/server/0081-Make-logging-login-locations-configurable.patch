@@ -1,0 +1,44 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Martijn Muijsers <martijnmuijsers@live.nl>
+Date: Mon, 26 Dec 2022 00:17:40 +0100
+Subject: [PATCH] Make logging login locations configurable
+
+License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+Gale - https://galemc.org
+
+This patch is based on the following patch:
+"configurable logging of player login location"
+By: Simon Gardling <titaniumtown@gmail.com>
+As part of: JettPack (https://gitlab.com/Titaniumtown/JettPack)
+Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+
+diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
+index 530e049a10cccd13bcfccc652db1610113433242..cb345dc563d30edc23b380b8c330e24bfe3fa2a2 100644
+--- a/src/main/java/net/minecraft/server/players/PlayerList.java
++++ b/src/main/java/net/minecraft/server/players/PlayerList.java
+@@ -471,7 +471,13 @@ public abstract class PlayerList {
+         }
+         // Paper end
+         // CraftBukkit - Moved from above, added world
++        if (GaleGlobalConfiguration.get().logToConsole.playerLoginLocations) { // Gale - JettPack - make logging login location configurable
+         PlayerList.LOGGER.info("{}[{}] logged in with entity id {} at ([{}]{}, {}, {})", player.getName().getString(), s1, player.getId(), worldserver1.serverLevelData.getLevelName(), player.getX(), player.getY(), player.getZ());
++        // Gale start - JettPack - make logging login location configurable
++        } else {
++            PlayerList.LOGGER.info("{}[{}] logged in with entity id {}", player.getName().getString(), s1, player.getId());
++        }
++        // Gale end - JettPack - make logging login location configurable
+     }
+ 
+     public void updateEntireScoreboard(ServerScoreboard scoreboard, ServerPlayer player) {
+diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
+index f4f6f59af9ae02748763b82f2c2ae5da90737749..599c921e30e84c7145340f575d8de1b1d71d9331 100644
+--- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
++++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
+@@ -120,6 +120,7 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+         public boolean setBlockInFarChunk = true; // Gale - Purpur - do not log setBlock in far chunks
+         public boolean unrecognizedRecipes = false; // Gale - Purpur - do not log unrecognized recipes
+         public boolean legacyMaterialInitialization = false; // Gale - Purpur - do not log legacy Material initialization
++        public boolean playerLoginLocations = true; // Gale - JettPack - make logging login location configurable
+ 
+         public Chat chat;
+         public class Chat extends ConfigurationPart {

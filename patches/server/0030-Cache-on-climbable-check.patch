@@ -31,7 +31,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index 517a4cde947b51195ca7e99afc330d8b40fae235..db64a50dd929d64418cfd81176377b3a1d5d1acc 100644
+index 8d90c02c8f0b82e9c31889b35dcfbe2932406b1d..6411a059a67e1a09580ec8b11afbffe1ef4b8958 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
 @@ -141,7 +141,6 @@ import org.bukkit.event.entity.EntityTeleportEvent;
@@ -64,10 +64,10 @@ index 517a4cde947b51195ca7e99afc330d8b40fae235..db64a50dd929d64418cfd81176377b3a
          if (this.isSpectator()) {
              return false;
 diff --git a/src/main/java/org/spigotmc/ActivationRange.java b/src/main/java/org/spigotmc/ActivationRange.java
-index e881584d38dc354204479863f004e974a0ac6c07..2bff2b6cff78f1ad4cbc6abbc1a37464f543ccb7 100644
+index 52780192d6417f8085566e4cdf3a895a83638520..a04c202e83abc08a98549440e987d4d5f47379b7 100644
 --- a/src/main/java/org/spigotmc/ActivationRange.java
 +++ b/src/main/java/org/spigotmc/ActivationRange.java
-@@ -291,7 +291,7 @@ public class ActivationRange
+@@ -292,7 +292,7 @@ public class ActivationRange
          if ( entity instanceof LivingEntity )
          {
              LivingEntity living = (LivingEntity) entity;

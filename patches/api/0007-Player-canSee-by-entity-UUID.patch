@@ -37,7 +37,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 diff --git a/src/main/java/org/bukkit/entity/Player.java b/src/main/java/org/bukkit/entity/Player.java
-index 660f28e371176c62e38a84b187958aceb235c8e3..15c57f3e4e1c023e0f3168ce03dd770f006cf27b 100644
+index ee446bfb3e6c4b1d4428c00d6406bf9455c68ad5..2258276b31dda927003367a92e31f05f2c362b1e 100644
 --- a/src/main/java/org/bukkit/entity/Player.java
 +++ b/src/main/java/org/bukkit/entity/Player.java
 @@ -3,6 +3,8 @@ package org.bukkit.entity;
@@ -49,8 +49,8 @@ index 660f28e371176c62e38a84b187958aceb235c8e3..15c57f3e4e1c023e0f3168ce03dd770f
  import org.bukkit.DyeColor;
  import org.bukkit.Effect;
  import org.bukkit.GameMode;
-@@ -1587,6 +1589,16 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
-     @org.jetbrains.annotations.ApiStatus.Experimental // Paper
+@@ -1622,6 +1624,16 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
+     @ApiStatus.Experimental
      public boolean canSee(@NotNull Entity entity);
  
 +    // Gale start - Purpur - Player#canSee by entity UUID

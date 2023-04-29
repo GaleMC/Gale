@@ -24,7 +24,7 @@ index 6394d18f32d190e4eee34c40c1aa9ffe65662e6b..7d3b8f3c7616b5db72a6fccb51e5543a
              "Specification-Title" to "Bukkit",
              "Specification-Version" to project.version,
 diff --git a/src/main/java/com/destroystokyo/paper/PaperVersionFetcher.java b/src/main/java/com/destroystokyo/paper/PaperVersionFetcher.java
-index bf42969859545a8a520923ef1836ffa4a5cc24a0..f6183c39b3e6895953047ee1e2d967b3ab43eb4a 100644
+index 9d687da5bdf398bb3f6c84cdf1249a7213d09f2e..03f5ec3c4f8eac9cecfef0f257b90090aece5017 100644
 --- a/src/main/java/com/destroystokyo/paper/PaperVersionFetcher.java
 +++ b/src/main/java/com/destroystokyo/paper/PaperVersionFetcher.java
 @@ -1,85 +1,40 @@
@@ -57,7 +57,7 @@ index bf42969859545a8a520923ef1836ffa4a5cc24a0..f6183c39b3e6895953047ee1e2d967b3
 -public class PaperVersionFetcher implements VersionFetcher {
 -    private static final java.util.regex.Pattern VER_PATTERN = java.util.regex.Pattern.compile("^([0-9\\.]*)\\-.*R"); // R is an anchor, will always give '-R' at end
 -    private static final String GITHUB_BRANCH_NAME = "master";
--    private static final String DOWNLOAD_PAGE = "https://papermc.io/downloads";
+-    private static final String DOWNLOAD_PAGE = "https://papermc.io/downloads/paper";
 -    private static @Nullable String mcVer;
 +// Gale start - branding changes - version fetcher
 +/**
@@ -70,7 +70,7 @@ index bf42969859545a8a520923ef1836ffa4a5cc24a0..f6183c39b3e6895953047ee1e2d967b3
 -    public long getCacheTime() {
 -        return 720000;
 +    public PaperVersionFetcher() {
-+        super("master", "https://papermc.io/downloads", "Paper", "PaperMC", "PaperMC", "Paper");
++        super("master", "https://papermc.io/downloads/paper", "Paper", "PaperMC", "PaperMC", "Paper");
      }
  
 -    @Nonnull
@@ -194,10 +194,10 @@ index c5d5648f4ca603ef2b1df723b58f9caf4dd3c722..e45e6b44b2a8f2cdae6e0048a812b921
                  .completer(new ConsoleCommandCompleter(this.server))
                  .option(LineReader.Option.COMPLETE_IN_WORD, true);
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 4450d825a5474da211f0e83f845d8c7129fa08aa..d7cc91c5b259e047c21e2c53fc563e1e90f3d3eb 100644
+index 9f15d9dbdfa74a0640b1a2b4ff695609d4758a4c..ec7bf5c30a19215af6fe19b16de24e523de0a2ac 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -924,7 +924,13 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -925,7 +925,13 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          shutdownThread = Thread.currentThread();
          org.spigotmc.WatchdogThread.doStop(); // Paper
          if (!isSameThread()) {
@@ -212,7 +212,7 @@ index 4450d825a5474da211f0e83f845d8c7129fa08aa..d7cc91c5b259e047c21e2c53fc563e1e
              while (this.getRunningThread().isAlive()) {
                  this.getRunningThread().stop();
                  try {
-@@ -1681,7 +1687,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1682,7 +1688,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
  
      @DontObfuscate
      public String getServerModName() {
@@ -222,7 +222,7 @@ index 4450d825a5474da211f0e83f845d8c7129fa08aa..d7cc91c5b259e047c21e2c53fc563e1e
  
      public SystemReport fillSystemReport(SystemReport details) {
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index f9a9d2bb7b6d1bf4a0931438de4d8c7ee0757479..c5ead5947d0ede35060e25876df43aa488ab0121 100644
+index e90e7f32c81ac2ffdb7594fa3e4623061304409e..492265a4bf28a8797cabbcc966c0ea6e76a7dc5f 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 @@ -256,7 +256,7 @@ import javax.annotation.Nullable; // Paper

@@ -1,0 +1,60 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Martijn Muijsers <martijnmuijsers@live.nl>
+Date: Sun, 25 Dec 2022 16:55:45 +0100
+Subject: [PATCH] Load portal destination chunk before entity teleport
+
+License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+Gale - https://galemc.org
+
+This patch is based on the following patch:
+"Load chunks when entities go through an end portal"
+By: PureGero <puregero@gmail.com>
+As part of: MultiPaper (https://github.com/MultiPaper/MultiPaper)
+Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+
+diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
+index fcf9120663a19a31f6de9e791508dccc23d14893..bb552160cb9e1aebdac9e4a7756dcb5caa2d7a38 100644
+--- a/src/main/java/net/minecraft/world/entity/Entity.java
++++ b/src/main/java/net/minecraft/world/entity/Entity.java
+@@ -3475,6 +3475,13 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+                 Entity entity = this.getType().create(worldserver);
+ 
+                 if (entity != null) {
++                    // Gale start - MultiPaper - load portal destination chunk before entity teleport
++                    if (entity.level.galeConfig().gameplayMechanics.technical.loadPortalDestinationChunkBeforeEntityTeleport) {
++                        BlockPos pos = BlockPos.containing(position);
++                        worldserver.getChunkSource().addRegionTicket(TicketType.PORTAL, new ChunkPos(pos), 1, pos);
++                        worldserver.getChunkAt(pos);
++                    }
++                    // Gale end - MultiPaper - load portal destination chunk before entity teleport
+                     entity.restoreFrom(this);
+                     entity.moveTo(position.x, position.y, position.z, yaw, pitch); // Paper - use EntityPortalExitEvent values
+                     entity.setDeltaMovement(velocity); // Paper - use EntityPortalExitEvent values
+diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
+index a16c549ee1715c24acb93d17da396355e16e9158..c8813fc7827d37896bc3c36f3de12bfbd62444f7 100644
+--- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
++++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
+@@ -346,6 +346,23 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+ 
+         }
+ 
++        public Technical technical;
++        public class Technical extends ConfigurationPart {
++
++            // Gale start - MultiPaper - load portal destination chunk before entity teleport
++            /**
++             * Whether to fully load chunks before teleporting an entity, when an entity enters a portal.
++             * This forces the entire server to wait for the chunk to be loaded.
++             * <ul>
++             *     <li><i>Default</i>: false</li>
++             *     <li><i>Vanilla</i>: false</li>
++             * </ul>
++             */
++            public boolean loadPortalDestinationChunkBeforeEntityTeleport = false;
++            // Gale end - MultiPaper - load portal destination chunk before entity teleport
++
++        }
++
+         @Override
+         public void postProcess() {
+             this.playerMaxInteractionDistanceSquared = this.playerMaxInteractionDistance * this.playerMaxInteractionDistance; // Gale - make max interaction distance configurable
