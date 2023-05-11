@@ -438,7 +438,7 @@ index 48adbfbb8a55f6719c92a1fe83c64d87f1b236d5..834b497053f4fa20cf94c00e1ee2db48
  
              for (int j = 0; j < i; ++j) {
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index ef0b765c04bfdb684d8a3aef7aa4184fafb38864..5eb689cb445c0cf8b645e543c8c3a324b1eca536 100644
+index 9676d4523c14559cd13e6c53d220bf7472558d8a..288372fbf6c1e669ee16381be57120e5b569f4a4 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
 @@ -38,6 +38,8 @@ import java.util.stream.Collectors;
@@ -469,7 +469,7 @@ index ef0b765c04bfdb684d8a3aef7aa4184fafb38864..5eb689cb445c0cf8b645e543c8c3a324
          return ret;
      }
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 750850cce3d129f4b453c21fcd43a5d570805a54..a3854010434a1550d26c22c16e9978e9e5fdb3af 100644
+index 98661516868c93c19866a14aeacde57793c4ea4e..4be1658c5bb8251cd6be19583139460cc1bce95c 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -29,6 +29,8 @@ import java.util.function.UnaryOperator;
@@ -531,7 +531,7 @@ index 750850cce3d129f4b453c21fcd43a5d570805a54..a3854010434a1550d26c22c16e9978e9
              return;
          }
          // Paper end
-@@ -3294,7 +3292,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -3295,7 +3293,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
          // Paper start
          if (!org.bukkit.Bukkit.isPrimaryThread()) {
              if (recipeSpamPackets.addAndGet(io.papermc.paper.configuration.GlobalConfiguration.get().spamLimiter.recipeSpamIncrement) > io.papermc.paper.configuration.GlobalConfiguration.get().spamLimiter.recipeSpamLimit) {
@@ -827,7 +827,7 @@ index d4527b0f11893925c93b1846305fb3b17ba8e89a..b19e842be160748a6969e498952eb02f
          return slices.getChunkEntities();
      }
 diff --git a/src/main/java/net/minecraft/world/level/block/ComposterBlock.java b/src/main/java/net/minecraft/world/level/block/ComposterBlock.java
-index ae90e86327957bb784e2d81694ee7eea288bb455..d36f554e545686487e2c5198ddb5ad1a1b61af13 100644
+index fb4382337fe83f7d00c2212a7a71e0ba5bdd51cc..1694b48cd979778027811e7be3c940dc473611b0 100644
 --- a/src/main/java/net/minecraft/world/level/block/ComposterBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/ComposterBlock.java
 @@ -3,6 +3,8 @@ package net.minecraft.world.level.block;

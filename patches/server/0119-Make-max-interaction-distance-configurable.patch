@@ -20,7 +20,7 @@ index 1d33c02088c150189d7f4b0aa27f6a1de96b11cf..4c8275728175ebc1fdc8d0e8d0ba8398
              this.debugLogging(pos, false, sequence, "too far");
          } else if (pos.getY() >= worldHeight) {
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 0a0c829b4884ae5bf48e652a607d04f5c094929d..a7772ffe063485865812608999e5b6daa2ecc342 100644
+index a8f01686eb164158e5ddff079036486347d4b021..dbca3976f19401f67f999195ef9dad94169b4660 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -253,7 +253,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
@@ -55,7 +55,7 @@ index 0a0c829b4884ae5bf48e652a607d04f5c094929d..a7772ffe063485865812608999e5b6da
                  Vec3 vec3d2 = vec3d.subtract(vec3d1);
                  double d0 = 1.0000001D;
  
-@@ -2820,7 +2827,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -2821,7 +2828,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
  
              AABB axisalignedbb = entity.getBoundingBox();
  

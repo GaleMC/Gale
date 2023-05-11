@@ -1432,7 +1432,7 @@ index df4db98618c6c9261b4ec8e2987c4ed26af4bd4b..83a57b9bc59063ed8299f98bc33e14b5
  public class ServerChunkCache extends ChunkSource {
  
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index 781f0fefe3e1ed7db92d81890e6b39ca7aa91f7a..5af506704a22f969fac91051ec09deb3c6ccc397 100644
+index 0dfc703c3a1101da4b817227e2c41d467c37ae88..feeca393f960210a62740da053d21fecd62b0252 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
 @@ -22,6 +22,8 @@ import java.io.Writer;
@@ -1474,7 +1474,7 @@ index 781f0fefe3e1ed7db92d81890e6b39ca7aa91f7a..5af506704a22f969fac91051ec09deb3
                      for (Object o : worldData.cache.values() )
                      {
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index a7772ffe063485865812608999e5b6daa2ecc342..661a7c442309abbfa227cb96b6369544c82ad5b2 100644
+index dbca3976f19401f67f999195ef9dad94169b4660..ce378f07b848b10a9f6559243c7ad0de312d5cb7 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -187,8 +187,9 @@ import net.minecraft.world.phys.shapes.BooleanOp;
@@ -1593,7 +1593,7 @@ index a7772ffe063485865812608999e5b6daa2ecc342..661a7c442309abbfa227cb96b6369544
          } else {
              Optional<LastSeenMessages> optional = this.tryHandleChat(packet.command(), packet.timeStamp(), packet.lastSeenMessages());
  
-@@ -2355,9 +2353,9 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -2356,9 +2354,9 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
      private Optional<LastSeenMessages> tryHandleChat(String message, Instant timestamp, LastSeenMessages.Update acknowledgment) {
          if (!this.updateChatOrder(timestamp)) {
              if (GaleGlobalConfiguration.get().logToConsole.chat.outOfOrderMessageWarning) ServerGamePacketListenerImpl.LOGGER.warn("{} sent out-of-order chat: '{}': {} > {}", this.player.getName().getString(), message, this.lastChatTimeStamp.get().getEpochSecond(), timestamp.getEpochSecond()); // Paper // Gale - do not log out-of-order message warnings
@@ -1606,7 +1606,7 @@ index a7772ffe063485865812608999e5b6daa2ecc342..661a7c442309abbfa227cb96b6369544
              return Optional.empty();
          } else {
              Optional<LastSeenMessages> optional = this.unpackAndApplyLastSeen(acknowledgment);
-@@ -3320,7 +3318,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -3321,7 +3319,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
          // Paper start
          if (!org.bukkit.Bukkit.isPrimaryThread()) {
              if (recipeSpamPackets.addAndGet(io.papermc.paper.configuration.GlobalConfiguration.get().spamLimiter.recipeSpamIncrement) > io.papermc.paper.configuration.GlobalConfiguration.get().spamLimiter.recipeSpamLimit) {
