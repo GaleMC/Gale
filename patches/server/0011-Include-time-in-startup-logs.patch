@@ -7,7 +7,7 @@ License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/org/bukkit/craftbukkit/Main.java b/src/main/java/org/bukkit/craftbukkit/Main.java
-index d51650d3e37eb76a0cf991e95d28a552aa567af9..7c38d14671b8a9a671deece654d2f89426b26081 100644
+index bfa091f72d6f477bcaf63d364639a1b4df9b1987..a075eaa65541ffcf4affa07e60c163fe7a0b9b4b 100644
 --- a/src/main/java/org/bukkit/craftbukkit/Main.java
 +++ b/src/main/java/org/bukkit/craftbukkit/Main.java
 @@ -2,6 +2,7 @@ package org.bukkit.craftbukkit;
@@ -45,7 +45,7 @@ index d51650d3e37eb76a0cf991e95d28a552aa567af9..7c38d14671b8a9a671deece654d2f894
      public static void main(String[] args) {
          // Paper start
          final String warnWhenLegacyFormattingDetected = String.join(".", "net", "kyori", "adventure", "text", "warnWhenLegacyFormattingDetected");
-@@ -299,13 +320,13 @@ public class Main {
+@@ -306,13 +327,13 @@ public class Main {
                      String javaInfo = "Java " + runtimeMX.getSpecVersion() + " (" + runtimeMX.getVmName() + " " + runtimeMX.getVmVersion() + ")";
                      String osInfo = "Host: " + osMX.getName() + " " + osMX.getVersion() + " (" + osMX.getArch() + ")";
  

@@ -14,10 +14,10 @@ As part of: MultiPaper (https://github.com/MultiPaper/MultiPaper)
 Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index 8863ac03186251b9bc234401493a18f1d4a98d3b..add4649d2003f5ac38abeb372e4a6de9ee377489 100644
+index f87d10098ea3e3c35e574dc388da6eba4bc6422c..eb90b375c589076afc454bd80f013384df090b11 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
-@@ -259,6 +259,13 @@ public abstract class PlayerList {
+@@ -262,6 +262,13 @@ public abstract class PlayerList {
          org.spigotmc.event.player.PlayerSpawnLocationEvent ev = new com.destroystokyo.paper.event.player.PlayerInitialSpawnEvent(spawnPlayer, spawnPlayer.getLocation()); // Paper use our duplicate event
          this.cserver.getPluginManager().callEvent(ev);
  

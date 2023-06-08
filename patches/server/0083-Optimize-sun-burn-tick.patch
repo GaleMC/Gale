@@ -13,10 +13,10 @@ As part of: JettPack (https://gitlab.com/Titaniumtown/JettPack)
 Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 9d85885552b3d5735359ff1e48ce4d28a60ff623..9777479e2154146f40bd4b2c1eae3698444b6368 100644
+index 254feb89dc2bdb7c994fb65b1a345f879ec8ff72..6990b9cf582f32a9ec259f5641eb1d58ffff2a9d 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -290,7 +290,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -291,7 +291,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
      public double xo;
      public double yo;
      public double zo;
@@ -25,7 +25,7 @@ index 9d85885552b3d5735359ff1e48ce4d28a60ff623..9777479e2154146f40bd4b2c1eae3698
      public BlockPos blockPosition; // Gale - Pufferfish - optimize entity coordinate key - private -> public
      private ChunkPos chunkPosition;
      private Vec3 deltaMovement;
-@@ -1872,9 +1872,17 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -1874,9 +1874,17 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
      /** @deprecated */
      @Deprecated
      public float getLightLevelDependentMagicValue() {

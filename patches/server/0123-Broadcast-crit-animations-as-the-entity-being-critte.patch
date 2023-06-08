@@ -13,10 +13,10 @@ As part of: MultiPaper (https://github.com/MultiPaper/MultiPaper)
 Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 1f74a55093367ffb3ed8ed39d2e6d0a1275bf97a..e61155ad48b9055a5744b7d1724f6e9dc901440d 100644
+index 9de7eda75e41065ab509c05c3ed844d943ccfe00..2cfa9b6568ab15dcde884b7d1b5d738c7ceb8210 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-@@ -1861,12 +1861,18 @@ public class ServerPlayer extends Player {
+@@ -1863,12 +1863,18 @@ public class ServerPlayer extends Player {
  
      @Override
      public void crit(Entity target) {

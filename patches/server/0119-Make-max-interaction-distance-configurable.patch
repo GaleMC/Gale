@@ -20,10 +20,10 @@ index 1d33c02088c150189d7f4b0aa27f6a1de96b11cf..4c8275728175ebc1fdc8d0e8d0ba8398
              this.debugLogging(pos, false, sequence, "too far");
          } else if (pos.getY() >= worldHeight) {
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index a8f01686eb164158e5ddff079036486347d4b021..dbca3976f19401f67f999195ef9dad94169b4660 100644
+index 851c97fc36e31926a2f241759e12daeee09f45c9..5d61d3ead44175654f39760f9a7fdd4914b002b3 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -253,7 +253,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -254,7 +254,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
  
      static final Logger LOGGER = LogUtils.getLogger();
      private static final int LATENCY_CHECK_INTERVAL = 15000;
@@ -32,7 +32,7 @@ index a8f01686eb164158e5ddff079036486347d4b021..dbca3976f19401f67f999195ef9dad94
      private static final int NO_BLOCK_UPDATES_TO_ACK = -1;
      private static final int TRACKED_MESSAGE_DISCONNECT_THRESHOLD = 4096;
      private static final Component CHAT_VALIDATION_FAILED = Component.translatable("multiplayer.disconnect.chat_validation_failed");
-@@ -351,6 +351,13 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -352,6 +352,13 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
      }
      // CraftBukkit end
  
@@ -46,7 +46,7 @@ index a8f01686eb164158e5ddff079036486347d4b021..dbca3976f19401f67f999195ef9dad94
      @Override
      public void tick() {
          if (this.ackBlockChangesUpTo > -1) {
-@@ -1967,7 +1974,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -1968,7 +1975,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
              BlockPos blockposition = movingobjectpositionblock.getBlockPos();
              Vec3 vec3d1 = Vec3.atCenterOf(blockposition);
  
@@ -55,7 +55,7 @@ index a8f01686eb164158e5ddff079036486347d4b021..dbca3976f19401f67f999195ef9dad94
                  Vec3 vec3d2 = vec3d.subtract(vec3d1);
                  double d0 = 1.0000001D;
  
-@@ -2821,7 +2828,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -2827,7 +2834,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
  
              AABB axisalignedbb = entity.getBoundingBox();
  

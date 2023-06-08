@@ -469,7 +469,7 @@ index 9676d4523c14559cd13e6c53d220bf7472558d8a..288372fbf6c1e669ee16381be57120e5
          return ret;
      }
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 98661516868c93c19866a14aeacde57793c4ea4e..4be1658c5bb8251cd6be19583139460cc1bce95c 100644
+index a63236fb2995e8eea9185a19417dd6464bb832a0..9f2f019ad39b0aa16ebe0eabd79fc5beba897959 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -29,6 +29,8 @@ import java.util.function.UnaryOperator;
@@ -497,7 +497,7 @@ index 98661516868c93c19866a14aeacde57793c4ea4e..4be1658c5bb8251cd6be19583139460c
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.BlockHitResult;
-@@ -227,8 +227,6 @@ import org.bukkit.event.inventory.InventoryCreativeEvent;
+@@ -228,8 +228,6 @@ import org.bukkit.event.inventory.InventoryCreativeEvent;
  import org.bukkit.event.inventory.InventoryType.SlotType;
  import org.bukkit.event.inventory.SmithItemEvent;
  import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -506,7 +506,7 @@ index 98661516868c93c19866a14aeacde57793c4ea4e..4be1658c5bb8251cd6be19583139460c
  import org.bukkit.event.player.PlayerChatEvent;
  import org.bukkit.event.player.PlayerCommandPreprocessEvent;
  import org.bukkit.event.player.PlayerInteractAtEntityEvent;
-@@ -405,7 +403,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -406,7 +404,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
          if (this.keepAlivePending) {
              if (!this.processedDisconnect && elapsedTime >= KEEPALIVE_LIMIT) { // check keepalive limit, don't fire if already disconnected
                  ServerGamePacketListenerImpl.LOGGER.warn("{} was kicked due to keepalive timeout!", this.player.getScoreboardName()); // more info
@@ -515,7 +515,7 @@ index 98661516868c93c19866a14aeacde57793c4ea4e..4be1658c5bb8251cd6be19583139460c
              }
          } else {
              if (elapsedTime >= 15000L) { // 15 seconds
-@@ -876,13 +874,13 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -877,13 +875,13 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
          // PacketUtils.ensureRunningOnSameThread(packet, this, this.player.getLevel()); // Paper - run this async
          // CraftBukkit start
          if (this.chatSpamTickCount.addAndGet(io.papermc.paper.configuration.GlobalConfiguration.get().spamLimiter.tabSpamIncrement) > io.papermc.paper.configuration.GlobalConfiguration.get().spamLimiter.tabSpamLimit && !this.server.getPlayerList().isOp(this.player.getGameProfile())) { // Paper start - split and make configurable
@@ -531,7 +531,7 @@ index 98661516868c93c19866a14aeacde57793c4ea4e..4be1658c5bb8251cd6be19583139460c
              return;
          }
          // Paper end
-@@ -3295,7 +3293,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -3301,7 +3299,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
          // Paper start
          if (!org.bukkit.Bukkit.isPrimaryThread()) {
              if (recipeSpamPackets.addAndGet(io.papermc.paper.configuration.GlobalConfiguration.get().spamLimiter.recipeSpamIncrement) > io.papermc.paper.configuration.GlobalConfiguration.get().spamLimiter.recipeSpamLimit) {
@@ -578,7 +578,7 @@ index 2ff578e4a953ffcf5176815ba8e3f06f73499989..a436ef49325c9cae1008d5763373cce8
          final String s;
  
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index cb345dc563d30edc23b380b8c330e24bfe3fa2a2..e8d89c582ecd6517eb41da28b1249072ab099b32 100644
+index 69d22ca2f2a2b4d85d72eeef36a3843a11ee4c91..b03789c629c87d524e24a6e3bb893ae2bac1d5c1 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
 @@ -27,6 +27,8 @@ import java.util.UUID;
@@ -590,15 +590,7 @@ index cb345dc563d30edc23b380b8c330e24bfe3fa2a2..e8d89c582ecd6517eb41da28b1249072
  import net.minecraft.ChatFormatting;
  import net.minecraft.FileUtil;
  import net.minecraft.commands.CommandSourceStack;
-@@ -119,7 +121,6 @@ import org.bukkit.Location;
- import org.bukkit.craftbukkit.CraftServer;
- import org.bukkit.craftbukkit.CraftWorld;
- import org.bukkit.craftbukkit.entity.CraftPlayer;
--import org.bukkit.craftbukkit.util.CraftChatMessage;
- import org.bukkit.entity.Player;
- import org.bukkit.event.player.PlayerChangedWorldEvent;
- import org.bukkit.event.player.PlayerJoinEvent;
-@@ -699,7 +700,7 @@ public abstract class PlayerList {
+@@ -701,7 +703,7 @@ public abstract class PlayerList {
          while (iterator.hasNext()) {
              entityplayer = (ServerPlayer) iterator.next();
              this.save(entityplayer); // CraftBukkit - Force the player's inventory to be saved
@@ -753,7 +745,7 @@ index 71a36cf9b976443cca9ab63cd0eb23253f638562..201b0e1b25d0773bbcf9c1ed69fd888a
  
          for (int j = 0; j < i; ++j) {
 diff --git a/src/main/java/net/minecraft/world/item/ItemStack.java b/src/main/java/net/minecraft/world/item/ItemStack.java
-index a7533d18fe6148d7bfd3106b9cdcb6fa3347cf7c..29a11bbcab84e66cb8adf9df2ea9feef4da601e8 100644
+index d81fcbadc5c0b3d4b54dde5d47a0f847d8ec6918..84067c11ee5dd18195afa21dec9d80adb9815866 100644
 --- a/src/main/java/net/minecraft/world/item/ItemStack.java
 +++ b/src/main/java/net/minecraft/world/item/ItemStack.java
 @@ -1008,7 +1008,7 @@ public final class ItemStack {
@@ -827,7 +819,7 @@ index d4527b0f11893925c93b1846305fb3b17ba8e89a..b19e842be160748a6969e498952eb02f
          return slices.getChunkEntities();
      }
 diff --git a/src/main/java/net/minecraft/world/level/block/ComposterBlock.java b/src/main/java/net/minecraft/world/level/block/ComposterBlock.java
-index fb4382337fe83f7d00c2212a7a71e0ba5bdd51cc..1694b48cd979778027811e7be3c940dc473611b0 100644
+index 6fab2b69a0af298bd00b309efcd6aa8399e23d1f..29aa7303ce5854a7f2b5ed5f9ff02ca7e00bf6c0 100644
 --- a/src/main/java/net/minecraft/world/level/block/ComposterBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/ComposterBlock.java
 @@ -3,6 +3,8 @@ package net.minecraft.world.level.block;
@@ -839,7 +831,7 @@ index fb4382337fe83f7d00c2212a7a71e0ba5bdd51cc..1694b48cd979778027811e7be3c940dc
  import net.minecraft.Util;
  import net.minecraft.core.BlockPos;
  import net.minecraft.core.Direction;
-@@ -413,7 +415,7 @@ public class ComposterBlock extends Block implements WorldlyContainerHolder {
+@@ -414,7 +416,7 @@ public class ComposterBlock extends Block implements WorldlyContainerHolder {
  
          @Override
          public int[] getSlotsForFace(Direction side) {
@@ -848,7 +840,7 @@ index fb4382337fe83f7d00c2212a7a71e0ba5bdd51cc..1694b48cd979778027811e7be3c940dc
          }
  
          @Override
-@@ -462,7 +464,7 @@ public class ComposterBlock extends Block implements WorldlyContainerHolder {
+@@ -463,7 +465,7 @@ public class ComposterBlock extends Block implements WorldlyContainerHolder {
  
          @Override
          public int[] getSlotsForFace(Direction side) {
@@ -857,7 +849,7 @@ index fb4382337fe83f7d00c2212a7a71e0ba5bdd51cc..1694b48cd979778027811e7be3c940dc
          }
  
          @Override
-@@ -504,7 +506,7 @@ public class ComposterBlock extends Block implements WorldlyContainerHolder {
+@@ -505,7 +507,7 @@ public class ComposterBlock extends Block implements WorldlyContainerHolder {
  
          @Override
          public int[] getSlotsForFace(Direction side) {

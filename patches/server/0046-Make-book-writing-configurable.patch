@@ -22,7 +22,7 @@ you to easily disable books, should you want to preemptively remove this
 functionality before additional exploits are found.
 
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 7e5ab66f82a4013b36e3880897efddba0af307a9..b24af137664c30ab2443d334b2863f8ccc4684bb 100644
+index 4b74da1c0138ed5946c7f446be79c647c172faa5..10bdc027ad7070e2ee0e5b1b24783c3e880996dd 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -184,6 +184,8 @@ import net.minecraft.world.phys.Vec3;
@@ -34,7 +34,7 @@ index 7e5ab66f82a4013b36e3880897efddba0af307a9..b24af137664c30ab2443d334b2863f8c
  import org.slf4j.Logger;
  
  // CraftBukkit start
-@@ -1213,6 +1215,11 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -1214,6 +1216,11 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
  
      @Override
      public void handleEditBook(ServerboundEditBookPacket packet) {

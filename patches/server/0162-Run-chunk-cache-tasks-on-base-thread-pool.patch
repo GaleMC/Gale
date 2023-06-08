@@ -267,7 +267,7 @@ index 83a57b9bc59063ed8299f98bc33e14b57f2ea0de..9ee931a6442d3f18a7521704f39297af
          // CraftBukkit start - process pending Chunk loadCallback() and unloadCallback() after each run task
          public boolean pollTask() {
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index 5af506704a22f969fac91051ec09deb3c6ccc397..a60fdfa682cbce4ed69117beea2d6bd74790d426 100644
+index feeca393f960210a62740da053d21fecd62b0252..8a6f903d84eb9259236a63011d66b7246fca28c2 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
 @@ -275,7 +275,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
@@ -355,10 +355,10 @@ index 18c3f13c523ea62a098f489636b4320c73da4b8b..43c3ff92bad2b812fbad9af65bde1768
                          return;
                      }
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
-index 47faf23e902e542d0739d0ba9b1de2d555a020d3..19c6d8ef623127c878a99dec0f8538e8d446ac6d 100644
+index 1c2220ff497db66a48ae47cff9103c424ff37bc8..1cdcf0b7ec11c7bda92aeed2f3470e9419e1214e 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
-@@ -373,7 +373,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
+@@ -371,7 +371,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
          if (!Bukkit.isPrimaryThread()) {
              return java.util.concurrent.CompletableFuture.supplyAsync(() -> {
                  return CraftWorld.this.isChunkGenerated(x, z);
@@ -367,7 +367,7 @@ index 47faf23e902e542d0739d0ba9b1de2d555a020d3..19c6d8ef623127c878a99dec0f8538e8
          }
          ChunkAccess chunk = world.getChunkSource().getChunkAtImmediately(x, z);
          if (chunk == null) {
-@@ -481,7 +481,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
+@@ -479,7 +479,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
                  list,
                  true
              );

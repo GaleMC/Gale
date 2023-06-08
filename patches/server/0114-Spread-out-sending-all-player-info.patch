@@ -37,7 +37,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index e8d89c582ecd6517eb41da28b1249072ab099b32..94f0a36f669775f2a6a143cbb6010b524bf94fd1 100644
+index b03789c629c87d524e24a6e3bb893ae2bac1d5c1..b123164e6a838412feb3f011c3097932d607b064 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
 @@ -15,6 +15,8 @@ import java.net.SocketAddress;
@@ -49,7 +49,7 @@ index e8d89c582ecd6517eb41da28b1249072ab099b32..94f0a36f669775f2a6a143cbb6010b52
  import java.util.Collection;
  import java.util.EnumSet;
  import java.util.Iterator;
-@@ -138,10 +140,11 @@ public abstract class PlayerList {
+@@ -141,10 +143,11 @@ public abstract class PlayerList {
      public static final File WHITELIST_FILE = new File("whitelist.json");
      public static final Component CHAT_FILTERED_FULL = Component.translatable("chat.filtered_full");
      private static final Logger LOGGER = LogUtils.getLogger();
@@ -62,7 +62,7 @@ index e8d89c582ecd6517eb41da28b1249072ab099b32..94f0a36f669775f2a6a143cbb6010b52
      private final Map<UUID, ServerPlayer> playersByUUID = Maps.newHashMap();
      private final UserBanList bans;
      private final IpBanList ipBans;
-@@ -312,6 +315,7 @@ public abstract class PlayerList {
+@@ -315,6 +318,7 @@ public abstract class PlayerList {
  
          // player.connection.send(ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(this.players)); // Paper
          this.players.add(player);
@@ -70,7 +70,7 @@ index e8d89c582ecd6517eb41da28b1249072ab099b32..94f0a36f669775f2a6a143cbb6010b52
          this.playersByName.put(player.getScoreboardName().toLowerCase(java.util.Locale.ROOT), player); // Spigot
          this.playersByUUID.put(player.getUUID(), player);
          // this.broadcastAll(ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(List.of(entityplayer))); // CraftBukkit - replaced with loop below
-@@ -646,6 +650,7 @@ public abstract class PlayerList {
+@@ -649,6 +653,7 @@ public abstract class PlayerList {
          worldserver.removePlayerImmediately(entityplayer, Entity.RemovalReason.UNLOADED_WITH_PLAYER);
          entityplayer.getAdvancements().stopListening();
          this.players.remove(entityplayer);
@@ -78,7 +78,7 @@ index e8d89c582ecd6517eb41da28b1249072ab099b32..94f0a36f669775f2a6a143cbb6010b52
          this.playersByName.remove(entityplayer.getScoreboardName().toLowerCase(java.util.Locale.ROOT)); // Spigot
          this.server.getCustomBossEvents().onPlayerDisconnect(entityplayer);
          UUID uuid = entityplayer.getUUID();
-@@ -799,6 +804,7 @@ public abstract class PlayerList {
+@@ -802,6 +807,7 @@ public abstract class PlayerList {
          // Paper end
          entityplayer.stopRiding(); // CraftBukkit
          this.players.remove(entityplayer);
@@ -86,7 +86,7 @@ index e8d89c582ecd6517eb41da28b1249072ab099b32..94f0a36f669775f2a6a143cbb6010b52
          this.playersByName.remove(entityplayer.getScoreboardName().toLowerCase(java.util.Locale.ROOT)); // Spigot
          entityplayer.getLevel().removePlayerImmediately(entityplayer, Entity.RemovalReason.DISCARDED);
          BlockPos blockposition = entityplayer.getRespawnPosition();
-@@ -936,6 +942,7 @@ public abstract class PlayerList {
+@@ -939,6 +945,7 @@ public abstract class PlayerList {
          if (!entityplayer.connection.isDisconnected()) {
              worldserver1.addRespawnedPlayer(entityplayer1);
              this.players.add(entityplayer1);
@@ -94,7 +94,7 @@ index e8d89c582ecd6517eb41da28b1249072ab099b32..94f0a36f669775f2a6a143cbb6010b52
              this.playersByName.put(entityplayer1.getScoreboardName().toLowerCase(java.util.Locale.ROOT), entityplayer1); // Spigot
              this.playersByUUID.put(entityplayer1.getUUID(), entityplayer1);
          }
-@@ -988,20 +995,55 @@ public abstract class PlayerList {
+@@ -991,20 +998,55 @@ public abstract class PlayerList {
          this.sendPlayerPermissionLevel(player, i);
      }
  

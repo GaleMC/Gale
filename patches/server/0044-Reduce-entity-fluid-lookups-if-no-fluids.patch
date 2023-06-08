@@ -31,10 +31,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 00445f768e978c393cba8cdde46c0cdd4cee5d9a..fb6ffe2cfcff94ca41df6de3314213704c025246 100644
+index f27df41a95926da2c38d2a5224d7597d17b620b0..a105db86db91d932d7d27fc6a96a5ef3c60671e5 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -4169,16 +4169,18 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -4171,16 +4171,18 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
      }
  
      public boolean updateFluidHeightAndDoFluidPushing(TagKey<Fluid> tag, double speed) {
@@ -60,7 +60,7 @@ index 00445f768e978c393cba8cdde46c0cdd4cee5d9a..fb6ffe2cfcff94ca41df6de331421370
              double d1 = 0.0D;
              boolean flag = this.isPushedByFluid();
              boolean flag1 = false;
-@@ -4186,14 +4188,61 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -4188,14 +4190,61 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
              int k1 = 0;
              BlockPos.MutableBlockPos blockposition_mutableblockposition = new BlockPos.MutableBlockPos();
  
@@ -128,7 +128,7 @@ index 00445f768e978c393cba8cdde46c0cdd4cee5d9a..fb6ffe2cfcff94ca41df6de331421370
  
                              if (d2 >= axisalignedbb.minY) {
                                  flag1 = true;
-@@ -4215,9 +4264,12 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -4217,9 +4266,12 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
                                  // CraftBukkit end
                              }
                          }
@@ -142,7 +142,7 @@ index 00445f768e978c393cba8cdde46c0cdd4cee5d9a..fb6ffe2cfcff94ca41df6de331421370
              if (vec3d.length() > 0.0D) {
                  if (k1 > 0) {
 diff --git a/src/main/java/net/minecraft/world/level/chunk/LevelChunkSection.java b/src/main/java/net/minecraft/world/level/chunk/LevelChunkSection.java
-index 1b80a91fa36c59a31b57ef7ef4a68eacbb0f17f5..2b376a73a2f3c38fa1774f79f975fc580460194e 100644
+index 854865f28bcae0fb0c17717c914687f78e951e21..0b4afcbe5a8c25418c28ce95961dd9e337c6973a 100644
 --- a/src/main/java/net/minecraft/world/level/chunk/LevelChunkSection.java
 +++ b/src/main/java/net/minecraft/world/level/chunk/LevelChunkSection.java
 @@ -27,6 +27,7 @@ public class LevelChunkSection {
@@ -169,7 +169,7 @@ index 1b80a91fa36c59a31b57ef7ef4a68eacbb0f17f5..2b376a73a2f3c38fa1774f79f975fc58
          }
  
          this.updateKnownBlockInfo(x | (z << 4) | (y << 8), iblockdata1, state); // Paper
-@@ -260,6 +263,7 @@ public class LevelChunkSection {
+@@ -261,6 +264,7 @@ public class LevelChunkSection {
                  if (fluid.isRandomlyTicking()) {
                      this.tickingFluidCount = (short) (this.tickingFluidCount + 1);
                  }

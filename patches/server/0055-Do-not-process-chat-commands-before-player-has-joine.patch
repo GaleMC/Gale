@@ -13,10 +13,10 @@ As part of: EmpireCraft (https://github.com/starlis/empirecraft)
 Licensed under: MIT (https://opensource.org/licenses/MIT)
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index fe7d1850b4b26b9a739d6805bfe85c0961f0cd0b..1f74a55093367ffb3ed8ed39d2e6d0a1275bf97a 100644
+index ab208c49a5ed5db359ab8a4a12ddf91ecec2ce5d..9de7eda75e41065ab509c05c3ed844d943ccfe00 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-@@ -268,6 +268,7 @@ public class ServerPlayer extends Player {
+@@ -270,6 +270,7 @@ public class ServerPlayer extends Player {
      public boolean joining = true;
      public boolean sentListPacket = false;
      public boolean supressTrackerForLogin = false; // Paper
@@ -25,10 +25,10 @@ index fe7d1850b4b26b9a739d6805bfe85c0961f0cd0b..1f74a55093367ffb3ed8ed39d2e6d0a1
      // CraftBukkit end
      public boolean isRealPlayer; // Paper
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 7fb3d6dc94da734e685e6fecb833433fddf2e200..2eb627c4cdc393b15e6b85f617c8a29efbd24985 100644
+index 434a671878fedb3dea7423a929def187a9ef4f9c..6e1567de96b77a8eea9f2a3bcb1756e391949ca8 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -2339,6 +2339,10 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -2345,6 +2345,10 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
              if (this.player.isRemoved() || this.player.getChatVisibility() == ChatVisiblity.HIDDEN) { // CraftBukkit - dead men tell no tales
                  this.send(new ClientboundSystemChatPacket(PaperAdventure.asAdventure(Component.translatable("chat.disabled.options").withStyle(ChatFormatting.RED)), false)); // Paper - Adventure
                  return Optional.empty();
@@ -40,10 +40,10 @@ index 7fb3d6dc94da734e685e6fecb833433fddf2e200..2eb627c4cdc393b15e6b85f617c8a29e
                  this.player.resetLastActionTime();
                  return optional;
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index 4d837c1530a3031a4c2a5a39d87bd013d60e14a6..55a5fe227c1b14430486e2663a4f63bba357b63a 100644
+index 92e758a286a5db079c32d53cc52c8a422457daef..c86c06adc424577de49339760473758ac12d2000 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
-@@ -333,6 +333,8 @@ public abstract class PlayerList {
+@@ -335,6 +335,8 @@ public abstract class PlayerList {
              return;
          }
  

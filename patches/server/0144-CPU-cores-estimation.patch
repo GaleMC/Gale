@@ -55,10 +55,10 @@ index 5a92a8f24d3a6957cc3f8404bf3458f4c4058fb4..666114daf9e9a3f9f9e0779a3a40dfac
          // Attempt to detect vectorization
          try {
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index b1432cdcd388129556eebb63fe3c4d4d08639bae..25d6ca8370af3d314d799ed960276a7554c091ba 100644
+index 59c1496617572544afa241ea0963c1de021a256c..d175d019c865bf9ecc5641d39fb1a29aebde662c 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-@@ -249,6 +249,8 @@ import org.bukkit.structure.StructureManager;
+@@ -255,6 +255,8 @@ import org.bukkit.structure.StructureManager;
  import org.bukkit.util.StringUtil;
  import org.bukkit.util.permissions.DefaultPermissions;
  import org.yaml.snakeyaml.LoaderOptions;
