@@ -31,26 +31,26 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 diff --git a/src/main/java/net/minecraft/world/entity/monster/EnderMan.java b/src/main/java/net/minecraft/world/entity/monster/EnderMan.java
-index 418d6301f067803e2471e59ac2d52a68cbff249b..079bd9d0d3c73da61297723aea8e79edf531004b 100644
+index 4616addb05fcc20b1ec6ca1dea01cbefed697acd..82e8ddfd136d04106c796d784028c45e5c21dedd 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/EnderMan.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/EnderMan.java
 @@ -322,11 +322,17 @@ public class EnderMan extends Monster implements NeutralMob {
      private boolean teleport(double x, double y, double z) {
          BlockPos.MutableBlockPos blockposition_mutableblockposition = new BlockPos.MutableBlockPos(x, y, z);
  
--        while (blockposition_mutableblockposition.getY() > this.level.getMinBuildHeight() && !this.level.getBlockState(blockposition_mutableblockposition).getMaterial().blocksMotion()) {
+-        while (blockposition_mutableblockposition.getY() > this.level().getMinBuildHeight() && !this.level().getBlockState(blockposition_mutableblockposition).blocksMotion()) {
 +        // Gale start - Airplane - single chunk lookup
-+        net.minecraft.world.level.chunk.LevelChunk chunk = this.level.getChunkIfLoaded(blockposition_mutableblockposition);
++        net.minecraft.world.level.chunk.LevelChunk chunk = this.level().getChunkIfLoaded(blockposition_mutableblockposition);
 +        if (chunk == null) {
 +            return false;
 +        }
-+        while (blockposition_mutableblockposition.getY() > this.level.getMinBuildHeight() && !chunk.getBlockState(blockposition_mutableblockposition).getMaterial().blocksMotion()) {
++        while (blockposition_mutableblockposition.getY() > this.level().getMinBuildHeight() && !chunk.getBlockState(blockposition_mutableblockposition).blocksMotion()) {
 +            // Gale end - Airplane - single chunk lookup
              blockposition_mutableblockposition.move(Direction.DOWN);
          }
  
--        BlockState iblockdata = this.level.getBlockState(blockposition_mutableblockposition);
+-        BlockState iblockdata = this.level().getBlockState(blockposition_mutableblockposition);
 +        BlockState iblockdata = chunk.getBlockState(blockposition_mutableblockposition); // Gale - Airplane - single chunk lookup
-         boolean flag = iblockdata.getMaterial().blocksMotion();
+         boolean flag = iblockdata.blocksMotion();
          boolean flag1 = iblockdata.getFluidState().is(FluidTags.WATER);
  

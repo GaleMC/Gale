@@ -31,10 +31,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 diff --git a/src/main/java/net/minecraft/world/entity/projectile/Projectile.java b/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
-index 8b2a3a8482018b7db7de81bc295862f783e17ce5..64f6555372ba5c97891fd6742f51fa6680c690a2 100644
+index 1b7cf6d06bdf36f146656727511a461f2520762e..d598a99072bd8eb4a4ed151b9202237dd0c2af8c 100644
 --- a/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
 +++ b/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
-@@ -44,6 +44,44 @@ public abstract class Projectile extends Entity implements TraceableEntity {
+@@ -44,6 +44,45 @@ public abstract class Projectile extends Entity implements TraceableEntity {
          super(type, world);
      }
  
@@ -53,17 +53,18 @@ index 8b2a3a8482018b7db7de81bc295862f783e17ce5..64f6555372ba5c97891fd6742f51fa66
 +        int previousX = Mth.floor(this.getX()) >> 4, previousZ = Mth.floor(this.getZ()) >> 4;
 +        int newX = Mth.floor(x) >> 4, newZ = Mth.floor(z) >> 4;
 +        if (previousX != newX || previousZ != newZ) {
-+            boolean isLoaded = ((net.minecraft.server.level.ServerChunkCache) this.level.getChunkSource()).getChunkAtIfLoadedMainThread(newX, newZ) != null;
++            boolean isLoaded = ((net.minecraft.server.level.ServerChunkCache) this.level().getChunkSource()).getChunkAtIfLoadedMainThread(newX, newZ) != null;
 +            if (!isLoaded) {
-+                int maxChunkLoadsPerTick = this.level.galeConfig().smallOptimizations.maxProjectileChunkLoads.perTick;
++                var maxProjectileChunkLoadsConfig = this.level().galeConfig().smallOptimizations.maxProjectileChunkLoads;
++                int maxChunkLoadsPerTick = maxProjectileChunkLoadsConfig.perTick;
 +                if (maxChunkLoadsPerTick >= 0 && chunksLoadedThisTick > maxChunkLoadsPerTick) {
 +                    return;
 +                }
-+                int maxChunkLoadsPerProjectile = this.level.galeConfig().smallOptimizations.maxProjectileChunkLoads.perProjectile.max;
++                int maxChunkLoadsPerProjectile = maxProjectileChunkLoadsConfig.perProjectile.max;
 +                if (maxChunkLoadsPerProjectile >= 0 && this.chunksLoadedByProjectile >= maxChunkLoadsPerProjectile) {
-+                    if (this.level.galeConfig().smallOptimizations.maxProjectileChunkLoads.perProjectile.removeFromWorldAfterReachLimit) {
++                    if (maxProjectileChunkLoadsConfig.perProjectile.removeFromWorldAfterReachLimit) {
 +                        this.discard();
-+                    } else if (this.level.galeConfig().smallOptimizations.maxProjectileChunkLoads.perProjectile.resetMovementAfterReachLimit) {
++                    } else if (maxProjectileChunkLoadsConfig.perProjectile.resetMovementAfterReachLimit) {
 +                        this.setDeltaMovement(0, this.getDeltaMovement().y, 0);
 +                    }
 +                    return;

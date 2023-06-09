@@ -1,0 +1,91 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Martijn Muijsers <martijnmuijsers@live.nl>
+Date: Tue, 29 Nov 2022 16:42:48 +0100
+Subject: [PATCH] Fix MC-121706
+
+License: MIT (https://opensource.org/licenses/MIT)
+Gale - https://galemc.org
+
+This patch is based on the following patch:
+"MC-121706 - Fix mobs not looking up and down when strafing"
+By: Krakenied <Krakenied1@gmail.com>
+As part of: Purpur (https://github.com/PurpurMC/Purpur)
+Licensed under: MIT (https://opensource.org/licenses/MIT)
+
+* Purpur copyright *
+
+MIT License
+
+Copyright (c) 2019-2022 PurpurMC
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+diff --git a/src/main/java/net/minecraft/world/entity/ai/goal/RangedBowAttackGoal.java b/src/main/java/net/minecraft/world/entity/ai/goal/RangedBowAttackGoal.java
+index 87fb10096fc9dade33c663234b1cecc34d3d77bb..cb2c6dcdd2be476d0434e7f771bbb25150b8bdac 100644
+--- a/src/main/java/net/minecraft/world/entity/ai/goal/RangedBowAttackGoal.java
++++ b/src/main/java/net/minecraft/world/entity/ai/goal/RangedBowAttackGoal.java
+@@ -104,7 +104,10 @@ public class RangedBowAttackGoal<T extends Monster & RangedAttackMob> extends Go
+                 this.strafingTime = 0;
+             }
+ 
+-            if (this.strafingTime > -1) {
++            // Gale start - Purpur - fix MC-121706
++            boolean hasStrafingTime = this.strafingTime > -1;
++            if (hasStrafingTime) {
++                // Gale end - Purpur - fix MC-121706
+                 if (d > (double)(this.attackRadiusSqr * 0.75F)) {
+                     this.strafingBackwards = false;
+                 } else if (d < (double)(this.attackRadiusSqr * 0.25F)) {
+@@ -119,7 +122,10 @@ public class RangedBowAttackGoal<T extends Monster & RangedAttackMob> extends Go
+                 }
+ 
+                 this.mob.lookAt(livingEntity, 30.0F, 30.0F);
+-            } else {
++                // Gale start - Purpur - fix MC-121706
++            }
++            if (!hasStrafingTime || this.mob.level().galeConfig().gameplayMechanics.fixes.mc121706) {
++            // Gale end - Purpur - fix MC-121706
+                 this.mob.getLookControl().setLookAt(livingEntity, 30.0F, 30.0F);
+             }
+ 
+diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
+index 9f8dd7a0113a9723758d0a9779f7f0dd4ec749cf..aa704ab1f64d0a8572b81e6e41bdb419fba2e4fc 100644
+--- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
++++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
+@@ -280,7 +280,7 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+ 
+             public boolean sandDuping = true; // Gale - Purpur - make sand duping fix configurable
+             public boolean keepMooshroomRotationAfterShearing = true; // Gale - Purpur - fix cow rotation when shearing mooshroom
+-            
++
+             // Gale start - Purpur - fix MC-238526
+             @Setting("mc-238526")
+             public boolean mc238526 = false;
+@@ -291,6 +291,11 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+             public boolean mc123848 = false;
+             // Gale end - Purpur - fix MC-123848
+ 
++            // Gale start - Purpur - fix MC-121706
++            @Setting("mc-121706")
++            public boolean mc121706 = false;
++            // Gale end - Purpur - fix MC-121706
++
+         }
+ 
+     }

@@ -7,10 +7,10 @@ License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 1f7d0aa2d36b59c23a04e94dc117da987bc1a0b2..6394d18f32d190e4eee34c40c1aa9ffe65662e6b 100644
+index ab3633eb6552bde9ac6fc16d3a5feb6d1f0992bc..86a8726e033f405cb0c8b4289f21dca16431718e 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
-@@ -182,6 +182,10 @@ fun TaskContainer.registerRunTask(
+@@ -183,6 +183,10 @@ fun TaskContainer.registerRunTask(
      val memoryGb = providers.gradleProperty("paper.runMemoryGb").getOrElse("2")
      minHeapSize = "${memoryGb}G"
      maxHeapSize = "${memoryGb}G"

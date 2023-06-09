@@ -9,14 +9,26 @@
 # of these issues. Due to the complex nature of mappings generation and the debugging difficulty involved it may take
 # a significant amount of time for us to track down every possible issue, so this file will likely be around and in
 # use - at least in some capacity - for a long time.
-#
-# If you are adding mappings patches which are correcting for issues in paperweight's reobf mappings generation,
-# unrelated to any changes in your patches, we ask that you PR the mapping to Paper so more users can benefit rather
-# than keep the fix for your own fork. If the mappings patch is there to correct reobf for changes made in your patches,
-# then obviously it doesn't make any sense to PR them upstream.
 
 tiny	2	0	mojang+yarn	spigot
 
-# Workaround by MoritzR200 (see issue#87)
-c	net/minecraft/server/dedicated/DedicatedServerProperties	net/minecraft/server/dedicated/DedicatedServerProperties
-	m	(Ljava/lang/String;)Ljava/lang/String;	lambda$new$3	d
+# CraftBukkit changes type
+c	net/minecraft/server/level/ServerLevel	net/minecraft/server/level/WorldServer
+	f	Lnet/minecraft/world/level/storage/PrimaryLevelData;	serverLevelData	K
+
+c	net/minecraft/world/level/chunk/LevelChunk	net/minecraft/world/level/chunk/Chunk
+	f	Lnet/minecraft/server/level/ServerLevel;	level	r
+
+# See mappings-patch.tiny
+c	net/minecraft/server/level/ChunkMap	net/minecraft/server/level/PlayerChunkMap
+	f	Lnet/minecraft/server/level/ChunkMap$ChunkDistanceManager;	distanceManager	F
+
+# Paper changes type
+c	net/minecraft/core/MappedRegistry	net/minecraft/core/RegistryMaterials
+	f	Lit/unimi/dsi/fastutil/objects/Reference2IntOpenHashMap;	toId	e
+
+# upstream makes a bunch of methods public that cause accidental overrides now
+c	net/minecraft/world/entity/Display	net/minecraft/world/entity/Display
+	m	()I	getInterpolationDelay	getInterpolationDelay_
+	m	(I)V	setInterpolationDelay	setInterpolationDelay_
+	m	(I)V	setInterpolationDuration	setInterpolationDuration_

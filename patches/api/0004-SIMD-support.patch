@@ -13,10 +13,10 @@ As part of: Pufferfish (https://github.com/pufferfish-gg/Pufferfish)
 Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index cd3207095c92ab6a195f8a24dbe4afaa65bf0996..0719e49dde343c80d18daf82d7fed926150d7d6d 100644
+index 3ba111a857dda4773f4a66dea99d516b37c64b07..003429ead5a773c1283a732ff54a4fdc7b85618b 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
-@@ -91,6 +91,7 @@ tasks.withType<JavaCompile> {
+@@ -93,6 +93,7 @@ tasks.withType<JavaCompile> {
      compilerArgs.add("-Xlint:-module")
      compilerArgs.add("-Xlint:-removal")
      compilerArgs.add("-Xlint:-dep-ann")
@@ -24,7 +24,7 @@ index cd3207095c92ab6a195f8a24dbe4afaa65bf0996..0719e49dde343c80d18daf82d7fed926
  }
  // Gale end - hide irrelevant compilation warnings
  
-@@ -145,6 +146,7 @@ tasks.withType<Javadoc> {
+@@ -147,6 +148,7 @@ tasks.withType<Javadoc> {
      }
  
      options.addStringOption("Xdoclint:none", "-quiet") // Gale - hide irrelevant compilation warnings
@@ -34,7 +34,7 @@ index cd3207095c92ab6a195f8a24dbe4afaa65bf0996..0719e49dde343c80d18daf82d7fed926
  // Paper start
 diff --git a/src/main/java/gg/pufferfish/pufferfish/simd/SIMDChecker.java b/src/main/java/gg/pufferfish/pufferfish/simd/SIMDChecker.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..48312d416805697257e4cd3451b8d14bab7ea252
+index 0000000000000000000000000000000000000000..3f008b41727ff1bfdf14e6d186e8d74af5b35245
 --- /dev/null
 +++ b/src/main/java/gg/pufferfish/pufferfish/simd/SIMDChecker.java
 @@ -0,0 +1,45 @@
@@ -58,7 +58,7 @@ index 0000000000000000000000000000000000000000..48312d416805697257e4cd3451b8d14b
 +    public static boolean canEnable(Logger logger, boolean logVectorSizesToConsole) {
 +        try {
 +            int javaVersion = SIMDDetection.getJavaVersion();
-+            if (!(javaVersion >= 17 && javaVersion <= 19)) {
++            if (!(javaVersion >= 17 && javaVersion <= 22)) {
 +                return false;
 +            } else {
 +                SIMDDetection.testRun = true;

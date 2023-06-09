@@ -40,23 +40,23 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index b4b916f2929d83aaa160a69a198836ed53430e23..517a4cde947b51195ca7e99afc330d8b40fae235 100644
+index 5cf43c4d0ce6e3af5ea6c190db0c47c35b0a350c..59db3933d1abb161b7ea6b9164653e96255cb545 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-@@ -3591,7 +3591,7 @@ public abstract class LivingEntity extends Entity implements Attackable {
+@@ -3640,7 +3640,7 @@ public abstract class LivingEntity extends Entity implements Attackable {
              Vec3 vec3d1 = new Vec3(entity.getX(), entity.getEyeY(), entity.getZ());
  
              // Paper - diff on change - used in CraftLivingEntity#hasLineOfSight(Location) and CraftWorld#lineOfSightExists
--            return vec3d1.distanceToSqr(vec3d) > 128D * 128D ? false : this.level.clip(new ClipContext(vec3d, vec3d1, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this)).getType() == HitResult.Type.MISS; // Paper - use distanceToSqr
-+            return vec3d1.distanceToSqr(vec3d) > 128D * 128D ? false : this.level.rayTraceDirect(vec3d, vec3d1, net.minecraft.world.phys.shapes.CollisionContext.of(this)) == net.minecraft.world.phys.BlockHitResult.Type.MISS; // Paper - use distanceToSqr // Gale - Airplane - strip raytracing for EntityLiving#hasLineOfSight
+-            return vec3d1.distanceToSqr(vec3d) > 128D * 128D ? false : this.level().clip(new ClipContext(vec3d, vec3d1, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this)).getType() == HitResult.Type.MISS;
++            return vec3d1.distanceToSqr(vec3d) > 128D * 128D ? false : this.level().rayTraceDirect(vec3d, vec3d1, net.minecraft.world.phys.shapes.CollisionContext.of(this)) == net.minecraft.world.phys.BlockHitResult.Type.MISS; // Paper - use distanceToSqr // Gale - Airplane - strip raytracing for EntityLiving#hasLineOfSight
          }
      }
  
 diff --git a/src/main/java/net/minecraft/world/level/BlockGetter.java b/src/main/java/net/minecraft/world/level/BlockGetter.java
-index 2ee9e8e3c1a28c1823de8e1fe421cc1f3e72f384..9d41fc2ed4fa623d5fac62fbb3340d13c78a746d 100644
+index 0e8746759752b692668886370181aa5db1fd0bb0..e5e50817c83b6a7d3daf90960ed402180998ca49 100644
 --- a/src/main/java/net/minecraft/world/level/BlockGetter.java
 +++ b/src/main/java/net/minecraft/world/level/BlockGetter.java
-@@ -73,6 +73,16 @@ public interface BlockGetter extends LevelHeightAccessor {
+@@ -68,6 +68,16 @@ public interface BlockGetter extends LevelHeightAccessor {
          });
      }
  
@@ -74,10 +74,10 @@ index 2ee9e8e3c1a28c1823de8e1fe421cc1f3e72f384..9d41fc2ed4fa623d5fac62fbb3340d13
      default BlockHitResult clip(ClipContext raytrace1, BlockPos blockposition) {
              // Paper start - Prevent raytrace from loading chunks
 diff --git a/src/main/java/net/minecraft/world/level/Level.java b/src/main/java/net/minecraft/world/level/Level.java
-index 262626a0a01ed05f3f49cebec8b31266b2c441e7..c512c37439fa2b40bbd1d40301686bd13fa0469e 100644
+index 65258190f550a0a2653fc975430d8d88ff5ec259..0502f5bf4ee886ddc16f430a4c6679279cc12ff1 100644
 --- a/src/main/java/net/minecraft/world/level/Level.java
 +++ b/src/main/java/net/minecraft/world/level/Level.java
-@@ -409,6 +409,91 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
+@@ -408,6 +408,91 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
          return null;
      }
  

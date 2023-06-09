@@ -1,3 +1,5 @@
+import io.papermc.paperweight.tasks.CollectATsFromPatches
+
 plugins {
     java
     `maven-publish`
@@ -66,3 +68,8 @@ paperweight {
         }
     }
 }
+
+// Uncomment while updating for a new Minecraft version
+//tasks.withType<CollectATsFromPatches> {
+//    extraPatchDir.set(layout.projectDirectory.dir("patches/unapplied/server"))
+//}

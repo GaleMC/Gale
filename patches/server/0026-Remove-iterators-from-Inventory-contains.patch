@@ -31,10 +31,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 diff --git a/src/main/java/net/minecraft/world/entity/player/Inventory.java b/src/main/java/net/minecraft/world/entity/player/Inventory.java
-index 27c028ab6b1edb6e413af3bbaa27bf30f2d85540..5e0e5a59fced422b931009f98550fd0f8729d9f4 100644
+index 395cecc385e4126a7534ac9aeb15cf323efab03e..cbcbb826733cf75bb018752af75a6a338947c472 100644
 --- a/src/main/java/net/minecraft/world/entity/player/Inventory.java
 +++ b/src/main/java/net/minecraft/world/entity/player/Inventory.java
-@@ -682,6 +682,8 @@ public class Inventory implements Container, Nameable {
+@@ -681,6 +681,8 @@ public class Inventory implements Container, Nameable {
      }
  
      public boolean contains(ItemStack stack) {
@@ -43,7 +43,7 @@ index 27c028ab6b1edb6e413af3bbaa27bf30f2d85540..5e0e5a59fced422b931009f98550fd0f
          Iterator iterator = this.compartments.iterator();
  
          while (iterator.hasNext()) {
-@@ -696,7 +698,18 @@ public class Inventory implements Container, Nameable {
+@@ -695,7 +697,18 @@ public class Inventory implements Container, Nameable {
                  }
              }
          }
@@ -53,7 +53,7 @@ index 27c028ab6b1edb6e413af3bbaa27bf30f2d85540..5e0e5a59fced422b931009f98550fd0f
 +            for (int j = 0; j < list.size(); j++) {
 +                ItemStack itemstack1 = list.get(j);
  
-+                if (!itemstack1.isEmpty() && itemstack1.sameItem(stack)) {
++                if (!itemstack1.isEmpty() && ItemStack.isSameItem(itemstack1, stack)) {
 +                    return true;
 +                }
 +            }

@@ -93,10 +93,10 @@ index 50a9f33aa31e9273c7c52d4bb2b02f0f884f7ba5..19779298b2b2ecbe30f9308dad1d8037
              });
              return Collections.unmodifiableCollection(list);
 diff --git a/src/main/java/net/minecraft/util/ExtraCodecs.java b/src/main/java/net/minecraft/util/ExtraCodecs.java
-index cf64c2bed790da41a2e524e75d60a069765f035a..57fae84be749bd4a61a0c700a5cefce7122643e6 100644
+index 066d423dc908080157586555ba01053a2477d570..9402ba85ebb8260d7bd29ddf8cf871b77aa2e783 100644
 --- a/src/main/java/net/minecraft/util/ExtraCodecs.java
 +++ b/src/main/java/net/minecraft/util/ExtraCodecs.java
-@@ -228,7 +228,7 @@ public class ExtraCodecs {
+@@ -247,7 +247,7 @@ public class ExtraCodecs {
              return ImmutableList.of(leftFunction.apply(pair), rightFunction.apply(pair));
          });
          Codec<I> codec3 = RecordCodecBuilder.<Pair>create((instance) -> {
@@ -105,7 +105,7 @@ index cf64c2bed790da41a2e524e75d60a069765f035a..57fae84be749bd4a61a0c700a5cefce7
          }).comapFlatMap((pair) -> {
              return combineFunction.apply((P)pair.getFirst(), (P)pair.getSecond());
          }, (pair) -> {
-@@ -259,7 +259,7 @@ public class ExtraCodecs {
+@@ -278,7 +278,7 @@ public class ExtraCodecs {
                  Optional<Pair<A, T>> optional = dataResult.resultOrPartial(mutableObject::setValue);
                  return optional.isPresent() ? dataResult : DataResult.error(() -> {
                      return "(" + (String)mutableObject.getValue() + " -> using default)";
@@ -114,7 +114,7 @@ index cf64c2bed790da41a2e524e75d60a069765f035a..57fae84be749bd4a61a0c700a5cefce7
              }
  
              public <T> DataResult<T> coApply(DynamicOps<T> dynamicOps, A objectx, DataResult<T> dataResult) {
-@@ -542,7 +542,7 @@ public class ExtraCodecs {
+@@ -565,7 +565,7 @@ public class ExtraCodecs {
  
      static record LazyInitializedCodec<A>(Supplier<Codec<A>> delegate) implements Codec<A> {
          LazyInitializedCodec {
@@ -124,7 +124,7 @@ index cf64c2bed790da41a2e524e75d60a069765f035a..57fae84be749bd4a61a0c700a5cefce7
  
          public <T> DataResult<Pair<A, T>> decode(DynamicOps<T> dynamicOps, T object) {
 diff --git a/src/main/java/net/minecraft/util/datafix/fixes/ChunkProtoTickListFix.java b/src/main/java/net/minecraft/util/datafix/fixes/ChunkProtoTickListFix.java
-index db8eed0070a6e9949d73e94e07fea589ace09fd4..d6de68b4b0edabf37ba551b91bbe6682895b2a82 100644
+index 2e650637afede22d314bbe4dd4e91806ce88dcc3..8081a24eb5a533a55cdca3c882ccc61255b8a76c 100644
 --- a/src/main/java/net/minecraft/util/datafix/fixes/ChunkProtoTickListFix.java
 +++ b/src/main/java/net/minecraft/util/datafix/fixes/ChunkProtoTickListFix.java
 @@ -17,6 +17,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
@@ -196,7 +196,7 @@ index db8eed0070a6e9949d73e94e07fea589ace09fd4..d6de68b4b0edabf37ba551b91bbe6682
  
      public static final class PoorMansPalettedContainer {
 diff --git a/src/main/java/net/minecraft/world/entity/monster/Zoglin.java b/src/main/java/net/minecraft/world/entity/monster/Zoglin.java
-index 5956a7759964f5e4939f062e93714fba64f53141..51ad507a3b625201ecca50bd92f8f089f3b4d60a 100644
+index c1abeb62f63d2f8fb891efec8f76c6736b8f7f75..b056e29671f0a8437387c990fc96a9f3c1d614a2 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/Zoglin.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/Zoglin.java
 @@ -182,7 +182,7 @@ public class Zoglin extends Monster implements Enemy, HoglinBase {
@@ -209,7 +209,7 @@ index 5956a7759964f5e4939f062e93714fba64f53141..51ad507a3b625201ecca50bd92f8f089
  
      protected void updateActivity() {
 diff --git a/src/main/java/net/minecraft/world/entity/monster/piglin/PiglinBrute.java b/src/main/java/net/minecraft/world/entity/monster/piglin/PiglinBrute.java
-index ac75c54e897565e340b66823caeed92ba1d1641a..e44eec821eaa1cd77569814000d4aa36253fb13d 100644
+index d02ee11066fc4f07ccb110b09b86d895ff90d4f2..5d1a30e09870a5a535c71a2e44b8e6933de0c1e8 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/piglin/PiglinBrute.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/piglin/PiglinBrute.java
 @@ -70,7 +70,7 @@ public class PiglinBrute extends AbstractPiglin {
@@ -221,8 +221,25 @@ index ac75c54e897565e340b66823caeed92ba1d1641a..e44eec821eaa1cd77569814000d4aa36
      }
  
      @Override
+diff --git a/src/main/java/net/minecraft/world/item/BrushItem.java b/src/main/java/net/minecraft/world/item/BrushItem.java
+index 0279e3fc7aed675ccf66aa68a11ff94a6dc6abe6..d025232b43af3cb8dc28dff2e3e05c72e490901d 100644
+--- a/src/main/java/net/minecraft/world/item/BrushItem.java
++++ b/src/main/java/net/minecraft/world/item/BrushItem.java
+@@ -82,8 +82,10 @@ public class BrushItem extends Item {
+                             BlockEntity var18 = world.getBlockEntity(blockPos);
+                             if (var18 instanceof BrushableBlockEntity) {
+                                 BrushableBlockEntity brushableBlockEntity = (BrushableBlockEntity)var18;
+-                                boolean bl2 = brushableBlockEntity.brush(world.getGameTime(), player, blockHitResult.getDirection());
+-                                if (bl2) {
++                                // Gale start - dev import deobfuscation fixes
++                                boolean bl22 = brushableBlockEntity.brush(world.getGameTime(), player, blockHitResult.getDirection());
++                                if (bl22) {
++                                    // Gale end - dev import deobfuscation fixes
+                                     EquipmentSlot equipmentSlot = stack.equals(player.getItemBySlot(EquipmentSlot.OFFHAND)) ? EquipmentSlot.OFFHAND : EquipmentSlot.MAINHAND;
+                                     stack.hurtAndBreak(1, user, (userx) -> {
+                                         userx.broadcastBreakEvent(equipmentSlot);
 diff --git a/src/main/java/net/minecraft/world/level/levelgen/SurfaceRules.java b/src/main/java/net/minecraft/world/level/levelgen/SurfaceRules.java
-index daee1072171769d89783a7d7ef9e5692cb9fbc20..45b0706a48c4bf44923a2590f34913b7373de8f4 100644
+index 915c1cbcc0ecf634cc76f02bba53dc82d22be698..0c05aa0d0938b19453f45adf5931c88713e3b227 100644
 --- a/src/main/java/net/minecraft/world/level/levelgen/SurfaceRules.java
 +++ b/src/main/java/net/minecraft/world/level/levelgen/SurfaceRules.java
 @@ -154,7 +154,7 @@ public class SurfaceRules {

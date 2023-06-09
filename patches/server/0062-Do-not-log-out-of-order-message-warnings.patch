@@ -1,0 +1,33 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Martijn Muijsers <martijnmuijsers@live.nl>
+Date: Mon, 26 Dec 2022 05:18:17 +0100
+Subject: [PATCH] Do not log out-of-order message warnings
+
+License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
+Gale - https://galemc.org
+
+diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
+index aeeda04840eb8f7b1c05456acecbf9f81fcef54d..fcf395497593704858439f7f9ca8b46b699c42df 100644
+--- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
++++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
+@@ -2333,7 +2333,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+ 
+     private Optional<LastSeenMessages> tryHandleChat(String message, Instant timestamp, LastSeenMessages.Update acknowledgment) {
+         if (!this.updateChatOrder(timestamp)) {
+-            ServerGamePacketListenerImpl.LOGGER.warn("{} sent out-of-order chat: '{}': {} > {}", this.player.getName().getString(), message, this.lastChatTimeStamp.get().getEpochSecond(), timestamp.getEpochSecond()); // Paper
++            if (GaleGlobalConfiguration.get().logToConsole.chat.outOfOrderMessageWarning) ServerGamePacketListenerImpl.LOGGER.warn("{} sent out-of-order chat: '{}': {} > {}", this.player.getName().getString(), message, this.lastChatTimeStamp.get().getEpochSecond(), timestamp.getEpochSecond()); // Paper // Gale - do not log out-of-order message warnings
+             this.server.scheduleOnMain(() -> { // Paper - push to main
+             this.disconnect(Component.translatable("multiplayer.disconnect.out_of_order_chat"), org.bukkit.event.player.PlayerKickEvent.Cause.OUT_OF_ORDER_CHAT); // Paper - kick event ca
+             }); // Paper - push to main
+diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
+index 3541e53b60793bc53c49402f3a3eacf12cb92b23..2c012ca584c84528a143609110d39a0d808a9c00 100644
+--- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
++++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
+@@ -120,6 +120,7 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+         public class Chat extends ConfigurationPart {
+             public boolean emptyMessageWarning = false; // Gale - do not log empty message warnings
+             public boolean expiredMessageWarning = false; // Gale - do not log expired message warnings
++            public boolean outOfOrderMessageWarning = false; // Gale - do not log out-of-order message warnings
+         }
+ 
+     }

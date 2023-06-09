@@ -13,7 +13,7 @@ As part of: Paper (https://github.com/PaperMC/Paper)
 Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 
 diff --git a/src/main/java/co/aikar/timings/TimingsExport.java b/src/main/java/co/aikar/timings/TimingsExport.java
-index c07eb451a576811a39021f6f97103c77488fd001..6724cd70b2b255979b371411c7b5b8c6231b49fd 100644
+index a2f71a6d1a9e98133dff6cd0f625da9435a8af14..1b9d997c31ab281ce9f4719f53b0ad78a430789d 100644
 --- a/src/main/java/co/aikar/timings/TimingsExport.java
 +++ b/src/main/java/co/aikar/timings/TimingsExport.java
 @@ -242,7 +242,10 @@ public class TimingsExport extends Thread {
@@ -225,7 +225,7 @@ index f6b9d216c24d8858802f85209fe1a869e5a9be31..1376290026401424619f95dead7fca63
 +    // Gale end - Gale configuration
  }
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index ec7bf5c30a19215af6fe19b16de24e523de0a2ac..d2b0f385ae241f8212e78bfe96f8c2047c96a237 100644
+index bc54a4d802b81877b45fc69631f09a9668b5ea78..2fbd75595dc222c2fb784e9e356a3dce530c6776 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -3,9 +3,6 @@ package net.minecraft.server;
@@ -254,15 +254,17 @@ index ec7bf5c30a19215af6fe19b16de24e523de0a2ac..d2b0f385ae241f8212e78bfe96f8c204
  import net.minecraft.util.datafix.DataFixers;
  import net.minecraft.util.profiling.EmptyProfileResults;
  import net.minecraft.util.profiling.ProfileResults;
-@@ -164,6 +159,7 @@ import net.minecraft.world.level.storage.loot.LootTables;
- import net.minecraft.world.level.storage.loot.PredicateManager;
- import net.minecraft.world.phys.Vec2;
- import net.minecraft.world.phys.Vec3;
+@@ -161,6 +156,9 @@ import net.minecraft.world.level.storage.PrimaryLevelData;
+ import net.minecraft.world.level.storage.ServerLevelData;
+ import net.minecraft.world.level.storage.WorldData;
+ import net.minecraft.world.level.storage.loot.LootDataManager;
++import net.minecraft.world.phys.Vec2;
++import net.minecraft.world.phys.Vec3;
 +import org.galemc.gale.configuration.GaleConfigurations;
  import org.slf4j.Logger;
  
  // CraftBukkit start
-@@ -308,6 +304,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -308,6 +306,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
      public final double[] recentTps = new double[ 3 ];
      // Spigot end
      public final io.papermc.paper.configuration.PaperConfigurations paperConfigurations;
@@ -270,7 +272,7 @@ index ec7bf5c30a19215af6fe19b16de24e523de0a2ac..d2b0f385ae241f8212e78bfe96f8c204
      public static long currentTickLong = 0L; // Paper
  
      public volatile Thread shutdownThread; // Paper
-@@ -410,6 +407,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -410,6 +409,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          // Paper end
          Runtime.getRuntime().addShutdownHook(new org.bukkit.craftbukkit.util.ServerShutdownThread(this));
          this.paperConfigurations = services.paperConfigurations(); // Paper
@@ -279,26 +281,26 @@ index ec7bf5c30a19215af6fe19b16de24e523de0a2ac..d2b0f385ae241f8212e78bfe96f8c204
      // CraftBukkit end
  
 diff --git a/src/main/java/net/minecraft/server/Services.java b/src/main/java/net/minecraft/server/Services.java
-index ef6ff78af2ae747e939895b82ee9d11c75012dcd..b445d4562304fec912131ee32c4e0f894f44a928 100644
+index a9b2c8cd4dcd3f884e4306bebee9334d3848fce5..3430a1ac3252ff9a457ee36ffc112503a25e4272 100644
 --- a/src/main/java/net/minecraft/server/Services.java
 +++ b/src/main/java/net/minecraft/server/Services.java
-@@ -6,12 +6,13 @@ import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
- import java.io.File;
+@@ -9,12 +9,13 @@ import java.io.File;
+ import javax.annotation.Nullable;
  import net.minecraft.server.players.GameProfileCache;
  import net.minecraft.util.SignatureValidator;
 +import org.galemc.gale.configuration.GaleConfigurations;
  
  // Paper start
--public record Services(MinecraftSessionService sessionService, SignatureValidator serviceSignatureValidator, GameProfileRepository profileRepository, GameProfileCache profileCache, @javax.annotation.Nullable io.papermc.paper.configuration.PaperConfigurations paperConfigurations) {
-+public record Services(MinecraftSessionService sessionService, SignatureValidator serviceSignatureValidator, GameProfileRepository profileRepository, GameProfileCache profileCache, @javax.annotation.Nullable io.papermc.paper.configuration.PaperConfigurations paperConfigurations, @javax.annotation.Nullable GaleConfigurations galeConfigurations) { // Gale - Gale configuration
+-public record Services(MinecraftSessionService sessionService, ServicesKeySet servicesKeySet, GameProfileRepository profileRepository, GameProfileCache profileCache, @javax.annotation.Nullable io.papermc.paper.configuration.PaperConfigurations paperConfigurations) {
++public record Services(MinecraftSessionService sessionService, ServicesKeySet servicesKeySet, GameProfileRepository profileRepository, GameProfileCache profileCache, @javax.annotation.Nullable io.papermc.paper.configuration.PaperConfigurations paperConfigurations, @javax.annotation.Nullable GaleConfigurations galeConfigurations) { // Gale - Gale configuration
  
-     public Services(MinecraftSessionService sessionService, SignatureValidator signatureValidator, GameProfileRepository profileRepository, GameProfileCache profileCache) {
--        this(sessionService, signatureValidator, profileRepository, profileCache, null);
-+        this(sessionService, signatureValidator, profileRepository, profileCache, null, null); // Gale - Gale configuration
+     public Services(MinecraftSessionService sessionService, ServicesKeySet servicesKeySet, GameProfileRepository profileRepository, GameProfileCache profileCache) {
+-        this(sessionService, servicesKeySet, profileRepository, profileCache, null);
++        this(sessionService, servicesKeySet, profileRepository, profileCache, null, null); // Gale - Gale configuration
      }
  
      @Override
-@@ -19,6 +20,11 @@ public record Services(MinecraftSessionService sessionService, SignatureValidato
+@@ -22,6 +23,11 @@ public record Services(MinecraftSessionService sessionService, ServicesKeySet se
          return java.util.Objects.requireNonNull(this.paperConfigurations);
      }
      // Paper end
@@ -310,20 +312,20 @@ index ef6ff78af2ae747e939895b82ee9d11c75012dcd..b445d4562304fec912131ee32c4e0f89
      public static final String USERID_CACHE_FILE = "usercache.json"; // Paper - private -> public
  
      public static Services create(YggdrasilAuthenticationService authenticationService, File rootDirectory, File userCacheFile, joptsimple.OptionSet optionSet) throws Exception { // Paper
-@@ -30,7 +36,10 @@ public record Services(MinecraftSessionService sessionService, SignatureValidato
+@@ -32,7 +38,10 @@ public record Services(MinecraftSessionService sessionService, ServicesKeySet se
          final java.nio.file.Path legacyConfigPath = ((File) optionSet.valueOf("paper-settings")).toPath();
          final java.nio.file.Path configDirPath = ((File) optionSet.valueOf("paper-settings-directory")).toPath();
          io.papermc.paper.configuration.PaperConfigurations paperConfigurations = io.papermc.paper.configuration.PaperConfigurations.setup(legacyConfigPath, configDirPath, rootDirectory.toPath(), (File) optionSet.valueOf("spigot-settings"));
--        return new Services(minecraftSessionService, signatureValidator, gameProfileRepository, gameProfileCache, paperConfigurations);
+-        return new Services(minecraftSessionService, authenticationService.getServicesKeySet(), gameProfileRepository, gameProfileCache, paperConfigurations);
 +        // Gale start - Gale configuration
 +        GaleConfigurations galeConfigurations = GaleConfigurations.setup(configDirPath);
-+        return new Services(minecraftSessionService, signatureValidator, gameProfileRepository, gameProfileCache, paperConfigurations, galeConfigurations);
++        return new Services(minecraftSessionService, authenticationService.getServicesKeySet(), gameProfileRepository, gameProfileCache, paperConfigurations, galeConfigurations);
 +        // Gale end - Gale configuration
          // Paper end
      }
- }
+ 
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index a7e133f3495e9132a5fdae2c24f225e7b026295a..b98fb8afdadbda47db5924299d90082edf3ca1b4 100644
+index 9f422cbeaa52b3e6a0a27af4f8ad4ddb7808483f..9d54ef5f12a24131b1504566e09cd9714b93e913 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 @@ -1,20 +1,15 @@
@@ -360,10 +362,10 @@ index a7e133f3495e9132a5fdae2c24f225e7b026295a..b98fb8afdadbda47db5924299d90082e
          if (this.convertOldUsers()) {
              this.getProfileCache().save(false); // Paper
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index 45804711255f04110e9509df8d60900314aa10b7..ffbc971acd9a01e693d9fc2c9ab8fab859e1df10 100644
+index 18aac3da3c88f33b1a71a5920a8daa27e9723913..513916690d2579760f59edecb1a273f475d54adf 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
-@@ -130,12 +130,10 @@ import net.minecraft.world.level.chunk.storage.EntityStorage;
+@@ -132,12 +132,10 @@ import net.minecraft.world.level.chunk.storage.EntityStorage;
  import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
  import net.minecraft.world.level.dimension.LevelStem;
  import net.minecraft.world.level.dimension.end.EndDragonFight;
@@ -376,7 +378,7 @@ index 45804711255f04110e9509df8d60900314aa10b7..ffbc971acd9a01e693d9fc2c9ab8fab8
  import net.minecraft.world.level.gameevent.DynamicGameEventListener;
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.level.gameevent.GameEventDispatcher;
-@@ -527,7 +525,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -647,7 +645,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
          // Holder holder = worlddimension.type(); // CraftBukkit - decompile error
  
          // Objects.requireNonNull(minecraftserver); // CraftBukkit - decompile error
@@ -386,7 +388,7 @@ index 45804711255f04110e9509df8d60900314aa10b7..ffbc971acd9a01e693d9fc2c9ab8fab8
          this.convertable = convertable_conversionsession;
          this.uuid = WorldUUID.getUUID(convertable_conversionsession.levelDirectory.path().toFile());
 diff --git a/src/main/java/net/minecraft/world/level/Level.java b/src/main/java/net/minecraft/world/level/Level.java
-index 973ecd50f9cb6b86c353586e84d15dcb118ccb60..63122fb74a51547e23232a5409295369ee3aa353 100644
+index 147d802d9207e358fdb2d1c7806fc2f634dcfd98..71189e98dcb71e625defe5a0bd6355597c9382e6 100644
 --- a/src/main/java/net/minecraft/world/level/Level.java
 +++ b/src/main/java/net/minecraft/world/level/Level.java
 @@ -1,10 +1,7 @@
@@ -436,7 +438,7 @@ index 973ecd50f9cb6b86c353586e84d15dcb118ccb60..63122fb74a51547e23232a5409295369
  // CraftBukkit end
  
  public abstract class Level implements LevelAccessor, AutoCloseable {
-@@ -175,6 +167,12 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
+@@ -174,6 +166,12 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
          return this.paperConfig;
      }
      // Paper end
@@ -449,7 +451,7 @@ index 973ecd50f9cb6b86c353586e84d15dcb118ccb60..63122fb74a51547e23232a5409295369
  
      public final com.destroystokyo.paper.antixray.ChunkPacketBlockController chunkPacketBlockController; // Paper - Anti-Xray
      public final co.aikar.timings.WorldTimingsHandler timings; // Paper
-@@ -274,9 +272,10 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
+@@ -273,9 +271,10 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
  
      public abstract ResourceKey<LevelStem> getTypeKey();
  
@@ -462,7 +464,7 @@ index 973ecd50f9cb6b86c353586e84d15dcb118ccb60..63122fb74a51547e23232a5409295369
          this.world = new CraftWorld((ServerLevel) this, gen, biomeProvider, env);
  
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index ac72aa6f4bb39aaace7c2abd7ec7ced4b955991d..1cd4198fa1cbb4e27f016463c489dbddce9c659e 100644
+index 7f3cb409e90dc0b558f583d0c83c91f5f76d6ea8..2301c9adfd70e130ee89c63481d9976cec0793e4 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 @@ -979,6 +979,7 @@ public final class CraftServer implements Server {
@@ -473,7 +475,7 @@ index ac72aa6f4bb39aaace7c2abd7ec7ced4b955991d..1cd4198fa1cbb4e27f016463c489dbdd
          for (ServerLevel world : this.console.getAllLevels()) {
              // world.serverLevelData.setDifficulty(config.difficulty); // Paper - per level difficulty
              world.setSpawnSettings(world.serverLevelData.getDifficulty() != Difficulty.PEACEFUL && config.spawnMonsters, config.spawnAnimals); // Paper - per level difficulty (from MinecraftServer#setDifficulty(ServerLevel, Difficulty, boolean))
-@@ -2763,6 +2764,14 @@ public final class CraftServer implements Server {
+@@ -2759,6 +2760,14 @@ public final class CraftServer implements Server {
              return CraftServer.this.console.paperConfigurations.createLegacyObject(CraftServer.this.console);
          }
  

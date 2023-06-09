@@ -19,10 +19,10 @@ require it to be initialized earlier. By moving it to the superclass, we
 initialize it earlier, ensuring that it is available sooner.
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index 42b0aa27af33aa5879f9d9a5fcfa19c296fbc635..c0424d758bf2921ae89cfdf89ff71980684e5d0c 100644
+index 287f6a38a6f042983c5e652ff9800fb215a91221..47acb63bfca2f722a595cf6614c28e75d1d94235 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
-@@ -770,7 +770,6 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -911,7 +911,6 @@ public class ServerLevel extends Level implements WorldGenLevel {
      }
      // Paper start - optimise random block ticking
      private final BlockPos.MutableBlockPos chunkTickMutablePosition = new BlockPos.MutableBlockPos();
@@ -31,10 +31,10 @@ index 42b0aa27af33aa5879f9d9a5fcfa19c296fbc635..c0424d758bf2921ae89cfdf89ff71980
  
      public void tickChunk(LevelChunk chunk, int randomTickSpeed) {
 diff --git a/src/main/java/net/minecraft/world/level/Level.java b/src/main/java/net/minecraft/world/level/Level.java
-index c512c37439fa2b40bbd1d40301686bd13fa0469e..67de286dd6a569da9f8b36a4c7bd673830c17a2b 100644
+index 0502f5bf4ee886ddc16f430a4c6679279cc12ff1..5185af09005fd9f671daca0844b42e85b29a0376 100644
 --- a/src/main/java/net/minecraft/world/level/Level.java
 +++ b/src/main/java/net/minecraft/world/level/Level.java
-@@ -181,6 +181,8 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
+@@ -180,6 +180,8 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
      public final Map<Explosion.CacheKey, Float> explosionDensityCache = new HashMap<>(); // Paper - Optimize explosions
      public java.util.ArrayDeque<net.minecraft.world.level.block.RedstoneTorchBlock.Toggle> redstoneUpdateInfos; // Paper - Move from Map in BlockRedstoneTorch to here
  

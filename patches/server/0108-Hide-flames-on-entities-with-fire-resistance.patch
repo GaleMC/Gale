@@ -1,0 +1,44 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Martijn Muijsers <martijnmuijsers@live.nl>
+Date: Wed, 30 Nov 2022 14:39:27 +0100
+Subject: [PATCH] Hide flames on entities with fire resistance
+
+License: MIT (https://opensource.org/licenses/MIT)
+Gale - https://galemc.org
+
+This patch is based on the following patch:
+"Don't send fire packets if player has Fire Resistance"
+By: Cryptite <cryptite@gmail.com>
+As part of: Slice (https://github.com/Cryptite/Slice)
+Licensed under: MIT (https://opensource.org/licenses/MIT)
+
+diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
+index 88e414d74a6b144b7c3db5bcd3a3d9841b9c051d..b30e7c2fe1d9247a3aa38e9d2b50f768181c26f8 100644
+--- a/src/main/java/net/minecraft/world/entity/Entity.java
++++ b/src/main/java/net/minecraft/world/entity/Entity.java
+@@ -878,7 +878,13 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+ 
+         this.checkBelowWorld();
+         if (!this.level().isClientSide) {
++            // Gale start - Slice - hide flames on entities with fire resistance
++            if (this instanceof net.minecraft.world.entity.LivingEntity livingEntity) {
++                this.setSharedFlagOnFire(this.remainingFireTicks > 0 && (!this.level.galeConfig().gameplayMechanics.hideFlamesOnEntitiesWithFireResistance || !livingEntity.hasEffect(net.minecraft.world.effect.MobEffects.FIRE_RESISTANCE)));
++            } else {
++            // Gale end - Slice - hide flames on entities with fire resistance
+             this.setSharedFlagOnFire(this.remainingFireTicks > 0);
++            } // Gale - Slice - hide flames on entities with fire resistance
+         }
+ 
+         this.firstTick = false;
+diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
+index 3ebd9c177453bf720c40c7f9d41e28a234c80467..4329d9bbfe002a4e505b0a2f13063aa8ca736f8f 100644
+--- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
++++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
+@@ -292,6 +292,7 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+ 
+         public boolean entitiesCanEatBlocksInNonTickingChunks = false; // Gale - Purpur - prevent entities eating blocks in non-ticking chunks
+         public boolean arrowMovementResetsDespawnCounter = true; // Gale - Purpur - make arrow movement resetting despawn counter configurable
++        public boolean hideFlamesOnEntitiesWithFireResistance = false; // Gale - Slice - hide flames on entities with fire resistance
+ 
+         public Fixes fixes;
+         public class Fixes extends ConfigurationPart {
