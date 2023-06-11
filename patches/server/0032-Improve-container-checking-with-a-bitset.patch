@@ -390,7 +390,7 @@ index a71414397bd45ee7bcacfeef0041d80dfa25f114..7743f185672e977520218c3ce6b8ddc9
  
      @Override
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java
-index 93c13cb36024370f6ec71137cebca254af2b3b61..9849e784f4fc92368779134f8e10fa2f290a086b 100644
+index a8a26a0a37a08b6bbeb5a1fde417d6f448d3c79f..fd1ea9473f228bc2f96f3dc288b38616807b8edd 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java
 @@ -47,7 +47,10 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
@@ -485,7 +485,7 @@ index 93c13cb36024370f6ec71137cebca254af2b3b61..9849e784f4fc92368779134f8e10fa2f
  
              if (itemstack1.isEmpty()) {
                  // Spigot start - SPIGOT-6693, InventorySubcontainer#setItem
-@@ -813,7 +839,10 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
+@@ -831,7 +857,10 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
  
      @Override
      protected void setItems(NonNullList<ItemStack> list) {
