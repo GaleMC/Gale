@@ -13,7 +13,7 @@ As part of: EmpireCraft (https://github.com/starlis/empirecraft)
 Licensed under: MIT (https://opensource.org/licenses/MIT)
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index f77f4cbdca0b22e0c24acbf08425e2e83ddef449..e7ec98be67ab50c06d90a1bccd023fcd2a2fee93 100644
+index 8badf1d6239eca7e48819860ada3a1ce21c3b4db..c3076b07077873a852c8a59219bd6aa74f2b9212 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -270,6 +270,7 @@ public class ServerPlayer extends Player {
@@ -25,10 +25,10 @@ index f77f4cbdca0b22e0c24acbf08425e2e83ddef449..e7ec98be67ab50c06d90a1bccd023fcd
      // CraftBukkit end
      public boolean isRealPlayer; // Paper
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 9b028f8a5d0bcda9ea1bc28b65587627e31e78b1..ae50f9e62f1275d0cff6f017ec23e4ebcad46a1d 100644
+index 9cce018d0d187a299fb8275b5e0db81d79b91fec..996810340723f9a86f2f8f96d2c7a77fb4bf5e8e 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -2343,6 +2343,10 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -2346,6 +2346,10 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
              if (this.player.isRemoved() || this.player.getChatVisibility() == ChatVisiblity.HIDDEN) { // CraftBukkit - dead men tell no tales
                  this.send(new ClientboundSystemChatPacket(PaperAdventure.asAdventure(Component.translatable("chat.disabled.options").withStyle(ChatFormatting.RED)), false)); // Paper - Adventure
                  return Optional.empty();
@@ -40,7 +40,7 @@ index 9b028f8a5d0bcda9ea1bc28b65587627e31e78b1..ae50f9e62f1275d0cff6f017ec23e4eb
                  this.player.resetLastActionTime();
                  return optional;
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index 683b5d78f9e3dc34e40c54683f64be32317797ac..e0e27beebffdbb8fa534899b451cc59f275faef0 100644
+index 8547e7ff2f1f5b7701fb0f3c3010c14601a5f83e..3d6dd50625a61fa2dccc7ea71e1913733dddf801 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
 @@ -342,6 +342,8 @@ public abstract class PlayerList {

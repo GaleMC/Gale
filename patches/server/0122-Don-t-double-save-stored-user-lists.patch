@@ -31,7 +31,7 @@ index 935dac757280731bfeb0a8f033cbe315ecac46da..a9786790620d4100b52fafc15933d312
  
      @Override
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftIpBanList.java b/src/main/java/org/bukkit/craftbukkit/CraftIpBanList.java
-index 30f2ddff4108e92eaac50317bdd9ef4eb25ec085..027855cc99b0fad7a8d3967b6c0b2037b3a52574 100644
+index 5a7d884bcad7b30109567c1eff816a31c1701b06..6955072875cd3034a3b1ad8c758bf8ac19972306 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftIpBanList.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftIpBanList.java
 @@ -41,12 +41,6 @@ public class CraftIpBanList implements org.bukkit.BanList {
@@ -63,7 +63,7 @@ index 126968d557263b3efddc9d53d0f8f436a401cf78..3854c93794d27ecd0331105106b104b1
      }
  }
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftProfileBanList.java b/src/main/java/org/bukkit/craftbukkit/CraftProfileBanList.java
-index 6e2047f1b45799c7a1ddfdcd24d76e6e12f91e4b..a31d126590505c00d1a4c0fbb9eb327ec87f7895 100644
+index 535a571d140dd5932dbd503c540f988c421f0627..cad7307e3e00f672b768c563bfcd06dd9dfcb53b 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftProfileBanList.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftProfileBanList.java
 @@ -54,12 +54,6 @@ public class CraftProfileBanList implements org.bukkit.BanList {

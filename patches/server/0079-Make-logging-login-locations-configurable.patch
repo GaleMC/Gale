@@ -13,7 +13,7 @@ As part of: JettPack (https://gitlab.com/Titaniumtown/JettPack)
 Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index efc958959b772312acfbcfb0cf52c6aa6be77fb2..6deac057bae3fe80bbdd39fc6151ee66e754c71e 100644
+index 77e6d38d145c98422a41a310337258898c3afb1f..603260943ecd5706b6ed574973287d6d3ad4bbb7 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
 @@ -480,7 +480,13 @@ public abstract class PlayerList {
@@ -31,10 +31,10 @@ index efc958959b772312acfbcfb0cf52c6aa6be77fb2..6deac057bae3fe80bbdd39fc6151ee66
  
      public void updateEntireScoreboard(ServerScoreboard scoreboard, ServerPlayer player) {
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index f4f6f59af9ae02748763b82f2c2ae5da90737749..599c921e30e84c7145340f575d8de1b1d71d9331 100644
+index 882830dd0bddb81e1a592cdd089d4340beb946a7..c9ad1e5371b7d6f7de868cabebb8880052e59f64 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-@@ -120,6 +120,7 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+@@ -119,6 +119,7 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
          public boolean setBlockInFarChunk = true; // Gale - Purpur - do not log setBlock in far chunks
          public boolean unrecognizedRecipes = false; // Gale - Purpur - do not log unrecognized recipes
          public boolean legacyMaterialInitialization = false; // Gale - Purpur - do not log legacy Material initialization

@@ -37,7 +37,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 574c8a2680c66d9e8bc14b1128652f1f4d16210b..31dc612cd8f84fec4138b5d9ed4ac093c3e202ce 100644
+index 2166fb9e993394f8298c02b0eddd5f773c2c2182..93b8c00c16b26f4b76f35d1aa32560375097aef4 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -7,6 +7,8 @@ import com.mojang.brigadier.StringReader;
@@ -91,7 +91,7 @@ index 574c8a2680c66d9e8bc14b1128652f1f4d16210b..31dc612cd8f84fec4138b5d9ed4ac093
          if (this.keepAlivePending) {
              if (!this.processedDisconnect && elapsedTime >= KEEPALIVE_LIMIT) { // check keepalive limit, don't fire if already disconnected
                  ServerGamePacketListenerImpl.LOGGER.warn("{} was kicked due to keepalive timeout!", this.player.getScoreboardName()); // more info
-@@ -3465,6 +3486,16 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -3468,6 +3489,16 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
  
      @Override
      public void handleKeepAlive(ServerboundKeepAlivePacket packet) {
@@ -109,7 +109,7 @@ index 574c8a2680c66d9e8bc14b1128652f1f4d16210b..31dc612cd8f84fec4138b5d9ed4ac093
          if (this.keepAlivePending && packet.getId() == this.keepAliveChallenge) {
              int i = (int) (Util.getMillis() - this.keepAliveTime);
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index 599c921e30e84c7145340f575d8de1b1d71d9331..ef95ee4238c6da237e939c06c63cd8666a863ac5 100644
+index c9ad1e5371b7d6f7de868cabebb8880052e59f64..ead1ae2db1c2ad118a50ab3a2c1216bd3bb5eae8 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 @@ -109,6 +109,13 @@ public class GaleGlobalConfiguration extends ConfigurationPart {

@@ -26,7 +26,7 @@ index 1af5f4fde0d9d6c7d9dd32714a4e31b298d7564d..098828871f36ef8f9796456747977d7c
              double d1 = (double) (center.y - maxRange);
              double d2 = (double) (center.x + maxRange);
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 6bbb894b26c2ed3844aa5a6ea809fea74538468a..f4cc145f2670dee5893eeb1891b3fb8bfadd9b36 100644
+index 0e765c1fb7b93905b7aff8f03fcabba7dc2d8cfa..00ce8b78e35055da01a053cb0d4ed914d50acebc 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -441,7 +441,7 @@ public class ServerPlayer extends Player {

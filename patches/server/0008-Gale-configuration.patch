@@ -225,7 +225,7 @@ index f6b9d216c24d8858802f85209fe1a869e5a9be31..1376290026401424619f95dead7fca63
 +    // Gale end - Gale configuration
  }
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index bc54a4d802b81877b45fc69631f09a9668b5ea78..2fbd75595dc222c2fb784e9e356a3dce530c6776 100644
+index d404cbb04e25ef145738fbd1cb2453acd96745ac..1c070563cfa76bf907c961cf3703214ec88a3f75 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -3,9 +3,6 @@ package net.minecraft.server;
@@ -264,7 +264,7 @@ index bc54a4d802b81877b45fc69631f09a9668b5ea78..2fbd75595dc222c2fb784e9e356a3dce
  import org.slf4j.Logger;
  
  // CraftBukkit start
-@@ -308,6 +306,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -306,6 +304,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
      public final double[] recentTps = new double[ 3 ];
      // Spigot end
      public final io.papermc.paper.configuration.PaperConfigurations paperConfigurations;
@@ -272,7 +272,7 @@ index bc54a4d802b81877b45fc69631f09a9668b5ea78..2fbd75595dc222c2fb784e9e356a3dce
      public static long currentTickLong = 0L; // Paper
  
      public volatile Thread shutdownThread; // Paper
-@@ -410,6 +409,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -408,6 +407,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          // Paper end
          Runtime.getRuntime().addShutdownHook(new org.bukkit.craftbukkit.util.ServerShutdownThread(this));
          this.paperConfigurations = services.paperConfigurations(); // Paper
@@ -464,7 +464,7 @@ index 147d802d9207e358fdb2d1c7806fc2f634dcfd98..71189e98dcb71e625defe5a0bd635559
          this.world = new CraftWorld((ServerLevel) this, gen, biomeProvider, env);
  
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index 7f3cb409e90dc0b558f583d0c83c91f5f76d6ea8..2301c9adfd70e130ee89c63481d9976cec0793e4 100644
+index 0a3f5b354336e9acf70524c93f3386c6f7cdafe0..eae08c4e9f6efb3cb6822b9e02776826920b2e5c 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 @@ -979,6 +979,7 @@ public final class CraftServer implements Server {
@@ -475,7 +475,7 @@ index 7f3cb409e90dc0b558f583d0c83c91f5f76d6ea8..2301c9adfd70e130ee89c63481d9976c
          for (ServerLevel world : this.console.getAllLevels()) {
              // world.serverLevelData.setDifficulty(config.difficulty); // Paper - per level difficulty
              world.setSpawnSettings(world.serverLevelData.getDifficulty() != Difficulty.PEACEFUL && config.spawnMonsters, config.spawnAnimals); // Paper - per level difficulty (from MinecraftServer#setDifficulty(ServerLevel, Difficulty, boolean))
-@@ -2759,6 +2760,14 @@ public final class CraftServer implements Server {
+@@ -2776,6 +2777,14 @@ public final class CraftServer implements Server {
              return CraftServer.this.console.paperConfigurations.createLegacyObject(CraftServer.this.console);
          }
  

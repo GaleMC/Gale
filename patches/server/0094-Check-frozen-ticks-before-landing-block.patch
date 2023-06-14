@@ -13,7 +13,7 @@ As part of: Lithium (https://github.com/CaffeineMC/lithium-fabric)
 Licensed under: LGPL-3.0 (https://www.gnu.org/licenses/lgpl-3.0.html)
 
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index 1016a70c2b468463cb74aa6bbfe3aa65eb297786..da2b72bdcd2ec7e1992a828c4d5a543b113a2592 100644
+index 12a8a375714b1ccb7c66121975a7d865183bbb19..1f31b9bb36274a53b3594e0564f97e1275544b9c 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
 @@ -584,11 +584,10 @@ public abstract class LivingEntity extends Entity implements Attackable {

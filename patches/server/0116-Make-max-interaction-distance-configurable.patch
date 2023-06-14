@@ -20,7 +20,7 @@ index 1635fee928d64f4d2c336dca6675ed4641918830..d65b9d2d9070d8dee2c144c9b37d6605
              this.debugLogging(pos, false, sequence, "too far");
          } else if (pos.getY() >= worldHeight) {
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 31dc612cd8f84fec4138b5d9ed4ac093c3e202ce..79dba3796df83d0127db6e29f38a35e1d3289724 100644
+index 93b8c00c16b26f4b76f35d1aa32560375097aef4..8d90209a01020d44626f56e2cb0dd5eca300f699 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -254,7 +254,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
@@ -46,7 +46,7 @@ index 31dc612cd8f84fec4138b5d9ed4ac093c3e202ce..79dba3796df83d0127db6e29f38a35e1
      @Override
      public void tick() {
          if (this.ackBlockChangesUpTo > -1) {
-@@ -1966,7 +1973,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -1969,7 +1976,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
              BlockPos blockposition = movingobjectpositionblock.getBlockPos();
              Vec3 vec3d1 = Vec3.atCenterOf(blockposition);
  
@@ -55,7 +55,7 @@ index 31dc612cd8f84fec4138b5d9ed4ac093c3e202ce..79dba3796df83d0127db6e29f38a35e1
                  Vec3 vec3d2 = vec3d.subtract(vec3d1);
                  double d0 = 1.0000001D;
  
-@@ -2825,7 +2832,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -2828,7 +2835,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
  
              AABB axisalignedbb = entity.getBoundingBox();
  

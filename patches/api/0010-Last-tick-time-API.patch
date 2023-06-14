@@ -23,10 +23,10 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 diff --git a/src/main/java/org/bukkit/Bukkit.java b/src/main/java/org/bukkit/Bukkit.java
-index b5042ccfad1f99cce88b3a8878da15909333c3a0..8b66e73c03ef016b99e0480b951140c1c6be6ec4 100644
+index 343123836a843e633adc0c9bcdcd3d89572e70e2..bc84a2b89218fc1e21bddf25ca342c6e2bf9984c 100644
 --- a/src/main/java/org/bukkit/Bukkit.java
 +++ b/src/main/java/org/bukkit/Bukkit.java
-@@ -2532,6 +2532,20 @@ public final class Bukkit {
+@@ -2549,6 +2549,20 @@ public final class Bukkit {
      }
      // Paper end
  
@@ -48,10 +48,10 @@ index b5042ccfad1f99cce88b3a8878da15909333c3a0..8b66e73c03ef016b99e0480b951140c1
      public static Server.Spigot spigot() {
          return server.spigot();
 diff --git a/src/main/java/org/bukkit/Server.java b/src/main/java/org/bukkit/Server.java
-index 237b837a790bb3a3e33ae5731f550b1e8b55437b..007e23a9383ab8eda12c6dffb385256215356040 100644
+index 4fabb37be76d85f111d8cbd6ca967bb0ca8f58de..714ea77b4509ba842c764e78e0bfc1862abcd537 100644
 --- a/src/main/java/org/bukkit/Server.java
 +++ b/src/main/java/org/bukkit/Server.java
-@@ -2215,4 +2215,30 @@ public interface Server extends PluginMessageRecipient, net.kyori.adventure.audi
+@@ -2228,4 +2228,30 @@ public interface Server extends PluginMessageRecipient, net.kyori.adventure.audi
       */
      @NotNull org.bukkit.potion.PotionBrewer getPotionBrewer();
      // Paper end
