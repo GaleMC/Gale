@@ -11,7 +11,7 @@ License for non-image files: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 794aa5ec516d6d1f2c633bcdb53232515a06e32a..a35e8a5a66bcd1235edbf2ba1a245956f90117f7 100644
+index 427749555a81724dbe36a99b70fb7aaba5f80151..47f235b641946b58afd18783e3dbca6432fcc268 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -79,7 +79,7 @@ tasks.jar {
@@ -248,7 +248,7 @@ index d7ce4971d9271dbeff4adb9d852e4e7bdf60bf03..3dd7ee2e099199550b885947d33d8b27
                  // (async tasks must live with race-conditions if they attempt to cancel between these few lines of code)
              }
 diff --git a/src/main/java/org/bukkit/craftbukkit/util/CraftMagicNumbers.java b/src/main/java/org/bukkit/craftbukkit/util/CraftMagicNumbers.java
-index 8092db9de43ca4824374e1a76c85f71929521f6d..35da803d7679ba6d110764881dc7cad6823381b6 100644
+index 83cef5ec27c31f133a23cd27349f722799c786ea..267f590126c22f5800d54200fca7c2a89a5364f6 100644
 --- a/src/main/java/org/bukkit/craftbukkit/util/CraftMagicNumbers.java
 +++ b/src/main/java/org/bukkit/craftbukkit/util/CraftMagicNumbers.java
 @@ -470,7 +470,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
@@ -460,7 +460,7 @@ index 0000000000000000000000000000000000000000..7fee1c2779ab390586b2d3f75f568908
 +}
 diff --git a/src/main/java/org/galemc/gale/version/GaleVersionFetcher.java b/src/main/java/org/galemc/gale/version/GaleVersionFetcher.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..4946618a2be455738a3b0222d91ed6611c472c74
+index 0000000000000000000000000000000000000000..9b4bc17fed9dc7251159687082cf8de60dd49ba4
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/version/GaleVersionFetcher.java
 @@ -0,0 +1,11 @@
@@ -471,7 +471,7 @@ index 0000000000000000000000000000000000000000..4946618a2be455738a3b0222d91ed661
 +public class GaleVersionFetcher extends AbstractPaperVersionFetcher {
 +
 +    public GaleVersionFetcher() {
-+        super("ver/1.20", "https://github.com/GaleMC/Gale", "Gale", "GaleMC", "GaleMC", "Gale");
++        super("ver/1.20.1", "https://github.com/GaleMC/Gale", "Gale", "GaleMC", "GaleMC", "Gale");
 +    }
 +
 +}

@@ -7,7 +7,7 @@ License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 7a17e05b630517a6861c34a4561198db62acf82a..7617fe6903713893af8f6ef6564c97549709ff26 100644
+index a0c5592530d2a59bfde87d1e9eb3752e7d4694da..77fc393c793cfe719b48255bffa29c5160f8aece 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -7,8 +7,14 @@ plugins {
@@ -20,7 +20,7 @@ index 7a17e05b630517a6861c34a4561198db62acf82a..7617fe6903713893af8f6ef6564c9754
 +    // Depend on own API
 +    implementation(project(":gale-api"))
 +    // Depend on Paper MojangAPI
-+    implementation("io.papermc.paper:paper-mojangapi:1.20-R0.1-SNAPSHOT") {
++    implementation("io.papermc.paper:paper-mojangapi:1.20.1-R0.1-SNAPSHOT") {
 +        exclude("io.papermc.paper", "paper-api")
 +    }
 +    // Gale end - project setup

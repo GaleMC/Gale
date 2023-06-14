@@ -346,7 +346,7 @@ index a2920b8a9eff77d9c5d1d7f70ad3abdacba8f0fa..43f402d9032e4570a81a80e412215598
      protected CipherBase(Cipher cipher) {
          this.cipher = cipher;
 diff --git a/src/main/java/net/minecraft/network/Connection.java b/src/main/java/net/minecraft/network/Connection.java
-index c45c1d519aba414557bf1a4c9260f928bd8d9b14..e152e851db27ea4e43678b91a65ce303cb7004b3 100644
+index 1b634b303105a0f8424e1e40b7c39f9938232d95..f98545988a081564581a5ff43d2d9087b676b725 100644
 --- a/src/main/java/net/minecraft/network/Connection.java
 +++ b/src/main/java/net/minecraft/network/Connection.java
 @@ -21,7 +21,6 @@ import io.netty.channel.epoll.EpollSocketChannel;
@@ -367,7 +367,7 @@ index c45c1d519aba414557bf1a4c9260f928bd8d9b14..e152e851db27ea4e43678b91a65ce303
  import net.minecraft.Util;
  import net.minecraft.network.chat.Component;
  import net.minecraft.network.chat.MutableComponent;
-@@ -316,7 +316,7 @@ public class Connection extends SimpleChannelInboundHandler<Packet<?>> {
+@@ -322,7 +322,7 @@ public class Connection extends SimpleChannelInboundHandler<Packet<?>> {
      }
  
      public void setListener(PacketListener listener) {
