@@ -44,7 +44,7 @@ Additional thanks and friendly greetings go out to the following forks and other
 * [Purpur](https://github.com/PurpurMC/Purpur)
 * [Mirai](https://github.com/etil2jz/Mirai)
 * [Leaf](https://github.com/Winds-Studio/Leaf)
-* KeYi
+* [KeYi](https://github.com/MC-Multithreading-Lab/KeYi-MT)
 * [EmpireCraft](https://github.com/starlis/empirecraft)
 * [Slice](https://github.com/Cryptite/Slice)
 * [JettPack](https://gitlab.com/Titaniumtown/JettPack)

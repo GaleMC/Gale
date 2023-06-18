@@ -160,17 +160,10 @@ index a0aa1f1a7adf986d500a2135aa42e138aa3c4f08..6d19b985222d78750828fd2719c1fbf7
      }
  }
 diff --git a/src/main/java/io/papermc/paper/configuration/PaperConfigurations.java b/src/main/java/io/papermc/paper/configuration/PaperConfigurations.java
-index f6b9d216c24d8858802f85209fe1a869e5a9be31..1376290026401424619f95dead7fca63681b3994 100644
+index ad2177cdbc61a6f41c7e2ed81af262d4ffe7d861..141139abcbccc856532c971efcb0e4883ce063af 100644
 --- a/src/main/java/io/papermc/paper/configuration/PaperConfigurations.java
 +++ b/src/main/java/io/papermc/paper/configuration/PaperConfigurations.java
-@@ -127,13 +127,13 @@ public class PaperConfigurations extends Configurations<GlobalConfiguration, Wor
-         See https://docs.papermc.io/paper/configuration for more information.
-         """;
- 
--    private static final Supplier<SpigotWorldConfig> SPIGOT_WORLD_DEFAULTS = Suppliers.memoize(() -> new SpigotWorldConfig(RandomStringUtils.randomAlphabetic(255)) {
-+    public static final Supplier<SpigotWorldConfig> SPIGOT_WORLD_DEFAULTS = Suppliers.memoize(() -> new SpigotWorldConfig(RandomStringUtils.randomAlphabetic(255)) { // Gale - Gale configuration
-         @Override // override to ensure "verbose" is false
-         public void init() {
+@@ -134,7 +134,7 @@ public class PaperConfigurations extends Configurations<GlobalConfiguration, Wor
              SpigotConfig.readConfig(SpigotWorldConfig.class, this);
          }
      });
@@ -179,7 +172,7 @@ index f6b9d216c24d8858802f85209fe1a869e5a9be31..1376290026401424619f95dead7fca63
  
  
      public PaperConfigurations(final Path globalFolder) {
-@@ -297,7 +297,7 @@ public class PaperConfigurations extends Configurations<GlobalConfiguration, Wor
+@@ -298,7 +298,7 @@ public class PaperConfigurations extends Configurations<GlobalConfiguration, Wor
          }
      }
  
@@ -188,7 +181,7 @@ index f6b9d216c24d8858802f85209fe1a869e5a9be31..1376290026401424619f95dead7fca63
          return createWorldContextMap(level.convertable.levelDirectory.path(), level.serverLevelData.getLevelName(), level.dimension().location(), level.spigotConfig);
      }
  
-@@ -398,17 +398,6 @@ public class PaperConfigurations extends Configurations<GlobalConfiguration, Wor
+@@ -399,17 +399,6 @@ public class PaperConfigurations extends Configurations<GlobalConfiguration, Wor
          return Files.exists(legacyConfig) && Files.isRegularFile(legacyConfig);
      }
  
@@ -206,7 +199,7 @@ index f6b9d216c24d8858802f85209fe1a869e5a9be31..1376290026401424619f95dead7fca63
      @Deprecated
      public static YamlConfiguration loadLegacyConfigFile(File configFile) throws Exception {
          YamlConfiguration config = new YamlConfiguration();
-@@ -431,9 +420,16 @@ public class PaperConfigurations extends Configurations<GlobalConfiguration, Wor
+@@ -432,9 +421,16 @@ public class PaperConfigurations extends Configurations<GlobalConfiguration, Wor
      }
  
      // Symlinks are not correctly checked in createDirectories
