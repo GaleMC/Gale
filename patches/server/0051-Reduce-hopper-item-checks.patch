@@ -17,14 +17,13 @@ Licensed under: MIT (https://opensource.org/licenses/MIT)
 Only do an item "suck in" action once per second
 
 diff --git a/src/main/java/net/minecraft/world/entity/item/ItemEntity.java b/src/main/java/net/minecraft/world/entity/item/ItemEntity.java
-index a85f3a9b52748b32eece5364c59d0aa282f91a22..d94020fc88c8941b99ccaea5fa7a5d3bd58f0394 100644
+index a85f3a9b52748b32eece5364c59d0aa282f91a22..a54e0c2759a3987dc74dfdd8e61962841122a5f6 100644
 --- a/src/main/java/net/minecraft/world/entity/item/ItemEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/item/ItemEntity.java
-@@ -14,11 +14,14 @@ import net.minecraft.world.entity.Entity;
+@@ -14,11 +14,13 @@ import net.minecraft.world.entity.Entity;
  import net.minecraft.world.entity.EntityType;
  import net.minecraft.world.entity.MoverType;
  import net.minecraft.world.entity.TraceableEntity;
-+import net.minecraft.world.entity.player.Player;
 +import net.minecraft.world.entity.vehicle.MinecartHopper;
  import net.minecraft.world.item.Item;
  import net.minecraft.world.item.ItemStack;
@@ -35,7 +34,7 @@ index a85f3a9b52748b32eece5364c59d0aa282f91a22..d94020fc88c8941b99ccaea5fa7a5d3b
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.core.BlockPos;
  import net.minecraft.nbt.CompoundTag;
-@@ -209,11 +212,31 @@ public class ItemEntity extends Entity implements TraceableEntity {
+@@ -209,11 +211,31 @@ public class ItemEntity extends Entity implements TraceableEntity {
                  }
                  // CraftBukkit end
                  this.discard();
@@ -67,7 +66,7 @@ index a85f3a9b52748b32eece5364c59d0aa282f91a22..d94020fc88c8941b99ccaea5fa7a5d3b
      // Spigot start - copied from above
      @Override
      public void inactiveTick() {
-@@ -233,7 +256,13 @@ public class ItemEntity extends Entity implements TraceableEntity {
+@@ -233,7 +255,13 @@ public class ItemEntity extends Entity implements TraceableEntity {
              }
              // CraftBukkit end
              this.discard();
