@@ -7,10 +7,10 @@ License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 1b6f49bf945f037b6950b3ca865e27520b2b0148..a2781f6fd62486b03b031f230a63294c2f680f0e 100644
+index 084c6e9d927ce76eb81792d98bc8c6fd27a2cf49..fbcd1384f8a56efeb5f4e6883b41616a784e516a 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -2336,7 +2336,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -2337,7 +2337,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
  
      private Optional<LastSeenMessages> tryHandleChat(String message, Instant timestamp, LastSeenMessages.Update acknowledgment) {
          if (!this.updateChatOrder(timestamp)) {

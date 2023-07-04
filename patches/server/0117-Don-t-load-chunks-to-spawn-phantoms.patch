@@ -13,7 +13,7 @@ As part of: MultiPaper (https://github.com/MultiPaper/MultiPaper)
 Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 
 diff --git a/src/main/java/net/minecraft/world/level/levelgen/PhantomSpawner.java b/src/main/java/net/minecraft/world/level/levelgen/PhantomSpawner.java
-index bc7648dbc132551dc6591ab49a1919a623c30f60..11f6a1854c08cbf8ee5c99522c3cd2ae5322de6d 100644
+index dfeb3e336e06ef01f5401a362755030db942bb07..518b40a27a8d4d015caa7e67d355839628c965ef 100644
 --- a/src/main/java/net/minecraft/world/level/levelgen/PhantomSpawner.java
 +++ b/src/main/java/net/minecraft/world/level/levelgen/PhantomSpawner.java
 @@ -71,7 +71,15 @@ public class PhantomSpawner implements CustomSpawner {
@@ -34,10 +34,10 @@ index bc7648dbc132551dc6591ab49a1919a623c30f60..11f6a1854c08cbf8ee5c99522c3cd2ae
  
                                          if (NaturalSpawner.isValidEmptySpawnBlock(world, blockposition1, iblockdata, fluid, EntityType.PHANTOM)) {
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index 5ec7da98dc21ef1146d7d65667f3ecb4508f94ef..43b5b1e600d12b5ac39ee11cf3596c095cf4058d 100644
+index 20615b75ec9bc37a4dc116271dda9138efeb97ce..b087b7333a801f86e21f170111812263a2829730 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-@@ -270,6 +270,23 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+@@ -268,6 +268,23 @@ public class GaleWorldConfiguration extends ConfigurationPart {
  
          }
  

@@ -7,7 +7,7 @@ License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayerGameMode.java b/src/main/java/net/minecraft/server/level/ServerPlayerGameMode.java
-index 1635fee928d64f4d2c336dca6675ed4641918830..d65b9d2d9070d8dee2c144c9b37d6605a59cfafe 100644
+index 34ecfb89372f459117db99d57a7edd6f681bbe8a..69d663705ffb4dc904adf1fa2759b4c5096f93ce 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayerGameMode.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayerGameMode.java
 @@ -174,7 +174,7 @@ public class ServerPlayerGameMode {
@@ -20,7 +20,7 @@ index 1635fee928d64f4d2c336dca6675ed4641918830..d65b9d2d9070d8dee2c144c9b37d6605
              this.debugLogging(pos, false, sequence, "too far");
          } else if (pos.getY() >= worldHeight) {
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 93b8c00c16b26f4b76f35d1aa32560375097aef4..8d90209a01020d44626f56e2cb0dd5eca300f699 100644
+index 1c6e3796cec1867dbffd129087fe614cdcce0eec..b7f23b3e000a0681e88104a471bc937daaf22234 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -254,7 +254,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
@@ -55,7 +55,7 @@ index 93b8c00c16b26f4b76f35d1aa32560375097aef4..8d90209a01020d44626f56e2cb0dd5ec
                  Vec3 vec3d2 = vec3d.subtract(vec3d1);
                  double d0 = 1.0000001D;
  
-@@ -2828,7 +2835,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -2829,7 +2836,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
  
              AABB axisalignedbb = entity.getBoundingBox();
  
@@ -86,10 +86,10 @@ index d025232b43af3cb8dc28dff2e3e05c72e490901d..06d75d94af6aff29d542d0c5e150d8f7
  
      public void spawnDustParticles(Level world, BlockHitResult hitResult, BlockState state, Vec3 userRotation, HumanoidArm arm) {
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index edb4e3b5bde5309bd61a6f1605c71633facae7af..c0274ed66bfe3a2bd8c67d0af807bc090dfabf7d 100644
+index 4329d9bbfe002a4e505b0a2f13063aa8ca736f8f..b0674c4fa2fc5d990a2039f466d7412e383865f8 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-@@ -273,7 +273,7 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+@@ -271,7 +271,7 @@ public class GaleWorldConfiguration extends ConfigurationPart {
      }
  
      public GameplayMechanics gameplayMechanics;
@@ -98,7 +98,7 @@ index edb4e3b5bde5309bd61a6f1605c71633facae7af..c0274ed66bfe3a2bd8c67d0af807bc09
  
          // Gale start - variable entity wake-up duration
          /**
-@@ -296,6 +296,20 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+@@ -294,6 +294,20 @@ public class GaleWorldConfiguration extends ConfigurationPart {
          public boolean arrowMovementResetsDespawnCounter = true; // Gale - Purpur - make arrow movement resetting despawn counter configurable
          public boolean hideFlamesOnEntitiesWithFireResistance = false; // Gale - Slice - hide flames on entities with fire resistance
  
@@ -119,7 +119,7 @@ index edb4e3b5bde5309bd61a6f1605c71633facae7af..c0274ed66bfe3a2bd8c67d0af807bc09
          public Fixes fixes;
          public class Fixes extends ConfigurationPart {
  
-@@ -330,6 +344,11 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+@@ -328,6 +342,11 @@ public class GaleWorldConfiguration extends ConfigurationPart {
  
          }
  

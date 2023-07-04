@@ -17,13 +17,14 @@ Licensed under: MIT (https://opensource.org/licenses/MIT)
 Only do an item "suck in" action once per second
 
 diff --git a/src/main/java/net/minecraft/world/entity/item/ItemEntity.java b/src/main/java/net/minecraft/world/entity/item/ItemEntity.java
-index cf2b2c279718d86cc2c57795ef2e61c835977564..fb0cd2ad93d2dbd678662f2cdad0851fd698cf3d 100644
+index a85f3a9b52748b32eece5364c59d0aa282f91a22..d94020fc88c8941b99ccaea5fa7a5d3bd58f0394 100644
 --- a/src/main/java/net/minecraft/world/entity/item/ItemEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/item/ItemEntity.java
-@@ -15,11 +15,13 @@ import net.minecraft.world.entity.EntityType;
+@@ -14,11 +14,14 @@ import net.minecraft.world.entity.Entity;
+ import net.minecraft.world.entity.EntityType;
  import net.minecraft.world.entity.MoverType;
  import net.minecraft.world.entity.TraceableEntity;
- import net.minecraft.world.entity.player.Player;
++import net.minecraft.world.entity.player.Player;
 +import net.minecraft.world.entity.vehicle.MinecartHopper;
  import net.minecraft.world.item.Item;
  import net.minecraft.world.item.ItemStack;
@@ -34,7 +35,7 @@ index cf2b2c279718d86cc2c57795ef2e61c835977564..fb0cd2ad93d2dbd678662f2cdad0851f
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.core.BlockPos;
  import net.minecraft.nbt.CompoundTag;
-@@ -208,11 +210,31 @@ public class ItemEntity extends Entity implements TraceableEntity {
+@@ -209,11 +212,31 @@ public class ItemEntity extends Entity implements TraceableEntity {
                  }
                  // CraftBukkit end
                  this.discard();
@@ -66,7 +67,7 @@ index cf2b2c279718d86cc2c57795ef2e61c835977564..fb0cd2ad93d2dbd678662f2cdad0851f
      // Spigot start - copied from above
      @Override
      public void inactiveTick() {
-@@ -232,7 +254,13 @@ public class ItemEntity extends Entity implements TraceableEntity {
+@@ -233,7 +256,13 @@ public class ItemEntity extends Entity implements TraceableEntity {
              }
              // CraftBukkit end
              this.discard();

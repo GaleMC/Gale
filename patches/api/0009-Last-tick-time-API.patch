@@ -23,12 +23,12 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 diff --git a/src/main/java/org/bukkit/Bukkit.java b/src/main/java/org/bukkit/Bukkit.java
-index 343123836a843e633adc0c9bcdcd3d89572e70e2..bc84a2b89218fc1e21bddf25ca342c6e2bf9984c 100644
+index 07194bd35c9a72586a5d4096354ec1f96f882116..6523d1525c41892fd007d9bba00bc84bea299ca6 100644
 --- a/src/main/java/org/bukkit/Bukkit.java
 +++ b/src/main/java/org/bukkit/Bukkit.java
-@@ -2549,6 +2549,20 @@ public final class Bukkit {
+@@ -2711,6 +2711,20 @@ public final class Bukkit {
      }
-     // Paper end
+     // Paper end - Folia region threading API
  
 +    // Gale start - YAPFA - last tick time - API
 +    public static long getLastTickTotalTime() {
@@ -48,13 +48,13 @@ index 343123836a843e633adc0c9bcdcd3d89572e70e2..bc84a2b89218fc1e21bddf25ca342c6e
      public static Server.Spigot spigot() {
          return server.spigot();
 diff --git a/src/main/java/org/bukkit/Server.java b/src/main/java/org/bukkit/Server.java
-index 4fabb37be76d85f111d8cbd6ca967bb0ca8f58de..714ea77b4509ba842c764e78e0bfc1862abcd537 100644
+index d8aed689e6f42798cc8a50919779f5be6f61d685..c4d45446b18268c822ee06ae4781f7909d02e04a 100644
 --- a/src/main/java/org/bukkit/Server.java
 +++ b/src/main/java/org/bukkit/Server.java
-@@ -2228,4 +2228,30 @@ public interface Server extends PluginMessageRecipient, net.kyori.adventure.audi
+@@ -2366,4 +2366,30 @@ public interface Server extends PluginMessageRecipient, net.kyori.adventure.audi
       */
-     @NotNull org.bukkit.potion.PotionBrewer getPotionBrewer();
-     // Paper end
+     boolean isOwnedByCurrentRegion(@NotNull Entity entity);
+     // Paper end - Folia region threading API
 +
 +    // Gale start - YAPFA - last tick time - API
 +    /**

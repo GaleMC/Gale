@@ -7,10 +7,10 @@ License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 6f1bcfb656ed5bc8ba9d8afab1ec8b8ee6263754..358a6aa87df1bbeb8ade06c24e9bd222a99262f0 100644
+index 570ccff83e1562555d4445d89aa4c647b846d53a..caa053d607907dc5582fd3de2aefa0a9ee8b5bb8 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -4519,6 +4519,16 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -4515,6 +4515,16 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
          return this.feetBlockState;
      }
  
@@ -28,10 +28,10 @@ index 6f1bcfb656ed5bc8ba9d8afab1ec8b8ee6263754..358a6aa87df1bbeb8ade06c24e9bd222
          return this.chunkPosition;
      }
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index 1f31b9bb36274a53b3594e0564f97e1275544b9c..07ab60405dfbef46e74911a750ab0a9d067111c9 100644
+index 2f252bbe2946ea3228933b4b8c91a4e46fe99705..a35891723fad4fe984566c41cdd728004f8f371e 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-@@ -1989,19 +1989,43 @@ public abstract class LivingEntity extends Entity implements Attackable {
+@@ -1979,19 +1979,43 @@ public abstract class LivingEntity extends Entity implements Attackable {
  
      public boolean onClimbableCached() {
          if (!this.blockPosition().equals(this.lastClimbingPosition)) {
@@ -79,10 +79,10 @@ index 1f31b9bb36274a53b3594e0564f97e1275544b9c..07ab60405dfbef46e74911a750ab0a9d
              if (iblockdata.is(BlockTags.CLIMBABLE)) {
                  this.lastClimbablePos = Optional.of(blockposition);
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index 43b5b1e600d12b5ac39ee11cf3596c095cf4058d..e47a06ecd6516a78eba59a043e4aa460fa3b9375 100644
+index b087b7333a801f86e21f170111812263a2829730..f33f964fb7f94b5b014464a9b34795bc54549a0a 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-@@ -285,6 +285,18 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+@@ -283,6 +283,18 @@ public class GaleWorldConfiguration extends ConfigurationPart {
              public boolean toSpawnPhantoms = false;
              // Gale end - MultiPaper - don't load chunks to spawn phantoms
  

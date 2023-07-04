@@ -13,10 +13,10 @@ As part of: JettPack (https://gitlab.com/Titaniumtown/JettPack)
 Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 94b95080651350845932e2b362138d42c32f2741..21dd00eaac3aad121e71fa16d4587ba157f3b090 100644
+index 47bcb134acdaa8d36a0544dae15f12ea47e143dd..4c37f55041de8f315b55d28f3a894f859cc6ef64 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -293,7 +293,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -305,7 +305,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
      public double xo;
      public double yo;
      public double zo;
@@ -25,7 +25,7 @@ index 94b95080651350845932e2b362138d42c32f2741..21dd00eaac3aad121e71fa16d4587ba1
      public BlockPos blockPosition; // Gale - Pufferfish - optimize entity coordinate key - private -> public
      private ChunkPos chunkPosition;
      private Vec3 deltaMovement;
-@@ -1993,9 +1993,17 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -2006,9 +2006,17 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
      /** @deprecated */
      @Deprecated
      public float getLightLevelDependentMagicValue() {

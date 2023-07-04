@@ -31,10 +31,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 diff --git a/src/main/java/net/minecraft/world/entity/item/ItemEntity.java b/src/main/java/net/minecraft/world/entity/item/ItemEntity.java
-index 3d41dbe0285f8fec8adae1e93010cf464df9b08c..cf2b2c279718d86cc2c57795ef2e61c835977564 100644
+index 52196431a6538872755344859a0454a0e50c3b6e..a85f3a9b52748b32eece5364c59d0aa282f91a22 100644
 --- a/src/main/java/net/minecraft/world/entity/item/ItemEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/item/ItemEntity.java
-@@ -269,10 +269,16 @@ public class ItemEntity extends Entity implements TraceableEntity {
+@@ -270,10 +270,16 @@ public class ItemEntity extends Entity implements TraceableEntity {
                  if (entityitem.isMergable()) {
                      // Paper Start - Fix items merging through walls
                          if (this.level().paperConfig().fixes.fixItemsMergingThroughWalls) {

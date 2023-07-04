@@ -31,10 +31,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index cc6bcffcc124f75bdaf4e72601d1557a173b7825..ba832679bd88779eeea9ba17ff4b1bb164496d56 100644
+index 431bc32a61934f9bf4d268df1f70194c3e48ee93..93255c7388c1a2f281f508f8ca34571bf565accd 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -495,17 +495,37 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -507,17 +507,37 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
          this.isLegacyTrackingEntity = isLegacyTrackingEntity;
      }
  
@@ -73,7 +73,7 @@ index cc6bcffcc124f75bdaf4e72601d1557a173b7825..ba832679bd88779eeea9ba17ff4b1bb1
          for (Entity passenger : passengers) {
              org.spigotmc.TrackingRange.TrackingRangeType passengerType = passenger.trackingRangeType;
              int passengerRange = chunkMap.getEntityTrackerRange(passengerType.ordinal());
-@@ -514,6 +534,9 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -526,6 +546,9 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
                  range = passengerRange;
              }
          }

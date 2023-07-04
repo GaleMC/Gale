@@ -346,7 +346,7 @@ index a2920b8a9eff77d9c5d1d7f70ad3abdacba8f0fa..43f402d9032e4570a81a80e412215598
      protected CipherBase(Cipher cipher) {
          this.cipher = cipher;
 diff --git a/src/main/java/net/minecraft/network/Connection.java b/src/main/java/net/minecraft/network/Connection.java
-index 1b634b303105a0f8424e1e40b7c39f9938232d95..f98545988a081564581a5ff43d2d9087b676b725 100644
+index cf20f0983fc25b26cf92b9d3a28746b1909fc56b..f20738fbfbc85a73e43898ec2b15c3a834ba7099 100644
 --- a/src/main/java/net/minecraft/network/Connection.java
 +++ b/src/main/java/net/minecraft/network/Connection.java
 @@ -21,7 +21,6 @@ import io.netty.channel.epoll.EpollSocketChannel;
@@ -367,7 +367,7 @@ index 1b634b303105a0f8424e1e40b7c39f9938232d95..f98545988a081564581a5ff43d2d9087
  import net.minecraft.Util;
  import net.minecraft.network.chat.Component;
  import net.minecraft.network.chat.MutableComponent;
-@@ -322,7 +322,7 @@ public class Connection extends SimpleChannelInboundHandler<Packet<?>> {
+@@ -325,7 +325,7 @@ public class Connection extends SimpleChannelInboundHandler<Packet<?>> {
      }
  
      public void setListener(PacketListener listener) {
@@ -412,7 +412,7 @@ index dae36c6452ccd57a436dd918547b64d59957ab0a..f06cafd80d7c027ca97e50bcb45ad520
          OptionSpec<Integer> optionspec11 = optionparser.accepts("port").withRequiredArg().ofType(Integer.class).defaultsTo(-1, new Integer[0]);
          OptionSpec<String> optionspec12 = optionparser.accepts("serverId").withRequiredArg();
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 745727701051ebc8280ab61161e7b652f6abee8a..53aa1cb62794ea481c37587b2d424f188130764c 100644
+index ae74867e5ca1a77c99d6d2e39e916a6c3cf4f866..151b354d6b9613a2715bf618ff6bff4331006093 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -50,6 +50,8 @@ import java.util.stream.Collectors;
@@ -425,7 +425,7 @@ index 745727701051ebc8280ab61161e7b652f6abee8a..53aa1cb62794ea481c37587b2d424f18
  import net.minecraft.ReportedException;
  import net.minecraft.SharedConstants;
 diff --git a/src/main/java/net/minecraft/server/level/ServerEntity.java b/src/main/java/net/minecraft/server/level/ServerEntity.java
-index 1717844256fe6479e3d7125db3937354578d17d0..0ced61876ad4790c0a0c8e24be721241fa7fd319 100644
+index c122671d89a06474f0618f52a3e4abd5214e2839..59ce2175afd1210344ce2c9f557193ff9139bcee 100644
 --- a/src/main/java/net/minecraft/server/level/ServerEntity.java
 +++ b/src/main/java/net/minecraft/server/level/ServerEntity.java
 @@ -332,7 +332,7 @@ public class ServerEntity {
@@ -469,7 +469,7 @@ index efbc8483a51c5272ca81747c82dc65e7f0f5c232..9879599c38db4f3332c347b6b0c26034
          return ret;
      }
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index a2781f6fd62486b03b031f230a63294c2f680f0e..2166fb9e993394f8298c02b0eddd5f773c2c2182 100644
+index fbcd1384f8a56efeb5f4e6883b41616a784e516a..8c3261e34c3f60f88cbe78b372179cd5fca8d24d 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -29,6 +29,8 @@ import java.util.function.UnaryOperator;
@@ -531,7 +531,7 @@ index a2781f6fd62486b03b031f230a63294c2f680f0e..2166fb9e993394f8298c02b0eddd5f77
              return;
          }
          // Paper end
-@@ -3303,7 +3301,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -3304,7 +3302,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
          // Paper start
          if (!org.bukkit.Bukkit.isPrimaryThread()) {
              if (this.recipeSpamPackets.addAndGet(io.papermc.paper.configuration.GlobalConfiguration.get().spamLimiter.recipeSpamIncrement) > io.papermc.paper.configuration.GlobalConfiguration.get().spamLimiter.recipeSpamLimit) {
@@ -578,7 +578,7 @@ index 2ff578e4a953ffcf5176815ba8e3f06f73499989..a436ef49325c9cae1008d5763373cce8
          final String s;
  
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index 603260943ecd5706b6ed574973287d6d3ad4bbb7..4bab4dced684a0e22e97d72d517ad4abfa4e9628 100644
+index f300964912f76cc97074e954dfcddad3e62d4af0..8fe9fd6828f9fdfcd587d67471a4199602807e74 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
 @@ -27,6 +27,8 @@ import java.util.UUID;
@@ -590,7 +590,7 @@ index 603260943ecd5706b6ed574973287d6d3ad4bbb7..4bab4dced684a0e22e97d72d517ad4ab
  import net.minecraft.ChatFormatting;
  import net.minecraft.FileUtil;
  import net.minecraft.commands.CommandSourceStack;
-@@ -708,7 +710,7 @@ public abstract class PlayerList {
+@@ -709,7 +711,7 @@ public abstract class PlayerList {
          while (iterator.hasNext()) {
              entityplayer = (ServerPlayer) iterator.next();
              this.save(entityplayer); // CraftBukkit - Force the player's inventory to be saved
@@ -600,17 +600,18 @@ index 603260943ecd5706b6ed574973287d6d3ad4bbb7..4bab4dced684a0e22e97d72d517ad4ab
  
          // Instead of kicking then returning, we need to store the kick reason
 diff --git a/src/main/java/net/minecraft/server/players/StoredUserList.java b/src/main/java/net/minecraft/server/players/StoredUserList.java
-index 4fd709a550bf8da1e996894a1ca6b91206c31e9e..5dee29939421333caa51e1a659d8ad9f9c0358c9 100644
+index 9e8112fbc40a1d89c0f73ea4452e0fa1bb459bf4..59205dd87c114685f4efe9249d2f65442be36a96 100644
 --- a/src/main/java/net/minecraft/server/players/StoredUserList.java
 +++ b/src/main/java/net/minecraft/server/players/StoredUserList.java
-@@ -1,6 +1,5 @@
+@@ -1,7 +1,6 @@
+ // mc-dev import
  package net.minecraft.server.players;
  
 -import com.google.common.collect.Lists;
  import com.google.common.collect.Maps;
  import com.google.common.io.Files;
  import com.google.gson.Gson;
-@@ -23,6 +22,8 @@ import java.util.Map;
+@@ -24,6 +23,8 @@ import java.util.Map;
  import java.util.Objects;
  import java.util.stream.Stream;
  import javax.annotation.Nullable;
@@ -619,7 +620,7 @@ index 4fd709a550bf8da1e996894a1ca6b91206c31e9e..5dee29939421333caa51e1a659d8ad9f
  import net.minecraft.Util;
  import net.minecraft.util.GsonHelper;
  import org.slf4j.Logger;
-@@ -95,7 +96,7 @@ public abstract class StoredUserList<K, V extends StoredUserEntry<K>> {
+@@ -96,7 +97,7 @@ public abstract class StoredUserList<K, V extends StoredUserEntry<K>> {
      }
  
      public String[] getUserList() {
@@ -627,7 +628,7 @@ index 4fd709a550bf8da1e996894a1ca6b91206c31e9e..5dee29939421333caa51e1a659d8ad9f
 +        return (String[]) this.map.keySet().toArray(ArrayConstants.emptyStringArray); // Gale - JettPack - reduce array allocations
      }
  
-     // CraftBukkit start
+     public boolean isEmpty() {
 diff --git a/src/main/java/net/minecraft/util/MemoryReserve.java b/src/main/java/net/minecraft/util/MemoryReserve.java
 index 0ee04fe6ff6a4d09754f326526ae04fe7226bab2..a4f7fee3ea112c8f7b0b94949f9eb899fc5be687 100644
 --- a/src/main/java/net/minecraft/util/MemoryReserve.java
@@ -679,10 +680,10 @@ index 97ff19efa0b3943ccb7a6e02cba6ed2fea61adac..b2ae2bd8bd4ff3cb6457e8c08172e348
      private EquipmentSlot(EquipmentSlot.Type type, int entityId, int armorStandId, String name) {
          this.type = type;
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index 699d4e17cf3a0f688ce07676afb1a86b5e180eef..12a8a375714b1ccb7c66121975a7d865183bbb19 100644
+index 559e85f266614f08e5b383e41f9898b2cca28513..506cbd835df841608d0d26a2a9313ee3434bf1ab 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-@@ -3109,7 +3109,7 @@ public abstract class LivingEntity extends Entity implements Attackable {
+@@ -3099,7 +3099,7 @@ public abstract class LivingEntity extends Entity implements Attackable {
      @Nullable
      private Map<EquipmentSlot, ItemStack> collectEquipmentChanges() {
          Map<EquipmentSlot, ItemStack> map = null;
@@ -745,10 +746,10 @@ index 25ed5571b24e590bc95056020d84496492b53298..087acc992a83b2a7e40a0e24f00e283c
  
          for (int j = 0; j < i; ++j) {
 diff --git a/src/main/java/net/minecraft/world/item/ItemStack.java b/src/main/java/net/minecraft/world/item/ItemStack.java
-index adb7220be617d6d9f2cdd7fbe4fa2dd24cc7d142..99c0ec4b3bff1ff41192d3acc9d58eb65ffb72c2 100644
+index ae9b821d71d2868ba4eb3c73558fdcd6caf264e3..77db86efe50ad29bded1cbd02806837b5f506fb3 100644
 --- a/src/main/java/net/minecraft/world/item/ItemStack.java
 +++ b/src/main/java/net/minecraft/world/item/ItemStack.java
-@@ -1014,7 +1014,7 @@ public final class ItemStack {
+@@ -1015,7 +1015,7 @@ public final class ItemStack {
          int k;
  
          if (ItemStack.shouldShowInTooltip(i, ItemStack.TooltipPart.MODIFIERS)) {
@@ -819,7 +820,7 @@ index b9431be4e6fb366bbdb7e66c9570f26a37379488..4b8736f19c0b968fac27037d2d0eb3f6
          return slices.getChunkEntities();
      }
 diff --git a/src/main/java/net/minecraft/world/level/block/ComposterBlock.java b/src/main/java/net/minecraft/world/level/block/ComposterBlock.java
-index 87153b5576fed05103183a9860d804c2c8cfbe1c..8d741018c7dc9a2ac1b666025a4e041010a745d4 100644
+index 10d3912ef043eefdf89105332e29b0d2bf4a5539..0500d4b96328ccc64e0dd3bd2d35c6b7bd21907e 100644
 --- a/src/main/java/net/minecraft/world/level/block/ComposterBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/ComposterBlock.java
 @@ -3,6 +3,8 @@ package net.minecraft.world.level.block;
@@ -831,7 +832,7 @@ index 87153b5576fed05103183a9860d804c2c8cfbe1c..8d741018c7dc9a2ac1b666025a4e0410
  import net.minecraft.Util;
  import net.minecraft.core.BlockPos;
  import net.minecraft.core.Direction;
-@@ -416,7 +418,7 @@ public class ComposterBlock extends Block implements WorldlyContainerHolder {
+@@ -415,7 +417,7 @@ public class ComposterBlock extends Block implements WorldlyContainerHolder {
  
          @Override
          public int[] getSlotsForFace(Direction side) {
@@ -840,7 +841,7 @@ index 87153b5576fed05103183a9860d804c2c8cfbe1c..8d741018c7dc9a2ac1b666025a4e0410
          }
  
          @Override
-@@ -465,7 +467,7 @@ public class ComposterBlock extends Block implements WorldlyContainerHolder {
+@@ -464,7 +466,7 @@ public class ComposterBlock extends Block implements WorldlyContainerHolder {
  
          @Override
          public int[] getSlotsForFace(Direction side) {
@@ -849,7 +850,7 @@ index 87153b5576fed05103183a9860d804c2c8cfbe1c..8d741018c7dc9a2ac1b666025a4e0410
          }
  
          @Override
-@@ -507,7 +509,7 @@ public class ComposterBlock extends Block implements WorldlyContainerHolder {
+@@ -506,7 +508,7 @@ public class ComposterBlock extends Block implements WorldlyContainerHolder {
  
          @Override
          public int[] getSlotsForFace(Direction side) {

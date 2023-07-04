@@ -7,11 +7,11 @@ License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index a0c5592530d2a59bfde87d1e9eb3752e7d4694da..77fc393c793cfe719b48255bffa29c5160f8aece 100644
+index 57f2c414dbfe127c193002fbc8eeb22e94e9cb55..f84011f83ebf238023ae6900873b0dfc9dfd0bd4 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
-@@ -7,8 +7,14 @@ plugins {
- }
+@@ -13,8 +13,14 @@ configurations.named(log4jPlugins.compileClasspathConfigurationName) {
+ val alsoShade: Configuration by configurations.creating
  
  dependencies {
 -    implementation(project(":paper-api"))

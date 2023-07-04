@@ -13,7 +13,7 @@ As part of: Patina (https://github.com/PatinaMC/Patina)
 Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 
 diff --git a/src/main/java/net/minecraft/server/commands/SpreadPlayersCommand.java b/src/main/java/net/minecraft/server/commands/SpreadPlayersCommand.java
-index 1af5f4fde0d9d6c7d9dd32714a4e31b298d7564d..098828871f36ef8f9796456747977d7c9f02c9a3 100644
+index f5bc3497831877e0c2b7dc1cbd8abe3a67d7695b..5783a8014e3faf93b81903c947b2534e41ba6037 100644
 --- a/src/main/java/net/minecraft/server/commands/SpreadPlayersCommand.java
 +++ b/src/main/java/net/minecraft/server/commands/SpreadPlayersCommand.java
 @@ -65,7 +65,7 @@ public class SpreadPlayersCommand {

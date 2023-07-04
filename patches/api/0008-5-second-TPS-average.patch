@@ -37,10 +37,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 diff --git a/src/main/java/org/bukkit/Bukkit.java b/src/main/java/org/bukkit/Bukkit.java
-index f3f3470f2e07e5e06f599ddc0e5538dfc7a4c283..343123836a843e633adc0c9bcdcd3d89572e70e2 100644
+index a177509cff1f66bc7f48488b9440e573a443c3b5..07194bd35c9a72586a5d4096354ec1f96f882116 100644
 --- a/src/main/java/org/bukkit/Bukkit.java
 +++ b/src/main/java/org/bukkit/Bukkit.java
-@@ -2108,8 +2108,30 @@ public final class Bukkit {
+@@ -2135,8 +2135,30 @@ public final class Bukkit {
          return server.getTPS();
      }
  
@@ -72,10 +72,10 @@ index f3f3470f2e07e5e06f599ddc0e5538dfc7a4c283..343123836a843e633adc0c9bcdcd3d89
       * Gets the average server TPS over the last 1 minute
       *
 diff --git a/src/main/java/org/bukkit/Server.java b/src/main/java/org/bukkit/Server.java
-index bac4fccdd56d04e1c130986eb35a2d0c0dd03983..4fabb37be76d85f111d8cbd6ca967bb0ca8f58de 100644
+index d9bf9c7ad36f7b8d99342e43e7af81075c039431..d8aed689e6f42798cc8a50919779f5be6f61d685 100644
 --- a/src/main/java/org/bukkit/Server.java
 +++ b/src/main/java/org/bukkit/Server.java
-@@ -1787,8 +1787,27 @@ public interface Server extends PluginMessageRecipient, net.kyori.adventure.audi
+@@ -1810,8 +1810,27 @@ public interface Server extends PluginMessageRecipient, net.kyori.adventure.audi
      @NotNull
      public double[] getTPS();
  
