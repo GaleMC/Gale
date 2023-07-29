@@ -57,10 +57,10 @@ index b7318670e039e05a058e437e025519d40557bb88..efbc8483a51c5272ca81747c82dc65e7
                      }
                  }
 diff --git a/src/main/java/net/minecraft/world/level/Level.java b/src/main/java/net/minecraft/world/level/Level.java
-index dd5d28339d28f344c2e68b43782545e6378117ca..b9431be4e6fb366bbdb7e66c9570f26a37379488 100644
+index 88de79c989320e5f54e1a380e8178085684202de..2968e5fb171fe7ee17afcd2590a1cb26ac287ea2 100644
 --- a/src/main/java/net/minecraft/world/level/Level.java
 +++ b/src/main/java/net/minecraft/world/level/Level.java
-@@ -1013,13 +1013,13 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
+@@ -1014,13 +1014,13 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
          try {
              tickConsumer.accept(entity);
              MinecraftServer.getServer().executeMidTickTasks(); // Paper - execute chunk tasks mid tick

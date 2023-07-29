@@ -13,10 +13,10 @@ As part of: MultiPaper (https://github.com/MultiPaper/MultiPaper)
 Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 2ececcfaf44eb0a0f7be23987dd4d081ffe8120f..570ccff83e1562555d4445d89aa4c647b846d53a 100644
+index 2a4132103a937f58f8976d355f2419da816e6af9..eca5c3b581da9426d109eb71bf9b883362e155df 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -3597,6 +3597,13 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -3596,6 +3596,13 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
                  Entity entity = this.getType().create(worldserver);
  
                  if (entity != null) {
@@ -31,10 +31,10 @@ index 2ececcfaf44eb0a0f7be23987dd4d081ffe8120f..570ccff83e1562555d4445d89aa4c647
                      entity.moveTo(position.x, position.y, position.z, yaw, pitch); // Paper - use EntityPortalExitEvent values
                      entity.setDeltaMovement(velocity); // Paper - use EntityPortalExitEvent values
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index b0674c4fa2fc5d990a2039f466d7412e383865f8..20615b75ec9bc37a4dc116271dda9138efeb97ce 100644
+index fdee39f6bd903924a9bf1c4b92e989b8dac07c43..06f3cafbb1b0b38bbd9996206b1a4eff597f81c4 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-@@ -342,6 +342,23 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+@@ -336,6 +336,23 @@ public class GaleWorldConfiguration extends ConfigurationPart {
  
          }
  

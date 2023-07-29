@@ -498,7 +498,7 @@ index 4a610b712acfe0b1b4dcf4988bc22c6a71616050..e49e1f2afdade4dc16aa5239d60c0dcf
  
                  ++j;
 diff --git a/src/main/java/net/minecraft/server/level/ChunkMap.java b/src/main/java/net/minecraft/server/level/ChunkMap.java
-index 9209b598d7168b82574e4800056b8b9f84265dd0..31963a0931bcd3465e46b9c875e89ac56aead62d 100644
+index 469083208110d5735e1bbda7a15c55a032d0e8cc..67d778ef115fc1e09fc8fa9c21d17613a11ca17f 100644
 --- a/src/main/java/net/minecraft/server/level/ChunkMap.java
 +++ b/src/main/java/net/minecraft/server/level/ChunkMap.java
 @@ -75,7 +75,6 @@ import net.minecraft.server.level.progress.ChunkProgressListener;
@@ -885,7 +885,7 @@ index 9d46536f80b5b3e6641fd377c02166a431edfd77..8badf1d6239eca7e48819860ada3a1ce
                  this.connection.send(new ClientboundPlayerAbilitiesPacket(this.getAbilities()));
                  playerlist.sendLevelInfo(this, worldserver);
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index b777547cb9f8edf4e7b3c2cfb894f8cd1b1a35a5..27fb4833c3fb153c9af05fef8fc72421f9832958 100644
+index 316740b2ba4c85828f544249c8cdd6fa1b525d3f..27b177c3291bf2e6d7b8223bc3ea275c71fa0a49 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -395,7 +395,6 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
@@ -981,10 +981,10 @@ index 7ab57748b2f2aea1003d9b7e70e76c372aa1e432..47e75ec4a01f8a456ec6ebc13031c1f0
      }
  
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 3ffb92a82e17af467afb18c81accc482a93d6a6f..431bc32a61934f9bf4d268df1f70194c3e48ee93 100644
+index 4c298406ce06d39f8279049270c88ec0830733b1..6d6dc0e5457df7ac2a7166ffd62add6655b79e5b 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -810,7 +810,6 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -809,7 +809,6 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
      // CraftBukkit end
  
      public void baseTick() {
@@ -992,7 +992,7 @@ index 3ffb92a82e17af467afb18c81accc482a93d6a6f..431bc32a61934f9bf4d268df1f70194c
          if (firstTick && this instanceof net.minecraft.world.entity.NeutralMob neutralMob) neutralMob.tickInitialPersistentAnger(level); // Paper - Update last hurt when ticking
          this.feetBlockState = null;
          if (this.isPassenger() && this.getVehicle().isRemoved()) {
-@@ -871,7 +870,6 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -870,7 +869,6 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
          }
  
          this.firstTick = false;
@@ -1000,7 +1000,7 @@ index 3ffb92a82e17af467afb18c81accc482a93d6a6f..431bc32a61934f9bf4d268df1f70194c
      }
  
      public void setSharedFlagOnFire(boolean onFire) {
-@@ -1090,7 +1088,6 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -1089,7 +1087,6 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
                  }
              }
  
@@ -1008,7 +1008,7 @@ index 3ffb92a82e17af467afb18c81accc482a93d6a6f..431bc32a61934f9bf4d268df1f70194c
              if (this.stuckSpeedMultiplier.lengthSqr() > 1.0E-7D) {
                  movement = movement.multiply(this.stuckSpeedMultiplier);
                  this.stuckSpeedMultiplier = Vec3.ZERO;
-@@ -1099,7 +1096,6 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -1098,7 +1095,6 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
              // Paper start - ignore movement changes while inactive.
              if (isTemporarilyActive && !(this instanceof ItemEntity || this instanceof net.minecraft.world.entity.vehicle.AbstractMinecart) && movement == getDeltaMovement() && movementType == MoverType.SELF) {
                  setDeltaMovement(Vec3.ZERO);
@@ -1016,7 +1016,7 @@ index 3ffb92a82e17af467afb18c81accc482a93d6a6f..431bc32a61934f9bf4d268df1f70194c
                  return;
              }
              // Paper end
-@@ -1120,8 +1116,6 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -1119,8 +1115,6 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
                  this.setPos(this.getX() + vec3d1.x, this.getY() + vec3d1.y, this.getZ() + vec3d1.z);
              }
  
@@ -1025,7 +1025,7 @@ index 3ffb92a82e17af467afb18c81accc482a93d6a6f..431bc32a61934f9bf4d268df1f70194c
              boolean flag = !Mth.equal(movement.x, vec3d1.x);
              boolean flag1 = !Mth.equal(movement.z, vec3d1.z);
  
-@@ -1139,9 +1133,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -1138,9 +1132,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
              BlockState iblockdata = this.level().getBlockState(blockposition);
  
              this.checkFallDamage(vec3d1.y, this.onGround(), iblockdata, blockposition);
@@ -1036,7 +1036,7 @@ index 3ffb92a82e17af467afb18c81accc482a93d6a6f..431bc32a61934f9bf4d268df1f70194c
                  if (this.horizontalCollision) {
                      Vec3 vec3d2 = this.getDeltaMovement();
  
-@@ -1277,8 +1269,6 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -1276,8 +1268,6 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
                  if (this.isOnFire() && (this.isInPowderSnow || this.isInWaterRainOrBubble())) {
                      this.setRemainingFireTicks(-this.getFireImmuneTicks());
                  }
@@ -1045,7 +1045,7 @@ index 3ffb92a82e17af467afb18c81accc482a93d6a6f..431bc32a61934f9bf4d268df1f70194c
              }
          }
          // Paper start - detailed watchdog information
-@@ -3029,7 +3019,6 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -3028,7 +3018,6 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
                  ServerLevel worldserver1 = minecraftserver.getLevel(resourcekey);
  
                  if (true && !this.isPassenger() && this.portalTime++ >= i) { // CraftBukkit
@@ -1053,7 +1053,7 @@ index 3ffb92a82e17af467afb18c81accc482a93d6a6f..431bc32a61934f9bf4d268df1f70194c
                      this.portalTime = i;
                      // Paper start
                      io.papermc.paper.event.entity.EntityPortalReadyEvent event = new io.papermc.paper.event.entity.EntityPortalReadyEvent(this.getBukkitEntity(), worldserver1 == null ? null : worldserver1.getWorld(), org.bukkit.PortalType.NETHER);
-@@ -3047,7 +3036,6 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -3046,7 +3035,6 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
                      }
                      } // Paper
                      // CraftBukkit end
@@ -1061,7 +1061,7 @@ index 3ffb92a82e17af467afb18c81accc482a93d6a6f..431bc32a61934f9bf4d268df1f70194c
                  }
  
                  this.isInsidePortal = false;
-@@ -3518,14 +3506,12 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -3517,14 +3505,12 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
          }
          // Paper end
          if (this.level() instanceof ServerLevel && !this.isRemoved()) {
@@ -1076,7 +1076,7 @@ index 3ffb92a82e17af467afb18c81accc482a93d6a6f..431bc32a61934f9bf4d268df1f70194c
              PortalInfo shapedetectorshape = (location == null) ? this.findDimensionEntryPoint(worldserver) : new PortalInfo(new Vec3(location.x(), location.y(), location.z()), Vec3.ZERO, this.yRot, this.xRot, worldserver, null); // CraftBukkit
  
              if (shapedetectorshape == null) {
-@@ -3559,7 +3545,6 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -3558,7 +3544,6 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
                  this.unRide();
                  // CraftBukkit end
  
@@ -1084,7 +1084,7 @@ index 3ffb92a82e17af467afb18c81accc482a93d6a6f..431bc32a61934f9bf4d268df1f70194c
                  // Paper start - Change lead drop timing to prevent dupe
                  if (this instanceof Mob) {
                      ((Mob) this).dropLeash(true, true); // Paper drop lead
-@@ -3582,10 +3567,8 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -3581,10 +3566,8 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
                  }
  
                  this.removeAfterChangingDimensions();
@@ -1609,7 +1609,7 @@ index 8f97c9df726ac20cfce7bdddd5dd4f8c5aa76c35..8f2c0dcb0ca69ea1b09bb055c6a94949
              }
  
 diff --git a/src/main/java/net/minecraft/world/level/Level.java b/src/main/java/net/minecraft/world/level/Level.java
-index 71189e98dcb71e625defe5a0bd6355597c9382e6..65258190f550a0a2653fc975430d8d88ff5ec259 100644
+index f95aa6362605c10145a212ed4b7df42ad443f4cf..e87f593bc61fd60812ea60c597644cd02fc7f7f0 100644
 --- a/src/main/java/net/minecraft/world/level/Level.java
 +++ b/src/main/java/net/minecraft/world/level/Level.java
 @@ -35,7 +35,6 @@ import net.minecraft.sounds.SoundSource;
@@ -1645,7 +1645,7 @@ index 71189e98dcb71e625defe5a0bd6355597c9382e6..65258190f550a0a2653fc975430d8d88
          this.levelData = worlddatamutable;
          this.dimensionTypeRegistration = holder;
          this.dimensionTypeId = (ResourceKey) holder.unwrapKey().orElseThrow(() -> {
-@@ -862,9 +859,6 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
+@@ -863,9 +860,6 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
      }
  
      protected void tickBlockEntities() {
@@ -1655,7 +1655,7 @@ index 71189e98dcb71e625defe5a0bd6355597c9382e6..65258190f550a0a2653fc975430d8d88
          timings.tileEntityPending.startTiming(); // Spigot
          this.tickingBlockEntities = true;
          if (!this.pendingBlockEntityTickers.isEmpty()) {
-@@ -909,7 +903,6 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
+@@ -910,7 +904,6 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
          timings.tileEntityTick.stopTiming(); // Spigot
          this.tickingBlockEntities = false;
          co.aikar.timings.TimingHistory.tileEntityTicks += this.blockEntityTickers.size(); // Paper
@@ -1663,7 +1663,7 @@ index 71189e98dcb71e625defe5a0bd6355597c9382e6..65258190f550a0a2653fc975430d8d88
          spigotConfig.currentPrimedTnt = 0; // Spigot
      }
  
-@@ -1102,7 +1095,6 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
+@@ -1103,7 +1096,6 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
  
      @Override
      public List<Entity> getEntities(@Nullable Entity except, AABB box, Predicate<? super Entity> predicate) {
@@ -1671,7 +1671,7 @@ index 71189e98dcb71e625defe5a0bd6355597c9382e6..65258190f550a0a2653fc975430d8d88
          List<Entity> list = Lists.newArrayList();
          ((ServerLevel)this).getEntityLookup().getEntities(except, box, list, predicate); // Paper - optimise this call
          return list;
-@@ -1121,7 +1113,6 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
+@@ -1122,7 +1114,6 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
      }
  
      public <T extends Entity> void getEntities(EntityTypeTest<Entity, T> filter, AABB box, Predicate<? super T> predicate, List<? super T> result, int limit) {
@@ -1679,7 +1679,7 @@ index 71189e98dcb71e625defe5a0bd6355597c9382e6..65258190f550a0a2653fc975430d8d88
          // Paper start - optimise this call
          //TODO use limit
          if (filter instanceof net.minecraft.world.entity.EntityType entityTypeTest) {
-@@ -1377,14 +1368,6 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
+@@ -1378,14 +1369,6 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
          return false;
      }
  

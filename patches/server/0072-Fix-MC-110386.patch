@@ -35,10 +35,10 @@ index 80ef4b6649da3049f21624926fa38595d76c5da5..7ce47abc44e0dfe8ff90afeb25b14d8d
      }
  }
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index aa704ab1f64d0a8572b81e6e41bdb419fba2e4fc..899aa60e2c20c4d973777d4f82f524e2fb902c93 100644
+index 776bdcc5b19f985f62e3a6aaf7cff232b06bc54e..a136a07fb890a4672283c456390ce425c41e9cdc 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-@@ -296,6 +296,11 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+@@ -291,6 +291,11 @@ public class GaleWorldConfiguration extends ConfigurationPart {
              public boolean mc121706 = false;
              // Gale end - Purpur - fix MC-121706
  

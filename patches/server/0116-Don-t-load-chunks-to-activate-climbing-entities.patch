@@ -7,10 +7,10 @@ License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 570ccff83e1562555d4445d89aa4c647b846d53a..caa053d607907dc5582fd3de2aefa0a9ee8b5bb8 100644
+index eca5c3b581da9426d109eb71bf9b883362e155df..eecf64e6ae6f11d242d2579039b783a013072646 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -4515,6 +4515,16 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -4514,6 +4514,16 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
          return this.feetBlockState;
      }
  
@@ -79,7 +79,7 @@ index 2f252bbe2946ea3228933b4b8c91a4e46fe99705..a35891723fad4fe984566c41cdd72800
              if (iblockdata.is(BlockTags.CLIMBABLE)) {
                  this.lastClimbablePos = Optional.of(blockposition);
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index b087b7333a801f86e21f170111812263a2829730..f33f964fb7f94b5b014464a9b34795bc54549a0a 100644
+index dd9052a8b23cfe2005b0cb7494e43f7c7b399870..c052c33e11a77c5b9af5620f860546e4625e0111 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 @@ -283,6 +283,18 @@ public class GaleWorldConfiguration extends ConfigurationPart {

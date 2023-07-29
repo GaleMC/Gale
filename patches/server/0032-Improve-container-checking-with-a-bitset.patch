@@ -390,7 +390,7 @@ index a71414397bd45ee7bcacfeef0041d80dfa25f114..7743f185672e977520218c3ce6b8ddc9
  
      @Override
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java
-index a8a26a0a37a08b6bbeb5a1fde417d6f448d3c79f..fd1ea9473f228bc2f96f3dc288b38616807b8edd 100644
+index b11f51762ca289d99eaa49e66e31e58595bcea4e..9aa26d2581df4ef75fffe203d80bc669f3ba6790 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java
 @@ -47,7 +47,10 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
@@ -462,7 +462,7 @@ index a8a26a0a37a08b6bbeb5a1fde417d6f448d3c79f..fd1ea9473f228bc2f96f3dc288b38616
              if (!item.isEmpty()) {
                  foundItem = true;
                  ItemStack origItemStack = item;
-@@ -451,11 +477,11 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
+@@ -452,11 +478,11 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
      }
  
      private static boolean isFullContainer(Container inventory, Direction direction) {
@@ -476,7 +476,7 @@ index a8a26a0a37a08b6bbeb5a1fde417d6f448d3c79f..fd1ea9473f228bc2f96f3dc288b38616
      }
  
      public static boolean suckInItems(Level world, Hopper hopper) {
-@@ -636,7 +662,7 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
+@@ -637,7 +663,7 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
  
          if (HopperBlockEntity.canPlaceItemInContainer(to, stack, slot, side)) {
              boolean flag = false;
@@ -485,7 +485,7 @@ index a8a26a0a37a08b6bbeb5a1fde417d6f448d3c79f..fd1ea9473f228bc2f96f3dc288b38616
  
              if (itemstack1.isEmpty()) {
                  // Spigot start - SPIGOT-6693, InventorySubcontainer#setItem
-@@ -831,7 +857,10 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
+@@ -832,7 +858,10 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
  
      @Override
      protected void setItems(NonNullList<ItemStack> list) {

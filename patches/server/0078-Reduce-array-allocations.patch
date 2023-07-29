@@ -81,7 +81,7 @@ index ae60bd96b5284d54676d8e7e4dd5d170b526ec1e..b269b9b55c10542b16af301be3f43798
          return true;
      }
 diff --git a/src/main/java/io/papermc/paper/world/ChunkEntitySlices.java b/src/main/java/io/papermc/paper/world/ChunkEntitySlices.java
-index ce449b7b6f615f2c8240e4207f06d4e54ae0083e..c21398bd39bd1e96f8005539909aa7497fb19c9e 100644
+index 7e8dc9e8f381abfdcce2746edc93122d623622d1..66721a27cc9a373a12dffb72c4a403473377eff6 100644
 --- a/src/main/java/io/papermc/paper/world/ChunkEntitySlices.java
 +++ b/src/main/java/io/papermc/paper/world/ChunkEntitySlices.java
 @@ -2,9 +2,9 @@ package io.papermc.paper.world;
@@ -104,7 +104,7 @@ index ce449b7b6f615f2c8240e4207f06d4e54ae0083e..c21398bd39bd1e96f8005539909aa749
      }
  
      public CompoundTag save() {
-@@ -299,7 +299,7 @@ public final class ChunkEntitySlices {
+@@ -303,7 +303,7 @@ public final class ChunkEntitySlices {
  
      protected static final class BasicEntityList<E extends Entity> {
  
@@ -113,7 +113,7 @@ index ce449b7b6f615f2c8240e4207f06d4e54ae0083e..c21398bd39bd1e96f8005539909aa749
          protected static final int DEFAULT_CAPACITY = 4;
  
          protected E[] storage;
-@@ -310,7 +310,7 @@ public final class ChunkEntitySlices {
+@@ -314,7 +314,7 @@ public final class ChunkEntitySlices {
          }
  
          public BasicEntityList(final int cap) {
@@ -122,7 +122,7 @@ index ce449b7b6f615f2c8240e4207f06d4e54ae0083e..c21398bd39bd1e96f8005539909aa749
          }
  
          public boolean isEmpty() {
-@@ -322,7 +322,7 @@ public final class ChunkEntitySlices {
+@@ -326,7 +326,7 @@ public final class ChunkEntitySlices {
          }
  
          private void resize() {
@@ -469,7 +469,7 @@ index efbc8483a51c5272ca81747c82dc65e7f0f5c232..9879599c38db4f3332c347b6b0c26034
          return ret;
      }
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index fbcd1384f8a56efeb5f4e6883b41616a784e516a..8c3261e34c3f60f88cbe78b372179cd5fca8d24d 100644
+index a48770650bd2fd52c6a90acd9e69e4fdd9548e30..58fa40518af4c79f01d6b54672dab631c4a7d97b 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -29,6 +29,8 @@ import java.util.function.UnaryOperator;
@@ -531,7 +531,7 @@ index fbcd1384f8a56efeb5f4e6883b41616a784e516a..8c3261e34c3f60f88cbe78b372179cd5
              return;
          }
          // Paper end
-@@ -3304,7 +3302,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -3311,7 +3309,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
          // Paper start
          if (!org.bukkit.Bukkit.isPrimaryThread()) {
              if (this.recipeSpamPackets.addAndGet(io.papermc.paper.configuration.GlobalConfiguration.get().spamLimiter.recipeSpamIncrement) > io.papermc.paper.configuration.GlobalConfiguration.get().spamLimiter.recipeSpamLimit) {
@@ -746,7 +746,7 @@ index 25ed5571b24e590bc95056020d84496492b53298..087acc992a83b2a7e40a0e24f00e283c
  
          for (int j = 0; j < i; ++j) {
 diff --git a/src/main/java/net/minecraft/world/item/ItemStack.java b/src/main/java/net/minecraft/world/item/ItemStack.java
-index ae9b821d71d2868ba4eb3c73558fdcd6caf264e3..77db86efe50ad29bded1cbd02806837b5f506fb3 100644
+index 86304357ca687036cf2448f8cd7c639bdc309e25..d0e2304cd9096c7f1ca4843bb365303f555c1f19 100644
 --- a/src/main/java/net/minecraft/world/item/ItemStack.java
 +++ b/src/main/java/net/minecraft/world/item/ItemStack.java
 @@ -1015,7 +1015,7 @@ public final class ItemStack {
@@ -798,7 +798,7 @@ index 2bfbdaeb2b0d99dfd956cd5936403fe8b0eeae64..84f1c4c3ded4f201899f3c74e639349b
      public Enchantments() {}
  
 diff --git a/src/main/java/net/minecraft/world/level/Level.java b/src/main/java/net/minecraft/world/level/Level.java
-index b9431be4e6fb366bbdb7e66c9570f26a37379488..4b8736f19c0b968fac27037d2d0eb3f6d3a2fe94 100644
+index 2968e5fb171fe7ee17afcd2590a1cb26ac287ea2..5efa854354796ff3b045947e1a430ef633b29b63 100644
 --- a/src/main/java/net/minecraft/world/level/Level.java
 +++ b/src/main/java/net/minecraft/world/level/Level.java
 @@ -12,6 +12,8 @@ import java.util.function.Consumer;
@@ -810,7 +810,7 @@ index b9431be4e6fb366bbdb7e66c9570f26a37379488..4b8736f19c0b968fac27037d2d0eb3f6
  import net.minecraft.CrashReport;
  import net.minecraft.CrashReportCategory;
  import net.minecraft.core.BlockPos;
-@@ -1508,7 +1510,7 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
+@@ -1509,7 +1511,7 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
      public org.bukkit.entity.Entity[] getChunkEntities(int chunkX, int chunkZ) {
          io.papermc.paper.world.ChunkEntitySlices slices = ((ServerLevel)this).getEntityLookup().getChunk(chunkX, chunkZ);
          if (slices == null) {

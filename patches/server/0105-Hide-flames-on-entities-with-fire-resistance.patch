@@ -13,10 +13,10 @@ As part of: Slice (https://github.com/Cryptite/Slice)
 Licensed under: MIT (https://opensource.org/licenses/MIT)
 
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 15c2e875129db97f379d74f8b5e470a50ed8185b..2ececcfaf44eb0a0f7be23987dd4d081ffe8120f 100644
+index 307e74d2d116d62b54c9be21bc13c2605733cc3f..2a4132103a937f58f8976d355f2419da816e6af9 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -891,7 +891,13 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -890,7 +890,13 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
  
          this.checkBelowWorld();
          if (!this.level().isClientSide) {
@@ -31,12 +31,12 @@ index 15c2e875129db97f379d74f8b5e470a50ed8185b..2ececcfaf44eb0a0f7be23987dd4d081
  
          this.firstTick = false;
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index 3ebd9c177453bf720c40c7f9d41e28a234c80467..4329d9bbfe002a4e505b0a2f13063aa8ca736f8f 100644
+index 1ea5a89bb52db60b2bb2a2217a1332432fa06510..70f4ebc71d1b82ac06862752523de1be856df466 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-@@ -292,6 +292,7 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+@@ -291,6 +291,7 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+         // Gale end - variable entity wake-up duration
  
-         public boolean entitiesCanEatBlocksInNonTickingChunks = false; // Gale - Purpur - prevent entities eating blocks in non-ticking chunks
          public boolean arrowMovementResetsDespawnCounter = true; // Gale - Purpur - make arrow movement resetting despawn counter configurable
 +        public boolean hideFlamesOnEntitiesWithFireResistance = false; // Gale - Slice - hide flames on entities with fire resistance
  
