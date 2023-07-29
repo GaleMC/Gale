@@ -31,13 +31,13 @@ index afab6cd5ea21c97ea1b8936bd3a00a572d38f48e..f300964912f76cc97074e954dfcddad3
  
      public void updateEntireScoreboard(ServerScoreboard scoreboard, ServerPlayer player) {
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index 882830dd0bddb81e1a592cdd089d4340beb946a7..c9ad1e5371b7d6f7de868cabebb8880052e59f64 100644
+index 2065c70e461dff839c660ab9b70cedf3c989df0b..f033f2909bea28a37ce95c8b30ff4a744786d79c 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-@@ -119,6 +119,7 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
-         public boolean setBlockInFarChunk = true; // Gale - Purpur - do not log setBlock in far chunks
+@@ -120,6 +120,7 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
          public boolean unrecognizedRecipes = false; // Gale - Purpur - do not log unrecognized recipes
          public boolean legacyMaterialInitialization = false; // Gale - Purpur - do not log legacy Material initialization
+         public boolean nullIdDisconnections = true; // Gale - Pufferfish - do not log disconnections with null id
 +        public boolean playerLoginLocations = true; // Gale - JettPack - make logging login location configurable
  
          public Chat chat;

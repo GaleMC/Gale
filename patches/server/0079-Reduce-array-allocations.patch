@@ -541,7 +541,7 @@ index a48770650bd2fd52c6a90acd9e69e4fdd9548e30..58fa40518af4c79f01d6b54672dab631
              }
          }
 diff --git a/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
-index 2ff578e4a953ffcf5176815ba8e3f06f73499989..a436ef49325c9cae1008d5763373cce8c6680e5f 100644
+index 0d034a1b810e3840055a10ca1960eecbbf306549..00166d86baad60beed5896871c9b9118fefc20b6 100644
 --- a/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
 @@ -12,8 +12,9 @@ import java.security.PrivateKey;
@@ -555,7 +555,7 @@ index 2ff578e4a953ffcf5176815ba8e3f06f73499989..a436ef49325c9cae1008d5763373cce8
  import net.minecraft.DefaultUncaughtExceptionHandler;
  import net.minecraft.core.UUIDUtil;
  import net.minecraft.network.Connection;
-@@ -236,8 +237,10 @@ public class ServerLoginPacketListenerImpl implements ServerLoginPacketListener,
+@@ -245,8 +246,10 @@ public class ServerLoginPacketListenerImpl implements ServerLoginPacketListener,
  
      @Override
      public void handleHello(ServerboundHelloPacket packet) {
@@ -568,7 +568,7 @@ index 2ff578e4a953ffcf5176815ba8e3f06f73499989..a436ef49325c9cae1008d5763373cce8
          // Paper start - validate usernames
          if (io.papermc.paper.configuration.GlobalConfiguration.get().proxies.isProxyOnlineMode() && io.papermc.paper.configuration.GlobalConfiguration.get().unsupportedSettings.performUsernameValidation) {
              if (!this.iKnowThisMayNotBeTheBestIdeaButPleaseDisableUsernameValidation && !validateUsername(packet.name())) {
-@@ -296,7 +299,7 @@ public class ServerLoginPacketListenerImpl implements ServerLoginPacketListener,
+@@ -305,7 +308,7 @@ public class ServerLoginPacketListenerImpl implements ServerLoginPacketListener,
  
      @Override
      public void handleKey(ServerboundKeyPacket packet) {

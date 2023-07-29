@@ -7,18 +7,10 @@ License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
-index a436ef49325c9cae1008d5763373cce8c6680e5f..5b7c12db86be64433c65e31e3ecc0b444b0ddf48 100644
+index 00166d86baad60beed5896871c9b9118fefc20b6..ded7811cd10bc436957ed9f1576f3231f1af7b7b 100644
 --- a/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
-@@ -37,6 +37,7 @@ import net.minecraft.util.Crypt;
- import net.minecraft.util.CryptException;
- import net.minecraft.util.RandomSource;
- import org.apache.commons.lang3.Validate;
-+import org.galemc.gale.configuration.GaleGlobalConfiguration;
- import org.slf4j.Logger;
- 
- // CraftBukkit start
-@@ -96,7 +97,10 @@ public class ServerLoginPacketListenerImpl implements ServerLoginPacketListener,
+@@ -97,7 +97,10 @@ public class ServerLoginPacketListenerImpl implements ServerLoginPacketListener,
              }
          }
  
@@ -31,7 +23,7 @@ index a436ef49325c9cae1008d5763373cce8c6680e5f..5b7c12db86be64433c65e31e3ecc0b44
          }
  
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index ead1ae2db1c2ad118a50ab3a2c1216bd3bb5eae8..1b7ff78c12bc9eb04bc0f74b21ccdbbec6dc54c4 100644
+index 455aad097e4f20141d90e237e7f02ef7a50d1e5c..9576ce22e2c5fb06d10de00ca24fba9345087870 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 @@ -74,6 +74,20 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
