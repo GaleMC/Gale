@@ -48,7 +48,7 @@ index 92bd58010e8c89e361e28aec59447349edbbc028..2239c7260638bb25df5b45dbc129bcfe
          org.bukkit.event.entity.EntityDropItemEvent event = new org.bukkit.event.entity.EntityDropItemEvent(entity.getBukkitEntity(), (org.bukkit.entity.Item) entityitem.getBukkitEntity());
          entityitem.level().getCraftServer().getPluginManager().callEvent(event);
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index dafaa52cbdd673478c3f828e96a4563fe1d1165b..c1c77fc68a6f2898f074a98e286112bdc8cc22ce 100644
+index dffac4422559d1b5095950d90dc03b0d7bf27d26..2f9687ad6c50cdcebc7908583b1093d1a0fa9737 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 @@ -236,6 +236,21 @@ public class GaleWorldConfiguration extends ConfigurationPart {

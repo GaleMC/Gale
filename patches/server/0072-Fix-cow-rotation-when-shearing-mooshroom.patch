@@ -64,7 +64,7 @@ index a04374f91f2fbb31219d86b6ae63bcf8fdf7318c..e3b92e8b2274ee6d07d1e9c74f669aea
                      entitycow.setPersistenceRequired();
                  }
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index 607f281e3018a729991e981c6ad565f78252b902..05f9389a8d9c132fdf799c33b5bcf7544f0d5008 100644
+index 32b9b7ab76fbb2acac9c27c49a27b5dd3134876b..f066a6ae227d2d8c064b48529e580c9b84a16ca3 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 @@ -279,7 +279,8 @@ public class GaleWorldConfiguration extends ConfigurationPart {

@@ -1,16 +1,21 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Martijn Muijsers <martijnmuijsers@live.nl>
-Date: Tue, 29 Nov 2022 16:06:11 +0100
-Subject: [PATCH] Make sand duping fix configurable
+Date: Tue, 29 Nov 2022 21:37:22 +0100
+Subject: [PATCH] Make arrow movement resetting despawn counter configurable
 
 License: MIT (https://opensource.org/licenses/MIT)
 Gale - https://galemc.org
 
 This patch is based on the following patch:
-"Add toggle for sand duping fix"
+"Arrows should not reset despawn counter"
 By: William Blake Galbreath <blake.galbreath@gmail.com>
 As part of: Purpur (https://github.com/PurpurMC/Purpur)
 Licensed under: MIT (https://opensource.org/licenses/MIT)
+
+* Purpur description *
+
+This prevents keeping arrows alive indefinitely (such as when the block
+the arrow is stuck in gets removed, like a piston head going up/down)
 
 * Purpur copyright *
 
@@ -36,43 +41,31 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-diff --git a/src/main/java/net/minecraft/world/entity/item/FallingBlockEntity.java b/src/main/java/net/minecraft/world/entity/item/FallingBlockEntity.java
-index 18eaccb39a4c81338a8cbebe3de03934913ac2a4..a1466d29b896c06f67a6f110270377fdd036960a 100644
---- a/src/main/java/net/minecraft/world/entity/item/FallingBlockEntity.java
-+++ b/src/main/java/net/minecraft/world/entity/item/FallingBlockEntity.java
-@@ -133,7 +133,7 @@ public class FallingBlockEntity extends Entity {
-     @Override
-     public void tick() {
-         // Paper start - fix sand duping
--        if (this.isRemoved()) {
-+        if (this.level().galeConfig().gameplayMechanics.fixes.sandDuping && this.isRemoved()) { // Gale - Purpur - make sand duping fix configurable
-             return;
-         }
-         // Paper end - fix sand duping
-@@ -150,7 +150,7 @@ public class FallingBlockEntity extends Entity {
-             this.move(MoverType.SELF, this.getDeltaMovement());
+diff --git a/src/main/java/net/minecraft/world/entity/projectile/AbstractArrow.java b/src/main/java/net/minecraft/world/entity/projectile/AbstractArrow.java
+index 7226be19248a1ffb8ff2c89b55882529d33a6c0c..cff4d09af11d1741bf3301b457555d71e77e801c 100644
+--- a/src/main/java/net/minecraft/world/entity/projectile/AbstractArrow.java
++++ b/src/main/java/net/minecraft/world/entity/projectile/AbstractArrow.java
+@@ -312,7 +312,7 @@ public abstract class AbstractArrow extends Projectile {
+         Vec3 vec3d = this.getDeltaMovement();
  
-             // Paper start - fix sand duping
--            if (this.isRemoved()) {
-+            if (this.level().galeConfig().gameplayMechanics.fixes.sandDuping && this.isRemoved()) { // Gale - Purpur - make sand duping fix configurable
-                 return;
-             }
-             // Paper end - fix sand duping
+         this.setDeltaMovement(vec3d.multiply((double) (this.random.nextFloat() * 0.2F), (double) (this.random.nextFloat() * 0.2F), (double) (this.random.nextFloat() * 0.2F)));
+-        this.life = 0;
++        if (this.level().galeConfig().gameplayMechanics.arrowMovementResetsDespawnCounter) this.life = 0; // Gale - Purpur - make arrow movement resetting despawn counter configurable
+     }
+ 
+     @Override
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index 1c4e04fed44e851bb38b64721b87f4b4ff8fd77c..b585236fdbd8de2195cdd411c566a82fef5d6dfb 100644
+index d3c567390d3e9acb8f69aba16d5eb270f971eaeb..f6ac2c897f63737baecbefdb7cf22302b7a31b68 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-@@ -274,6 +274,13 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+@@ -274,7 +274,9 @@ public class GaleWorldConfiguration extends ConfigurationPart {
           */
          public double entityWakeUpDurationRatioStandardDeviation = 0.2;
          // Gale end - variable entity wake-up duration
-+        
-+        public Fixes fixes;
-+        public class Fixes extends ConfigurationPart {
+-        
 +
-+            public boolean sandDuping = true; // Gale - Purpur - make sand duping fix configurable
-+            
-+        }
- 
-         public boolean enderDragonCanBeRespawnWithEndCrystals = true; // Gale - Pufferfish - make ender dragon respawning with end crystals configurable
++        public boolean arrowMovementResetsDespawnCounter = true; // Gale - Purpur - make arrow movement resetting despawn counter configurable
++
+         public Fixes fixes;
+         public class Fixes extends ConfigurationPart {
  

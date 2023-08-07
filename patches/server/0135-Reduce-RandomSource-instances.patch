@@ -122,7 +122,7 @@ index 414a47a82927bed02a4f3cf330c78e46f1d66782..cc17cb985856fd8d1083b5b1f57f82c6
  
      @Override
 diff --git a/src/main/java/net/minecraft/world/level/dimension/end/EndDragonFight.java b/src/main/java/net/minecraft/world/level/dimension/end/EndDragonFight.java
-index 02d5a5b799bfe90993bc6868369d31f43d5b7fd6..07f0b0807358e595b76e70e5b8716caaab383a0c 100644
+index 9cb6a36ac210574a3d62202b16058e9fdc94691e..51a3188f4873666100ba438550efa76e59342afd 100644
 --- a/src/main/java/net/minecraft/world/level/dimension/end/EndDragonFight.java
 +++ b/src/main/java/net/minecraft/world/level/dimension/end/EndDragonFight.java
 @@ -454,7 +454,7 @@ public class EndDragonFight {

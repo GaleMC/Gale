@@ -31,12 +31,12 @@ index 4f654e5cc39ca3fccb0bff1c1f859a17e7d17229..332750297ca104bb95ef624caff80105
                      entity.moveTo(position.x, position.y, position.z, yaw, pitch); // Paper - use EntityPortalExitEvent values
                      entity.setDeltaMovement(velocity); // Paper - use EntityPortalExitEvent values
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index 42ee7a74cacabd3d315711b0bfb20e19dc8b9262..750739d3df0cb94c4f27e608656ffef92b4b725f 100644
+index db9d461a05fb253ee4f1273e0fb9015c6c46a4bf..9213aafac5b3b5718c93c910212f8b77a4b22ea3 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 @@ -338,6 +338,23 @@ public class GaleWorldConfiguration extends ConfigurationPart {
  
-         public boolean enderDragonCanBeRespawnWithEndCrystals = true; // Gale - Pufferfish - make ender dragon respawning with end crystals configurable
+         public boolean tryRespawnEnderDragonAfterEndCrystalPlace = true; // Gale - Pufferfish - make ender dragon respawn attempt after placing end crystals configurable
  
 +        public Technical technical;
 +        public class Technical extends ConfigurationPart {

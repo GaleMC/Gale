@@ -7,7 +7,7 @@ License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index c1c77fc68a6f2898f074a98e286112bdc8cc22ce..1c4e04fed44e851bb38b64721b87f4b4ff8fd77c 100644
+index 2f9687ad6c50cdcebc7908583b1093d1a0fa9737..b3822132cbb34dde90754aa2ee5439433ea4df4b 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 @@ -258,6 +258,23 @@ public class GaleWorldConfiguration extends ConfigurationPart {
@@ -31,7 +31,7 @@ index c1c77fc68a6f2898f074a98e286112bdc8cc22ce..1c4e04fed44e851bb38b64721b87f4b4
 +        public double entityWakeUpDurationRatioStandardDeviation = 0.2;
 +        // Gale end - variable entity wake-up duration
 +
-         public boolean enderDragonCanBeRespawnWithEndCrystals = true; // Gale - Pufferfish - make ender dragon respawning with end crystals configurable
+         public boolean tryRespawnEnderDragonAfterEndCrystalPlace = true; // Gale - Pufferfish - make ender dragon respawn attempt after placing end crystals configurable
  
      }
 diff --git a/src/main/java/org/spigotmc/ActivationRange.java b/src/main/java/org/spigotmc/ActivationRange.java

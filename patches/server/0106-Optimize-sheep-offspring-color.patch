@@ -110,7 +110,7 @@ index c0e89262c596fbdd0bb3c3f76baccb17a1bb5fcd..d8f99e1221609d481ee79ee31f645731
          DyeColor enumcolor1 = ((Sheep) secondParent).getColor();
          CraftingContainer inventorycrafting = Sheep.makeContainer(enumcolor, enumcolor1);
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index b5f6599e4cd4b36f5e5844664ea11bfa14222828..52d95fc0e33832303260b7a9ccd77d5f910752e1 100644
+index f6ac2c897f63737baecbefdb7cf22302b7a31b68..3bf1b9a5bb3c974025d4f1f3827fca39141df684 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 @@ -47,6 +47,21 @@ public class GaleWorldConfiguration extends ConfigurationPart {

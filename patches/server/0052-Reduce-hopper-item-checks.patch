@@ -188,7 +188,7 @@ index 9aa26d2581df4ef75fffe203d80bc669f3ba6790..d1ba406f481a72513743b549cf450b44
      public double getLevelX() {
          return (double) this.worldPosition.getX() + 0.5D;
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index 7b2213e0d39711f4036cb7a52337f2d4602ecd55..dafaa52cbdd673478c3f828e96a4563fe1d1165b 100644
+index 6f7fe7377532e87b8c5bf0d55cb4cb3f5619eb3e..dffac4422559d1b5095950d90dc03b0d7bf27d26 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 @@ -130,6 +130,112 @@ public class GaleWorldConfiguration extends ConfigurationPart {
