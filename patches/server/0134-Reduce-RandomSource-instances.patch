@@ -26,7 +26,7 @@ index f5bc3497831877e0c2b7dc1cbd8abe3a67d7695b..5783a8014e3faf93b81903c947b2534e
              double d1 = (double) (center.y - maxRange);
              double d2 = (double) (center.x + maxRange);
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 0e765c1fb7b93905b7aff8f03fcabba7dc2d8cfa..00ce8b78e35055da01a053cb0d4ed914d50acebc 100644
+index 8e216eaafb1b90d4fd373a4384ecff0b1e917835..43c170fe1eed27e1b0367a3b277cc6d034bc34e1 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -441,7 +441,7 @@ public class ServerPlayer extends Player {
@@ -122,24 +122,24 @@ index 414a47a82927bed02a4f3cf330c78e46f1d66782..cc17cb985856fd8d1083b5b1f57f82c6
  
      @Override
 diff --git a/src/main/java/net/minecraft/world/level/dimension/end/EndDragonFight.java b/src/main/java/net/minecraft/world/level/dimension/end/EndDragonFight.java
-index e2cd77d9de9709aa50f4b6febabe21bfcf94dc5d..f04699f87e1a52b7349fe776de44af0c5fa01343 100644
+index 02d5a5b799bfe90993bc6868369d31f43d5b7fd6..07f0b0807358e595b76e70e5b8716caaab383a0c 100644
 --- a/src/main/java/net/minecraft/world/level/dimension/end/EndDragonFight.java
 +++ b/src/main/java/net/minecraft/world/level/dimension/end/EndDragonFight.java
-@@ -402,7 +402,7 @@ public class EndDragonFight {
-         this.level.registryAccess().registry(Registries.CONFIGURED_FEATURE).flatMap((registry) -> {
-             return registry.getHolder(EndFeatures.END_GATEWAY_DELAYED);
-         }).ifPresent((reference) -> {
--            reference.value().place(this.level, this.level.getChunkSource().getGenerator(), RandomSource.create(), pos);
-+            reference.value().place(this.level, this.level.getChunkSource().getGenerator(), this.level.random, pos); // Gale - Patina - reduce RandomSource instances
+@@ -454,7 +454,7 @@ public class EndDragonFight {
+         this.level.registryAccess().registry(Registries.CONFIGURED_FEATURE).flatMap((iregistry) -> {
+             return iregistry.getHolder(EndFeatures.END_GATEWAY_DELAYED);
+         }).ifPresent((holder_c) -> {
+-            ((ConfiguredFeature) holder_c.value()).place(this.level, this.level.getChunkSource().getGenerator(), RandomSource.create(), pos);
++            ((ConfiguredFeature) holder_c.value()).place(this.level, this.level.getChunkSource().getGenerator(), this.level.random, pos); // Gale - Patina - reduce RandomSource instances
          });
      }
  
-@@ -418,7 +418,7 @@ public class EndDragonFight {
+@@ -472,7 +472,7 @@ public class EndDragonFight {
              this.portalLocation = this.portalLocation.atY(this.level.getMinBuildHeight() + 1);
          }
          // Paper end
--        endPodiumFeature.place(FeatureConfiguration.NONE, this.level, this.level.getChunkSource().getGenerator(), RandomSource.create(), this.portalLocation);
-+        endPodiumFeature.place(FeatureConfiguration.NONE, this.level, this.level.getChunkSource().getGenerator(), this.level.random, this.portalLocation); // Gale - Patina - reduce RandomSource instances
+-        worldgenendtrophy.place(FeatureConfiguration.NONE, this.level, this.level.getChunkSource().getGenerator(), RandomSource.create(), this.portalLocation);
++        worldgenendtrophy.place(FeatureConfiguration.NONE, this.level, this.level.getChunkSource().getGenerator(), this.level.random, this.portalLocation); // Gale - Patina - reduce RandomSource instances
      }
  
      @Nullable

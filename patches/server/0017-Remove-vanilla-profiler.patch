@@ -856,7 +856,7 @@ index 513916690d2579760f59edecb1a273f475d54adf..287f6a38a6f042983c5e652ff9800fb2
  
                  while (iterator.hasNext()) {
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 9d46536f80b5b3e6641fd377c02166a431edfd77..8badf1d6239eca7e48819860ada3a1ce21c3b4db 100644
+index dc5fda83a66afbfeb7897fc20b4742899d8aca08..5986507deeb9f9f05b6045df4ef28afba802274c 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -1205,7 +1205,6 @@ public class ServerPlayer extends Player {
@@ -885,10 +885,10 @@ index 9d46536f80b5b3e6641fd377c02166a431edfd77..8badf1d6239eca7e48819860ada3a1ce
                  this.connection.send(new ClientboundPlayerAbilitiesPacket(this.getAbilities()));
                  playerlist.sendLevelInfo(this, worldserver);
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 316740b2ba4c85828f544249c8cdd6fa1b525d3f..27b177c3291bf2e6d7b8223bc3ea275c71fa0a49 100644
+index 75bd92e1d40588d3bc40fa7837943eec9f2062a6..8b0441f672f1821e31860d3318c09c309b276135 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -395,7 +395,6 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -397,7 +397,6 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
              this.aboveGroundVehicleTickCount = 0;
          }
  
@@ -896,7 +896,7 @@ index 316740b2ba4c85828f544249c8cdd6fa1b525d3f..27b177c3291bf2e6d7b8223bc3ea275c
          // Paper Start - give clients a longer time to respond to pings as per pre 1.12.2 timings
          // This should effectively place the keepalive handling back to "as it was" before 1.12.2
          long currentTime = Util.getMillis();
-@@ -416,7 +415,6 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -418,7 +417,6 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
          }
          // Paper end
  
@@ -981,7 +981,7 @@ index 7ab57748b2f2aea1003d9b7e70e76c372aa1e432..47e75ec4a01f8a456ec6ebc13031c1f0
      }
  
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 4c298406ce06d39f8279049270c88ec0830733b1..6d6dc0e5457df7ac2a7166ffd62add6655b79e5b 100644
+index f189629f03503fc06b790729bd407b663a48e0db..015b2d60c0be5f37fcef489628da1f29395483c3 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -809,7 +809,6 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {

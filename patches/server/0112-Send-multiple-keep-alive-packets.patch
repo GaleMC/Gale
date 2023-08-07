@@ -37,7 +37,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 58fa40518af4c79f01d6b54672dab631c4a7d97b..b2ee2dbfb5533f738224af0eb3868d6a04a55532 100644
+index c51aee272b5cc991fec5fd0242f493ab6e9e4b32..4633aaf37dad0348191880f3d4cd91c4e7cc4737 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -7,6 +7,8 @@ import com.mojang.brigadier.StringReader;
@@ -49,7 +49,7 @@ index 58fa40518af4c79f01d6b54672dab631c4a7d97b..b2ee2dbfb5533f738224af0eb3868d6a
  import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
  import it.unimi.dsi.fastutil.objects.ObjectIterator;
  import java.net.SocketAddress;
-@@ -264,6 +266,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -266,6 +268,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
      private long keepAliveTime = Util.getMillis();
      private boolean keepAlivePending;
      private long keepAliveChallenge;
@@ -57,7 +57,7 @@ index 58fa40518af4c79f01d6b54672dab631c4a7d97b..b2ee2dbfb5533f738224af0eb3868d6a
      // CraftBukkit start - multithreaded fields
      private final AtomicInteger chatSpamTickCount = new AtomicInteger();
      private final java.util.concurrent.atomic.AtomicInteger tabSpamLimiter = new java.util.concurrent.atomic.AtomicInteger(); // Paper - configurable tab spam limits
-@@ -302,7 +305,10 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -304,7 +307,10 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
      private final LastSeenMessagesValidator lastSeenMessages;
      private final MessageSignatureCache messageSignatureCache;
      private final FutureChain chatMessageChain;
@@ -69,7 +69,7 @@ index 58fa40518af4c79f01d6b54672dab631c4a7d97b..b2ee2dbfb5533f738224af0eb3868d6a
      private static final int MAX_SIGN_LINE_LENGTH = Integer.getInteger("Paper.maxSignLength", 80); // Paper
  
      private String clientBrandName = null; // Paper - Brand name
-@@ -401,6 +407,21 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -403,6 +409,21 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
          long currentTime = Util.getMillis();
          long elapsedTime = currentTime - this.keepAliveTime;
  
@@ -91,7 +91,7 @@ index 58fa40518af4c79f01d6b54672dab631c4a7d97b..b2ee2dbfb5533f738224af0eb3868d6a
          if (this.keepAlivePending) {
              if (!this.processedDisconnect && elapsedTime >= KEEPALIVE_LIMIT) { // check keepalive limit, don't fire if already disconnected
                  ServerGamePacketListenerImpl.LOGGER.warn("{} was kicked due to keepalive timeout!", this.player.getScoreboardName()); // more info
-@@ -3476,6 +3497,16 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -3502,6 +3523,16 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
  
      @Override
      public void handleKeepAlive(ServerboundKeepAlivePacket packet) {

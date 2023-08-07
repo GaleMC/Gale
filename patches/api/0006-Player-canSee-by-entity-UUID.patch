@@ -37,10 +37,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 diff --git a/src/main/java/org/bukkit/entity/Player.java b/src/main/java/org/bukkit/entity/Player.java
-index 4f710a941954a3d94acabe2a83bee050ad1ff052..760e6f96d3c43d6ab3d4e2e147a3472724c9ec25 100644
+index 14c92390aeaeee518f43778ccd5fc820fdc62689..da3e990b2e888387736ffda4a6c9165c5d84248e 100644
 --- a/src/main/java/org/bukkit/entity/Player.java
 +++ b/src/main/java/org/bukkit/entity/Player.java
-@@ -5,6 +5,8 @@ import java.net.InetSocketAddress;
+@@ -7,6 +7,8 @@ import java.time.Instant;
  import java.util.Collection;
  import java.util.Date;
  import java.util.Map;
@@ -49,7 +49,7 @@ index 4f710a941954a3d94acabe2a83bee050ad1ff052..760e6f96d3c43d6ab3d4e2e147a34727
  import org.bukkit.BanEntry;
  import org.bukkit.DyeColor;
  import org.bukkit.Effect;
-@@ -1775,6 +1777,16 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
+@@ -1841,6 +1843,16 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      @ApiStatus.Experimental
      public boolean canSee(@NotNull Entity entity);
  

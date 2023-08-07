@@ -425,7 +425,7 @@ index ae74867e5ca1a77c99d6d2e39e916a6c3cf4f866..151b354d6b9613a2715bf618ff6bff43
  import net.minecraft.ReportedException;
  import net.minecraft.SharedConstants;
 diff --git a/src/main/java/net/minecraft/server/level/ServerEntity.java b/src/main/java/net/minecraft/server/level/ServerEntity.java
-index c122671d89a06474f0618f52a3e4abd5214e2839..59ce2175afd1210344ce2c9f557193ff9139bcee 100644
+index e215cb22a226fa61d7eb9a8f69fe2a644d4394f7..d23fe810b1b971abe4ed52018929a40817060fdc 100644
 --- a/src/main/java/net/minecraft/server/level/ServerEntity.java
 +++ b/src/main/java/net/minecraft/server/level/ServerEntity.java
 @@ -332,7 +332,7 @@ public class ServerEntity {
@@ -469,7 +469,7 @@ index efbc8483a51c5272ca81747c82dc65e7f0f5c232..9879599c38db4f3332c347b6b0c26034
          return ret;
      }
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index a48770650bd2fd52c6a90acd9e69e4fdd9548e30..58fa40518af4c79f01d6b54672dab631c4a7d97b 100644
+index a72876beab9a0522ef3239b718e5be295a90da94..c51aee272b5cc991fec5fd0242f493ab6e9e4b32 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -29,6 +29,8 @@ import java.util.function.UnaryOperator;
@@ -497,7 +497,7 @@ index a48770650bd2fd52c6a90acd9e69e4fdd9548e30..58fa40518af4c79f01d6b54672dab631
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.BlockHitResult;
-@@ -228,8 +228,6 @@ import org.bukkit.event.inventory.InventoryCreativeEvent;
+@@ -230,8 +230,6 @@ import org.bukkit.event.inventory.InventoryCreativeEvent;
  import org.bukkit.event.inventory.InventoryType.SlotType;
  import org.bukkit.event.inventory.SmithItemEvent;
  import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -506,7 +506,7 @@ index a48770650bd2fd52c6a90acd9e69e4fdd9548e30..58fa40518af4c79f01d6b54672dab631
  import org.bukkit.event.player.PlayerChatEvent;
  import org.bukkit.event.player.PlayerCommandPreprocessEvent;
  import org.bukkit.event.player.PlayerInteractAtEntityEvent;
-@@ -406,7 +404,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -408,7 +406,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
          if (this.keepAlivePending) {
              if (!this.processedDisconnect && elapsedTime >= KEEPALIVE_LIMIT) { // check keepalive limit, don't fire if already disconnected
                  ServerGamePacketListenerImpl.LOGGER.warn("{} was kicked due to keepalive timeout!", this.player.getScoreboardName()); // more info
@@ -515,7 +515,7 @@ index a48770650bd2fd52c6a90acd9e69e4fdd9548e30..58fa40518af4c79f01d6b54672dab631
              }
          } else {
              if (elapsedTime >= 15000L) { // 15 seconds
-@@ -884,13 +882,13 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -886,13 +884,13 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
          // PacketUtils.ensureRunningOnSameThread(packet, this, this.player.serverLevel()); // Paper - run this async
          // CraftBukkit start
          if (this.chatSpamTickCount.addAndGet(io.papermc.paper.configuration.GlobalConfiguration.get().spamLimiter.tabSpamIncrement) > io.papermc.paper.configuration.GlobalConfiguration.get().spamLimiter.tabSpamLimit && !this.server.getPlayerList().isOp(this.player.getGameProfile())) { // Paper start - split and make configurable
@@ -531,7 +531,7 @@ index a48770650bd2fd52c6a90acd9e69e4fdd9548e30..58fa40518af4c79f01d6b54672dab631
              return;
          }
          // Paper end
-@@ -3311,7 +3309,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -3310,7 +3308,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
          // Paper start
          if (!org.bukkit.Bukkit.isPrimaryThread()) {
              if (this.recipeSpamPackets.addAndGet(io.papermc.paper.configuration.GlobalConfiguration.get().spamLimiter.recipeSpamIncrement) > io.papermc.paper.configuration.GlobalConfiguration.get().spamLimiter.recipeSpamLimit) {
@@ -578,7 +578,7 @@ index 0d034a1b810e3840055a10ca1960eecbbf306549..00166d86baad60beed5896871c9b9118
          final String s;
  
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index f300964912f76cc97074e954dfcddad3e62d4af0..8fe9fd6828f9fdfcd587d67471a4199602807e74 100644
+index 4c5d2c3e50be81435260207dc1208c083a8201e6..87fabd874b39a6a21ca7fb2c6207a4cec048328c 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
 @@ -27,6 +27,8 @@ import java.util.UUID;
@@ -746,10 +746,10 @@ index 25ed5571b24e590bc95056020d84496492b53298..087acc992a83b2a7e40a0e24f00e283c
  
          for (int j = 0; j < i; ++j) {
 diff --git a/src/main/java/net/minecraft/world/item/ItemStack.java b/src/main/java/net/minecraft/world/item/ItemStack.java
-index 86304357ca687036cf2448f8cd7c639bdc309e25..d0e2304cd9096c7f1ca4843bb365303f555c1f19 100644
+index 879cc823d56625867eb73bb621db6a13f40ad81c..3d589c9698129ab2a09093425d0bb97c5a3897f9 100644
 --- a/src/main/java/net/minecraft/world/item/ItemStack.java
 +++ b/src/main/java/net/minecraft/world/item/ItemStack.java
-@@ -1015,7 +1015,7 @@ public final class ItemStack {
+@@ -1019,7 +1019,7 @@ public final class ItemStack {
          int k;
  
          if (ItemStack.shouldShowInTooltip(i, ItemStack.TooltipPart.MODIFIERS)) {
