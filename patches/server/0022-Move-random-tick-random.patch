@@ -31,10 +31,10 @@ index 287f6a38a6f042983c5e652ff9800fb215a91221..47acb63bfca2f722a595cf6614c28e75
  
      public void tickChunk(LevelChunk chunk, int randomTickSpeed) {
 diff --git a/src/main/java/net/minecraft/world/level/Level.java b/src/main/java/net/minecraft/world/level/Level.java
-index 0502f5bf4ee886ddc16f430a4c6679279cc12ff1..5185af09005fd9f671daca0844b42e85b29a0376 100644
+index 96921ace1ecc5472794df9bf4fa5fd73e9779f5c..cb32c25a95fb16f02d84371d4bd0e4bc2755cb79 100644
 --- a/src/main/java/net/minecraft/world/level/Level.java
 +++ b/src/main/java/net/minecraft/world/level/Level.java
-@@ -180,6 +180,8 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
+@@ -181,6 +181,8 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
      public final Map<Explosion.CacheKey, Float> explosionDensityCache = new HashMap<>(); // Paper - Optimize explosions
      public java.util.ArrayDeque<net.minecraft.world.level.block.RedstoneTorchBlock.Toggle> redstoneUpdateInfos; // Paper - Move from Map in BlockRedstoneTorch to here
  
