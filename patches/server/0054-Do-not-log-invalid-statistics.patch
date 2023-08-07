@@ -1,0 +1,69 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Martijn Muijsers <martijnmuijsers@live.nl>
+Date: Thu, 24 Nov 2022 23:39:32 +0100
+Subject: [PATCH] Do not log invalid statistics
+
+License: MIT (https://opensource.org/licenses/MIT)
+Gale - https://galemc.org
+
+This patch is based on the following patch:
+"Ignore statistics warnings"
+By: Aikar <aikar@aikar.co>
+As part of: EmpireCraft (https://github.com/starlis/empirecraft)
+Licensed under: MIT (https://opensource.org/licenses/MIT)
+
+diff --git a/src/main/java/net/minecraft/stats/ServerStatsCounter.java b/src/main/java/net/minecraft/stats/ServerStatsCounter.java
+index 9501e5f25f5c4d3069e554d4dc82b0e094156682..e81afb79d66321f70eb40c43d3bd7b92a49fa1ac 100644
+--- a/src/main/java/net/minecraft/stats/ServerStatsCounter.java
++++ b/src/main/java/net/minecraft/stats/ServerStatsCounter.java
+@@ -36,6 +36,7 @@ import net.minecraft.server.level.ServerPlayer;
+ import net.minecraft.util.datafix.DataFixTypes;
+ import net.minecraft.world.entity.player.Player;
+ import org.apache.commons.io.FileUtils;
++import org.galemc.gale.configuration.GaleGlobalConfiguration;
+ import org.slf4j.Logger;
+ 
+ public class ServerStatsCounter extends StatsCounter {
+@@ -131,15 +132,15 @@ public class ServerStatsCounter extends StatsCounter {
+                                             Util.ifElse(this.getStat(statisticwrapper, s2), (statistic) -> {
+                                                 this.stats.put(statistic, nbttagcompound2.getInt(s2));
+                                             }, () -> {
+-                                                ServerStatsCounter.LOGGER.warn("Invalid statistic in {}: Don't know what {} is", this.file, s2);
++                                                if (GaleGlobalConfiguration.get().logToConsole.invalidStatistics) ServerStatsCounter.LOGGER.warn("Invalid statistic in {}: Don't know what {} is", this.file, s2); // Gale - EMC - do not log invalid statistics
+                                             });
+                                         } else {
+-                                            ServerStatsCounter.LOGGER.warn("Invalid statistic value in {}: Don't know what {} is for key {}", new Object[]{this.file, nbttagcompound2.get(s2), s2});
++                                            if (GaleGlobalConfiguration.get().logToConsole.invalidStatistics) ServerStatsCounter.LOGGER.warn("Invalid statistic value in {}: Don't know what {} is for key {}", new Object[]{this.file, nbttagcompound2.get(s2), s2}); // Gale - EMC - do not log invalid statistics
+                                         }
+                                     }
+ 
+                                 }, () -> {
+-                                    ServerStatsCounter.LOGGER.warn("Invalid statistic type in {}: Don't know what {} is", this.file, s1);
++                                    if (GaleGlobalConfiguration.get().logToConsole.invalidStatistics) ServerStatsCounter.LOGGER.warn("Invalid statistic type in {}: Don't know what {} is", this.file, s1); // Gale - EMC - do not log invalid statistics
+                                 });
+                             }
+                         }
+diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
+index 9190885b839bc06042f1c22e4280838621a6936c..044ea3e293a7ad2ae169a7ac8a635c390aa5d393 100644
+--- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
++++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
+@@ -63,6 +63,7 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+         // Gale end - Pufferfish - make chat order verification configurable
+ 
+         public IncludeInTimingsReport includeInTimingsReport;
++
+         public class IncludeInTimingsReport extends ConfigurationPart {
+ 
+             // Gale start - include server.properties in timings
+@@ -98,4 +99,11 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+ 
+     }
+ 
++    public LogToConsole logToConsole;
++    public class LogToConsole extends ConfigurationPart {
++
++        public boolean invalidStatistics = true; // Gale - EMC - do not log invalid statistics
++
++    }
++
+ }

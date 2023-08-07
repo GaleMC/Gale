@@ -1,0 +1,66 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Martijn Muijsers <martijnmuijsers@live.nl>
+Date: Sun, 25 Dec 2022 23:33:28 +0100
+Subject: [PATCH] Broadcast crit animations as the entity being critted
+
+License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+Gale - https://galemc.org
+
+This patch is based on the following patch:
+"Send crit animations as the entity being critted"
+By: PureGero <puregero@gmail.com>
+As part of: MultiPaper (https://github.com/MultiPaper/MultiPaper)
+Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+
+diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
+index 9c99384dac31b94d62d129868ad6f0131dd7bd16..8e216eaafb1b90d4fd373a4384ecff0b1e917835 100644
+--- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
++++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
+@@ -1908,12 +1908,18 @@ public class ServerPlayer extends Player {
+ 
+     @Override
+     public void crit(Entity target) {
+-        this.serverLevel().getChunkSource().broadcastAndSend(this, new ClientboundAnimatePacket(target, 4));
++        // Gale start - MultiPaper - broadcast crit animations as the entity being critted
++        var level = this.serverLevel();
++        level.getChunkSource().broadcastAndSend(level.galeConfig().gameplayMechanics.fixes.broadcastCritAnimationsAsTheEntityBeingCritted ? target : this, new ClientboundAnimatePacket(target, 4));
++        // Gale end - MultiPaper - broadcast crit animations as the entity being critted
+     }
+ 
+     @Override
+     public void magicCrit(Entity target) {
+-        this.serverLevel().getChunkSource().broadcastAndSend(this, new ClientboundAnimatePacket(target, 5));
++        // Gale start - MultiPaper - broadcast crit animations as the entity being critted
++        var level = this.serverLevel();
++        level.getChunkSource().broadcastAndSend(level.galeConfig().gameplayMechanics.fixes.broadcastCritAnimationsAsTheEntityBeingCritted ? target : this, new ClientboundAnimatePacket(target, 5));
++        // Gale end - MultiPaper - broadcast crit animations as the entity being critted
+     }
+ 
+     @Override
+diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
+index c052c33e11a77c5b9af5620f860546e4625e0111..e6e1b8df926ed8942d98a6f906a3e7b588643f56 100644
+--- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
++++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
+@@ -343,6 +343,22 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+             public boolean keepMooshroomRotationAfterShearing = true; // Gale - Purpur - fix cow rotation when shearing mooshroom
+             public boolean checkCanChangeDimensionsBeforeUseEndGateway = false; // Gale - Purpur - end gateway should check if entity can use portal
+ 
++            // Gale start - MultiPaper - broadcast crit animations as the entity being critted
++            /**
++             * Whether to broadcast crit animations as the entity being critted.
++             * This does not affect where the crit animation is shown: it is always shown on the entity being critted.
++             * However, normally (if this setting is set to false), the crit animation is broadcasted as the
++             * player doing the crit, meaning anyone that cannot see the player cannot see the crit.
++             * If this setting is set to true, the crit animation is broadcasted as the entity being hit, meaning
++             * anyone that cannot see the entity cannot see the crit, which makes more sense.
++             * <ul>
++             *     <li><i>Default</i>: false</li>
++             *     <li><i>Vanilla</i>: false</li>
++             * </ul>
++             */
++            public boolean broadcastCritAnimationsAsTheEntityBeingCritted = false;
++            // Gale end - MultiPaper - broadcast crit animations as the entity being critted
++
+             // Gale start - Purpur - fix MC-238526
+             @Setting("mc-238526")
+             public boolean mc238526 = false;
