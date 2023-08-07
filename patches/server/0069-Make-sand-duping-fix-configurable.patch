@@ -59,7 +59,7 @@ index 18eaccb39a4c81338a8cbebe3de03934913ac2a4..a1466d29b896c06f67a6f110270377fd
              }
              // Paper end - fix sand duping
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index 7355c828ab66c23d878e4981be9e44c7d0b13d63..913d113519e28878bbf768d44f1b5bf76c42cd9d 100644
+index 1c4e04fed44e851bb38b64721b87f4b4ff8fd77c..b585236fdbd8de2195cdd411c566a82fef5d6dfb 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 @@ -274,6 +274,13 @@ public class GaleWorldConfiguration extends ConfigurationPart {
@@ -74,5 +74,5 @@ index 7355c828ab66c23d878e4981be9e44c7d0b13d63..913d113519e28878bbf768d44f1b5bf7
 +            
 +        }
  
-     }
+         public boolean enderDragonCanBeRespawnWithEndCrystals = true; // Gale - Pufferfish - make ender dragon respawning with end crystals configurable
  

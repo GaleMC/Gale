@@ -7,16 +7,13 @@ License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index be563b466b9b9312254596ea3b8e116b28cf250c..7355c828ab66c23d878e4981be9e44c7d0b13d63 100644
+index c1c77fc68a6f2898f074a98e286112bdc8cc22ce..1c4e04fed44e851bb38b64721b87f4b4ff8fd77c 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-@@ -255,4 +255,26 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+@@ -258,6 +258,23 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+     public GameplayMechanics gameplayMechanics;
+     public class GameplayMechanics extends ConfigurationPart {
  
-     }
- 
-+    public GameplayMechanics gameplayMechanics;
-+    public class GameplayMechanics extends ConfigurationPart {
-+
 +        // Gale start - variable entity wake-up duration
 +        /**
 +         * This value is <code>σ</code> (the standard deviation) of the inactivity duration ratio,
@@ -34,9 +31,9 @@ index be563b466b9b9312254596ea3b8e116b28cf250c..7355c828ab66c23d878e4981be9e44c7
 +        public double entityWakeUpDurationRatioStandardDeviation = 0.2;
 +        // Gale end - variable entity wake-up duration
 +
-+    }
-+
- }
+         public boolean enderDragonCanBeRespawnWithEndCrystals = true; // Gale - Pufferfish - make ender dragon respawning with end crystals configurable
+ 
+     }
 diff --git a/src/main/java/org/spigotmc/ActivationRange.java b/src/main/java/org/spigotmc/ActivationRange.java
 index 0d04d7f9a9df7140cc35534a3f301f2815faed51..50cd68e40c67b83af4e8008ce93782a060658dd4 100644
 --- a/src/main/java/org/spigotmc/ActivationRange.java

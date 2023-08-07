@@ -1,0 +1,60 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Martijn Muijsers <martijnmuijsers@live.nl>
+Date: Mon, 7 Aug 2023 21:35:57 +0200
+Subject: [PATCH] Make ender dragon respawning with end crystals configurable
+
+The original Pufferfish description has been included below for reference,
+but please note that on Gale, there is no need to disable end crystal
+spawning for performance: Gale already contains other performance
+enhancements that make the end crystal checks very fast.
+
+License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+Gale - https://galemc.org
+
+This patch is based on the following patch:
+"Option to disable end crystal dragon respawning"
+By: Kevin Raneri <kevin.raneri@gmail.com>
+As part of: Pufferfish (https://github.com/pufferfish-gg/Pufferfish)
+Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+
+* Pufferfish description *
+
+On servers that expect end crystal fights in the end dimension,
+disabling this will prevent the server from performing an expensive
+search to attempt respawning the ender dragon whenever a player places
+an end crystal.
+
+diff --git a/src/main/java/net/minecraft/world/item/EndCrystalItem.java b/src/main/java/net/minecraft/world/item/EndCrystalItem.java
+index ca1edc083847b47bb450b291723aca778a5912dc..b754b6248249ddb693ada67cb940f340de9acbaf 100644
+--- a/src/main/java/net/minecraft/world/item/EndCrystalItem.java
++++ b/src/main/java/net/minecraft/world/item/EndCrystalItem.java
+@@ -53,11 +53,13 @@ public class EndCrystalItem extends Item {
+                         // CraftBukkit end
+                         world.addFreshEntity(entityendercrystal);
+                         world.gameEvent((Entity) context.getPlayer(), GameEvent.ENTITY_PLACE, blockposition1);
++                        if (world.galeConfig().gameplayMechanics.enderDragonCanBeRespawnWithEndCrystals) { // Gale - Pufferfish - make ender dragon respawning with end crystals configurable
+                         EndDragonFight enderdragonbattle = ((ServerLevel) world).getDragonFight();
+ 
+                         if (enderdragonbattle != null) {
+                             enderdragonbattle.tryRespawn();
+                         }
++                        } // Gale - Pufferfish - make ender dragon respawning with end crystals configurable
+                     }
+ 
+                     context.getItemInHand().shrink(1);
+diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
+index d34ee90eaf160a72d4898feed13d94b0b61eded3..54abeaf23ab6e1dc5c78ac3996334c9b7718cc9d 100644
+--- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
++++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
+@@ -120,4 +120,11 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+ 
+     }
+ 
++    public GameplayMechanics gameplayMechanics;
++    public class GameplayMechanics extends ConfigurationPart {
++
++        public boolean enderDragonCanBeRespawnWithEndCrystals = true; // Gale - Pufferfish - make ender dragon respawning with end crystals configurable
++
++    }
++
+ }
