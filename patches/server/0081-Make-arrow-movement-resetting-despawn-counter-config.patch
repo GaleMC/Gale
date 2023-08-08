@@ -55,7 +55,7 @@ index 7226be19248a1ffb8ff2c89b55882529d33a6c0c..cff4d09af11d1741bf3301b457555d71
  
      @Override
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index d3c567390d3e9acb8f69aba16d5eb270f971eaeb..f6ac2c897f63737baecbefdb7cf22302b7a31b68 100644
+index 1b5367474c69b2073a643287a29e0beda4a9f08a..c57275584b56d9d32d4b5f303423ffeb1de19854 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 @@ -274,7 +274,9 @@ public class GaleWorldConfiguration extends ConfigurationPart {

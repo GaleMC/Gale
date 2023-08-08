@@ -1,0 +1,33 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Dreeam <61569423+Dreeam-qwq@users.noreply.github.com>
+Date: Sun, 6 Nov 2022 04:32:27 -0500
+Subject: [PATCH] Make tripwire duping fix configurable
+
+License: MIT (https://opensource.org/licenses/MIT)
+Leaf - https://github.com/Winds-Studio/Leaf
+
+diff --git a/src/main/java/net/minecraft/world/level/block/TripWireBlock.java b/src/main/java/net/minecraft/world/level/block/TripWireBlock.java
+index cb2ff8d94308c637a498d2737f86f6af4c9c1b83..eb1ecbbb5c0f887ee1c7de85a6137f2f182b3fc0 100644
+--- a/src/main/java/net/minecraft/world/level/block/TripWireBlock.java
++++ b/src/main/java/net/minecraft/world/level/block/TripWireBlock.java
+@@ -78,7 +78,7 @@ public class TripWireBlock extends Block {
+     public void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean moved) {
+         if (io.papermc.paper.configuration.GlobalConfiguration.get().blockUpdates.disableTripwireUpdates) return; // Paper - prevent adjacent tripwires from updating
+         if (!moved && !state.is(newState.getBlock())) {
+-            this.updateSource(world, pos, (BlockState) state.setValue(TripWireBlock.POWERED, true), true); // Paper - fix state inconsistency
++            this.updateSource(world, pos, (BlockState) state.setValue(TripWireBlock.POWERED, true), world.galeConfig().gameplayMechanics.fixes.tripwireDuping); // Paper - fix state inconsistency // Gale - Leaf - make tripwire duping fix configurable
+         }
+     }
+ 
+diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
+index 636892ac5af6b4c1989c12cf15b75d965f60512a..18a4ab9f8549fac95d703d9fff4b74e4ae6a9b4f 100644
+--- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
++++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
+@@ -279,6 +279,7 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+         public class Fixes extends ConfigurationPart {
+ 
+             public boolean sandDuping = true; // Gale - Purpur - make sand duping fix configurable
++            public boolean tripwireDuping = true; // Gale - Leaf - make tripwire duping fix configurable
+ 
+         }
+ 

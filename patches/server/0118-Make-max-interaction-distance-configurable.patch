@@ -86,7 +86,7 @@ index d025232b43af3cb8dc28dff2e3e05c72e490901d..06d75d94af6aff29d542d0c5e150d8f7
  
      public void spawnDustParticles(Level world, BlockHitResult hitResult, BlockState state, Vec3 userRotation, HumanoidArm arm) {
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index 6e5ca5cd9762fa2ca0b91fb290eac72890693643..db9d461a05fb253ee4f1273e0fb9015c6c46a4bf 100644
+index 392e0c346ee9f11d21bcc78c5c59f2baab5f391d..243a76badb7e09ce4dcf7d5dd8ed57d55768b341 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 @@ -271,7 +271,7 @@ public class GaleWorldConfiguration extends ConfigurationPart {
@@ -119,7 +119,7 @@ index 6e5ca5cd9762fa2ca0b91fb290eac72890693643..db9d461a05fb253ee4f1273e0fb9015c
          public Fixes fixes;
          public class Fixes extends ConfigurationPart {
  
-@@ -324,6 +338,11 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+@@ -325,6 +339,11 @@ public class GaleWorldConfiguration extends ConfigurationPart {
  
          public boolean tryRespawnEnderDragonAfterEndCrystalPlace = true; // Gale - Pufferfish - make ender dragon respawn attempt after placing end crystals configurable
  

@@ -38,10 +38,10 @@ index 9c99384dac31b94d62d129868ad6f0131dd7bd16..8e216eaafb1b90d4fd373a4384ecff0b
  
      @Override
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index 6a804c026bd4c03462a3031338296a898b5356ef..d80c55aa3d256e1fe7e4dc8dfe26110acd74711a 100644
+index 589ba88b01f23ba9d0b2396e03b0885e88302ab5..faf9ece6dfea15efaae6d7d6501e3a0ae47aed59 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-@@ -343,6 +343,22 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+@@ -344,6 +344,22 @@ public class GaleWorldConfiguration extends ConfigurationPart {
              public boolean keepMooshroomRotationAfterShearing = true; // Gale - Purpur - fix cow rotation when shearing mooshroom
              public boolean checkCanChangeDimensionsBeforeUseEndGateway = false; // Gale - Purpur - end gateway should check if entity can use portal
  
