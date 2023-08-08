@@ -28,14 +28,14 @@ index c0a80824a0307ea673805015119cc834b268f0dc..d7c6e90ccf3a8ce58e5533c5158ce626
  
                      return playerChatMessage;
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index 241431b3d118e402e98710929102c7502af813bf..cd15e6db2f266a3221a26c344bf67af6ad7b79c7 100644
+index aac521e0bf2ecda0d750ef3a209af6b6c730c102..d172c2165197e553198edb6d7dcc3a9796c35b1e 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-@@ -111,6 +111,7 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+@@ -112,6 +112,7 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
          public Chat chat;
          public class Chat extends ConfigurationPart {
              public boolean emptyMessageWarning = false; // Gale - do not log empty message warnings
 +            public boolean expiredMessageWarning = false; // Gale - do not log expired message warnings
          }
  
-     }
+         // Gale start - Purpur - do not log plugin library loads

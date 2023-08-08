@@ -44,10 +44,10 @@ index 2ff578e4a953ffcf5176815ba8e3f06f73499989..0d034a1b810e3840055a10ca1960eecb
      }
  
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index 8692e7eb8b2b08fc3c5132adcc4262759f579da2..8bf9763c9c359cfc45d1c866d667fa01e6bd0bf6 100644
+index c7622ff665c066b22c331d887a9f052f704e81e7..4cb41ab602b05a4d2b7639c86780127d1d122a50 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-@@ -107,6 +107,7 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+@@ -108,6 +108,7 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
          public boolean setBlockInFarChunk = true; // Gale - Purpur - do not log setBlock in far chunks
          public boolean unrecognizedRecipes = false; // Gale - Purpur - do not log unrecognized recipes
          public boolean legacyMaterialInitialization = false; // Gale - Purpur - do not log legacy Material initialization

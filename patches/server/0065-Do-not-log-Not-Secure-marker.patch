@@ -49,14 +49,14 @@ index 22697de39b8d00a522689d5abf894621cf051c89..cf717e46b82d8842c97d2c8aa172d02b
          boolean flag1 = false;
  
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index 91e02aa9bdd1ac68a883c1c0a0c70c51c37ce491..8692e7eb8b2b08fc3c5132adcc4262759f579da2 100644
+index 785bc2c67aadf2062802a998a96af3b139468386..c7622ff665c066b22c331d887a9f052f704e81e7 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-@@ -113,6 +113,7 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+@@ -114,6 +114,7 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
              public boolean emptyMessageWarning = false; // Gale - do not log empty message warnings
              public boolean expiredMessageWarning = false; // Gale - do not log expired message warnings
              public boolean outOfOrderMessageWarning = false; // Gale - do not log out-of-order message warnings
 +            public boolean notSecureMarker = true; // Gale - do not log Not Secure marker
          }
  
-     }
+         // Gale start - Purpur - do not log plugin library loads
