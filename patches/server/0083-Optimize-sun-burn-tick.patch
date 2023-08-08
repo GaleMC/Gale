@@ -13,7 +13,7 @@ As part of: JettPack (https://gitlab.com/Titaniumtown/JettPack)
 Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index c6d41c3650d24ebfbb57b75a1d76a12aa6a22faf..bd82f2374dc991dea21b83ae44d7f5708dc4e357 100644
+index 1e43237008827538773d3299778d6778bee4049b..ef85df48cfac8af3c15df0d686eea73c1346423c 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -305,7 +305,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {

@@ -31,7 +31,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 diff --git a/src/main/java/net/minecraft/server/level/ChunkMap.java b/src/main/java/net/minecraft/server/level/ChunkMap.java
-index 31963a0931bcd3465e46b9c875e89ac56aead62d..caa765c6264e14cc66973267f94074c7056fe122 100644
+index 67d778ef115fc1e09fc8fa9c21d17613a11ca17f..eb12a3c0aefb3d6a42f08439db1ca51e3db65241 100644
 --- a/src/main/java/net/minecraft/server/level/ChunkMap.java
 +++ b/src/main/java/net/minecraft/server/level/ChunkMap.java
 @@ -1549,8 +1549,30 @@ public class ChunkMap extends ChunkStorage implements ChunkHolder.PlayerProvider

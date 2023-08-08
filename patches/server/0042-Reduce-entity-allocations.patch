@@ -31,7 +31,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 93255c7388c1a2f281f508f8ca34571bf565accd..c27af8fc81f09abbb99b2b9cd990477298b210ed 100644
+index 32ec0620e9d8c900df5ce78c1ff5f306bff969d2..14ce63f8fbac2214f1653a5388043de0420d7223 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -433,6 +433,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {

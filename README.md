@@ -42,8 +42,9 @@ Of course, this fork would not exist without the years-long work of all the cont
 Additional thanks and friendly greetings go out to the following forks and other projects, for their code, shared knowledge or generous support:
 * [Airplane](https://github.com/TECHNOVE/Airplane)
 * [Purpur](https://github.com/PurpurMC/Purpur)
-* [Mirai](https://github.com/etil2jz/Mirai)
 * [Leaf](https://github.com/Winds-Studio/Leaf)
+* [Mirai](https://github.com/etil2jz/Mirai)
+* [Kaiiju](https://github.com/KaiijuMC/Kaiiju)
 * [KeYi](https://github.com/MC-Multithreading-Lab/KeYi-MT)
 * [EmpireCraft](https://github.com/starlis/empirecraft)
 * [Slice](https://github.com/Cryptite/Slice)
@@ -52,7 +53,6 @@ Additional thanks and friendly greetings go out to the following forks and other
 * [VMP](https://github.com/RelativityMC/VMP-fabric)
 * [C2ME](https://github.com/RelativityMC/C2ME-fabric)
 * [MultiPaper](https://github.com/MultiPaper/MultiPaper)
-* [Patina](https://github.com/PatinaMC/Patina)
 * MCMT ([Fabric](https://github.com/himekifee/MCMTFabric), [Forge](https://github.com/jediminer543/JMT-MCMT))
 
 ## License
