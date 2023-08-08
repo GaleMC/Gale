@@ -45,6 +45,7 @@ Additional thanks and friendly greetings go out to the following forks and other
 * [Leaf](https://github.com/Winds-Studio/Leaf)
 * [Mirai](https://github.com/etil2jz/Mirai)
 * [Kaiiju](https://github.com/KaiijuMC/Kaiiju)
+* [Plazma](https://github.com/PlazmaMC/Plazma)
 * [KeYi](https://github.com/MC-Multithreading-Lab/KeYi-MT)
 * [EmpireCraft](https://github.com/starlis/empirecraft)
 * [Slice](https://github.com/Cryptite/Slice)
