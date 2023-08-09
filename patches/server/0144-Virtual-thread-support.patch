@@ -7,12 +7,12 @@ License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/com/destroystokyo/paper/Metrics.java b/src/main/java/com/destroystokyo/paper/Metrics.java
-index 3ebecc68b7c38c94a5c20e4b8ac1e2fa5d69321f..1a96749d1a16eaf596261365b1beee30123cb4b0 100644
+index 5a85df87042a28ba6f7f5840fa80c5aaea62bbee..78a76b6f7bedf8aef94614fcb654c2cc3d6b3749 100644
 --- a/src/main/java/com/destroystokyo/paper/Metrics.java
 +++ b/src/main/java/com/destroystokyo/paper/Metrics.java
-@@ -874,6 +874,11 @@ public class Metrics {
-                 metrics.addCustomChart(new Metrics.DrilldownPie("gale_semantic_version", () -> semanticVersionMap));
-                 // Gale end - semantic version - include in metrics
+@@ -914,6 +914,11 @@ public class Metrics {
+                 }));
+                 // Gale end - SIMD support - include in metrics
  
 +                // Gale start - virtual thread support - include in metrics
 +                var virtualThreadSupport = String.valueOf(org.galemc.gale.util.VirtualThreads.areVirtualThreadsEnabled);

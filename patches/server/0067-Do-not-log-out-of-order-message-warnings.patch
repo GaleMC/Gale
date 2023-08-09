@@ -20,10 +20,10 @@ index ba2eb5818c1170eea9f455b7caeb3484e51ec395..1871a4ac9616ddc533dbbe6ae15022bf
              this.disconnect(Component.translatable("multiplayer.disconnect.out_of_order_chat"), org.bukkit.event.player.PlayerKickEvent.Cause.OUT_OF_ORDER_CHAT); // Paper - kick event ca
              }); // Paper - push to main
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index d172c2165197e553198edb6d7dcc3a9796c35b1e..785bc2c67aadf2062802a998a96af3b139468386 100644
+index dd4fb27eec651c4006b4ec4b7fe4d8d61e87e4b0..b1ae641c0cbbe597085f9b19a95cba98520374e1 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-@@ -113,6 +113,7 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+@@ -121,6 +121,7 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
          public class Chat extends ConfigurationPart {
              public boolean emptyMessageWarning = false; // Gale - do not log empty message warnings
              public boolean expiredMessageWarning = false; // Gale - do not log expired message warnings

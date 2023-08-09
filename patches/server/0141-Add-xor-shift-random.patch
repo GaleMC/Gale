@@ -92,7 +92,7 @@ index d1c7ab67cba881d96b7a5e9220130d86d0514304..ef1b30f3e757f7abaeb55728b50643ee
  
      public CraftFirework(CraftServer server, FireworkRocketEntity entity) {
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index 2ea8fbfe9b286e91b9e073a77abb6706f2bb26ae..d6f161335a9b97c48a0d69a295e288eae0898971 100644
+index 4114088e56a7974b2da84ff90ab66f72ed538b61..d6f161335a9b97c48a0d69a295e288eae0898971 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 @@ -6,6 +6,7 @@ import io.papermc.paper.configuration.Configuration;
@@ -103,10 +103,15 @@ index 2ea8fbfe9b286e91b9e073a77abb6706f2bb26ae..d6f161335a9b97c48a0d69a295e288ea
  import org.spongepowered.configurate.objectmapping.meta.Setting;
  
  import java.util.Locale;
-@@ -52,6 +53,40 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+@@ -52,13 +53,39 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
  
          }
  
+-        // Gale start - Pufferfish - SIMD support
+-        public Simd simd;
+-        public class Simd extends ConfigurationPart {
+-            public boolean warnIfDisabled = true;
+-            public boolean logVectorSizesToConsole = false;
 +        // Gale start - xor-shift random
 +        /**
 +         * Whether to use {@link org.galemc.gale.random.XorShiftRandom} instead of the default implementation
@@ -138,12 +143,12 @@ index 2ea8fbfe9b286e91b9e073a77abb6706f2bb26ae..d6f161335a9b97c48a0d69a295e288ea
 +             */
 +            public boolean elytraFireworkSpeed = true;
 +
-+        }
+         }
+-        // Gale end - Pufferfish - SIMD support
 +        // Gale end - xor-shift random
-+
+ 
      }
  
-     public GameplayMechanics gameplayMechanics;
 diff --git a/src/main/java/org/galemc/gale/random/XorShiftRandom.java b/src/main/java/org/galemc/gale/random/XorShiftRandom.java
 new file mode 100644
 index 0000000000000000000000000000000000000000..60dc2c1deb0749168d03c5d94136e613b09ce534

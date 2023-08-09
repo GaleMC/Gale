@@ -46,10 +46,10 @@ index cc7222cc7e53e8ae693e4e94ad53391db7a663c4..9d1d7033fdd2ae65b8fd323e9199b9d5
                          continue;
                      }
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index 2a3b50e09883aad815b88e5b4c87aa20942a20ed..1c0d4dbd642c03f25fa8c4bb0f5880e038960d84 100644
+index 25f07bb3a2c212dca6e25100014c7edbe280f011..a40d4237804300fbb939ad2212827d9bf46a3bf0 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-@@ -81,6 +81,19 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+@@ -89,6 +89,19 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
          public int premiumAccountSlowLoginTimeout = -1;
          // Gale end - make slow login timeout configurable
  

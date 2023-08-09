@@ -1,0 +1,172 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Martijn Muijsers <martijnmuijsers@live.nl>
+Date: Thu, 24 Nov 2022 01:21:32 +0100
+Subject: [PATCH] SIMD support
+
+License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+Gale - https://galemc.org
+
+This patch is based on the following patch:
+"Add SIMD utilities"
+By: Kevin Raneri <kevin.raneri@gmail.com>
+As part of: Pufferfish (https://github.com/pufferfish-gg/Pufferfish)
+Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+
+diff --git a/build.gradle.kts b/build.gradle.kts
+index 8825fd8ff27ba641deaa61c8a5cadb2b236b6512..adcee0a55ed720cb76f9dcd67be9be8f46fb925c 100644
+--- a/build.gradle.kts
++++ b/build.gradle.kts
+@@ -95,6 +95,7 @@ tasks.withType<JavaCompile> {
+     compilerArgs.add("-Xlint:-module")
+     compilerArgs.add("-Xlint:-removal")
+     compilerArgs.add("-Xlint:-dep-ann")
++    compilerArgs.add("--add-modules=jdk.incubator.vector") // Gale - Pufferfish - SIMD support
+ }
+ // Gale end - hide irrelevant compilation warnings
+ 
+@@ -152,6 +153,7 @@ tasks.withType<Javadoc> {
+     }
+ 
+     options.addStringOption("Xdoclint:none", "-quiet") // Gale - hide irrelevant compilation warnings
++    options.addStringOption("-add-modules", "jdk.incubator.vector") // Gale - Pufferfish - SIMD support
+ }
+ 
+ // Paper start
+diff --git a/src/main/java/gg/pufferfish/pufferfish/simd/SIMDChecker.java b/src/main/java/gg/pufferfish/pufferfish/simd/SIMDChecker.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..90d87374e9dddd79aeca3e05f9cd6c82eb3aad27
+--- /dev/null
++++ b/src/main/java/gg/pufferfish/pufferfish/simd/SIMDChecker.java
+@@ -0,0 +1,48 @@
++// Gale - Pufferfish - SIMD support
++
++package gg.pufferfish.pufferfish.simd;
++
++import jdk.incubator.vector.FloatVector;
++import jdk.incubator.vector.IntVector;
++import jdk.incubator.vector.VectorSpecies;
++
++/**
++ * Basically, java is annoying and we have to push this out to its own class.
++ */
++@Deprecated
++public class SIMDChecker {
++
++    public static void initialize() {
++        if (SIMDDetection.isInitialized()) {
++            return;
++        }
++        SIMDDetection.setInitialized();
++        try {
++            int javaVersion = SIMDDetection.getJavaVersion();
++            if (javaVersion < 17) {
++                return;
++            }
++            SIMDDetection.supportingJavaVersion = true;
++            SIMDDetection.testRunStarted = true;
++
++            VectorSpecies<Integer> ISPEC = IntVector.SPECIES_PREFERRED;
++            VectorSpecies<Float> FSPEC = FloatVector.SPECIES_PREFERRED;
++
++            SIMDDetection.intVectorBitSize = ISPEC.vectorBitSize();
++            SIMDDetection.floatVectorBitSize = FSPEC.vectorBitSize();
++
++            SIMDDetection.intElementSize = ISPEC.elementSize();
++            SIMDDetection.floatElementSize = FSPEC.elementSize();
++
++            SIMDDetection.testRunCompleted = true;
++
++            if (ISPEC.elementSize() < 2 || FSPEC.elementSize() < 2) {
++                SIMDDetection.unsupportingLaneSize = true;
++                return;
++            }
++
++            SIMDDetection.isEnabled = true;
++        } catch (Throwable ignored) {} // Basically, we don't do anything. This lets us detect if it's not functional and disable it.
++    }
++
++}
+diff --git a/src/main/java/gg/pufferfish/pufferfish/simd/SIMDDetection.java b/src/main/java/gg/pufferfish/pufferfish/simd/SIMDDetection.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..b19b6bc85cb08a49f064a4ecb88af858a9a22fe7
+--- /dev/null
++++ b/src/main/java/gg/pufferfish/pufferfish/simd/SIMDDetection.java
+@@ -0,0 +1,78 @@
++// Gale - Pufferfish - SIMD support
++
++package gg.pufferfish.pufferfish.simd;
++
++public class SIMDDetection {
++
++    private static boolean isInitialized = false;
++    static int intVectorBitSize;
++    static int floatVectorBitSize;
++    static int intElementSize;
++    static int floatElementSize;
++    static boolean supportingJavaVersion;
++    static boolean testRunStarted;
++    static boolean testRunCompleted;
++    static boolean unsupportingLaneSize;
++    static boolean isEnabled;
++
++    @SuppressWarnings("deprecation")
++    public static void initialize() {
++        try {
++            SIMDChecker.initialize();
++        } catch (Throwable ignored) {}
++    }
++
++    static void setInitialized() {
++        isInitialized = true;
++    }
++
++    public static boolean isInitialized() {
++        return isInitialized;
++    }
++
++    public static int intVectorBitSize() {
++        return intVectorBitSize;
++    }
++
++    public static int floatVectorBitSize() {
++        return floatVectorBitSize;
++    }
++
++    public static int intElementSize() {
++        return intElementSize;
++    }
++
++    public static int floatElementSize() {
++        return floatElementSize;
++    }
++
++    public static boolean supportingJavaVersion() {
++        return supportingJavaVersion;
++    }
++
++    public static boolean testRunCompleted() {
++        return testRunCompleted;
++    }
++
++    public static boolean unsupportingLaneSize() {
++        return unsupportingLaneSize;
++    }
++
++    public static boolean isEnabled() {
++        return isEnabled;
++    }
++
++    public static int getJavaVersion() {
++        // https://stackoverflow.com/a/2591122
++        String version = System.getProperty("java.version");
++        if(version.startsWith("1.")) {
++            version = version.substring(2, 3);
++        } else {
++            int dot = version.indexOf(".");
++            if(dot != -1) { version = version.substring(0, dot); }
++        }
++        version = version.split("-")[0]; // Azul is stupid
++        return Integer.parseInt(version);
++    }
++
++}

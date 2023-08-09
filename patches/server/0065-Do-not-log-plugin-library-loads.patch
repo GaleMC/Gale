@@ -37,7 +37,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index 241431b3d118e402e98710929102c7502af813bf..aac521e0bf2ecda0d750ef3a209af6b6c730c102 100644
+index 133c10907358ae6064d2c1a18c967a00ad358127..7820833f15d07ffc2fac5cdd4f7602e920e132ec 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 @@ -4,6 +4,7 @@ package org.galemc.gale.configuration;
@@ -48,7 +48,7 @@ index 241431b3d118e402e98710929102c7502af813bf..aac521e0bf2ecda0d750ef3a209af6b6
  import org.spongepowered.configurate.objectmapping.meta.Setting;
  
  @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal", "FieldMayBeFinal", "NotNullFieldNotInitialized", "InnerClassMayBeStatic"})
-@@ -113,6 +114,24 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+@@ -121,6 +122,24 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
              public boolean emptyMessageWarning = false; // Gale - do not log empty message warnings
          }
  

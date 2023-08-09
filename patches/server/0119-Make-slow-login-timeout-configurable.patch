@@ -23,10 +23,10 @@ index 00166d86baad60beed5896871c9b9118fefc20b6..ded7811cd10bc436957ed9f1576f3231
          }
  
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index be93695a82d79c55d8e6b747b80139d8994032bb..2a3b50e09883aad815b88e5b4c87aa20942a20ed 100644
+index 88a5ac2436b0aaaeb3e9e23ebd88105e8850769f..25f07bb3a2c212dca6e25100014c7edbe280f011 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-@@ -67,6 +67,20 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+@@ -75,6 +75,20 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
          public boolean verifyChatOrder = true;
          // Gale end - Pufferfish - make chat order verification configurable
  

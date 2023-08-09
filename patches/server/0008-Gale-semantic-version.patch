@@ -29,7 +29,7 @@ index f3179676ec933db1697d8077b1c69082d00192d0..3ebecc68b7c38c94a5c20e4b8ac1e2fa
          }
 diff --git a/src/main/java/org/galemc/gale/version/GaleSemanticVersion.java b/src/main/java/org/galemc/gale/version/GaleSemanticVersion.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..522d1522e4f91f4ab3b941c804691915d609aae1
+index 0000000000000000000000000000000000000000..0b1f2238931e074ed90b737c5ee41f603ed688f4
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/version/GaleSemanticVersion.java
 @@ -0,0 +1,37 @@
@@ -57,7 +57,7 @@ index 0000000000000000000000000000000000000000..522d1522e4f91f4ab3b941c804691915
 +     * The <code>patch</code> version is incremented for small changes that do not affect the goal of any feature,
 +     * such as bug fixes or changes in wording.
 +     */
-+    public static final @NotNull String version = "0.4.0";
++    public static final @NotNull String version = "0.5.0";
 +
 +    /**
 +     * The "<code>major.minor</code>" portion of the {@link #version}.
