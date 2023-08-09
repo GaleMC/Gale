@@ -31,7 +31,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-index 811a35412b5cba79287195762e7a205eca6aa442..a8d263c55974fb49259590851d4a2d0981d02129 100644
+index 53729fcbb297806fb0de78887e4739fbe19dbb69..4594730450e87e71f86c67af205610af1319d4df 100644
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 @@ -50,7 +50,10 @@ public class GlobalConfiguration extends ConfigurationPart {

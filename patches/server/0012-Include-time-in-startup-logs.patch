@@ -7,7 +7,7 @@ License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/org/bukkit/craftbukkit/Main.java b/src/main/java/org/bukkit/craftbukkit/Main.java
-index bfa091f72d6f477bcaf63d364639a1b4df9b1987..a075eaa65541ffcf4affa07e60c163fe7a0b9b4b 100644
+index 776b7fc26fe96b69be260bbd36efae147d988640..98eb3f64f9e057564ad041085d1676945a1ac182 100644
 --- a/src/main/java/org/bukkit/craftbukkit/Main.java
 +++ b/src/main/java/org/bukkit/craftbukkit/Main.java
 @@ -2,6 +2,7 @@ package org.bukkit.craftbukkit;

@@ -7,7 +7,7 @@ License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/com/destroystokyo/paper/Metrics.java b/src/main/java/com/destroystokyo/paper/Metrics.java
-index 4b002e8b75d117b726b0de274a76d3596fce015b..a83a1dc5a3ecc3780e12721bb3022867d80b34d4 100644
+index 4b002e8b75d117b726b0de274a76d3596fce015b..f3179676ec933db1697d8077b1c69082d00192d0 100644
 --- a/src/main/java/com/destroystokyo/paper/Metrics.java
 +++ b/src/main/java/com/destroystokyo/paper/Metrics.java
 @@ -593,7 +593,7 @@ public class Metrics {
@@ -24,7 +24,7 @@ index 4b002e8b75d117b726b0de274a76d3596fce015b..a83a1dc5a3ecc3780e12721bb3022867
                  metrics.addCustomChart(new Metrics.SingleLineChart("players", () -> Bukkit.getOnlinePlayers().size()));
                  metrics.addCustomChart(new Metrics.SimplePie("online_mode", () -> Bukkit.getOnlineMode() ? "online" : "offline"));
 -                final String paperVersion;
-+                final String galeVersion; // Gale - branding changes
++                final String galeVersion; // Gale - branding changes - metrics
                  final String implVersion = org.bukkit.craftbukkit.Main.class.getPackage().getImplementationVersion();
                  if (implVersion != null) {
                      final String buildOrHash = implVersion.substring(implVersion.lastIndexOf('-') + 1);
@@ -32,10 +32,218 @@ index 4b002e8b75d117b726b0de274a76d3596fce015b..a83a1dc5a3ecc3780e12721bb3022867
 +                    galeVersion = "git-Gale-%s-%s".formatted(Bukkit.getServer().getMinecraftVersion(), buildOrHash); // Gale - branding changes - metrics
                  } else {
 -                    paperVersion = "unknown";
-+                    galeVersion = "unknown"; // Gale - branding changes
++                    galeVersion = "unknown"; // Gale - branding changes - metrics
                  }
 -                metrics.addCustomChart(new Metrics.SimplePie("paper_version", () -> paperVersion));
 +                metrics.addCustomChart(new Metrics.SimplePie("gale_version", () -> galeVersion)); // Gale - branding changes - metrics
  
                  metrics.addCustomChart(new Metrics.DrilldownPie("java_version", () -> {
                      Map<String, Map<String, Integer>> map = new HashMap<>();
+@@ -676,6 +676,194 @@ public class Metrics {
+ 
+                     return map;
+                 }));
++
++                // Gale start - metrics - proxy
++                metrics.addCustomChart(new Metrics.DrilldownPie("proxy", () -> {
++                    String type;
++                    boolean onlineMode;
++                    var proxiesConfig = io.papermc.paper.configuration.GlobalConfiguration.get().proxies;
++                    if (proxiesConfig.velocity.enabled) {
++                        type = "Velocity";
++                        onlineMode = proxiesConfig.velocity.onlineMode;
++                    } else if (org.spigotmc.SpigotConfig.bungee) {
++                        type = "BungeeCord";
++                        onlineMode = proxiesConfig.bungeeCord.onlineMode;
++                    } else {
++                        type = "none";
++                        onlineMode = Bukkit.getOnlineMode();
++                    }
++
++                    Map<String, Map<String, Integer>> map = new HashMap<>();
++
++                    // insert online mode as lower dimension
++                    Map<String, Integer> entry = new HashMap<>();
++                    entry.put(onlineMode ? "online" : "offline", 1);
++
++                    // create type as higher dimension
++                    map.put(type, entry);
++
++                    return map;
++                }));
++                // Gale end - metrics - proxy
++
++                // Gale start - metrics - per-server player count
++                metrics.addCustomChart(new Metrics.DrilldownPie("per_server_player_count", () -> {
++                    Map<String, Map<String, Integer>> map = new HashMap<>();
++
++                    // count players
++                    int playerCount = Bukkit.getOnlinePlayers().size();
++
++                    // insert real value as lower dimension
++                    Map<String, Integer> entry = new HashMap<>();
++                    entry.put(String.valueOf(playerCount), 1);
++
++                    // create buckets as higher dimension
++                    if (playerCount <= 5) {
++                        map.put(String.valueOf(playerCount), entry);
++                    } else if (playerCount > 1000) {
++                        map.put("> 1000", entry);
++                    } else {
++                        int divisor;
++                        if (playerCount <= 50) {
++                            divisor = 5;
++                        } else if (playerCount <= 100) {
++                            divisor = 10;
++                        } else if (playerCount <= 250) {
++                            divisor = 25;
++                        } else if (playerCount <= 500) {
++                            divisor = 50;
++                        } else {
++                            divisor = 100;
++                        }
++                        int start = (playerCount - 1) / divisor * divisor + 1;
++                        int end = start + divisor - 1;
++                        map.put(start + "-" + end, entry);
++                    }
++
++                    return map;
++                }));
++                // Gale end - metrics - per-server player count
++
++                // Gale start - metrics - plugin count
++                metrics.addCustomChart(new Metrics.DrilldownPie("plugin_count", () -> {
++                    Map<String, Map<String, Integer>> map = new HashMap<>();
++
++                    // count plugins
++                    int pluginCount = Bukkit.getPluginManager().getPlugins().length;
++
++                    // insert real value as lower dimension
++                    Map<String, Integer> entry = new HashMap<>();
++                    entry.put(String.valueOf(pluginCount), 1);
++
++                    // create buckets as higher dimension
++                    if (pluginCount <= 5) {
++                        map.put(String.valueOf(pluginCount), entry);
++                    } else if (pluginCount > 1000) {
++                        map.put("> 1000", entry);
++                    } else {
++                        int divisor;
++                        if (pluginCount <= 50) {
++                            divisor = 5;
++                        } else if (pluginCount <= 100) {
++                            divisor = 10;
++                        } else if (pluginCount <= 250) {
++                            divisor = 25;
++                        } else if (pluginCount <= 500) {
++                            divisor = 50;
++                        } else {
++                            divisor = 100;
++                        }
++                        int start = (pluginCount - 1) / divisor * divisor + 1;
++                        int end = start + divisor - 1;
++                        map.put(start + "-" + end, entry);
++                    }
++
++                    return map;
++                }));
++                // Gale end - metrics - plugin count
++
++                // Gale start - metrics - netty threads
++                metrics.addCustomChart(new Metrics.SimplePie("netty_thread_count", () -> {
++                    // Try to get the number of Netty threads from the system property
++                    try {
++                        return System.getProperty("io.netty.eventLoopThreads");
++                    } catch (Exception ignored) {}
++                    // Otherwise, we fall back to nothing currently (reading from the Spigot configuration causes a re-read which is undesirable)
++                    return null;
++                }));
++                // Gale end - metrics - netty threads
++
++                metrics.addCustomChart(new Metrics.SimplePie("chunk_system_io_thread_count", () -> String.valueOf(io.papermc.paper.chunk.system.scheduling.ChunkTaskScheduler.newChunkSystemIOThreads))); // Gale - metrics - chunk system IO threads
++
++                // Gale start - metrics - physical cores
++                metrics.addCustomChart(new Metrics.SimplePie("physical_core_count", () -> {
++                    try {
++                        int physicalProcessorCount = new oshi.SystemInfo().getHardware().getProcessor().getPhysicalProcessorCount();
++                        if (physicalProcessorCount > 0) {
++                            return String.valueOf(physicalProcessorCount);
++                        }
++                    } catch (Exception ignored) {}
++                    return null;
++                }));
++                // Gale end - metrics - physical cores
++
++                // Gale start - metrics - physical memory
++                metrics.addCustomChart(new Metrics.DrilldownPie("physical_memory_total", () -> {
++                    try {
++                        long physicalMemory = new oshi.SystemInfo().getHardware().getMemory().getTotal();
++                        if (physicalMemory > 0) {
++
++                            Map<String, Map<String, Integer>> map = new HashMap<>();
++
++                            // use floored MB as lower dimension
++                            var flooredMB = physicalMemory / (1L << 20);
++                            Map<String, Integer> entry = new HashMap<>();
++                            entry.put(flooredMB < 1 ? "< 1M" : flooredMB + "M", 1);
++
++                            // use floored GB as higher dimension
++                            var flooredGB = physicalMemory / (1L << 30);
++                            map.put(flooredGB < 1 ? "< 1G" : flooredGB + "G", entry);
++
++                            return map;
++
++                        }
++                    } catch (Exception ignored) {}
++                    return null;
++                }));
++                // Gale end - metrics - physical memory
++
++                // Gale start - metrics - runtime max memory
++                metrics.addCustomChart(new Metrics.DrilldownPie("runtime_max_memory", () -> {
++
++                    // get memory limit
++                    long maxMemory = Runtime.getRuntime().maxMemory();
++                    if (maxMemory <= 0) {
++                        return null;
++                    }
++
++                    Map<String, Map<String, Integer>> map = new HashMap<>();
++
++                    // in the case of no limit
++                    if (maxMemory == Long.MAX_VALUE) {
++                        Map<String, Integer> entry = new HashMap<>();
++                        entry.put("no limit", 1);
++                        map.put("no limit", entry);
++                        return map;
++                    }
++
++                    // use floored MB as lower dimension
++                    var flooredMB = maxMemory / (1L << 20);
++                    Map<String, Integer> entry = new HashMap<>();
++                    entry.put(flooredMB < 1 ? "< 1M" : flooredMB + "M", 1);
++
++                    // use floored GB as higher dimension
++                    var flooredGB = maxMemory / (1L << 30);
++                    map.put(flooredGB < 1 ? "< 1G" : flooredGB + "G", entry);
++
++                    return map;
++                }));
++                // Gale end - metrics - runtime max memory
++
+             }
+ 
+         }
+diff --git a/src/main/java/io/papermc/paper/chunk/system/scheduling/ChunkTaskScheduler.java b/src/main/java/io/papermc/paper/chunk/system/scheduling/ChunkTaskScheduler.java
+index f975cb93716e137d973ff2f9011acdbef58859a2..d94eb8ca7ce18364d58d05592bbdf3637581460f 100644
+--- a/src/main/java/io/papermc/paper/chunk/system/scheduling/ChunkTaskScheduler.java
++++ b/src/main/java/io/papermc/paper/chunk/system/scheduling/ChunkTaskScheduler.java
+@@ -42,7 +42,7 @@ public final class ChunkTaskScheduler {
+ 
+     private static final Logger LOGGER = LogUtils.getClassLogger();
+ 
+-    static int newChunkSystemIOThreads;
++    public static int newChunkSystemIOThreads; // Gale - metrics - chunk system IO threads - package-private -> public
+     static int newChunkSystemWorkerThreads;
+     static int newChunkSystemGenParallelism;
+     static int newChunkSystemLoadParallelism;
