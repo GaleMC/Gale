@@ -7,17 +7,17 @@ License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/com/destroystokyo/paper/Metrics.java b/src/main/java/com/destroystokyo/paper/Metrics.java
-index f3179676ec933db1697d8077b1c69082d00192d0..3ebecc68b7c38c94a5c20e4b8ac1e2fa5d69321f 100644
+index d10c024a7a5c3dd78e624526974d6c6ca2c0fbfb..432731a10443cd7ee62f79693b27e9759581b9bb 100644
 --- a/src/main/java/com/destroystokyo/paper/Metrics.java
 +++ b/src/main/java/com/destroystokyo/paper/Metrics.java
-@@ -864,6 +864,16 @@ public class Metrics {
+@@ -919,6 +919,16 @@ public class Metrics {
                  }));
                  // Gale end - metrics - runtime max memory
  
 +                // Gale start - semantic version - include in metrics
-+                Map<String, Map<String, Integer>> semanticVersionMap = new HashMap<>();
++                Map<String, Map<String, Integer>> semanticVersionMap = new HashMap<>(2);
 +                {
-+                    Map<String, Integer> entry = new HashMap<>();
++                    Map<String, Integer> entry = new HashMap<>(2);
 +                    entry.put(org.galemc.gale.version.GaleSemanticVersion.version, 1);
 +                    semanticVersionMap.put(org.galemc.gale.version.GaleSemanticVersion.majorMinorVersion, entry);
 +                }
@@ -29,7 +29,7 @@ index f3179676ec933db1697d8077b1c69082d00192d0..3ebecc68b7c38c94a5c20e4b8ac1e2fa
          }
 diff --git a/src/main/java/org/galemc/gale/version/GaleSemanticVersion.java b/src/main/java/org/galemc/gale/version/GaleSemanticVersion.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..0b1f2238931e074ed90b737c5ee41f603ed688f4
+index 0000000000000000000000000000000000000000..3f3486f8a812db6fa85bcd8667dacdbb4d1e481a
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/version/GaleSemanticVersion.java
 @@ -0,0 +1,37 @@
@@ -57,7 +57,7 @@ index 0000000000000000000000000000000000000000..0b1f2238931e074ed90b737c5ee41f60
 +     * The <code>patch</code> version is incremented for small changes that do not affect the goal of any feature,
 +     * such as bug fixes or changes in wording.
 +     */
-+    public static final @NotNull String version = "0.5.0";
++    public static final @NotNull String version = "0.5.1";
 +
 +    /**
 +     * The "<code>major.minor</code>" portion of the {@link #version}.

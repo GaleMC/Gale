@@ -7,47 +7,256 @@ License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/com/destroystokyo/paper/Metrics.java b/src/main/java/com/destroystokyo/paper/Metrics.java
-index 5a85df87042a28ba6f7f5840fa80c5aaea62bbee..78a76b6f7bedf8aef94614fcb654c2cc3d6b3749 100644
+index c2a3839f21afeefb37a760b204a4da43cd64a9ae..2bbf1ee16ab27e81e870e50504ff50b943c4189e 100644
 --- a/src/main/java/com/destroystokyo/paper/Metrics.java
 +++ b/src/main/java/com/destroystokyo/paper/Metrics.java
-@@ -914,6 +914,11 @@ public class Metrics {
+@@ -969,6 +969,22 @@ public class Metrics {
                  }));
                  // Gale end - SIMD support - include in metrics
  
 +                // Gale start - virtual thread support - include in metrics
-+                var virtualThreadSupport = String.valueOf(org.galemc.gale.util.VirtualThreads.areVirtualThreadsEnabled);
-+                metrics.addCustomChart(new Metrics.SimplePie("virtual_thread_support", () -> virtualThreadSupport));
++                Map<String, Map<String, Integer>> virtualThreadSupportMap = new HashMap<>(2);
++                {
++                    Map<String, Integer> entry = new HashMap<>(2);
++                    boolean isSupported = org.galemc.gale.virtualthread.VirtualThreadService.isSupported();
++                    try {
++                        int javaMajorVersion = org.galemc.gale.virtualthread.VirtualThreadService.getJavaMajorVersion();
++                        entry.put(isSupported + " (Java " + javaMajorVersion + ")", 1);
++                    } catch (Exception ignored) {
++                        entry.put(String.valueOf(isSupported), 1);
++                    }
++                    virtualThreadSupportMap.put(String.valueOf(isSupported), entry);
++                }
++                metrics.addCustomChart(new Metrics.DrilldownPie("virtual_thread_support", () -> virtualThreadSupportMap));
 +                // Gale end - virtual thread support - include in metrics
 +
              }
  
          }
-diff --git a/src/main/java/org/galemc/gale/util/VirtualThreads.java b/src/main/java/org/galemc/gale/util/VirtualThreads.java
+diff --git a/src/main/java/org/galemc/gale/virtualthread/DirectVirtualThreadService.java b/src/main/java/org/galemc/gale/virtualthread/DirectVirtualThreadService.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..736cadd95a6ba3e2c4b6053b554e697d90f14d47
+index 0000000000000000000000000000000000000000..12eca4b93797b7f50f333d6cdd93e38bfedd4cd3
 --- /dev/null
-+++ b/src/main/java/org/galemc/gale/util/VirtualThreads.java
-@@ -0,0 +1,150 @@
++++ b/src/main/java/org/galemc/gale/virtualthread/DirectVirtualThreadService.java
+@@ -0,0 +1,50 @@
 +// Gale - virtual thread support
 +
-+package org.galemc.gale.util;
++package org.galemc.gale.virtualthread;
 +
-+import org.jetbrains.annotations.Nullable;
++import org.jetbrains.annotations.NotNull;
 +
-+import java.lang.reflect.Method;
 +import java.util.concurrent.ThreadFactory;
 +
 +/**
-+ * A utility class to detect and provide the ability to use virtual threads when they are available,
-+ * but compile against and run on Java versions that do not support virtual threads.
++ * An implementation of {@link VirtualThreadService} that can create virtual threads directly.
 + *
 + * @author Martijn Muijsers under AGPL-3.0
 + */
-+@SuppressWarnings({"JavadocReference", "Since15"})
-+public final class VirtualThreads {
++final class DirectVirtualThreadService extends VirtualThreadService {
 +
-+    private VirtualThreads() {
-+        throw new RuntimeException();
++    private DirectVirtualThreadService() {
++        super();
++    }
++
++    @Override
++    public @NotNull ThreadFactory createFactory() {
++        // Disabled until Minecraft requires servers to have a Java version that can read class files compiled with functionality from Java 19+ on preview / Java 21+ on stable
++        throw new UnsupportedOperationException();
++//        return Thread.ofVirtual().factory();
++    }
++
++    @Override
++    public @NotNull Thread start(@NotNull Runnable task) {
++        // Disabled until Minecraft requires servers to have a Java version that can read class files compiled with functionality from Java 19+ on preview / Java 21+ on stable
++        throw new UnsupportedOperationException();
++//        Objects.requireNonNull(task, "The task to start a virtual thread cannot be null");
++//        return Thread.ofVirtual().start(task);
++    }
++
++    /**
++     * @return A functional {@link DirectVirtualThreadService}.
++     * @throws Throwable If creating virtual threads directly is not supported by the current runtime.
++     * This could be any {@link Throwable}, including an {@link Exception} or an {@link Error}.
++     */
++    static @NotNull DirectVirtualThreadService create() throws Throwable {
++        // Disabled until Minecraft requires servers to have a Java version that can read class files compiled with functionality from Java 19+ on preview / Java 21+ on stable
++        throw new UnsupportedOperationException();
++//        var service = new DirectVirtualThreadService();
++//        // Run some tests to verify
++//        service.runTest();
++//        // If we end up here, it works
++//        return service;
++    }
++
++}
+diff --git a/src/main/java/org/galemc/gale/virtualthread/ReflectionVirtualThreadService.java b/src/main/java/org/galemc/gale/virtualthread/ReflectionVirtualThreadService.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..07462c644c49dd071e9d43d953b1870199f1c8ce
+--- /dev/null
++++ b/src/main/java/org/galemc/gale/virtualthread/ReflectionVirtualThreadService.java
+@@ -0,0 +1,79 @@
++// Gale - virtual thread support
++
++package org.galemc.gale.virtualthread;
++
++import org.jetbrains.annotations.NotNull;
++
++import java.lang.reflect.Method;
++import java.util.Objects;
++import java.util.concurrent.ThreadFactory;
++
++/**
++ * An implementation of {@link VirtualThreadService} that can create virtual threads using Java reflection.
++ *
++ * @author Martijn Muijsers under AGPL-3.0
++ */
++final class ReflectionVirtualThreadService extends VirtualThreadService {
++
++    /**
++     * The {@link Thread}<code>#ofVirtual()</code> method.
++     */
++    private final @NotNull Method Thread_ofVirtual_method;
++
++    /**
++     * The {@link Thread}<code>.Builder#factory()</code> method.
++     */
++    private final @NotNull Method Thread_Builder_factory_method;
++
++    /**
++     * The {@link Thread}<code>.Builder#start(Runnable)</code> method.
++     */
++    private final @NotNull Method Thread_Builder_start_method;
++
++    private ReflectionVirtualThreadService() throws Throwable {
++        this.Thread_ofVirtual_method = Objects.requireNonNull(Thread.class.getMethod("ofVirtual"));
++        this.Thread_ofVirtual_method.setAccessible(true);
++        // The Thread.Builder class
++        var Thread_Builder_class = Objects.requireNonNull(this.Thread_ofVirtual_method.invoke(null).getClass());
++        this.Thread_Builder_factory_method = Objects.requireNonNull(Thread_Builder_class.getMethod("factory"));
++        this.Thread_Builder_factory_method.setAccessible(true);
++        this.Thread_Builder_start_method = Objects.requireNonNull(Thread_Builder_class.getMethod("start", Runnable.class));
++        this.Thread_Builder_start_method.setAccessible(true);
++    }
++
++    @Override
++    public @NotNull ThreadFactory createFactory() {
++        try {
++            return (ThreadFactory) this.Thread_Builder_factory_method.invoke(this.Thread_ofVirtual_method.invoke(null));
++        } catch (Exception e) {
++            // This should not be possible because it was tested in create()
++            throw new RuntimeException(e);
++        }
++    }
++
++    @Override
++    public @NotNull Thread start(@NotNull Runnable task) {
++        Objects.requireNonNull(task, "The task to start a virtual thread cannot be null");
++        try {
++            return (Thread) this.Thread_Builder_start_method.invoke(this.Thread_ofVirtual_method.invoke(null), task);
++        } catch (Exception e) {
++            // This should not be possible because it was tested in create()
++            throw new RuntimeException(e);
++        }
++    }
++
++    /**
++     * @return A functional {@link ReflectionVirtualThreadService}.
++     * @throws Throwable If creating virtual threads via reflection is not supported by the current runtime.
++     * This could be any {@link Throwable}, including an {@link Exception} or an {@link Error}.
++     */
++    static @NotNull ReflectionVirtualThreadService create() throws Throwable {
++        // This will already throw something if the reflection fails
++        var service = new ReflectionVirtualThreadService();
++        // Run some tests to verify
++        service.runTest();
++        // If we end up here, it works
++        return service;
++    }
++
++}
+diff --git a/src/main/java/org/galemc/gale/virtualthread/VirtualThreadService.java b/src/main/java/org/galemc/gale/virtualthread/VirtualThreadService.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..287cb044e04c031b69397746974e18140e54b4fb
+--- /dev/null
++++ b/src/main/java/org/galemc/gale/virtualthread/VirtualThreadService.java
+@@ -0,0 +1,101 @@
++// Gale - virtual thread support
++
++package org.galemc.gale.virtualthread;
++
++import org.jetbrains.annotations.NotNull;
++import org.jetbrains.annotations.Nullable;
++
++import java.util.concurrent.ThreadFactory;
++
++/**
++ * An abstract service to create virtual threads.
++ *
++ * @author Martijn Muijsers under AGPL-3.0
++ */
++public sealed abstract class VirtualThreadService permits ReflectionVirtualThreadService, DirectVirtualThreadService {
++
++    /**
++     * @return A {@link ThreadFactory} that produces virtual threads.
++     */
++    public abstract @NotNull ThreadFactory createFactory();
++
++    /**
++     * @param task The runnable for the thread to execute.
++     * @return A virtual thread that has been started with the given task.
++     */
++    public abstract @NotNull Thread start(Runnable task);
++
++    /**
++     * Runs a test on the {@link #createFactory} and {@link #start} methods,
++     * which certainly throws some {@link Throwable} if something goes wrong.
++     */
++    protected void runTest() throws Throwable {
++        // This will definitely throw something if it doesn't work
++        try {
++            this.start(() -> {}).join();
++        } catch (InterruptedException ignored) {} // Except InterruptedException, we don't care about that one
++        try {
++            var thread = this.createFactory().newThread(() -> {});
++            thread.start();
++            thread.join();
++        } catch (InterruptedException ignored) {} // Except InterruptedException, we don't care about that one
++        // If we end up here, it works
++    }
++
++    private static boolean initialized = false;
++
++    /**
++     * The {@link VirtualThreadService} for the current runtime,
++     * or null if virtual threads are not supported, or if not {@link #initialized} yet.
++     */
++    private static @Nullable VirtualThreadService implementation;
++
++    /**
++     * @return Whether virtual threads are supported on the current runtime.
++     */
++    public static boolean isSupported() {
++        return get() != null;
++    }
++
++    /**
++     * @return The {@link VirtualThreadService} for the current runtime,
++     * or null if virtual threads are not {@linkplain #isSupported() supported}.
++     *
++     * This method is thread-safe only after the first time it has been fully run.
++     */
++    public static @Nullable VirtualThreadService get() {
++        if (!initialized) {
++            initialized = true;
++            try {
++                implementation = DirectVirtualThreadService.create();
++            } catch (Throwable ignored) {
++                try {
++                    implementation = ReflectionVirtualThreadService.create();
++                } catch (Throwable ignored2) {}
++            }
++        }
++        return implementation;
 +    }
 +
 +    /**
@@ -62,119 +271,13 @@ index 0000000000000000000000000000000000000000..736cadd95a6ba3e2c4b6053b554e697d
 +     */
 +    public static final int minimumJavaMajorVersionWithoutFeaturePreview = 21;
 +
-+    /**
-+     * The {@link Thread#ofVirtual()} method, obtained via Reflection,
-+     * or null if it could not be obtained.
-+     */
-+    private static final @Nullable Method Thread_ofVirtual_method;
-+
-+    /**
-+     * The {@link Thread.Builder} class, obtained via Reflection,
-+     * or null if it could not be obtained.
-+     */
-+    private static final @Nullable Class<?> Thread_Builder_class;
-+
-+    /**
-+     * The {@link Thread.Builder#factory()} method, obtained via Reflection,
-+     * or null if it could not be obtained.
-+     */
-+    private static final @Nullable Method Thread_Builder_factory_method;
-+
-+    /**
-+     * The {@link Thread.Builder#start(Runnable)} method, obtained via Reflection,
-+     * or null if it could not be obtained.
-+     */
-+    private static final @Nullable Method Thread_Builder_start_method;
-+
-+    /**
-+     * Whether virtual threads are enabled.
-+     */
-+    public static final boolean areVirtualThreadsEnabled;
-+
-+    /**
-+     * @return A {@link ThreadFactory} that produces {@link java.lang.VirtualThread}s,
-+     * or null if {@link #areVirtualThreadsEnabled} is false.
-+     */
-+    public static @Nullable ThreadFactory createVirtualThreadFactory() {
-+        if (!areVirtualThreadsEnabled) {
-+            return null;
++    public static int getJavaMajorVersion() {
++        var version = System.getProperty("java.version");
++        if (version.startsWith("1.")) {
++            return version.charAt(2) - '0';
 +        }
-+        try {
-+            //noinspection DataFlowIssue
-+            return (ThreadFactory) Thread_Builder_factory_method.invoke(Thread_ofVirtual_method.invoke(null));
-+        } catch (Exception e) {
-+            // We assume this does not happen when areVirtualThreadsEnabled has been set to true
-+            throw new RuntimeException(e);
-+        }
-+    }
-+
-+    /**
-+     * @param task The runnable for the thread to execute.
-+     * @return A {@link java.lang.VirtualThread} that has been started with the given task,
-+     * or null if {@link #areVirtualThreadsEnabled} is false.
-+     */
-+    public static @Nullable Thread startVirtualThread(Runnable task) {
-+        if (!areVirtualThreadsEnabled) {
-+            return null;
-+        }
-+        try {
-+            //noinspection DataFlowIssue
-+            return (Thread) Thread_Builder_start_method.invoke(Thread_ofVirtual_method.invoke(null), task);
-+        } catch (Exception e) {
-+            // We assume this does not happen when areVirtualThreadsEnabled has been set to true
-+            throw new RuntimeException(e);
-+        }
-+    }
-+
-+    static {
-+        {
-+            Method method;
-+            try {
-+                method = Thread.class.getMethod("ofVirtual");
-+            } catch (Throwable ignored) {
-+                method = null;
-+            }
-+            Thread_ofVirtual_method = method;
-+            if (Thread_ofVirtual_method != null) {
-+                Thread_ofVirtual_method.setAccessible(true);
-+            }
-+        }
-+        {
-+            Class<?> clazz;
-+            try {
-+                //noinspection DataFlowIssue
-+                clazz = Thread_ofVirtual_method.invoke(null).getClass();
-+            } catch (Throwable ignored) {
-+                clazz = null;
-+            }
-+            Thread_Builder_class = clazz;
-+        }
-+        {
-+            Method method;
-+            try {
-+                //noinspection DataFlowIssue
-+                method = Thread_Builder_class.getMethod("factory");
-+            } catch (Throwable ignored) {
-+                method = null;
-+            }
-+            Thread_Builder_factory_method = method;
-+            if (Thread_Builder_factory_method != null) {
-+                Thread_Builder_factory_method.setAccessible(true);
-+            }
-+        }
-+        {
-+            Method method;
-+            try {
-+                method = Thread_Builder_class.getMethod("start");
-+            } catch (Throwable ignored) {
-+                method = null;
-+            }
-+            Thread_Builder_start_method = method;
-+            if (Thread_Builder_start_method != null) {
-+                Thread_Builder_start_method.setAccessible(true);
-+            }
-+        }
-+        areVirtualThreadsEnabled = Thread_ofVirtual_method != null && Thread_Builder_class != null && Thread_Builder_factory_method != null && Thread_Builder_start_method != null;
++        int dotIndex = version.indexOf(".");
++        return Integer.parseInt(dotIndex == -1 ? version : version.substring(0, dotIndex));
 +    }
 +
 +}

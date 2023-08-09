@@ -33,10 +33,10 @@ index 6827ccd77dbba737b80bd14456c54fc54f8058f2..5b0693899daede245b43e9e9039cd1d0
      doFirst {
          workingDir.mkdirs()
 diff --git a/src/main/java/com/destroystokyo/paper/Metrics.java b/src/main/java/com/destroystokyo/paper/Metrics.java
-index 3ebecc68b7c38c94a5c20e4b8ac1e2fa5d69321f..5a85df87042a28ba6f7f5840fa80c5aaea62bbee 100644
+index 432731a10443cd7ee62f79693b27e9759581b9bb..c2a3839f21afeefb37a760b204a4da43cd64a9ae 100644
 --- a/src/main/java/com/destroystokyo/paper/Metrics.java
 +++ b/src/main/java/com/destroystokyo/paper/Metrics.java
-@@ -874,6 +874,46 @@ public class Metrics {
+@@ -929,6 +929,46 @@ public class Metrics {
                  metrics.addCustomChart(new Metrics.DrilldownPie("gale_semantic_version", () -> semanticVersionMap));
                  // Gale end - semantic version - include in metrics
  
