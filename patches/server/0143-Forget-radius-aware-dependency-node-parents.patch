@@ -1,0 +1,66 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Martijn Muijsers <martijnmuijsers@live.nl>
+Date: Thu, 10 Aug 2023 21:04:04 +0200
+Subject: [PATCH] Forget radius-aware dependency node parents
+
+License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+Gale - https://galemc.org
+
+diff --git a/src/main/java/io/papermc/paper/chunk/system/scheduling/queue/RadiusAwarePrioritisedExecutor.java b/src/main/java/io/papermc/paper/chunk/system/scheduling/queue/RadiusAwarePrioritisedExecutor.java
+index 3272f73013ea7d4efdd0ae2903925cc543be7075..7600f98cbfdefbaadf6bef8009b47cb19122a917 100644
+--- a/src/main/java/io/papermc/paper/chunk/system/scheduling/queue/RadiusAwarePrioritisedExecutor.java
++++ b/src/main/java/io/papermc/paper/chunk/system/scheduling/queue/RadiusAwarePrioritisedExecutor.java
+@@ -223,7 +223,7 @@ public class RadiusAwarePrioritisedExecutor {
+                 // no dependencies, add straight to awaiting
+                 this.awaiting.add(node);
+             } else {
+-                node.parents = parents;
++                node.parents = parents.size(); // Gale - forget radius-aware dependency node parents
+                 // we will be added to awaiting once we have no parents
+             }
+         }
+@@ -296,14 +296,17 @@ public class RadiusAwarePrioritisedExecutor {
+             if (children != null) {
+                 for (int i = 0, len = children.size(); i < len; ++i) {
+                     final DependencyNode child = children.get(i);
+-                    if (!child.parents.remove(node)) {
+-                        throw new IllegalStateException();
+-                    }
+-                    if (child.parents.isEmpty()) {
++                    // Gale start - forget radius-aware dependency node parents
++                    int newParents = --child.parents;
++                    if (newParents == 0) {
++                        // Gale end - forget radius-aware dependency node parents
+                         // no more dependents, we can push to awaiting
+-                        child.parents = null;
+                         // even if the child is purged, we need to push it so that its children will be pushed
+                         this.awaiting.add(child);
++                        // Gale start - forget radius-aware dependency node parents
++                    } else if (newParents < 0) {
++                        throw new IllegalStateException();
++                        // Gale end - forget radius-aware dependency node parents
+                     }
+                 }
+             }
+@@ -315,7 +318,7 @@ public class RadiusAwarePrioritisedExecutor {
+                 return ret;
+             }
+ 
+-            if (ret.parents != null) {
++            if (ret.parents != 0) { // Gale - forget radius-aware dependency node parents
+                 throw new IllegalStateException();
+             }
+ 
+@@ -390,8 +393,10 @@ public class RadiusAwarePrioritisedExecutor {
+         // (must hold lock on the scheduler to use)
+         // null is the same as empty, we just use it so that we don't allocate the set unless we need to
+         private List<DependencyNode> children;
+-        // null is the same as empty, indicating that this task is considered "awaiting"
+-        private ReferenceOpenHashSet<DependencyNode> parents;
++        // Gale start - forget radius-aware dependency node parents
++        // 0 indicates that this task is considered "awaiting"
++        private int parents;
++        // Gale end - forget radius-aware dependency node parents
+         // false -> scheduled and not cancelled
+         // true -> scheduled but cancelled
+         private boolean purged;
