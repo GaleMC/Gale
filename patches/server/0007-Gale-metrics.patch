@@ -7,7 +7,7 @@ License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/com/destroystokyo/paper/Metrics.java b/src/main/java/com/destroystokyo/paper/Metrics.java
-index 4b002e8b75d117b726b0de274a76d3596fce015b..d10c024a7a5c3dd78e624526974d6c6ca2c0fbfb 100644
+index 4b002e8b75d117b726b0de274a76d3596fce015b..2868dab7b100d9c325b0e5056f86660d631dec4b 100644
 --- a/src/main/java/com/destroystokyo/paper/Metrics.java
 +++ b/src/main/java/com/destroystokyo/paper/Metrics.java
 @@ -593,7 +593,7 @@ public class Metrics {
@@ -64,7 +64,7 @@ index 4b002e8b75d117b726b0de274a76d3596fce015b..d10c024a7a5c3dd78e624526974d6c6c
                      entry.put(String.valueOf(legacy), 1);
  
                      // create buckets as higher dimension
-@@ -676,6 +676,249 @@ public class Metrics {
+@@ -676,6 +676,253 @@ public class Metrics {
  
                      return map;
                  }));
@@ -234,7 +234,11 @@ index 4b002e8b75d117b726b0de274a76d3596fce015b..d10c024a7a5c3dd78e624526974d6c6c
 +                                entry.put(flooredMHz + " MHz", 1);
 +                            } else {
 +                                // Add a comma
-+                                entry.put((flooredMHz / 1000) + "," + (flooredMHz % 1000) + " MHz", 1);
++                                StringBuilder flooredMHzAfterComma = new StringBuilder(String.valueOf(flooredMHz % 1000));
++                                while (flooredMHzAfterComma.length() < 3) {
++                                    flooredMHzAfterComma.insert(0, "0");
++                                }
++                                entry.put((flooredMHz / 1000) + "," + flooredMHzAfterComma + " MHz", 1);
 +                            }
 +
 +                            // use tenth of GHz as higher dimension

@@ -1,16 +1,16 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Martijn Muijsers <martijnmuijsers@live.nl>
-Date: Wed, 9 Aug 2023 19:12:50 +0200
+Date: Wed, 9 Aug 2023 15:04:56 +0200
 Subject: [PATCH] Virtual thread support
 
 License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/com/destroystokyo/paper/Metrics.java b/src/main/java/com/destroystokyo/paper/Metrics.java
-index c2a3839f21afeefb37a760b204a4da43cd64a9ae..2bbf1ee16ab27e81e870e50504ff50b943c4189e 100644
+index 850ccd53c5007e8b18344ba76c9e7f0003decaff..88102f6ba8352a080125512d0bbfacdf779f4f38 100644
 --- a/src/main/java/com/destroystokyo/paper/Metrics.java
 +++ b/src/main/java/com/destroystokyo/paper/Metrics.java
-@@ -969,6 +969,22 @@ public class Metrics {
+@@ -973,6 +973,22 @@ public class Metrics {
                  }));
                  // Gale end - SIMD support - include in metrics
  
