@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Martijn Muijsers <martijnmuijsers@live.nl>
-Date: Wed, 9 Aug 2023 15:04:56 +0200
+Date: Wed, 9 Aug 2023 19:12:50 +0200
 Subject: [PATCH] Virtual thread support
 
 License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
@@ -91,10 +91,10 @@ index 0000000000000000000000000000000000000000..12eca4b93797b7f50f333d6cdd93e38b
 +}
 diff --git a/src/main/java/org/galemc/gale/virtualthread/ReflectionVirtualThreadService.java b/src/main/java/org/galemc/gale/virtualthread/ReflectionVirtualThreadService.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..07462c644c49dd071e9d43d953b1870199f1c8ce
+index 0000000000000000000000000000000000000000..5aad41cf610f16317ef94e1ff1e385c6eb5ee8f2
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/virtualthread/ReflectionVirtualThreadService.java
-@@ -0,0 +1,79 @@
+@@ -0,0 +1,76 @@
 +// Gale - virtual thread support
 +
 +package org.galemc.gale.virtualthread;
@@ -129,13 +129,10 @@ index 0000000000000000000000000000000000000000..07462c644c49dd071e9d43d953b18701
 +
 +    private ReflectionVirtualThreadService() throws Throwable {
 +        this.Thread_ofVirtual_method = Objects.requireNonNull(Thread.class.getMethod("ofVirtual"));
-+        this.Thread_ofVirtual_method.setAccessible(true);
 +        // The Thread.Builder class
-+        var Thread_Builder_class = Objects.requireNonNull(this.Thread_ofVirtual_method.invoke(null).getClass());
++        var Thread_Builder_class = Objects.requireNonNull(Class.forName("java.lang.Thread$Builder"));
 +        this.Thread_Builder_factory_method = Objects.requireNonNull(Thread_Builder_class.getMethod("factory"));
-+        this.Thread_Builder_factory_method.setAccessible(true);
 +        this.Thread_Builder_start_method = Objects.requireNonNull(Thread_Builder_class.getMethod("start", Runnable.class));
-+        this.Thread_Builder_start_method.setAccessible(true);
 +    }
 +
 +    @Override
