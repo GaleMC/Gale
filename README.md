@@ -15,7 +15,8 @@ The project is in open alpha.
 ## Current features
 
 * **Faster threading system**\
-  Gale comes with a custom threading system, that immediately makes terrain generation 2-3x faster than Paper on most systems! Try it for yourself and see.
+  Gale comes with a custom threading system, that immediately makes terrain generation 2-3x faster than Paper on most systems!\
+  (this is up to 1.19 only, working on rewriting it to 1.20 too but there were some chunk system changes related to Folia, my apologies)
 * **Micro-optimizations**\
   A number of micro-optimizations that do not change game mechanics from other projects, such as [Airplane](https://github.com/TECHNOVE/Airplane) and [Lithium](https://github.com/CaffeineMC/lithium-fabric), are also included. Every included optimization has been carefully tested and reviewed line-by-line; faulty or risky optimizations will not be added.
 * **Fixes and options**\
