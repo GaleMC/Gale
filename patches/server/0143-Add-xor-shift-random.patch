@@ -92,18 +92,10 @@ index 68c5af9b67a2834ee6e2f80ceefa19c3a982b8ed..bf9deb9a5f7eae6517fcd6d4476a7961
  
      public CraftFirework(CraftServer server, FireworkRocketEntity entity) {
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index 4114088e56a7974b2da84ff90ab66f72ed538b61..d6f161335a9b97c48a0d69a295e288eae0898971 100644
+index 4114088e56a7974b2da84ff90ab66f72ed538b61..dbddba95d9235b6dd262b5740d63ba41ba08861b 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-@@ -6,6 +6,7 @@ import io.papermc.paper.configuration.Configuration;
- import io.papermc.paper.configuration.ConfigurationPart;
- import net.minecraft.world.level.levelgen.structure.PoolElementStructurePiece;
- import org.bukkit.plugin.java.JavaPluginLoader;
-+import org.galemc.gale.random.XorShiftRandom;
- import org.spongepowered.configurate.objectmapping.meta.Setting;
- 
- import java.util.Locale;
-@@ -52,13 +53,39 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+@@ -52,13 +52,40 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
  
          }
  
@@ -126,6 +118,7 @@ index 4114088e56a7974b2da84ff90ab66f72ed538b61..d6f161335a9b97c48a0d69a295e288ea
 +
 +            public boolean lootableRefill = false;
 +            public boolean encryptionRequestVerifyToken = false;
++            public boolean entityWakeUpDuration = true;
 +
 +            /**
 +             * <ul>
@@ -559,3 +552,24 @@ index 0000000000000000000000000000000000000000..60dc2c1deb0749168d03c5d94136e613
 +        }
 +    }
 +}
+diff --git a/src/main/java/org/spigotmc/ActivationRange.java b/src/main/java/org/spigotmc/ActivationRange.java
+index 50cd68e40c67b83af4e8008ce93782a060658dd4..392c57d0365cc4371f58637ebac11e2b7492bf97 100644
+--- a/src/main/java/org/spigotmc/ActivationRange.java
++++ b/src/main/java/org/spigotmc/ActivationRange.java
+@@ -38,6 +38,7 @@ import co.aikar.timings.MinecraftTimings;
+ import net.minecraft.world.entity.schedule.Activity;
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.phys.AABB;
++import org.galemc.gale.configuration.GaleGlobalConfiguration;
+ import org.galemc.gale.configuration.GaleWorldConfiguration;
+ 
+ public class ActivationRange
+@@ -94,7 +95,7 @@ public class ActivationRange
+     // Paper end
+ 
+     // Gale start - variable entity wake-up duration
+-    private static final java.util.Random wakeUpDurationRandom = new java.util.Random();
++    private static final java.util.Random wakeUpDurationRandom = GaleGlobalConfiguration.get().smallOptimizations.useXorShiftRandom.entityWakeUpDuration ? new org.galemc.gale.random.XorShiftRandom() : new java.util.Random(); // Gale - xor-shift random
+ 
+     private static int getWakeUpDurationWithVariance(Entity entity, int wakeUpDuration) {
+         GaleWorldConfiguration config = entity.level().galeConfig();
