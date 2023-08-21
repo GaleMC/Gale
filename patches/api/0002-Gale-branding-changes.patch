@@ -1,0 +1,64 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Martijn Muijsers <martijnmuijsers@live.nl>
+Date: Mon, 21 Aug 2023 21:42:57 +0200
+Subject: [PATCH] Gale branding changes
+
+License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+Gale - https://galemc.org
+
+diff --git a/LICENCE.txt b/LICENSE.txt
+similarity index 99%
+rename from LICENCE.txt
+rename to LICENSE.txt
+index 94a9ed024d3859793618152ea559a168bbcbb5e2..e60008693e017bec1b4eb49c84be3898e26fcf2a 100644
+--- a/LICENCE.txt
++++ b/LICENSE.txt
+@@ -1,7 +1,7 @@
+                     GNU GENERAL PUBLIC LICENSE
+                        Version 3, 29 June 2007
+ 
+- Copyright (C) 2007 Free Software Foundation, Inc. <http://fsf.org/>
++ Copyright (C) 2007 Free Software Foundation, Inc. <https://fsf.org/>
+  Everyone is permitted to copy and distribute verbatim copies
+  of this license document, but changing it is not allowed.
+ 
+@@ -645,7 +645,7 @@ the "copyright" line and a pointer to where the full notice is found.
+     GNU General Public License for more details.
+ 
+     You should have received a copy of the GNU General Public License
+-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
++    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ 
+ Also add information on how to contact you by electronic and paper mail.
+ 
+@@ -664,11 +664,11 @@ might be different; for a GUI interface, you would use an "about box".
+   You should also get your employer (if you work as a programmer) or school,
+ if any, to sign a "copyright disclaimer" for the program, if necessary.
+ For more information on this, and how to apply and follow the GNU GPL, see
+-<http://www.gnu.org/licenses/>.
++<https://www.gnu.org/licenses/>.
+ 
+   The GNU General Public License does not permit incorporating your program
+ into proprietary programs.  If your program is a subroutine library, you
+ may consider it more useful to permit linking proprietary applications with
+ the library.  If this is what you want to do, use the GNU Lesser General
+ Public License instead of this License.  But first, please read
+-<http://www.gnu.org/philosophy/why-not-lgpl.html>.
++<https://www.gnu.org/philosophy/why-not-lgpl.html>.
+diff --git a/build.gradle.kts b/build.gradle.kts
+index 8825fd8ff27ba641deaa61c8a5cadb2b236b6512..c6acd641d1d76478a3c0063206f162414db69b7a 100644
+--- a/build.gradle.kts
++++ b/build.gradle.kts
+@@ -107,6 +107,12 @@ tasks.jar {
+             "Automatic-Module-Name" to "org.bukkit"
+         )
+     }
++
++    // Gale start - package license into jar
++    from("${project.projectDir}/LICENSE.txt") {
++        into("")
++    }
++    // Gale end - package license into jar
+ }
+ 
+ tasks.withType<Javadoc> {

@@ -3,7 +3,7 @@ From: Martijn Muijsers <martijnmuijsers@live.nl>
 Date: Sun, 25 Dec 2022 20:51:32 +0100
 Subject: [PATCH] Optimize matching item checks
 
-License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
+License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/net/minecraft/world/item/ItemStack.java b/src/main/java/net/minecraft/world/item/ItemStack.java

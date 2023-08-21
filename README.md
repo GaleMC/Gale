@@ -58,4 +58,6 @@ Additional thanks and friendly greetings go out to the following forks and other
 * MCMT ([Fabric](https://github.com/himekifee/MCMTFabric), [Forge](https://github.com/jediminer543/JMT-MCMT))
 
 ## License
-Paperweight files are licensed under MIT. Patches are licensed under GPL-3.0, unless indicated differently in their header.
+Paperweight files are licensed under MIT.
+Patches are licensed under GPL-3.0, unless indicated differently in their header.
+Binaries are licensed under GPL-3.0.

@@ -3,7 +3,7 @@ From: Martijn Muijsers <martijnmuijsers@live.nl>
 Date: Wed, 9 Aug 2023 15:04:56 +0200
 Subject: [PATCH] Virtual thread support
 
-License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
+License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/com/destroystokyo/paper/Metrics.java b/src/main/java/com/destroystokyo/paper/Metrics.java
@@ -35,7 +35,7 @@ index 850ccd53c5007e8b18344ba76c9e7f0003decaff..88102f6ba8352a080125512d0bbfacdf
          }
 diff --git a/src/main/java/org/galemc/gale/virtualthread/DirectVirtualThreadService.java b/src/main/java/org/galemc/gale/virtualthread/DirectVirtualThreadService.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..12eca4b93797b7f50f333d6cdd93e38bfedd4cd3
+index 0000000000000000000000000000000000000000..02bd280f549845c6fbf91ad26825d62eccf84d11
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/virtualthread/DirectVirtualThreadService.java
 @@ -0,0 +1,50 @@
@@ -50,7 +50,7 @@ index 0000000000000000000000000000000000000000..12eca4b93797b7f50f333d6cdd93e38b
 +/**
 + * An implementation of {@link VirtualThreadService} that can create virtual threads directly.
 + *
-+ * @author Martijn Muijsers under AGPL-3.0
++ * @author Martijn Muijsers
 + */
 +final class DirectVirtualThreadService extends VirtualThreadService {
 +
@@ -91,7 +91,7 @@ index 0000000000000000000000000000000000000000..12eca4b93797b7f50f333d6cdd93e38b
 +}
 diff --git a/src/main/java/org/galemc/gale/virtualthread/ReflectionVirtualThreadService.java b/src/main/java/org/galemc/gale/virtualthread/ReflectionVirtualThreadService.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..5aad41cf610f16317ef94e1ff1e385c6eb5ee8f2
+index 0000000000000000000000000000000000000000..9bdd3a45141938a8f09567bd8a7908c7a317791f
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/virtualthread/ReflectionVirtualThreadService.java
 @@ -0,0 +1,76 @@
@@ -108,7 +108,7 @@ index 0000000000000000000000000000000000000000..5aad41cf610f16317ef94e1ff1e385c6
 +/**
 + * An implementation of {@link VirtualThreadService} that can create virtual threads using Java reflection.
 + *
-+ * @author Martijn Muijsers under AGPL-3.0
++ * @author Martijn Muijsers
 + */
 +final class ReflectionVirtualThreadService extends VirtualThreadService {
 +
@@ -173,7 +173,7 @@ index 0000000000000000000000000000000000000000..5aad41cf610f16317ef94e1ff1e385c6
 +}
 diff --git a/src/main/java/org/galemc/gale/virtualthread/VirtualThreadService.java b/src/main/java/org/galemc/gale/virtualthread/VirtualThreadService.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..287cb044e04c031b69397746974e18140e54b4fb
+index 0000000000000000000000000000000000000000..e1b2dccd750a89d89484199eeaf6c376e4f900be
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/virtualthread/VirtualThreadService.java
 @@ -0,0 +1,101 @@
@@ -189,7 +189,7 @@ index 0000000000000000000000000000000000000000..287cb044e04c031b69397746974e1814
 +/**
 + * An abstract service to create virtual threads.
 + *
-+ * @author Martijn Muijsers under AGPL-3.0
++ * @author Martijn Muijsers
 + */
 +public sealed abstract class VirtualThreadService permits ReflectionVirtualThreadService, DirectVirtualThreadService {
 +

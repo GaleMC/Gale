@@ -3,7 +3,7 @@ From: Martijn Muijsers <martijnmuijsers@live.nl>
 Date: Sat, 24 Dec 2022 22:50:13 +0100
 Subject: [PATCH] Make slow login timeout configurable
 
-License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
+License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java

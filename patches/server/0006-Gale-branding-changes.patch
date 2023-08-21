@@ -10,8 +10,47 @@ No license is given for images. Images are copyright (©) Martijn Muijsers, all 
 License for non-image files: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 Gale - https://galemc.org
 
+diff --git a/LICENCE.txt b/LICENSE.txt
+similarity index 99%
+rename from LICENCE.txt
+rename to LICENSE.txt
+index 94a9ed024d3859793618152ea559a168bbcbb5e2..e60008693e017bec1b4eb49c84be3898e26fcf2a 100644
+--- a/LICENCE.txt
++++ b/LICENSE.txt
+@@ -1,7 +1,7 @@
+                     GNU GENERAL PUBLIC LICENSE
+                        Version 3, 29 June 2007
+ 
+- Copyright (C) 2007 Free Software Foundation, Inc. <http://fsf.org/>
++ Copyright (C) 2007 Free Software Foundation, Inc. <https://fsf.org/>
+  Everyone is permitted to copy and distribute verbatim copies
+  of this license document, but changing it is not allowed.
+ 
+@@ -645,7 +645,7 @@ the "copyright" line and a pointer to where the full notice is found.
+     GNU General Public License for more details.
+ 
+     You should have received a copy of the GNU General Public License
+-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
++    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ 
+ Also add information on how to contact you by electronic and paper mail.
+ 
+@@ -664,11 +664,11 @@ might be different; for a GUI interface, you would use an "about box".
+   You should also get your employer (if you work as a programmer) or school,
+ if any, to sign a "copyright disclaimer" for the program, if necessary.
+ For more information on this, and how to apply and follow the GNU GPL, see
+-<http://www.gnu.org/licenses/>.
++<https://www.gnu.org/licenses/>.
+ 
+   The GNU General Public License does not permit incorporating your program
+ into proprietary programs.  If your program is a subroutine library, you
+ may consider it more useful to permit linking proprietary applications with
+ the library.  If this is what you want to do, use the GNU Lesser General
+ Public License instead of this License.  But first, please read
+-<http://www.gnu.org/philosophy/why-not-lgpl.html>.
++<https://www.gnu.org/philosophy/why-not-lgpl.html>.
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 81ff409e32d4c05ee69e6a6892c8c388ea0d7cc9..6827ccd77dbba737b80bd14456c54fc54f8058f2 100644
+index 123c2c1bdc4ba5b887910bc613a43bc60be1c99e..9606c6954f2c53dbbda7e7235cf37308822fea02 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -88,7 +88,7 @@ tasks.jar {
@@ -23,6 +62,29 @@ index 81ff409e32d4c05ee69e6a6892c8c388ea0d7cc9..6827ccd77dbba737b80bd14456c54fc5
              "Implementation-Vendor" to date, // Paper
              "Specification-Title" to "Bukkit",
              "Specification-Version" to project.version,
+@@ -228,3 +228,22 @@ tasks.registerRunTask("runDev") {
+     description = "Spin up a non-relocated Mojang-mapped test server"
+     classpath(sourceSets.main.map { it.runtimeClasspath })
+ }
++
++// Gale start - package license into jar
++tasks.register<Copy>("copyLicense") {
++    from(layout.projectDirectory.file("LICENSE.txt"))
++    into(layout.buildDirectory.dir("tmp/copiedlicense"))
++}
++
++tasks.processResources {
++    dependsOn("copyLicense")
++}
++
++sourceSets {
++    main {
++        resources {
++            srcDir(layout.buildDirectory.dir("tmp/copiedlicense"))
++        }
++    }
++}
++// Gale end - package license into jar
 diff --git a/src/main/java/com/destroystokyo/paper/PaperVersionFetcher.java b/src/main/java/com/destroystokyo/paper/PaperVersionFetcher.java
 index 9d687da5bdf398bb3f6c84cdf1249a7213d09f2e..03f5ec3c4f8eac9cecfef0f257b90090aece5017 100644
 --- a/src/main/java/com/destroystokyo/paper/PaperVersionFetcher.java
@@ -222,7 +284,7 @@ index 3238cbcba567b1242c77e41f6b6f19a8d157fb4e..6cf49bdf5c337213a474627bc1771ccb
  
      public SystemReport fillSystemReport(SystemReport details) {
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index 54f27d91f941235a99e341ed84531ad7f0840728..bb45f1f7691e7ce9ad819a8ceac0d3c3e962a5ce 100644
+index 249d76acac9a91cd46f0b8a477511974a75d6f4a..f336a4559b74dbe36ab0ea3ea2ccffce9743bfec 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 @@ -265,7 +265,7 @@ import javax.annotation.Nullable; // Paper

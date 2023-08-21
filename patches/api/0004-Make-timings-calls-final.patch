@@ -3,7 +3,7 @@ From: Martijn Muijsers <martijnmuijsers@live.nl>
 Date: Sat, 24 Dec 2022 22:37:29 +0100
 Subject: [PATCH] Make timings calls final
 
-License: AGPL-3.0 (https://www.gnu.org/licenses/agpl-3.0.html)
+License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/co/aikar/timings/FullServerTickHandler.java b/src/main/java/co/aikar/timings/FullServerTickHandler.java
