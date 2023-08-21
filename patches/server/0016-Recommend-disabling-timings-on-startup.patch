@@ -31,10 +31,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-index 53729fcbb297806fb0de78887e4739fbe19dbb69..4594730450e87e71f86c67af205610af1319d4df 100644
+index 21f77ea9d8a68eef569f1df6eba0495e5740acdd..7a7d10a9c1764ae618112a453a5191124b1e6e8d 100644
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-@@ -50,7 +50,10 @@ public class GlobalConfiguration extends ConfigurationPart {
+@@ -89,7 +89,10 @@ public class GlobalConfiguration extends ConfigurationPart {
      public Timings timings;
  
      public class Timings extends ConfigurationPart.Post {
@@ -46,7 +46,7 @@ index 53729fcbb297806fb0de78887e4739fbe19dbb69..4594730450e87e71f86c67af205610af
          public boolean verbose = true;
          public String url = "https://timin.gs/"; // Gale - use timin.gs by default
          public boolean serverNamePrivacy = false;
-@@ -64,6 +67,13 @@ public class GlobalConfiguration extends ConfigurationPart {
+@@ -103,6 +106,13 @@ public class GlobalConfiguration extends ConfigurationPart {
  
          @Override
          public void postProcess() {

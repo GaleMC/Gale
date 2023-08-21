@@ -26,10 +26,10 @@ index f5bc3497831877e0c2b7dc1cbd8abe3a67d7695b..5783a8014e3faf93b81903c947b2534e
              double d1 = (double) (center.y - maxRange);
              double d2 = (double) (center.x + maxRange);
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 8e216eaafb1b90d4fd373a4384ecff0b1e917835..43c170fe1eed27e1b0367a3b277cc6d034bc34e1 100644
+index df640e94bf51cfa62ccd28e32c0adc1c76ec07a6..c97a719033ef075f2cc29f6e4e5327db12e24b8d 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-@@ -441,7 +441,7 @@ public class ServerPlayer extends Player {
+@@ -442,7 +442,7 @@ public class ServerPlayer extends Player {
              long l = k * k;
              int i1 = l > 2147483647L ? Integer.MAX_VALUE : (int) l;
              int j1 = this.getCoprime(i1);
@@ -38,7 +38,7 @@ index 8e216eaafb1b90d4fd373a4384ecff0b1e917835..43c170fe1eed27e1b0367a3b277cc6d0
  
              for (int l1 = 0; l1 < i1; ++l1) {
                  int i2 = (k1 + j1 * l1) % i1;
-@@ -478,7 +478,7 @@ public class ServerPlayer extends Player {
+@@ -479,7 +479,7 @@ public class ServerPlayer extends Player {
              long l = k * k;
              int i1 = l > 2147483647L ? Integer.MAX_VALUE : (int) l;
              int j1 = this.getCoprime(i1);

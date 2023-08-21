@@ -27,10 +27,10 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 diff --git a/src/main/java/com/destroystokyo/paper/loottable/PaperLootableInventoryData.java b/src/main/java/com/destroystokyo/paper/loottable/PaperLootableInventoryData.java
-index e5ea9f27a1936ed9e329e74317c91c5df89b9fbd..3913d5fe2f22cd49e4c2b201163881553e7c6884 100644
+index 5408cbc21fc7577a6100b5a1ca0463e899d2df8b..8bb5d662d62b0c16dc769d69ca45959e6c3164de 100644
 --- a/src/main/java/com/destroystokyo/paper/loottable/PaperLootableInventoryData.java
 +++ b/src/main/java/com/destroystokyo/paper/loottable/PaperLootableInventoryData.java
-@@ -13,7 +13,7 @@ import java.util.UUID;
+@@ -16,7 +16,7 @@ import java.util.UUID;
  
  public class PaperLootableInventoryData {
  
@@ -66,7 +66,7 @@ index 0c5ac12b1f395bba8b7fc50baf8e825ba6488f6c..0671e775ab296d6d591a31a8a0c38f62
      }
  
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
-index 550dcb7d595221b221e4710890d8a3cad789fc07..0cc4025613df85ace29db75cb8c4a465a69b1a06 100644
+index f857f490ffba2f25f7c06c5fb1a1905f0b51fbe2..18408d64905571283551c358f472c37f8b2593ef 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
 @@ -229,7 +229,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
@@ -79,10 +79,10 @@ index 550dcb7d595221b221e4710890d8a3cad789fc07..0cc4025613df85ace29db75cb8c4a465
      public CraftWorld(ServerLevel world, ChunkGenerator gen, BiomeProvider biomeProvider, Environment env) {
          this.world = world;
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftFirework.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftFirework.java
-index d1c7ab67cba881d96b7a5e9220130d86d0514304..ef1b30f3e757f7abaeb55728b50643eef9dfd949 100644
+index 68c5af9b67a2834ee6e2f80ceefa19c3a982b8ed..bf9deb9a5f7eae6517fcd6d4476a7961ae3b23b1 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftFirework.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftFirework.java
-@@ -15,7 +15,7 @@ import org.bukkit.inventory.meta.FireworkMeta;
+@@ -14,7 +14,7 @@ import org.bukkit.inventory.meta.FireworkMeta;
  
  public class CraftFirework extends CraftProjectile implements Firework {
  

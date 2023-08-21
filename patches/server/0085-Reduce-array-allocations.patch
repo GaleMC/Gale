@@ -412,7 +412,7 @@ index dae36c6452ccd57a436dd918547b64d59957ab0a..f06cafd80d7c027ca97e50bcb45ad520
          OptionSpec<Integer> optionspec11 = optionparser.accepts("port").withRequiredArg().ofType(Integer.class).defaultsTo(-1, new Integer[0]);
          OptionSpec<String> optionspec12 = optionparser.accepts("serverId").withRequiredArg();
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 963e6ea64aeaa8cb453d99c56654df265fb2d343..9c99883afefe882f5669c4317e6d07a10713e617 100644
+index 157e90f91b7461832ad628d07c3455fa8629d32a..4e6107114a23fd978e38c8a4b072057520285d36 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -50,6 +50,8 @@ import java.util.stream.Collectors;
@@ -425,7 +425,7 @@ index 963e6ea64aeaa8cb453d99c56654df265fb2d343..9c99883afefe882f5669c4317e6d07a1
  import net.minecraft.ReportedException;
  import net.minecraft.SharedConstants;
 diff --git a/src/main/java/net/minecraft/server/level/ServerEntity.java b/src/main/java/net/minecraft/server/level/ServerEntity.java
-index e215cb22a226fa61d7eb9a8f69fe2a644d4394f7..d23fe810b1b971abe4ed52018929a40817060fdc 100644
+index 8c28305ffdb210722b11a0bdcf077452d09bcc2d..95a17b9d3397516ce4cb4334e01cee2a391ad2fb 100644
 --- a/src/main/java/net/minecraft/server/level/ServerEntity.java
 +++ b/src/main/java/net/minecraft/server/level/ServerEntity.java
 @@ -332,7 +332,7 @@ public class ServerEntity {
@@ -469,7 +469,7 @@ index efbc8483a51c5272ca81747c82dc65e7f0f5c232..9879599c38db4f3332c347b6b0c26034
          return ret;
      }
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 1871a4ac9616ddc533dbbe6ae15022bfdaafa715..16df8c2b704225461dfadc64b1fb25f3f5003559 100644
+index 451b26fb1bda92872e31c62d0ce352c68215320b..4c3cc426978be322efc9e051e048c2192bbdc221 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -29,6 +29,8 @@ import java.util.function.UnaryOperator;
@@ -531,7 +531,7 @@ index 1871a4ac9616ddc533dbbe6ae15022bfdaafa715..16df8c2b704225461dfadc64b1fb25f3
              return;
          }
          // Paper end
-@@ -3351,7 +3349,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -3357,7 +3355,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
          // Paper start
          if (!org.bukkit.Bukkit.isPrimaryThread()) {
              if (this.recipeSpamPackets.addAndGet(io.papermc.paper.configuration.GlobalConfiguration.get().spamLimiter.recipeSpamIncrement) > io.papermc.paper.configuration.GlobalConfiguration.get().spamLimiter.recipeSpamLimit) {
@@ -578,7 +578,7 @@ index 0d034a1b810e3840055a10ca1960eecbbf306549..00166d86baad60beed5896871c9b9118
          final String s;
  
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index 4c5d2c3e50be81435260207dc1208c083a8201e6..87fabd874b39a6a21ca7fb2c6207a4cec048328c 100644
+index 6fefed8e329aa85b6edd0e5981db2336d23446fc..d75487fa0f6bd838e0ffa90fdf16758ee36009e5 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
 @@ -27,6 +27,8 @@ import java.util.UUID;
@@ -590,7 +590,7 @@ index 4c5d2c3e50be81435260207dc1208c083a8201e6..87fabd874b39a6a21ca7fb2c6207a4ce
  import net.minecraft.ChatFormatting;
  import net.minecraft.FileUtil;
  import net.minecraft.commands.CommandSourceStack;
-@@ -709,7 +711,7 @@ public abstract class PlayerList {
+@@ -717,7 +719,7 @@ public abstract class PlayerList {
          while (iterator.hasNext()) {
              entityplayer = (ServerPlayer) iterator.next();
              this.save(entityplayer); // CraftBukkit - Force the player's inventory to be saved

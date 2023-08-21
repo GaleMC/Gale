@@ -13,10 +13,10 @@ As part of: Lithium (https://github.com/CaffeineMC/lithium-fabric)
 Licensed under: LGPL-3.0 (https://www.gnu.org/licenses/lgpl-3.0.html)
 
 diff --git a/src/main/java/net/minecraft/world/level/block/Block.java b/src/main/java/net/minecraft/world/level/block/Block.java
-index c4cff3592a39e519fc62664a21d368d8cac55271..e9d37ab8e2b072454c46d4520491beac5873a7ec 100644
+index 9a4bb34cc29ad0c4391db94e638ee47ab53d5f3a..5f607c2d58a7b1016f6cc4a06e2abf5aabc0a462 100644
 --- a/src/main/java/net/minecraft/world/level/block/Block.java
 +++ b/src/main/java/net/minecraft/world/level/block/Block.java
-@@ -593,11 +593,18 @@ public class Block extends BlockBehaviour implements ItemLike {
+@@ -601,11 +601,18 @@ public class Block extends BlockBehaviour implements ItemLike {
          private final BlockState first;
          private final BlockState second;
          private final Direction direction;
@@ -35,7 +35,7 @@ index c4cff3592a39e519fc62664a21d368d8cac55271..e9d37ab8e2b072454c46d4520491beac
          }
  
          public boolean equals(Object object) {
-@@ -613,11 +620,7 @@ public class Block extends BlockBehaviour implements ItemLike {
+@@ -621,11 +628,7 @@ public class Block extends BlockBehaviour implements ItemLike {
          }
  
          public int hashCode() {

@@ -7,10 +7,10 @@ License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index ccb2722e8025b97d972cafac5258676cb4a29390..ffb0e9a5c24d7c95f1cc1fe495ac4d76c6362eb8 100644
+index 706b9606e17f10376a7ed96a829ff49d43dd7387..2689e7006e7350db206c2401344f01a0f09ba6bc 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -4519,6 +4519,16 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -4507,6 +4507,16 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
          return this.feetBlockState;
      }
  

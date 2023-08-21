@@ -13,10 +13,10 @@ As part of: Mirai (https://github.com/etil2jz/Mirai)
 Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 
 diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-index d7f541d94941a341a70dfac025a3d3601dd1aca8..53729fcbb297806fb0de78887e4739fbe19dbb69 100644
+index 019d3bbd78fb0b06861979d223915fedb6c99442..21f77ea9d8a68eef569f1df6eba0495e5740acdd 100644
 --- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
-@@ -52,7 +52,7 @@ public class GlobalConfiguration extends ConfigurationPart {
+@@ -91,7 +91,7 @@ public class GlobalConfiguration extends ConfigurationPart {
      public class Timings extends ConfigurationPart.Post {
          public boolean enabled = true;
          public boolean verbose = true;

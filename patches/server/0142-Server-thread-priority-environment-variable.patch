@@ -7,24 +7,27 @@ License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 3c0e0a884cde094054e79aa4d2cf915126bddba4..77dd3605bede2f8d2574961a21560df4631f6277 100644
+index 1431d13a8175631e7a3225c046b2e69aa0701405..2649d01a1fb8633dc47350f0078ea24aee22ebb6 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -187,6 +187,8 @@ import co.aikar.timings.MinecraftTimings; // Paper
  
  public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTask> implements CommandSource, AutoCloseable {
  
-+    public static final int SERVER_THREAD_PRIORITY = Integer.getInteger("gale.thread.priority.server", 8); // Gale - server thread priority environment variable
++    public static final int SERVER_THREAD_PRIORITY = Integer.getInteger("gale.thread.priority.server", -1); // Gale - server thread priority environment variable
 +
      private static MinecraftServer SERVER; // Paper
      public static final Logger LOGGER = LogUtils.getLogger();
      public static final net.kyori.adventure.text.logger.slf4j.ComponentLogger COMPONENT_LOGGER = net.kyori.adventure.text.logger.slf4j.ComponentLogger.logger(LOGGER.getName()); // Paper
-@@ -312,7 +314,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -313,6 +315,11 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          S s0 = serverFactory.apply(thread); // CraftBukkit - decompile error
  
          atomicreference.set(s0);
--        thread.setPriority(Thread.NORM_PRIORITY+2); // Paper - boost priority
-+        thread.setPriority(SERVER_THREAD_PRIORITY); // Gale - server thread priority environment variable
++        // Gale start - server thread priority environment variable
++        if (SERVER_THREAD_PRIORITY > 0) {
++            thread.setPriority(SERVER_THREAD_PRIORITY);
++        }
++        // Gale end - server thread priority environment variable
          thread.start();
          return s0;
      }

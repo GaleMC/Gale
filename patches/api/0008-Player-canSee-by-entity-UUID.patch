@@ -37,7 +37,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 diff --git a/src/main/java/org/bukkit/entity/Player.java b/src/main/java/org/bukkit/entity/Player.java
-index 14c92390aeaeee518f43778ccd5fc820fdc62689..da3e990b2e888387736ffda4a6c9165c5d84248e 100644
+index f9dd00210c1762a40259f823aeb8d8a5ddc78e3e..60df0fd1d3ef021cb6aecd8075a1ae87eac5d9eb 100644
 --- a/src/main/java/org/bukkit/entity/Player.java
 +++ b/src/main/java/org/bukkit/entity/Player.java
 @@ -7,6 +7,8 @@ import java.time.Instant;
@@ -49,9 +49,9 @@ index 14c92390aeaeee518f43778ccd5fc820fdc62689..da3e990b2e888387736ffda4a6c9165c
  import org.bukkit.BanEntry;
  import org.bukkit.DyeColor;
  import org.bukkit.Effect;
-@@ -1841,6 +1843,16 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
-     @ApiStatus.Experimental
-     public boolean canSee(@NotNull Entity entity);
+@@ -1867,6 +1869,16 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
+     boolean listPlayer(@NotNull Player other);
+     // Paper end
  
 +    // Gale start - Purpur - Player#canSee by entity UUID
 +    /**

@@ -160,10 +160,10 @@ index a0aa1f1a7adf986d500a2135aa42e138aa3c4f08..6d19b985222d78750828fd2719c1fbf7
      }
  }
 diff --git a/src/main/java/io/papermc/paper/configuration/PaperConfigurations.java b/src/main/java/io/papermc/paper/configuration/PaperConfigurations.java
-index ad2177cdbc61a6f41c7e2ed81af262d4ffe7d861..141139abcbccc856532c971efcb0e4883ce063af 100644
+index e471960e0443392f6f54732b052a4debf2a8fd97..c56b9264d83ae98a4cc0945ea1bd919e9a5de57a 100644
 --- a/src/main/java/io/papermc/paper/configuration/PaperConfigurations.java
 +++ b/src/main/java/io/papermc/paper/configuration/PaperConfigurations.java
-@@ -134,7 +134,7 @@ public class PaperConfigurations extends Configurations<GlobalConfiguration, Wor
+@@ -135,7 +135,7 @@ public class PaperConfigurations extends Configurations<GlobalConfiguration, Wor
              SpigotConfig.readConfig(SpigotWorldConfig.class, this);
          }
      });
@@ -172,7 +172,7 @@ index ad2177cdbc61a6f41c7e2ed81af262d4ffe7d861..141139abcbccc856532c971efcb0e488
  
  
      public PaperConfigurations(final Path globalFolder) {
-@@ -298,7 +298,7 @@ public class PaperConfigurations extends Configurations<GlobalConfiguration, Wor
+@@ -300,7 +300,7 @@ public class PaperConfigurations extends Configurations<GlobalConfiguration, Wor
          }
      }
  
@@ -181,7 +181,7 @@ index ad2177cdbc61a6f41c7e2ed81af262d4ffe7d861..141139abcbccc856532c971efcb0e488
          return createWorldContextMap(level.convertable.levelDirectory.path(), level.serverLevelData.getLevelName(), level.dimension().location(), level.spigotConfig);
      }
  
-@@ -399,17 +399,6 @@ public class PaperConfigurations extends Configurations<GlobalConfiguration, Wor
+@@ -401,17 +401,6 @@ public class PaperConfigurations extends Configurations<GlobalConfiguration, Wor
          return Files.exists(legacyConfig) && Files.isRegularFile(legacyConfig);
      }
  
@@ -199,7 +199,7 @@ index ad2177cdbc61a6f41c7e2ed81af262d4ffe7d861..141139abcbccc856532c971efcb0e488
      @Deprecated
      public static YamlConfiguration loadLegacyConfigFile(File configFile) throws Exception {
          YamlConfiguration config = new YamlConfiguration();
-@@ -432,9 +421,16 @@ public class PaperConfigurations extends Configurations<GlobalConfiguration, Wor
+@@ -434,9 +423,16 @@ public class PaperConfigurations extends Configurations<GlobalConfiguration, Wor
      }
  
      // Symlinks are not correctly checked in createDirectories
@@ -218,7 +218,7 @@ index ad2177cdbc61a6f41c7e2ed81af262d4ffe7d861..141139abcbccc856532c971efcb0e488
 +    // Gale end - Gale configuration
  }
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 6cf49bdf5c337213a474627bc1771ccb14740f0d..04919d27a0ba9d18c1d7cc8969049958839bf023 100644
+index 28615e65ab1e0525d2cd4b0a0fca31e37eb8af0e..d645fda67b00aca90091f419226010ee5ff527dd 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -3,9 +3,6 @@ package net.minecraft.server;
@@ -457,7 +457,7 @@ index f39ab10c5b0b8d86b579a5b683491204c51db70b..f95aa6362605c10145a212ed4b7df42a
          this.world = new CraftWorld((ServerLevel) this, gen, biomeProvider, env);
  
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index bb45f1f7691e7ce9ad819a8ceac0d3c3e962a5ce..c2e22dd084d922a827e6dd53e8634ec5b9e2d1ee 100644
+index 0f2d8cc6d8a6f6fb53658c0f49de3b76cc716ea1..04dfa4f59921ec5fcea6fb6989847fc5164ccfda 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 @@ -1057,6 +1057,7 @@ public final class CraftServer implements Server {
@@ -468,7 +468,7 @@ index bb45f1f7691e7ce9ad819a8ceac0d3c3e962a5ce..c2e22dd084d922a827e6dd53e8634ec5
          for (ServerLevel world : this.console.getAllLevels()) {
              // world.serverLevelData.setDifficulty(config.difficulty); // Paper - per level difficulty
              world.setSpawnSettings(world.serverLevelData.getDifficulty() != Difficulty.PEACEFUL && config.spawnMonsters, config.spawnAnimals); // Paper - per level difficulty (from MinecraftServer#setDifficulty(ServerLevel, Difficulty, boolean))
-@@ -2902,6 +2903,14 @@ public final class CraftServer implements Server {
+@@ -2932,6 +2933,14 @@ public final class CraftServer implements Server {
              return CraftServer.this.console.paperConfigurations.createLegacyObject(CraftServer.this.console);
          }
  

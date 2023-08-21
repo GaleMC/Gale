@@ -73,7 +73,7 @@ index 80c2c8d565f03ae0ea24fbdecdbe2bc5b9aa4b82..3396c696a380f8ac64740acee887de82
  
          return b0;
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 9ebdc32891ff243e8e7c2ff9308a8a0e329f343b..963e6ea64aeaa8cb453d99c56654df265fb2d343 100644
+index ac5028d2682889759cf89a49cf748c1841640d23..157e90f91b7461832ad628d07c3455fa8629d32a 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -107,18 +107,9 @@ import net.minecraft.util.ProgressListener;
@@ -496,7 +496,7 @@ index 4a610b712acfe0b1b4dcf4988bc22c6a71616050..e49e1f2afdade4dc16aa5239d60c0dcf
  
                  ++j;
 diff --git a/src/main/java/net/minecraft/server/level/ChunkMap.java b/src/main/java/net/minecraft/server/level/ChunkMap.java
-index 469083208110d5735e1bbda7a15c55a032d0e8cc..67d778ef115fc1e09fc8fa9c21d17613a11ca17f 100644
+index 65d947df910d60f478e7a449eb161e5105e2c0c9..a9e79b340814dfb2d60d51332a8a581298015e4f 100644
 --- a/src/main/java/net/minecraft/server/level/ChunkMap.java
 +++ b/src/main/java/net/minecraft/server/level/ChunkMap.java
 @@ -75,7 +75,6 @@ import net.minecraft.server.level.progress.ChunkProgressListener;
@@ -507,7 +507,7 @@ index 469083208110d5735e1bbda7a15c55a032d0e8cc..67d778ef115fc1e09fc8fa9c21d17613
  import net.minecraft.util.thread.BlockableEventLoop;
  import net.minecraft.util.thread.ProcessorHandle;
  import net.minecraft.util.thread.ProcessorMailbox;
-@@ -618,20 +617,14 @@ public class ChunkMap extends ChunkStorage implements ChunkHolder.PlayerProvider
+@@ -637,20 +636,14 @@ public class ChunkMap extends ChunkStorage implements ChunkHolder.PlayerProvider
      }
  
      protected void tick(BooleanSupplier shouldKeepTicking) {
@@ -529,7 +529,7 @@ index 469083208110d5735e1bbda7a15c55a032d0e8cc..67d778ef115fc1e09fc8fa9c21d17613
  
      public boolean hasWork() {
 diff --git a/src/main/java/net/minecraft/server/level/ServerChunkCache.java b/src/main/java/net/minecraft/server/level/ServerChunkCache.java
-index 488a253e218409b5f0b4a872cee0928578fa7582..78201998d6cbee9aa6f0bad80b726b46675393dc 100644
+index acbcdc8cb1523044b1657e03a141fae6389a3686..c7a8ec6b99e7db62abcbb1d5aed99738ee8732de 100644
 --- a/src/main/java/net/minecraft/server/level/ServerChunkCache.java
 +++ b/src/main/java/net/minecraft/server/level/ServerChunkCache.java
 @@ -24,7 +24,6 @@ import net.minecraft.core.SectionPos;
@@ -607,7 +607,7 @@ index 488a253e218409b5f0b4a872cee0928578fa7582..78201998d6cbee9aa6f0bad80b726b46
              this.level.timings.countNaturalMobs.startTiming(); // Paper - timings
              int l = this.distanceManager.getNaturalSpawnChunkCount();
              // Paper start - per player mob spawning
-@@ -574,13 +559,11 @@ public class ServerChunkCache extends ChunkSource {
+@@ -584,13 +569,11 @@ public class ServerChunkCache extends ChunkSource {
              this.level.timings.countNaturalMobs.stopTiming(); // Paper - timings
  
              this.lastSpawnState = spawnercreature_d;
@@ -621,7 +621,7 @@ index 488a253e218409b5f0b4a872cee0928578fa7582..78201998d6cbee9aa6f0bad80b726b46
              boolean flag2 = this.level.getGameRules().getBoolean(GameRules.RULE_DOMOBSPAWNING) && !this.level.players().isEmpty(); // CraftBukkit
  
              // Paper - only shuffle if per-player mob spawning is disabled
-@@ -632,15 +615,12 @@ public class ServerChunkCache extends ChunkSource {
+@@ -642,15 +625,12 @@ public class ServerChunkCache extends ChunkSource {
              }
              // Paper end - optimise chunk tick iteration
              this.level.timings.chunkTicks.stopTiming(); // Paper
@@ -637,7 +637,7 @@ index 488a253e218409b5f0b4a872cee0928578fa7582..78201998d6cbee9aa6f0bad80b726b46
              this.level.timings.broadcastChunkUpdates.startTiming(); // Paper - timing
              if (!this.chunkMap.needsChangeBroadcasting.isEmpty()) {
                  ReferenceOpenHashSet<ChunkHolder> copy = this.chunkMap.needsChangeBroadcasting.clone();
-@@ -654,7 +634,6 @@ public class ServerChunkCache extends ChunkSource {
+@@ -664,7 +644,6 @@ public class ServerChunkCache extends ChunkSource {
                  }
              }
              this.level.timings.broadcastChunkUpdates.stopTiming(); // Paper - timing
@@ -645,7 +645,7 @@ index 488a253e218409b5f0b4a872cee0928578fa7582..78201998d6cbee9aa6f0bad80b726b46
              // Paper end - use set of chunks requiring updates, rather than iterating every single one loaded
              // Paper start - controlled flush for entity tracker packets
              List<net.minecraft.network.Connection> disabledFlushes = new java.util.ArrayList<>(this.level.players.size());
-@@ -845,7 +824,6 @@ public class ServerChunkCache extends ChunkSource {
+@@ -855,7 +834,6 @@ public class ServerChunkCache extends ChunkSource {
  
          @Override
          protected void doRunTask(Runnable task) {
@@ -854,10 +854,10 @@ index 513916690d2579760f59edecb1a273f475d54adf..287f6a38a6f042983c5e652ff9800fb2
  
                  while (iterator.hasNext()) {
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index dc5fda83a66afbfeb7897fc20b4742899d8aca08..5986507deeb9f9f05b6045df4ef28afba802274c 100644
+index 161c40692e8d469fad4169908b9353be0f85d0d8..2622ee60f839f2af896fbf5d974005518247a5f5 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-@@ -1205,7 +1205,6 @@ public class ServerPlayer extends Player {
+@@ -1206,7 +1206,6 @@ public class ServerPlayer extends Player {
              PortalInfo shapedetectorshape = this.findDimensionEntryPoint(worldserver);
  
              if (shapedetectorshape != null) {
@@ -865,7 +865,7 @@ index dc5fda83a66afbfeb7897fc20b4742899d8aca08..5986507deeb9f9f05b6045df4ef28afb
                  worldserver = shapedetectorshape.world; // CraftBukkit
                  if (worldserver == null) { } else // CraftBukkit - empty to fall through to null to event
                  if (resourcekey == LevelStem.OVERWORLD && worldserver.getTypeKey() == LevelStem.NETHER) { // CraftBukkit
-@@ -1228,8 +1227,6 @@ public class ServerPlayer extends Player {
+@@ -1229,8 +1228,6 @@ public class ServerPlayer extends Player {
              worldserver = ((CraftWorld) exit.getWorld()).getHandle();
              // CraftBukkit end
  
@@ -874,7 +874,7 @@ index dc5fda83a66afbfeb7897fc20b4742899d8aca08..5986507deeb9f9f05b6045df4ef28afb
              if (true) { // CraftBukkit
                  this.isChangingDimension = true; // CraftBukkit - Set teleport invulnerability only if player changing worlds
  
-@@ -1246,7 +1243,6 @@ public class ServerPlayer extends Player {
+@@ -1247,7 +1244,6 @@ public class ServerPlayer extends Player {
                  this.connection.teleport(exit); // CraftBukkit - use internal teleport without event
                  this.connection.resetPosition();
                  worldserver.addDuringPortalTeleport(this);
@@ -883,7 +883,7 @@ index dc5fda83a66afbfeb7897fc20b4742899d8aca08..5986507deeb9f9f05b6045df4ef28afb
                  this.connection.send(new ClientboundPlayerAbilitiesPacket(this.getAbilities()));
                  playerlist.sendLevelInfo(this, worldserver);
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 80e050603e36134754136a8ee2bd14624f976e91..1b66c30ad7b4db4a77aa4da66ce7ed6843bdb370 100644
+index e8923befdee3514be5346c6e6c8e7236e7e6e668..afe336563a748c80c09e693ad6b63d8b55ffa2ca 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -397,7 +397,6 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
@@ -979,7 +979,7 @@ index 7ab57748b2f2aea1003d9b7e70e76c372aa1e432..47e75ec4a01f8a456ec6ebc13031c1f0
      }
  
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 2edab21bb271405f200de5a19e9c748bb14aba7d..be9ac3b5b1107f588f6c00e7768a883691a8adcb 100644
+index 0ed297f189e5d21c497ac78294db6ca664c0f2c4..e259743a550ef5eb2a19278c527e3c650afd917a 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -809,7 +809,6 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
@@ -1684,7 +1684,7 @@ index f95aa6362605c10145a212ed4b7df42ad443f4cf..baf53980acfe52ec23b7f2f2183c2287
  
      @Override
 diff --git a/src/main/java/net/minecraft/world/level/NaturalSpawner.java b/src/main/java/net/minecraft/world/level/NaturalSpawner.java
-index 089dd93d4cd4c1f72e63c4944b3b82c1e2ba732d..599efa2ed24e0d4944324c86ca23c38d8b111277 100644
+index e85ddf92b4f6f044e2b5834a172f37d78e702ef3..a3de93f3baf8921950f54a5c753e6169ebd90ebe 100644
 --- a/src/main/java/net/minecraft/world/level/NaturalSpawner.java
 +++ b/src/main/java/net/minecraft/world/level/NaturalSpawner.java
 @@ -132,7 +132,6 @@ public final class NaturalSpawner {

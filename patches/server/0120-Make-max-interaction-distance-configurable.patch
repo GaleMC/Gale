@@ -7,7 +7,7 @@ License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayerGameMode.java b/src/main/java/net/minecraft/server/level/ServerPlayerGameMode.java
-index baf3e79489e310f443788bc917c553ae7ea86c89..f830ff98ac6e94fa4f0c9d85bcdd8f3816ecc645 100644
+index 9a17193c9fe26c9c0390906b4c1f9d619ccba249..98b5efcea7d54a8132aab84d1de2d1f799556436 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayerGameMode.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayerGameMode.java
 @@ -174,7 +174,7 @@ public class ServerPlayerGameMode {
@@ -20,7 +20,7 @@ index baf3e79489e310f443788bc917c553ae7ea86c89..f830ff98ac6e94fa4f0c9d85bcdd8f38
              this.debugLogging(pos, false, sequence, "too far");
          } else if (pos.getY() >= worldHeight) {
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 35f88385ed5b7a5a22486d801052f61300a97fe1..c6d13f1df78d93fb4a21e6733c4ca7d22464bded 100644
+index 2fe85168935d2b558fd33a9f5b53dc1c1d5024f2..249f3b7671d4d5c6072b256afdec31ce948bd306 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -256,7 +256,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
@@ -46,7 +46,7 @@ index 35f88385ed5b7a5a22486d801052f61300a97fe1..c6d13f1df78d93fb4a21e6733c4ca7d2
      @Override
      public void tick() {
          if (this.ackBlockChangesUpTo > -1) {
-@@ -2012,7 +2019,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -2017,7 +2024,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
              BlockPos blockposition = movingobjectpositionblock.getBlockPos();
              Vec3 vec3d1 = Vec3.atCenterOf(blockposition);
  
@@ -55,7 +55,7 @@ index 35f88385ed5b7a5a22486d801052f61300a97fe1..c6d13f1df78d93fb4a21e6733c4ca7d2
                  Vec3 vec3d2 = vec3d.subtract(vec3d1);
                  double d0 = 1.0000001D;
  
-@@ -2876,7 +2883,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -2881,7 +2888,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
  
              AABB axisalignedbb = entity.getBoundingBox();
  
