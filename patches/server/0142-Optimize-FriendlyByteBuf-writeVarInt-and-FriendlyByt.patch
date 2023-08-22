@@ -1,0 +1,256 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Martijn Muijsers <martijnmuijsers@live.nl>
+Date: Tue, 22 Aug 2023 21:38:37 +0200
+Subject: [PATCH] Optimize FriendlyByteBuf#writeVarInt and
+ FriendlyByteBuf#writeVarLong
+
+License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+Gale - https://galemc.org
+
+This patch is based on the following commit:
+"Reapply "Optimize varint writing""
+By: Andrew Steinborn <git@steinborn.me>
+As part of: Velocity (https://github.com/PaperMC/Velocity)
+Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+
+* Velocity description *
+
+Inspired by the approach described at the bottom of https://richardstartin.github.io/posts/dont-use-protobuf-for-telemetry
+
+Given that we do a lot of varint writing as well, this should provide a small performance boost for larger/complex packets whilst not regressing hard on smaller packets.
+
+This includes a test to ensure that the behavior is as expected and fixes the initialization loop so that the correct results will be given. Much thanks to @octylFractal for acting as my duck while trying to figure this out.
+
+diff --git a/src/main/java/net/minecraft/network/FriendlyByteBuf.java b/src/main/java/net/minecraft/network/FriendlyByteBuf.java
+index c37d1a3cae9063a8cbc84b6420a7f89d650a874e..76d92f56a9deab824dcb7ca652c5fcd287f0cbfd 100644
+--- a/src/main/java/net/minecraft/network/FriendlyByteBuf.java
++++ b/src/main/java/net/minecraft/network/FriendlyByteBuf.java
+@@ -640,6 +640,41 @@ public class FriendlyByteBuf extends ByteBuf {
+     }
+ 
+     public FriendlyByteBuf writeVarInt(int value) {
++        // Gale start - Velocity - optimized FriendlyByteBuf#writeVarInt
++        if ((value & 0xFFFFFF80) == 0) {
++            this.writeByte(value);
++        } else if ((value & 0xFFFFC000) == 0) {
++            int w = (value & 0x7F) << 8
++                | (value >>> 7)
++                | 0x00008000;
++            this.writeShort(w);
++        } else if ((value & 0xFFE00000) == 0) {
++            int w = (value & 0x7F) << 16
++                | (value & 0x3F80) << 1
++                | (value >>> 14)
++                | 0x00808000;
++            this.writeMedium(w);
++        } else if ((value & 0xF0000000) == 0) {
++            int w = (value & 0x7F) << 24
++                | ((value & 0x3F80) << 9)
++                | (value & 0x1FC000) >> 6
++                | (value >>> 21)
++                | 0x80808000;
++            this.writeInt(w);
++        } else {
++            int w = (value & 0x7F) << 24
++                | (value & 0x3F80) << 9
++                | (value & 0x1FC000) >> 6
++                | ((value >>> 21) & 0x7F)
++                | 0x80808080;
++            this.writeInt(w);
++            this.writeByte(value >>> 28);
++        }
++        return this;
++    }
++
++    FriendlyByteBuf writeVarIntOriginal(int value) { // public -> package-private
++        // Gale end - Velocity - optimized FriendlyByteBuf#writeVarInt
+         while ((value & -128) != 0) {
+             this.writeByte(value & 127 | 128);
+             value >>>= 7;
+@@ -650,6 +685,127 @@ public class FriendlyByteBuf extends ByteBuf {
+     }
+ 
+     public FriendlyByteBuf writeVarLong(long value) {
++        // Gale start - Velocity - optimized FriendlyByteBuf#writeVarLong
++        if ((value & 0xFFFFFFFFFFFFFF80L) == 0) {
++            this.writeByte((int) value);
++        } else if (value < 0) {
++            // The case of writing arbitrary longs is common
++            // Here, the number is negative, which has probability 1/2 for arbitrary numbers
++            int least7bits = (int) (value & 0xFFFFFFFL);
++            int w = (least7bits & 0x7F) << 24
++                | (least7bits & 0x3F80) << 9
++                | (least7bits & 0x1FC000) >> 6
++                | ((least7bits >>> 21) & 0x7F)
++                | 0x80808080;
++            long nonLeast7Bits = value >>> 28;
++            int secondLeast7bits = (int) (nonLeast7Bits & 0xFFFFFFFL);
++            int w2 = (secondLeast7bits & 0x7F) << 24
++                | ((secondLeast7bits & 0x3F80) << 9)
++                | (secondLeast7bits & 0x1FC000) >> 6
++                | (secondLeast7bits >>> 21)
++                | 0x80808080;
++            int thirdLeast7Bits = (int) (nonLeast7Bits >>> 28);
++            int w3 = (thirdLeast7Bits & 0x7F) << 8
++                | (thirdLeast7Bits >>> 7)
++                | 0x00008000;
++            this.writeInt(w);
++            this.writeInt(w2);
++            this.writeShort(w3);
++        } else if ((value & 0xFFFFFFFFFFFFC000L) == 0) {
++            int least7bits = (int) value;
++            int w = (least7bits & 0x7F) << 8
++                | (least7bits >>> 7)
++                | 0x00008000;
++            this.writeShort(w);
++        } else if ((value & 0xFFFFFFFFFFE00000L) == 0) {
++            int least7bits = (int) value;
++            int w = (least7bits & 0x7F) << 16
++                | (least7bits & 0x3F80) << 1
++                | (least7bits >>> 14)
++                | 0x00808000;
++            this.writeMedium(w);
++        } else if ((value & 0xFFFFFFFFF0000000L) == 0) {
++            int least7bits = (int) value;
++            int w = (least7bits & 0x7F) << 24
++                | ((least7bits & 0x3F80) << 9)
++                | (least7bits & 0x1FC000) >> 6
++                | (least7bits >>> 21)
++                | 0x80808000;
++            this.writeInt(w);
++        } else if ((value & 0xFFFFFFF800000000L) == 0) {
++            int least7bits = (int) (value & 0xFFFFFFFL);
++            int w = (least7bits & 0x7F) << 24
++                | (least7bits & 0x3F80) << 9
++                | (least7bits & 0x1FC000) >> 6
++                | ((least7bits >>> 21) & 0x7F)
++                | 0x80808080;
++            this.writeInt(w);
++            this.writeByte((int) (value >>> 28));
++        } else if ((value & 0xFFFFFC0000000000L) == 0) {
++            int least7bits = (int) (value & 0xFFFFFFFL);
++            int w = (least7bits & 0x7F) << 24
++                | (least7bits & 0x3F80) << 9
++                | (least7bits & 0x1FC000) >> 6
++                | ((least7bits >>> 21) & 0x7F)
++                | 0x80808080;
++            int secondLeast7bits = (int) (value >>> 28);
++            int w2 = (secondLeast7bits & 0x7F) << 8
++                | (secondLeast7bits >>> 7)
++                | 0x00008000;
++            this.writeInt(w);
++            this.writeShort(w2);
++        } else if ((value & 0xFFFE000000000000L) == 0) {
++            int least7bits = (int) (value & 0xFFFFFFFL);
++            int w = (least7bits & 0x7F) << 24
++                | (least7bits & 0x3F80) << 9
++                | (least7bits & 0x1FC000) >> 6
++                | ((least7bits >>> 21) & 0x7F)
++                | 0x80808080;
++            int secondLeast7bits = (int) (value >>> 28);
++            int w2 = (secondLeast7bits & 0x7F) << 16
++                | (secondLeast7bits & 0x3F80) << 1
++                | (secondLeast7bits >>> 14)
++                | 0x00808000;
++            this.writeInt(w);
++            this.writeMedium(w2);
++        } else if ((value & 0xFF00000000000000L) == 0) {
++            int least7bits = (int) (value & 0xFFFFFFFL);
++            int w = (least7bits & 0x7F) << 24
++                | (least7bits & 0x3F80) << 9
++                | (least7bits & 0x1FC000) >> 6
++                | ((least7bits >>> 21) & 0x7F)
++                | 0x80808080;
++            int secondLeast7bits = (int) (value >>> 28);
++            int w2 = (secondLeast7bits & 0x7F) << 24
++                | ((secondLeast7bits & 0x3F80) << 9)
++                | (secondLeast7bits & 0x1FC000) >> 6
++                | (secondLeast7bits >>> 21)
++                | 0x80808000;
++            this.writeInt(w);
++            this.writeInt(w2);
++        } else {
++            int least7bits = (int) (value & 0xFFFFFFFL);
++            int w = (least7bits & 0x7F) << 24
++                | (least7bits & 0x3F80) << 9
++                | (least7bits & 0x1FC000) >> 6
++                | ((least7bits >>> 21) & 0x7F)
++                | 0x80808080;
++            long nonLeast7Bits = value >>> 28;
++            int secondLeast7bits = (int) (nonLeast7Bits & 0xFFFFFFFL);
++            int w2 = (secondLeast7bits & 0x7F) << 24
++                | ((secondLeast7bits & 0x3F80) << 9)
++                | (secondLeast7bits & 0x1FC000) >> 6
++                | (secondLeast7bits >>> 21)
++                | 0x80808080;
++            this.writeInt(w);
++            this.writeInt(w2);
++            this.writeByte((int) (nonLeast7Bits >>> 28));
++        }
++        return this;
++    }
++
++    FriendlyByteBuf writeVarLongOriginal(long value) { // public -> package-private
++        // Gale end - Velocity - optimized FriendlyByteBuf#writeVarLong
+         while ((value & -128L) != 0L) {
+             this.writeByte((int) (value & 127L) | 128);
+             value >>>= 7;
+diff --git a/src/test/java/net/minecraft/network/FriendlyByteBufTest.java b/src/test/java/net/minecraft/network/FriendlyByteBufTest.java
+index e529888932a88e4876a3287ac7ebe8ad2bf77513..f8bcfc6da906dc168b326b71d7c534ea21b90b7b 100644
+--- a/src/test/java/net/minecraft/network/FriendlyByteBufTest.java
++++ b/src/test/java/net/minecraft/network/FriendlyByteBufTest.java
+@@ -2,6 +2,7 @@
+ 
+ package net.minecraft.network;
+ 
++import io.netty.buffer.Unpooled;
+ import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
+ import it.unimi.dsi.fastutil.ints.IntSet;
+ import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
+@@ -156,4 +157,46 @@ public class FriendlyByteBufTest {
+     }
+     // Gale end - Velocity - pre-compute VarInt and VarLong sizes
+ 
++    // Gale - Velocity - optimized FriendlyByteBuf#writeVarInt and FriendlyByteBuf#writeVarLong
++    @Test
++    public void testWriteVarIntComparedToOriginal() {
++        integerCases.forEach(value -> {
++            // given
++            int capacity = 5;
++            FriendlyByteBuf buf1 = new FriendlyByteBuf(Unpooled.buffer(capacity));
++            FriendlyByteBuf buf2 = new FriendlyByteBuf(Unpooled.buffer(capacity));
++            buf1.writeVarIntOriginal(value);
++
++            // when
++            buf2.writeVarInt(value);
++
++            // then
++            Assert.assertEquals("Writer index of optimized buffer (" + buf2.writerIndex() + ") is not equal to writer index of original buffer (" + buf1.writerIndex() + ") for test case value " + value + " (binary: " + padStringWithLeadingZeros(Integer.toBinaryString(value), 32) + ")", buf1.writerIndex(), buf2.writerIndex());
++            for (int i = 0; i < capacity; i++) {
++                Assert.assertEquals("Buffer byte (at index " + i + ") in optimized buffer (" + buf2.getByte(i) + " (binary: " + padStringWithLeadingZeros(Integer.toBinaryString(Byte.toUnsignedInt(buf2.getByte(i))), 8) + ")) is not equal to the same byte in original buffer (" + buf1.getByte(i) + " (binary: " + padStringWithLeadingZeros(Integer.toBinaryString(Byte.toUnsignedInt(buf1.getByte(i))), 8) + ")) for test case value " + value + " (binary: " + padStringWithLeadingZeros(Integer.toBinaryString(value), 32) + ")", buf1.getByte(i), buf2.getByte(i));
++            }
++        });
++    }
++
++    @Test
++    public void testWriteVarLongComparedToOriginal() {
++        longCases.forEach(value -> {
++            // given
++            int capacity = 10;
++            FriendlyByteBuf buf1 = new FriendlyByteBuf(Unpooled.buffer(capacity));
++            FriendlyByteBuf buf2 = new FriendlyByteBuf(Unpooled.buffer(capacity));
++            buf1.writeVarLongOriginal(value);
++
++            // when
++            buf2.writeVarLong(value);
++
++            // then
++            Assert.assertEquals("Writer index of optimized buffer (" + buf2.writerIndex() + ") is not equal to writer index of original buffer (" + buf1.writerIndex() + ") for test case value " + value + " (binary: " + padStringWithLeadingZeros(Long.toBinaryString(value), 64) + ")", buf1.writerIndex(), buf2.writerIndex());
++            for (int i = 0; i < capacity; i++) {
++                Assert.assertEquals("Buffer byte (at index " + i + ") in optimized buffer (" + buf2.getByte(i) + " (binary: " + padStringWithLeadingZeros(Integer.toBinaryString(Byte.toUnsignedInt(buf2.getByte(i))), 8) + ")) is not equal to the same byte in original buffer (" + buf1.getByte(i) + " (binary: " + padStringWithLeadingZeros(Integer.toBinaryString(Byte.toUnsignedInt(buf1.getByte(i))), 8) + ")) for test case value " + value + " (binary: " + padStringWithLeadingZeros(Long.toBinaryString(value), 64) + ")", buf1.getByte(i), buf2.getByte(i));
++            }
++        });
++    }
++    // Gale end - Velocity - optimized FriendlyByteBuf#writeVarInt and FriendlyByteBuf#writeVarLong
++
+ }
