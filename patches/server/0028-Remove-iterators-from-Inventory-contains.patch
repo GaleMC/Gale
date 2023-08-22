@@ -31,10 +31,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 diff --git a/src/main/java/net/minecraft/world/entity/player/Inventory.java b/src/main/java/net/minecraft/world/entity/player/Inventory.java
-index 395cecc385e4126a7534ac9aeb15cf323efab03e..cbcbb826733cf75bb018752af75a6a338947c472 100644
+index 96d664c28738d6090f7067761c2978dd1aa0fd0e..e89942d80b435acbeb7a1d00491c7fdf18e89a3c 100644
 --- a/src/main/java/net/minecraft/world/entity/player/Inventory.java
 +++ b/src/main/java/net/minecraft/world/entity/player/Inventory.java
-@@ -681,6 +681,8 @@ public class Inventory implements Container, Nameable {
+@@ -687,6 +687,8 @@ public class Inventory implements Container, Nameable {
      }
  
      public boolean contains(ItemStack stack) {
@@ -43,7 +43,7 @@ index 395cecc385e4126a7534ac9aeb15cf323efab03e..cbcbb826733cf75bb018752af75a6a33
          Iterator iterator = this.compartments.iterator();
  
          while (iterator.hasNext()) {
-@@ -695,7 +697,18 @@ public class Inventory implements Container, Nameable {
+@@ -701,7 +703,18 @@ public class Inventory implements Container, Nameable {
                  }
              }
          }

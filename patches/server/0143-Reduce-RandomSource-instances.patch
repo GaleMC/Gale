@@ -109,10 +109,10 @@ index 8f2c0dcb0ca69ea1b09bb055c6a9494980be8e92..2a7813209d664fd8c123488ce9c530b4
          this.hitPlayers = Maps.newHashMap();
          this.level = world;
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/TheEndGatewayBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/TheEndGatewayBlockEntity.java
-index 414a47a82927bed02a4f3cf330c78e46f1d66782..cc17cb985856fd8d1083b5b1f57f82c651d28443 100644
+index 5f8e169a6e80e8f05df251fa76e60f512508d385..6569efea988243729af2c0df8d15edc848e95c13 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/TheEndGatewayBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/TheEndGatewayBlockEntity.java
-@@ -361,7 +361,7 @@ public class TheEndGatewayBlockEntity extends TheEndPortalBlockEntity {
+@@ -360,7 +360,7 @@ public class TheEndGatewayBlockEntity extends TheEndPortalBlockEntity {
      }
  
      private static void spawnGatewayPortal(ServerLevel world, BlockPos pos, EndGatewayConfiguration config) {
@@ -122,10 +122,10 @@ index 414a47a82927bed02a4f3cf330c78e46f1d66782..cc17cb985856fd8d1083b5b1f57f82c6
  
      @Override
 diff --git a/src/main/java/net/minecraft/world/level/dimension/end/EndDragonFight.java b/src/main/java/net/minecraft/world/level/dimension/end/EndDragonFight.java
-index 9cb6a36ac210574a3d62202b16058e9fdc94691e..51a3188f4873666100ba438550efa76e59342afd 100644
+index 060473abbeb9e0cae97e0c48cd480a300970ffa6..c8f75bf68c4787e4ba711cbf44c4524484c3d7c3 100644
 --- a/src/main/java/net/minecraft/world/level/dimension/end/EndDragonFight.java
 +++ b/src/main/java/net/minecraft/world/level/dimension/end/EndDragonFight.java
-@@ -454,7 +454,7 @@ public class EndDragonFight {
+@@ -472,7 +472,7 @@ public class EndDragonFight {
          this.level.registryAccess().registry(Registries.CONFIGURED_FEATURE).flatMap((iregistry) -> {
              return iregistry.getHolder(EndFeatures.END_GATEWAY_DELAYED);
          }).ifPresent((holder_c) -> {
@@ -134,7 +134,7 @@ index 9cb6a36ac210574a3d62202b16058e9fdc94691e..51a3188f4873666100ba438550efa76e
          });
      }
  
-@@ -472,7 +472,7 @@ public class EndDragonFight {
+@@ -490,7 +490,7 @@ public class EndDragonFight {
              this.portalLocation = this.portalLocation.atY(this.level.getMinBuildHeight() + 1);
          }
          // Paper end

@@ -37,10 +37,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/TheEndGatewayBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/TheEndGatewayBlockEntity.java
-index d9baa85962236c42219cf09d4f3129be93ff069c..414a47a82927bed02a4f3cf330c78e46f1d66782 100644
+index 1ec80f9c901dff1c9f29befa5a8e3c3f6f37aaf7..5f8e169a6e80e8f05df251fa76e60f512508d385 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/TheEndGatewayBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/TheEndGatewayBlockEntity.java
-@@ -178,6 +178,7 @@ public class TheEndGatewayBlockEntity extends TheEndPortalBlockEntity {
+@@ -177,6 +177,7 @@ public class TheEndGatewayBlockEntity extends TheEndPortalBlockEntity {
  
      public static void teleportEntity(Level world, BlockPos pos, BlockState state, Entity entity, TheEndGatewayBlockEntity blockEntity) {
          if (world instanceof ServerLevel && !blockEntity.isCoolingDown()) {

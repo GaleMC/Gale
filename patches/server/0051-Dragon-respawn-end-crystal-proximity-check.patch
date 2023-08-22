@@ -20,10 +20,10 @@ index ca1edc083847b47bb450b291723aca778a5912dc..428eed6ad35b59bdf293ca727fa3e815
                      }
  
 diff --git a/src/main/java/net/minecraft/world/level/dimension/end/EndDragonFight.java b/src/main/java/net/minecraft/world/level/dimension/end/EndDragonFight.java
-index 02d5a5b799bfe90993bc6868369d31f43d5b7fd6..9cb6a36ac210574a3d62202b16058e9fdc94691e 100644
+index 630971d7a87c12798672af9635535eaf80a3ec9c..060473abbeb9e0cae97e0c48cd480a300970ffa6 100644
 --- a/src/main/java/net/minecraft/world/level/dimension/end/EndDragonFight.java
 +++ b/src/main/java/net/minecraft/world/level/dimension/end/EndDragonFight.java
-@@ -535,6 +535,12 @@ public class EndDragonFight {
+@@ -553,6 +553,12 @@ public class EndDragonFight {
      }
  
      public boolean tryRespawn() { // CraftBukkit - return boolean
@@ -36,7 +36,7 @@ index 02d5a5b799bfe90993bc6868369d31f43d5b7fd6..9cb6a36ac210574a3d62202b16058e9f
          if (this.dragonKilled && this.respawnStage == null) {
              BlockPos blockposition = this.portalLocation;
  
-@@ -552,6 +558,22 @@ public class EndDragonFight {
+@@ -570,6 +576,22 @@ public class EndDragonFight {
                  blockposition = this.portalLocation;
              }
  
