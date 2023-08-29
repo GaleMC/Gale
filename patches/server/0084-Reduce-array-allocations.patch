@@ -412,7 +412,7 @@ index dae36c6452ccd57a436dd918547b64d59957ab0a..f06cafd80d7c027ca97e50bcb45ad520
          OptionSpec<Integer> optionspec11 = optionparser.accepts("port").withRequiredArg().ofType(Integer.class).defaultsTo(-1, new Integer[0]);
          OptionSpec<String> optionspec12 = optionparser.accepts("serverId").withRequiredArg();
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 157e90f91b7461832ad628d07c3455fa8629d32a..4e6107114a23fd978e38c8a4b072057520285d36 100644
+index ad222cd8bf85d1dcdf3f5dd613fb821e5c52ee4e..203598a379f944f44ff38bdd2007387cc7bc3176 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -50,6 +50,8 @@ import java.util.stream.Collectors;
@@ -759,7 +759,7 @@ index 879cc823d56625867eb73bb621db6a13f40ad81c..3d589c9698129ab2a09093425d0bb97c
              k = aenumitemslot.length;
  
 diff --git a/src/main/java/net/minecraft/world/item/crafting/ShapedRecipe.java b/src/main/java/net/minecraft/world/item/crafting/ShapedRecipe.java
-index 9c1285e31d947f92e0b00149e342e793898e0d7c..dccb73d1cf06da3e3180992ea6edce322f4316ee 100644
+index 6693dd51440da3f0fc338c4e2cb67d3222eed182..826c25c41b505d4258e055ddd4a54f61b91e1490 100644
 --- a/src/main/java/net/minecraft/world/item/crafting/ShapedRecipe.java
 +++ b/src/main/java/net/minecraft/world/item/crafting/ShapedRecipe.java
 @@ -12,6 +12,8 @@ import java.util.Iterator;
@@ -771,7 +771,7 @@ index 9c1285e31d947f92e0b00149e342e793898e0d7c..dccb73d1cf06da3e3180992ea6edce32
  import net.minecraft.core.NonNullList;
  import net.minecraft.core.RegistryAccess;
  import net.minecraft.core.registries.BuiltInRegistries;
-@@ -262,7 +264,7 @@ public class ShapedRecipe implements CraftingRecipe {
+@@ -263,7 +265,7 @@ public class ShapedRecipe extends io.papermc.paper.inventory.recipe.RecipeBookEx
          }
  
          if (pattern.length == l) {

@@ -13,7 +13,7 @@ As part of: VMP (https://github.com/RelativityMC/VMP-fabric)
 Licensed under: MIT (https://opensource.org/licenses/MIT)
 
 diff --git a/src/main/java/net/minecraft/server/level/ChunkMap.java b/src/main/java/net/minecraft/server/level/ChunkMap.java
-index eb12a3c0aefb3d6a42f08439db1ca51e3db65241..767f27759c3372b80d65f00195fcb49e8215fdf4 100644
+index f375c8a3cdc88ee8d1a54fb4663d56d190a62faa..be0210aef3805237adb0142d3eb8b4a76a3270e5 100644
 --- a/src/main/java/net/minecraft/server/level/ChunkMap.java
 +++ b/src/main/java/net/minecraft/server/level/ChunkMap.java
 @@ -14,6 +14,7 @@ import com.mojang.datafixers.util.Either;

@@ -218,7 +218,7 @@ index e471960e0443392f6f54732b052a4debf2a8fd97..c56b9264d83ae98a4cc0945ea1bd919e
 +    // Gale end - Gale configuration
  }
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 28615e65ab1e0525d2cd4b0a0fca31e37eb8af0e..d645fda67b00aca90091f419226010ee5ff527dd 100644
+index 3f31b91ac6c9cb4d2b19536b6a6a2ab0f1b0df20..15d60a311c44a66c0ff2fdff989f93c27be64c40 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -3,9 +3,6 @@ package net.minecraft.server;
@@ -257,7 +257,7 @@ index 28615e65ab1e0525d2cd4b0a0fca31e37eb8af0e..d645fda67b00aca90091f419226010ee
  import org.slf4j.Logger;
  
  // CraftBukkit start
-@@ -306,6 +304,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -305,6 +303,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
      public final double[] recentTps = new double[ 3 ];
      // Spigot end
      public final io.papermc.paper.configuration.PaperConfigurations paperConfigurations;
@@ -265,7 +265,7 @@ index 28615e65ab1e0525d2cd4b0a0fca31e37eb8af0e..d645fda67b00aca90091f419226010ee
      public static long currentTickLong = 0L; // Paper
  
      public volatile Thread shutdownThread; // Paper
-@@ -408,6 +407,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -407,6 +406,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          // Paper end
          Runtime.getRuntime().addShutdownHook(new org.bukkit.craftbukkit.util.ServerShutdownThread(this));
          this.paperConfigurations = services.paperConfigurations(); // Paper
@@ -318,7 +318,7 @@ index a9b2c8cd4dcd3f884e4306bebee9334d3848fce5..3430a1ac3252ff9a457ee36ffc112503
      }
  
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index 9f422cbeaa52b3e6a0a27af4f8ad4ddb7808483f..9d54ef5f12a24131b1504566e09cd9714b93e913 100644
+index c49802c936ae8e3f4dc1badd98414d96714ecd60..feff4844b1e19466f05a4116a221746acc3262f2 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 @@ -1,20 +1,15 @@

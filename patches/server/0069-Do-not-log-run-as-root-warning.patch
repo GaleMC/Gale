@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Martijn Muijsers <martijnmuijsers@live.nl>
-Date: Thu, 1 Dec 2022 16:52:27 +0100
-Subject: [PATCH] Do not log offline mode warning
+Date: Thu, 1 Dec 2022 16:43:50 +0100
+Subject: [PATCH] Do not log run as root warning
 
 License: MIT (https://opensource.org/licenses/MIT)
 Gale - https://galemc.org
@@ -14,7 +14,7 @@ Licensed under: MIT (https://opensource.org/licenses/MIT)
 
 * KeYi description *
 
-Let users decide if we should warn while running in offline mode
+Let users decide if we should warn while running in a root user
 
 * KeYi copyright *
 
@@ -41,15 +41,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index 16a9a9be54d5d763195b6f97eb2f09def2255483..fcf8fe61e1c1cff550f86b83fca095a5513aa093 100644
+index aba9c02f74bc0a1270d90a17db74f64dadb99f92..617b27eb8c42986dfb564decb30ad181527f1377 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -290,7 +290,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
-         String proxyFlavor = (io.papermc.paper.configuration.GlobalConfiguration.get().proxies.velocity.enabled) ? "Velocity" : "BungeeCord";
-         String proxyLink = (io.papermc.paper.configuration.GlobalConfiguration.get().proxies.velocity.enabled) ? "https://docs.papermc.io/velocity/security" : "http://www.spigotmc.org/wiki/firewall-guide/";
-         // Paper end
--        if (!this.usesAuthentication()) {
-+        if (!"false".equalsIgnoreCase(System.getProperty("gale.log.warning.offline.mode")) && !this.usesAuthentication()) { // Gale - KeYi - do not log offline mode warning
-             DedicatedServer.LOGGER.warn("**** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!");
-             DedicatedServer.LOGGER.warn("The server will make no attempt to authenticate usernames. Beware.");
-             // Spigot start
+@@ -179,7 +179,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
+         }
+ 
+         // Paper start - detect running as root
+-        if (io.papermc.paper.util.ServerEnvironment.userIsRootOrAdmin()) {
++        if (!"false".equalsIgnoreCase(System.getProperty("gale.log.warning.root")) && io.papermc.paper.util.ServerEnvironment.userIsRootOrAdmin()) { // Gale - KeYi - do not log run as root warning
+             DedicatedServer.LOGGER.warn("****************************");
+             DedicatedServer.LOGGER.warn("YOU ARE RUNNING THIS SERVER AS AN ADMINISTRATIVE OR ROOT USER. THIS IS NOT ADVISED.");
+             DedicatedServer.LOGGER.warn("YOU ARE OPENING YOURSELF UP TO POTENTIAL RISKS WHEN DOING THIS.");

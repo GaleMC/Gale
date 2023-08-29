@@ -37,10 +37,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 diff --git a/src/main/java/net/minecraft/world/item/crafting/ShapelessRecipe.java b/src/main/java/net/minecraft/world/item/crafting/ShapelessRecipe.java
-index 7f174bb89bf4d700a5ae1b65d8abd4f5b1e7b5ed..7420f51ad52d233330fc9313fc08611917876788 100644
+index 2e60bdc44c33d434bfd9ca5bf8f75de799c6768c..13e69770acdbccd4d1155e279f937837cec4a108 100644
 --- a/src/main/java/net/minecraft/world/item/crafting/ShapelessRecipe.java
 +++ b/src/main/java/net/minecraft/world/item/crafting/ShapelessRecipe.java
-@@ -27,8 +27,15 @@ public class ShapelessRecipe implements CraftingRecipe {
+@@ -27,8 +27,15 @@ public class ShapelessRecipe extends io.papermc.paper.inventory.recipe.RecipeBoo
      final CraftingBookCategory category;
      final ItemStack result;
      final NonNullList<Ingredient> ingredients;
@@ -56,7 +56,7 @@ index 7f174bb89bf4d700a5ae1b65d8abd4f5b1e7b5ed..7420f51ad52d233330fc9313fc086119
          this.id = id;
          this.group = group;
          this.category = category;
-@@ -82,6 +89,28 @@ public class ShapelessRecipe implements CraftingRecipe {
+@@ -83,6 +90,28 @@ public class ShapelessRecipe extends io.papermc.paper.inventory.recipe.RecipeBoo
      }
  
      public boolean matches(CraftingContainer inventory, Level world) {
@@ -83,8 +83,8 @@ index 7f174bb89bf4d700a5ae1b65d8abd4f5b1e7b5ed..7420f51ad52d233330fc9313fc086119
 +        // Gale end - Airplane - simpler ShapelessRecipe comparison for vanilla
 +
          StackedContents autorecipestackmanager = new StackedContents();
+         autorecipestackmanager.initialize(this); // Paper - better exact choice recipes
          int i = 0;
- 
 diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftShapelessRecipe.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftShapelessRecipe.java
 index f7ea77dd82d978ad307f99c743efacfb34478b3d..965c38b2539258f12b06ab21d248ee09e266bb1d 100644
 --- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftShapelessRecipe.java

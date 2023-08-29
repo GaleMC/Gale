@@ -82,7 +82,7 @@ index 0000000000000000000000000000000000000000..48c32b224095f606669a38f0e200505a
 +
 +}
 diff --git a/src/main/java/net/minecraft/world/level/block/Block.java b/src/main/java/net/minecraft/world/level/block/Block.java
-index 9522e646529f3d849471931b4b3c0d133e7fcfc5..c4cff3592a39e519fc62664a21d368d8cac55271 100644
+index fdd9c61b7248e92dbcbec91cd6fe4c6310bba237..9a4bb34cc29ad0c4391db94e638ee47ab53d5f3a 100644
 --- a/src/main/java/net/minecraft/world/level/block/Block.java
 +++ b/src/main/java/net/minecraft/world/level/block/Block.java
 @@ -11,6 +11,8 @@ import java.util.List;

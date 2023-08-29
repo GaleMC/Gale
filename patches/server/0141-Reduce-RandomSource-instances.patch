@@ -26,7 +26,7 @@ index f5bc3497831877e0c2b7dc1cbd8abe3a67d7695b..5783a8014e3faf93b81903c947b2534e
              double d1 = (double) (center.y - maxRange);
              double d2 = (double) (center.x + maxRange);
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index df640e94bf51cfa62ccd28e32c0adc1c76ec07a6..c97a719033ef075f2cc29f6e4e5327db12e24b8d 100644
+index 3049e4c011df8cb620d3fa981882be697f67e4ce..e430cb871489ce1e7c11a84002508480417daa4e 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -442,7 +442,7 @@ public class ServerPlayer extends Player {
@@ -122,7 +122,7 @@ index 5f8e169a6e80e8f05df251fa76e60f512508d385..6569efea988243729af2c0df8d15edc8
  
      @Override
 diff --git a/src/main/java/net/minecraft/world/level/dimension/end/EndDragonFight.java b/src/main/java/net/minecraft/world/level/dimension/end/EndDragonFight.java
-index 060473abbeb9e0cae97e0c48cd480a300970ffa6..c8f75bf68c4787e4ba711cbf44c4524484c3d7c3 100644
+index 5b333bef255d7ef61c99510837536920c6fb6e8c..50b4e8d1c8de1081a76d4495e0314a5e31e933af 100644
 --- a/src/main/java/net/minecraft/world/level/dimension/end/EndDragonFight.java
 +++ b/src/main/java/net/minecraft/world/level/dimension/end/EndDragonFight.java
 @@ -472,7 +472,7 @@ public class EndDragonFight {
