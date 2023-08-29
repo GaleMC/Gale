@@ -35,7 +35,7 @@ index d4a26febc956d8a4cecda742b28e2700a1148559..1eaa559b177f2dc982865f96dfc7654b
  
      public static long getCoordinateKey(final ChunkPos pair) {
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index fb43c428813d05f047a801cff8a2682499a03208..a33457376dad6f5e9680518ce11bb47c89f59f1e 100644
+index d751b3ce631527c2e65e649b56880fe0330c07e4..19d05bfec4aafdf3712ad24b4b29a9f55067e578 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -306,7 +306,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {

@@ -31,7 +31,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index c2e22dd084d922a827e6dd53e8634ec5b9e2d1ee..97226a1135e9228ec010110b5d24fae00a49996a 100644
+index 04dfa4f59921ec5fcea6fb6989847fc5164ccfda..6d1baf7592a0d016b7d9a842ecc8660c42059490 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 @@ -1141,6 +1141,13 @@ public final class CraftServer implements Server {

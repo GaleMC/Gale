@@ -13,7 +13,7 @@ As part of: Pufferfish (https://github.com/pufferfish-gg/Pufferfish)
 Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 50bb7e538c7493e52b2d1356ef6c89194efa593a..a0237112353240d9c8d0dc733f9176fd7e95f007 100644
+index 9606c6954f2c53dbbda7e7235cf37308822fea02..4466f21a83cb9ddca7309a194afcb8eded92de81 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -73,6 +73,7 @@ tasks.withType<JavaCompile> {
@@ -84,7 +84,7 @@ index 2acad4c3fd58178b0f8b22bdb04eeeeb689d5afa..850ccd53c5007e8b18344ba76c9e7f00
  
          }
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index 5be4267d88604210b7bfcc03b2c2056e0a9f0fb0..13d9fc5f4e6316b3fd6ef5ab50f78c7117e2df3a 100644
+index e75f0e6ce6cb7fa88ca3bd8dd7e63ea885bae341..aba9c02f74bc0a1270d90a17db74f64dadb99f92 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 @@ -14,6 +14,8 @@ import java.util.Locale;

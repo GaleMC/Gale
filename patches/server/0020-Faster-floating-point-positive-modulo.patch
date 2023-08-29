@@ -1,0 +1,54 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Martijn Muijsers <martijnmuijsers@live.nl>
+Date: Tue, 29 Aug 2023 22:29:08 +0200
+Subject: [PATCH] Faster floating-point positive modulo
+
+License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+Gale - https://galemc.org
+
+diff --git a/src/main/java/net/minecraft/util/Mth.java b/src/main/java/net/minecraft/util/Mth.java
+index 7327f3bb1c1f764ae1da88af27b1e9fb03fb89d9..aaefd728bb1a9fc398e55fe30c9337d51cf43785 100644
+--- a/src/main/java/net/minecraft/util/Mth.java
++++ b/src/main/java/net/minecraft/util/Mth.java
+@@ -139,14 +139,26 @@ public class Mth {
+         return Math.floorMod(dividend, divisor);
+     }
+ 
+-    public static float positiveModulo(float dividend, float divisor) {
++    public static float positiveModuloForAnyDivisor(float dividend, float divisor) { // Gale - faster floating-point positive modulo
+         return (dividend % divisor + divisor) % divisor;
+     }
+ 
+-    public static double positiveModulo(double dividend, double divisor) {
++    public static double positiveModuloForAnyDivisor(double dividend, double divisor) { // Gale - faster floating-point positive modulo
+         return (dividend % divisor + divisor) % divisor;
+     }
+ 
++    // Gale start - faster floating-point positive modulo
++    public static float positiveModuloForPositiveDivisor(float dividend, float divisor) {
++        var modulo = dividend % divisor;
++        return modulo < 0 ? modulo + divisor : modulo;
++    }
++
++    public static double positiveModuloForPositiveDivisor(double dividend, double divisor) {
++        var modulo = dividend % divisor;
++        return modulo < 0 ? modulo + divisor : modulo;
++    }
++    // Gale end - faster floating-point positive modulo
++
+     public static boolean isMultipleOf(int a, int b) {
+         return a % b == 0;
+     }
+diff --git a/src/main/java/net/minecraft/world/level/levelgen/blending/Blender.java b/src/main/java/net/minecraft/world/level/levelgen/blending/Blender.java
+index a6434f2c2d1ddb33e7c51d0a099fd127d8a785e6..aeecd8fc0b9d514990e1fa1f1c790fa61d664a0b 100644
+--- a/src/main/java/net/minecraft/world/level/levelgen/blending/Blender.java
++++ b/src/main/java/net/minecraft/world/level/levelgen/blending/Blender.java
+@@ -141,7 +141,7 @@ public class Blender {
+     private static double heightToOffset(double height) {
+         double d = 1.0D;
+         double e = height + 0.5D;
+-        double f = Mth.positiveModulo(e, 8.0D);
++        double f = Mth.positiveModuloForPositiveDivisor(e, 8.0D); // Gale - faster floating-point positive modulo
+         return 1.0D * (32.0D * (e - 128.0D) - 3.0D * (e - 120.0D) * f + 3.0D * f * f) / (128.0D * (32.0D - 3.0D * f));
+     }
+ 
