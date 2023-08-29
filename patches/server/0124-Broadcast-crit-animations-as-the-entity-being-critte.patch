@@ -38,29 +38,14 @@ index 52f6a56f9290fa0fb6537842c9fefe4521cc5859..df640e94bf51cfa62ccd28e32c0adc1c
  
      @Override
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index 589ba88b01f23ba9d0b2396e03b0885e88302ab5..faf9ece6dfea15efaae6d7d6501e3a0ae47aed59 100644
+index 3bcfcbb9bf085192c55aae58ddb231fb18dcabcd..6c9eacf9b4ec0a2eead062bd69a037c5c2d8722f 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-@@ -344,6 +344,22 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+@@ -108,6 +108,7 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+ 
+             public boolean sandDuping = true; // Gale - Purpur - make sand duping fix configurable
+             public boolean tripwireDuping = true; // Gale - Leaf - make tripwire duping fix configurable
++            public boolean broadcastCritAnimationsAsTheEntityBeingCritted = false; // Gale - MultiPaper - broadcast crit animations as the entity being critted
              public boolean keepMooshroomRotationAfterShearing = true; // Gale - Purpur - fix cow rotation when shearing mooshroom
              public boolean checkCanChangeDimensionsBeforeUseEndGateway = false; // Gale - Purpur - end gateway should check if entity can use portal
  
-+            // Gale start - MultiPaper - broadcast crit animations as the entity being critted
-+            /**
-+             * Whether to broadcast crit animations as the entity being critted.
-+             * This does not affect where the crit animation is shown: it is always shown on the entity being critted.
-+             * However, normally (if this setting is set to false), the crit animation is broadcasted as the
-+             * player doing the crit, meaning anyone that cannot see the player cannot see the crit.
-+             * If this setting is set to true, the crit animation is broadcasted as the entity being hit, meaning
-+             * anyone that cannot see the entity cannot see the crit, which makes more sense.
-+             * <ul>
-+             *     <li><i>Default</i>: false</li>
-+             *     <li><i>Vanilla</i>: false</li>
-+             * </ul>
-+             */
-+            public boolean broadcastCritAnimationsAsTheEntityBeingCritted = false;
-+            // Gale end - MultiPaper - broadcast crit animations as the entity being critted
-+
-             // Gale start - Purpur - fix MC-238526
-             @Setting("mc-238526")
-             public boolean mc238526 = false;

@@ -188,12 +188,12 @@ index 9aa26d2581df4ef75fffe203d80bc669f3ba6790..d1ba406f481a72513743b549cf450b44
      public double getLevelX() {
          return (double) this.worldPosition.getX() + 0.5D;
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index 6f7fe7377532e87b8c5bf0d55cb4cb3f5619eb3e..dffac4422559d1b5095950d90dc03b0d7bf27d26 100644
+index 00a327bd0e4e0f2def0bb29d5ecff4f0ec4ba1eb..c869a559b67ecdfb8f9617e1f54fb9c28bb3c766 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-@@ -130,6 +130,112 @@ public class GaleWorldConfiguration extends ConfigurationPart {
-             public int checkStuckInWall = 10;
-             // Gale end - Pufferfish - reduce in wall checks
+@@ -57,6 +57,37 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+             public int acquirePoiForStuckEntity = 60; // Gale - Airplane - reduce acquire POI for stuck entities
+             public int checkStuckInWall = 10; // Gale - Pufferfish - reduce in wall checks
  
 +            public CheckNearbyItem checkNearbyItem;
 +            public class CheckNearbyItem extends ConfigurationPart {
@@ -202,96 +202,21 @@ index 6f7fe7377532e87b8c5bf0d55cb4cb3f5619eb3e..dffac4422559d1b5095950d90dc03b0d
 +                public Hopper hopper;
 +                public class Hopper extends ConfigurationPart {
 +
-+                    /**
-+                     * Frequency with which hoppers check for items to pickup.
-+                     * Given in ticks.
-+                     * Any value <= 0 behaves like 1.
-+                     * <ul>
-+                     *     <li><i>Default</i>: 20 (1 second)</li>
-+                     *     <li><i>Vanilla</i>: 1</li>
-+                     * </ul>
-+                     */
 +                    public int interval = 20;
 +
 +                    public Minecart minecart;
 +                    public class Minecart extends ConfigurationPart {
 +
-+                        /**
-+                         * Frequency with which hopper minecarts check for items to pickup.
-+                         * Given in ticks.
-+                         * Any value <= 0 behaves like 1.
-+                         * <ul>
-+                         *     <li><i>Default</i>: 20 (1 second)</li>
-+                         *     <li><i>Vanilla</i>: 1</li>
-+                         * </ul>
-+                         */
 +                        public int interval = 20;
 +
 +                        public TemporaryImmunity temporaryImmunity;
 +                        public class TemporaryImmunity extends ConfigurationPart {
-+
-+                            /**
-+                             * Duration for which hopper minecarts have immunity from being affected by {@link Minecart#interval}
-+                             * after being made immune.
-+                             * Given in ticks.
-+                             * Any value <= 0 means hopper minecarts never have immunity.
-+                             * <ul>
-+                             *     <li><i>Default</i>: 200 (10 seconds)</li>
-+                             * </ul>
-+                             */
 +                            public int duration = 100;
-+
-+                            /**
-+                             * Items with an age higher than this value will not cause nearby hopper minecarts to become immune.
-+                             * Given in ticks.
-+                             * Any value < 0 means no age limit: all items can give nearby hopper minecarts
-+                             * temporary immunity to pick up items.
-+                             * <ul>
-+                             *     <li><i>Default</i>: 1200 (1 minute)</li>
-+                             * </ul>
-+                             */
 +                            public int nearbyItemMaxAge = 1200;
-+
-+                            /**
-+                             * How often to check for hopper minecarts near items, to give the minecarts temporary immunity
-+                             * to pick up items.
-+                             * Given in ticks.
-+                             * Any value <= 0 behaves like 1.
-+                             * <ul>
-+                             *     <li><i>Default</i>: 20</li>
-+                             * </ul>
-+                             */
 +                            public int checkForMinecartNearItemInterval = 20;
-+
-+                            /**
-+                             * Whether to check for hopper minecarts near items that are inactive, to give the minecarts
-+                             * temporary immunity to pick up items.
-+                             * <ul>
-+                             *     <li><i>Default</i>: true</li>
-+                             * </ul>
-+                             */
 +                            public boolean checkForMinecartNearItemWhileInactive = true;
-+
-+                            /**
-+                             * The maximum distance a dropped item can be to give hopper minecarts temporary immunity
-+                             * to pick up items.
-+                             * Any value < 0 means hopper minecarts never have immunity.
-+                             * <ul>
-+                             *     <li><i>Default</i>: 24.0</li>
-+                             * </ul>
-+                             */
 +                            public double maxItemHorizontalDistance = 24.0;
-+
-+                            /**
-+                             * The maximum distance a dropped item can be to give hopper minecarts temporary immunity
-+                             * to pick up items.
-+                             * Any value < 0 means hopper minecarts never have immunity.
-+                             * <ul>
-+                             *     <li><i>Default</i>: 4.0</li>
-+                             * </ul>
-+                             */
 +                            public double maxItemVerticalDistance = 4.0;
-+
 +                        }
 +
 +                    }

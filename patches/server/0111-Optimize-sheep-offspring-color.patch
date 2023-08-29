@@ -110,28 +110,14 @@ index c0e89262c596fbdd0bb3c3f76baccb17a1bb5fcd..d8f99e1221609d481ee79ee31f645731
          DyeColor enumcolor1 = ((Sheep) secondParent).getColor();
          CraftingContainer inventorycrafting = Sheep.makeContainer(enumcolor, enumcolor1);
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index c57275584b56d9d32d4b5f303423ffeb1de19854..7be0e4c7a54e858db93a6ac45517533d4b040a8c 100644
+index de850d184d57452529c5b6e2bfe2adf48360be3b..0f8edacfeafb77f722af246a8d9413f82a045cb3 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-@@ -47,6 +47,21 @@ public class GaleWorldConfiguration extends ConfigurationPart {
-         public boolean saveFireworks = true;
-         // Gale end - EMC - make saving fireworks configurable
+@@ -34,6 +34,7 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+     public class SmallOptimizations extends ConfigurationPart {
  
-+        // Gale start - carpet-fixes - optimize sheep offspring color
-+        /**
-+         * Whether to use a (much) faster way to choose a color when a new baby sheep is born.
-+         * The color chosen is exactly the same as vanilla.
-+         * However, in vanilla, it is possible to change the new color by
-+         * changing the crafting recipe for combining dyes using a data pack.
-+         * If this is set to true, any such crafting recipe changes will be ignored.
-+         * <ul>
-+         *     <li><i>Default</i>: true</li>
-+         *     <li><i>Vanilla</i>: false</li>
-+         * </ul>
-+         */
-+        public boolean useOptimizedSheepOffspringColor = true;
-+        // Gale end - carpet-fixes - optimize sheep offspring color
-+
+         public boolean saveFireworks = true; // Gale - EMC - make saving fireworks configurable
++        public boolean useOptimizedSheepOffspringColor = true; // Gale - carpet-fixes - optimize sheep offspring color
+ 
          // Gale start - Airplane - reduce projectile chunk loading
          public MaxProjectileChunkLoads maxProjectileChunkLoads;
-         public class MaxProjectileChunkLoads extends ConfigurationPart {

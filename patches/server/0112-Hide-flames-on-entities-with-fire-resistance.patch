@@ -31,14 +31,14 @@ index 850499786e72dd5e9e8b173f9203c64cb8d5f4a5..7fe7112145dbd46d851db3fc9ed183f5
  
          this.firstTick = false;
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index 7be0e4c7a54e858db93a6ac45517533d4b040a8c..392e0c346ee9f11d21bcc78c5c59f2baab5f391d 100644
+index 0f8edacfeafb77f722af246a8d9413f82a045cb3..492a279f080432b2340007be159d9bcba02f174b 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-@@ -291,6 +291,7 @@ public class GaleWorldConfiguration extends ConfigurationPart {
-         // Gale end - variable entity wake-up duration
+@@ -129,6 +129,7 @@ public class GaleWorldConfiguration extends ConfigurationPart {
  
          public boolean arrowMovementResetsDespawnCounter = true; // Gale - Purpur - make arrow movement resetting despawn counter configurable
+         public double entityWakeUpDurationRatioStandardDeviation = 0.2; // Gale - variable entity wake-up duration
 +        public boolean hideFlamesOnEntitiesWithFireResistance = false; // Gale - Slice - hide flames on entities with fire resistance
+         public boolean tryRespawnEnderDragonAfterEndCrystalPlace = true; // Gale - Pufferfish - make ender dragon respawn attempt after placing end crystals configurable
  
-         public Fixes fixes;
-         public class Fixes extends ConfigurationPart {
+     }

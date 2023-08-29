@@ -31,30 +31,18 @@ index 7fe7112145dbd46d851db3fc9ed183f5fdef24fe..286356ccb4f6938a857a58d4478f00aa
                      entity.moveTo(position.x, position.y, position.z, yaw, pitch); // Paper - use EntityPortalExitEvent values
                      entity.setDeltaMovement(velocity); // Paper - use EntityPortalExitEvent values
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index 243a76badb7e09ce4dcf7d5dd8ed57d55768b341..6f019ba3e732988ce60cbaa0e5494791c78ec21a 100644
+index 4ac4350a6a03ed2542d50033822ed1f55248a1ce..a6949c198f9530eda5c38019cc978876538391f4 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-@@ -339,6 +339,23 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+@@ -127,6 +127,11 @@ public class GaleWorldConfiguration extends ConfigurationPart {
  
-         public boolean tryRespawnEnderDragonAfterEndCrystalPlace = true; // Gale - Pufferfish - make ender dragon respawn attempt after placing end crystals configurable
+         }
  
 +        public Technical technical;
 +        public class Technical extends ConfigurationPart {
-+
-+            // Gale start - MultiPaper - load portal destination chunk before entity teleport
-+            /**
-+             * Whether to fully load chunks before teleporting an entity, when an entity enters a portal.
-+             * This forces the entire server to wait for the chunk to be loaded.
-+             * <ul>
-+             *     <li><i>Default</i>: false</li>
-+             *     <li><i>Vanilla</i>: false</li>
-+             * </ul>
-+             */
-+            public boolean loadPortalDestinationChunkBeforeEntityTeleport = false;
-+            // Gale end - MultiPaper - load portal destination chunk before entity teleport
-+
++            public boolean loadPortalDestinationChunkBeforeEntityTeleport = false; // Gale - MultiPaper - load portal destination chunk before entity teleport
 +        }
 +
-         @Override
-         public void postProcess() {
-             this.playerMaxInteractionDistanceSquared = this.playerMaxInteractionDistance * this.playerMaxInteractionDistance; // Gale - make max interaction distance configurable
+         public boolean arrowMovementResetsDespawnCounter = true; // Gale - Purpur - make arrow movement resetting despawn counter configurable
+         public double entityWakeUpDurationRatioStandardDeviation = 0.2; // Gale - variable entity wake-up duration
+         public boolean hideFlamesOnEntitiesWithFireResistance = false; // Gale - Slice - hide flames on entities with fire resistance

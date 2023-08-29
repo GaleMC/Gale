@@ -23,27 +23,14 @@ index 00166d86baad60beed5896871c9b9118fefc20b6..ded7811cd10bc436957ed9f1576f3231
          }
  
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index 88a5ac2436b0aaaeb3e9e23ebd88105e8850769f..25f07bb3a2c212dca6e25100014c7edbe280f011 100644
+index 5aeac04cf6d79bd381424954180df8d61b1f37f2..67c94cd227449b6371a4635a1884d47ec5221997 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-@@ -75,6 +75,20 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
-         public boolean verifyChatOrder = true;
-         // Gale end - Pufferfish - make chat order verification configurable
+@@ -51,6 +51,7 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+     public class Misc extends ConfigurationPart {
  
-+        // Gale start - make slow login timeout configurable
-+        /**
-+         * The maximum time that a premium account login can take.
-+         * If this time is exceeded, the connection is closed.
-+         * Given in ticks.
-+         * Any value < 1 uses the default timeout, which is currently 600 ticks (30 seconds).
-+         * <ul>
-+         *     <li><i>Default</i>: -1</li>
-+         *     <li><i>Vanilla</i>: -1</li>
-+         * </ul>
-+         */
-+        public int premiumAccountSlowLoginTimeout = -1;
-+        // Gale end - make slow login timeout configurable
-+
+         public boolean verifyChatOrder = true; // Gale - Pufferfish - make chat order verification configurable
++        public int premiumAccountSlowLoginTimeout = -1; // Gale - make slow login timeout configurable
+ 
          public IncludeInTimingsReport includeInTimingsReport;
  
-         public class IncludeInTimingsReport extends ConfigurationPart {

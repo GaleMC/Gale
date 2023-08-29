@@ -7,30 +7,14 @@ License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index 2f9687ad6c50cdcebc7908583b1093d1a0fa9737..b3822132cbb34dde90754aa2ee5439433ea4df4b 100644
+index 28afbf8da166377b295302e6ea7c602da70100b1..f8a561d91686d6df89a7374ca223972e435978c9 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-@@ -258,6 +258,23 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+@@ -96,6 +96,7 @@ public class GaleWorldConfiguration extends ConfigurationPart {
      public GameplayMechanics gameplayMechanics;
      public class GameplayMechanics extends ConfigurationPart {
  
-+        // Gale start - variable entity wake-up duration
-+        /**
-+         * This value is <code>σ</code> (the standard deviation) of the inactivity duration ratio,
-+         * so that the regular time interval before will be multiplied by a factor <code>normal(μ = 1, σ)</code>.
-+         * <br>
-+         * A value of around 0.2 makes entities wake up from inactivity at more randomized times
-+         * and therefore appear more natural in groups.
-+         * <br>
-+         * Any value < 0 behaves like 0.
-+         * <ul>
-+         *     <li><i>Default</i>: 0.2</li>
-+         *     <li><i>Vanilla</i>: 0</li>
-+         * </ul>
-+         */
-+        public double entityWakeUpDurationRatioStandardDeviation = 0.2;
-+        // Gale end - variable entity wake-up duration
-+
++        public double entityWakeUpDurationRatioStandardDeviation = 0.2; // Gale - variable entity wake-up duration
          public boolean tryRespawnEnderDragonAfterEndCrystalPlace = true; // Gale - Pufferfish - make ender dragon respawn attempt after placing end crystals configurable
  
      }

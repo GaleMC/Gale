@@ -79,25 +79,14 @@ index 2f252bbe2946ea3228933b4b8c91a4e46fe99705..a35891723fad4fe984566c41cdd72800
              if (iblockdata.is(BlockTags.CLIMBABLE)) {
                  this.lastClimbablePos = Optional.of(blockposition);
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index e20a48ef23e3eb186f6564102c9146de206282c3..589ba88b01f23ba9d0b2396e03b0885e88302ab5 100644
+index 566d33b127879c4c84557fce4ea4eb1c8c1130d5..3bcfcbb9bf085192c55aae58ddb231fb18dcabcd 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-@@ -283,6 +283,18 @@ public class GaleWorldConfiguration extends ConfigurationPart {
-             public boolean toSpawnPhantoms = false;
-             // Gale end - MultiPaper - don't load chunks to spawn phantoms
- 
-+            // Gale start - don't load chunks to activate climbing entities
-+            /**
-+             * Whether to load chunks to check whether entities are on a climbable block. If false,
-+             * entities in unloaded chunks will be assumed to not be on a climbable block.
-+             * <ul>
-+             *     <li><i>Default</i>: false</li>
-+             *     <li><i>Vanilla</i>: true</li>
-+             * </ul>
-+             */
-+            public boolean toActivateClimbingEntities = false;
-+            // Gale end - don't load chunks to activate climbing entities
-+
+@@ -95,6 +95,7 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+         public LoadChunks loadChunks;
+         public class LoadChunks extends ConfigurationPart {
+             public boolean toSpawnPhantoms = false; // Gale - MultiPaper - don't load chunks to spawn phantoms
++            public boolean toActivateClimbingEntities = false; // Gale - don't load chunks to activate climbing entities
          }
  
      }

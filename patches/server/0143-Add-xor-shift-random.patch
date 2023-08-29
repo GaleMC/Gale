@@ -27,31 +27,27 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 diff --git a/src/main/java/com/destroystokyo/paper/loottable/PaperLootableInventoryData.java b/src/main/java/com/destroystokyo/paper/loottable/PaperLootableInventoryData.java
-index 5408cbc21fc7577a6100b5a1ca0463e899d2df8b..8bb5d662d62b0c16dc769d69ca45959e6c3164de 100644
+index 5408cbc21fc7577a6100b5a1ca0463e899d2df8b..406119370596e1463c7b197988d7700a2f48c711 100644
 --- a/src/main/java/com/destroystokyo/paper/loottable/PaperLootableInventoryData.java
 +++ b/src/main/java/com/destroystokyo/paper/loottable/PaperLootableInventoryData.java
+@@ -2,7 +2,7 @@ package com.destroystokyo.paper.loottable;
+ 
+ import io.papermc.paper.configuration.WorldConfiguration;
+ import io.papermc.paper.configuration.type.DurationOrDisabled;
+-import java.time.temporal.ChronoUnit;
++
+ import java.util.concurrent.TimeUnit;
+ import org.bukkit.entity.Player;
+ import org.bukkit.loot.LootTable;
 @@ -16,7 +16,7 @@ import java.util.UUID;
  
  public class PaperLootableInventoryData {
  
 -    private static final Random RANDOM = new Random();
-+    private static final Random RANDOM = org.galemc.gale.configuration.GaleGlobalConfiguration.get().smallOptimizations.useXorShiftRandom.lootableRefill ? new org.galemc.gale.random.XorShiftRandom() : new Random(); // Gale - xor-shift random
++    public static Random RANDOM; // Gale - xor-shift random - set in GaleGlobalConfiguration
  
      private long lastFill = -1;
      private long nextRefill = -1;
-diff --git a/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
-index ded7811cd10bc436957ed9f1576f3231f1af7b7b..da6e9efd48567149123649e1a1014ebf14a4da2b 100644
---- a/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
-+++ b/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
-@@ -51,7 +51,7 @@ public class ServerLoginPacketListenerImpl implements ServerLoginPacketListener,
-     private static final AtomicInteger UNIQUE_THREAD_ID = new AtomicInteger(0);
-     static final Logger LOGGER = LogUtils.getLogger();
-     private static final int MAX_TICKS_BEFORE_LOGIN = 600;
--    private static final RandomSource RANDOM = new org.bukkit.craftbukkit.util.RandomSourceWrapper(new java.util.Random()); // Paper - This is called across threads, make safe
-+    private static final RandomSource RANDOM = new org.bukkit.craftbukkit.util.RandomSourceWrapper(org.galemc.gale.configuration.GaleGlobalConfiguration.get().smallOptimizations.useXorShiftRandom.encryptionRequestVerifyToken ? new org.galemc.gale.random.XorShiftRandom() : new java.util.Random()); // Paper - This is called across threads, make safe // Gale - xor-shift random - not thread-safe but it is not really a concern here
-     private final byte[] challenge;
-     final MinecraftServer server;
-     public final Connection connection;
 diff --git a/src/main/java/net/minecraft/world/level/chunk/storage/RegionFile.java b/src/main/java/net/minecraft/world/level/chunk/storage/RegionFile.java
 index 0c5ac12b1f395bba8b7fc50baf8e825ba6488f6c..0671e775ab296d6d591a31a8a0c38f62a7f45652 100644
 --- a/src/main/java/net/minecraft/world/level/chunk/storage/RegionFile.java
@@ -66,7 +62,7 @@ index 0c5ac12b1f395bba8b7fc50baf8e825ba6488f6c..0671e775ab296d6d591a31a8a0c38f62
      }
  
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
-index f857f490ffba2f25f7c06c5fb1a1905f0b51fbe2..18408d64905571283551c358f472c37f8b2593ef 100644
+index f857f490ffba2f25f7c06c5fb1a1905f0b51fbe2..a5a9c70c0d39ee36397790b2c7232ca13fff5a3a 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
 @@ -229,7 +229,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
@@ -74,7 +70,7 @@ index f857f490ffba2f25f7c06c5fb1a1905f0b51fbe2..18408d64905571283551c358f472c37f
      // Paper end
  
 -    private static final Random rand = new Random();
-+    private static final Random rand = org.galemc.gale.configuration.GaleGlobalConfiguration.get().smallOptimizations.useXorShiftRandom.generateTreeWithBukkitAPI ? new org.galemc.gale.random.XorShiftRandom() : new Random(); // Gale - xor-shift random
++    public static Random rand; // Gale - xor-shift random - set in GaleGlobalConfiguration
  
      public CraftWorld(ServerLevel world, ChunkGenerator gen, BiomeProvider biomeProvider, Environment env) {
          this.world = world;
@@ -92,10 +88,18 @@ index 68c5af9b67a2834ee6e2f80ceefa19c3a982b8ed..bf9deb9a5f7eae6517fcd6d4476a7961
  
      public CraftFirework(CraftServer server, FireworkRocketEntity entity) {
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index 4114088e56a7974b2da84ff90ab66f72ed538b61..dbddba95d9235b6dd262b5740d63ba41ba08861b 100644
+index 84331e863c6ae0cd634b41ddf859571a300ae5f3..ac8a36585e7f77e5789bc6f17489cf12f21ddfcc 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-@@ -52,13 +52,40 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+@@ -9,6 +9,7 @@ import org.bukkit.plugin.java.JavaPluginLoader;
+ import org.spongepowered.configurate.objectmapping.meta.Setting;
+ 
+ import java.util.Locale;
++import java.util.Random;
+ import java.util.function.Consumer;
+ 
+ @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal", "FieldMayBeFinal", "NotNullFieldNotInitialized", "InnerClassMayBeStatic"})
+@@ -40,13 +41,26 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
  
          }
  
@@ -105,36 +109,22 @@ index 4114088e56a7974b2da84ff90ab66f72ed538b61..dbddba95d9235b6dd262b5740d63ba41
 -            public boolean warnIfDisabled = true;
 -            public boolean logVectorSizesToConsole = false;
 +        // Gale start - xor-shift random
-+        /**
-+         * Whether to use {@link org.galemc.gale.random.XorShiftRandom} instead of the default implementation
-+         * for several occurrences of random generation.
-+         * <ul>
-+         *     <li><i>Default</i>: false</li>
-+         *     <li><i>Vanilla</i>: false</li>
-+         * </ul>
-+         */
 +        public UseXorShiftRandom useXorShiftRandom;
-+        public class UseXorShiftRandom extends ConfigurationPart {
++        public class UseXorShiftRandom extends ConfigurationPart.Post {
 +
-+            public boolean lootableRefill = false;
-+            public boolean encryptionRequestVerifyToken = false;
++            public boolean autoReplenishLootableRefill = true;
++            public boolean elytraFireworkSpeed = true;
 +            public boolean entityWakeUpDuration = true;
 +
-+            /**
-+             * <ul>
-+             *     <li><i>Default</i>: true</li>
-+             *     <li><i>Vanilla</i>: false</li>
-+             * </ul>
-+             */
++            @Setting("generate-tree-with-bukkit-api")
 +            public boolean generateTreeWithBukkitAPI = true;
 +
-+            /**
-+             * <ul>
-+             *     <li><i>Default</i>: true</li>
-+             *     <li><i>Vanilla</i>: false</li>
-+             * </ul>
-+             */
-+            public boolean elytraFireworkSpeed = true;
++            @Override
++            public void postProcess() {
++                com.destroystokyo.paper.loottable.PaperLootableInventoryData.RANDOM = autoReplenishLootableRefill ? new org.galemc.gale.random.XorShiftRandom() : new Random();
++                org.spigotmc.ActivationRange.wakeUpDurationRandom = entityWakeUpDuration ? new org.galemc.gale.random.XorShiftRandom() : new java.util.Random();
++                org.bukkit.craftbukkit.CraftWorld.rand = generateTreeWithBukkitAPI ? new org.galemc.gale.random.XorShiftRandom() : new Random();
++            }
 +
          }
 -        // Gale end - Pufferfish - SIMD support
@@ -553,7 +543,7 @@ index 0000000000000000000000000000000000000000..60dc2c1deb0749168d03c5d94136e613
 +    }
 +}
 diff --git a/src/main/java/org/spigotmc/ActivationRange.java b/src/main/java/org/spigotmc/ActivationRange.java
-index 50cd68e40c67b83af4e8008ce93782a060658dd4..392c57d0365cc4371f58637ebac11e2b7492bf97 100644
+index 50cd68e40c67b83af4e8008ce93782a060658dd4..aa68ff1abced10ad03957c9c0ac24beaf112adcf 100644
 --- a/src/main/java/org/spigotmc/ActivationRange.java
 +++ b/src/main/java/org/spigotmc/ActivationRange.java
 @@ -38,6 +38,7 @@ import co.aikar.timings.MinecraftTimings;
@@ -569,7 +559,7 @@ index 50cd68e40c67b83af4e8008ce93782a060658dd4..392c57d0365cc4371f58637ebac11e2b
  
      // Gale start - variable entity wake-up duration
 -    private static final java.util.Random wakeUpDurationRandom = new java.util.Random();
-+    private static final java.util.Random wakeUpDurationRandom = GaleGlobalConfiguration.get().smallOptimizations.useXorShiftRandom.entityWakeUpDuration ? new org.galemc.gale.random.XorShiftRandom() : new java.util.Random(); // Gale - xor-shift random
++    public static java.util.Random wakeUpDurationRandom; // Gale - xor-shift random - set in GaleGlobalConfiguration
  
      private static int getWakeUpDurationWithVariance(Entity entity, int wakeUpDuration) {
          GaleWorldConfiguration config = entity.level().galeConfig();

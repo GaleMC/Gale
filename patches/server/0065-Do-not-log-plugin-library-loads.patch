@@ -37,7 +37,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index 133c10907358ae6064d2c1a18c967a00ad358127..7820833f15d07ffc2fac5cdd4f7602e920e132ec 100644
+index 5af30bdac9e9315b53d31309956486ca3f0622b5..6a619e8a3084e509d861ec9f57608e4190f9dfe4 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 @@ -4,6 +4,7 @@ package org.galemc.gale.configuration;
@@ -48,7 +48,7 @@ index 133c10907358ae6064d2c1a18c967a00ad358127..7820833f15d07ffc2fac5cdd4f7602e9
  import org.spongepowered.configurate.objectmapping.meta.Setting;
  
  @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal", "FieldMayBeFinal", "NotNullFieldNotInitialized", "InnerClassMayBeStatic"})
-@@ -121,6 +122,24 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+@@ -98,6 +99,24 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
              public boolean emptyMessageWarning = false; // Gale - do not log empty message warnings
          }
  
@@ -58,13 +58,13 @@ index 133c10907358ae6064d2c1a18c967a00ad358127..7820833f15d07ffc2fac5cdd4f7602e9
 +
 +            public boolean downloads = true;
 +            public boolean startLoadLibrariesForPlugin = true;
-+            public boolean librariesLoaded = true;
++            public boolean libraryLoaded = true;
 +
 +            @Override
 +            public void postProcess() {
 +                JavaPluginLoader.logDownloads = this.downloads;
 +                JavaPluginLoader.logStartLoadLibrariesForPlugin = this.startLoadLibrariesForPlugin;
-+                JavaPluginLoader.logLibrariesLoaded = this.librariesLoaded;
++                JavaPluginLoader.logLibraryLoaded = this.libraryLoaded;
 +            }
 +
 +        }

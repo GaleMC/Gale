@@ -86,43 +86,27 @@ index d025232b43af3cb8dc28dff2e3e05c72e490901d..06d75d94af6aff29d542d0c5e150d8f7
  
      public void spawnDustParticles(Level world, BlockHitResult hitResult, BlockState state, Vec3 userRotation, HumanoidArm arm) {
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index 392e0c346ee9f11d21bcc78c5c59f2baab5f391d..243a76badb7e09ce4dcf7d5dd8ed57d55768b341 100644
+index 492a279f080432b2340007be159d9bcba02f174b..4ac4350a6a03ed2542d50033822ed1f55248a1ce 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-@@ -271,7 +271,7 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+@@ -95,7 +95,7 @@ public class GaleWorldConfiguration extends ConfigurationPart {
      }
  
      public GameplayMechanics gameplayMechanics;
 -    public class GameplayMechanics extends ConfigurationPart {
 +    public class GameplayMechanics extends ConfigurationPart.Post {
  
-         // Gale start - variable entity wake-up duration
-         /**
-@@ -293,6 +293,20 @@ public class GaleWorldConfiguration extends ConfigurationPart {
-         public boolean arrowMovementResetsDespawnCounter = true; // Gale - Purpur - make arrow movement resetting despawn counter configurable
+         public Fixes fixes;
+         public class Fixes extends ConfigurationPart {
+@@ -132,6 +132,16 @@ public class GaleWorldConfiguration extends ConfigurationPart {
          public boolean hideFlamesOnEntitiesWithFireResistance = false; // Gale - Slice - hide flames on entities with fire resistance
+         public boolean tryRespawnEnderDragonAfterEndCrystalPlace = true; // Gale - Pufferfish - make ender dragon respawn attempt after placing end crystals configurable
  
 +        // Gale start - make max interaction distance configurable
-+        /**
-+         * The maximum distance for blocks with which a player can interact with left- or right-clicking.
-+         * Any value < 0 uses the default max distance, which is currently 6.0.
-+         * <ul>
-+         *     <li><i>Default</i>: -1.0</li>
-+         *     <li><i>Vanilla</i>: -1.0</li>
-+         * </ul>
-+         */
 +        public double playerMaxInteractionDistance = -1.0;
-+
 +        public transient double playerMaxInteractionDistanceSquared;
 +        // Gale end - make max interaction distance configurable
 +
-         public Fixes fixes;
-         public class Fixes extends ConfigurationPart {
- 
-@@ -325,6 +339,11 @@ public class GaleWorldConfiguration extends ConfigurationPart {
- 
-         public boolean tryRespawnEnderDragonAfterEndCrystalPlace = true; // Gale - Pufferfish - make ender dragon respawn attempt after placing end crystals configurable
- 
 +        @Override
 +        public void postProcess() {
 +            this.playerMaxInteractionDistanceSquared = this.playerMaxInteractionDistance * this.playerMaxInteractionDistance; // Gale - make max interaction distance configurable

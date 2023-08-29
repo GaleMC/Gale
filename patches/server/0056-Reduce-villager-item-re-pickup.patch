@@ -48,28 +48,14 @@ index 92bd58010e8c89e361e28aec59447349edbbc028..2239c7260638bb25df5b45dbc129bcfe
          org.bukkit.event.entity.EntityDropItemEvent event = new org.bukkit.event.entity.EntityDropItemEvent(entity.getBukkitEntity(), (org.bukkit.entity.Item) entityitem.getBukkitEntity());
          entityitem.level().getCraftServer().getPluginManager().callEvent(event);
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index dffac4422559d1b5095950d90dc03b0d7bf27d26..2f9687ad6c50cdcebc7908583b1093d1a0fa9737 100644
+index c869a559b67ecdfb8f9617e1f54fb9c28bb3c766..28afbf8da166377b295302e6ea7c602da70100b1 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-@@ -236,6 +236,21 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+@@ -56,6 +56,7 @@ public class GaleWorldConfiguration extends ConfigurationPart {
  
-             }
+             public int acquirePoiForStuckEntity = 60; // Gale - Airplane - reduce acquire POI for stuck entities
+             public int checkStuckInWall = 10; // Gale - Pufferfish - reduce in wall checks
++            public int villagerItemRepickup = 100; // Gale - EMC - reduce villager item re-pickup
  
-+            // Gale start - EMC - reduce villager item re-pickup
-+            /**
-+             * The minimum delay of picking up items that were dropped by villagers.
-+             * This prevents villagers picking up farmed items before hoppers do in certain farm designs, that would
-+             * otherwise be broken by the {@link CheckNearbyItem.Hopper#interval} mechanic, and also reduces lag from
-+             * villagers continuously throwing many items at each other when their inventories are full.
-+             * Any value < 0 uses the default pickup delay of items.
-+             * <ul>
-+             *     <li><i>Default</i>: 100 (5 seconds)</li>
-+             *     <li><i>Vanilla</i>: -1</li>
-+             * </ul>
-+             */
-+            public int villagerItemRepickup = 100;
-+            // Gale end - EMC - reduce villager item re-pickup
-+
-         }
- 
-     }
+             public CheckNearbyItem checkNearbyItem;
+             public class CheckNearbyItem extends ConfigurationPart {

@@ -58,10 +58,10 @@ index acc49f66bf34e2507d0ee6fec0a56b11bfc68f46..8834a32bfb27653062d242144dcd75ce
                              // CraftBukkit end
                          } else {
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index 425206669bc13d971097ea052bffcfd6896f90d3..16c9ebc736bae1626bdb4e99ac8ff1cb7afd3419 100644
+index 2a42c6616e4702bb0a6dfbf4540e8c9c29c11373..9c8c283aa88165d862c649b22fd86e61ec8e84d7 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-@@ -111,6 +111,7 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+@@ -88,6 +88,7 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
      public class LogToConsole extends ConfigurationPart {
  
          public boolean invalidStatistics = true; // Gale - EMC - do not log invalid statistics

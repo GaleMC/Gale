@@ -81,10 +81,10 @@ index 1b7cf6d06bdf36f146656727511a461f2520762e..d598a99072bd8eb4a4ed151b9202237d
          if (entity != null) {
              this.ownerUUID = entity.getUUID();
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index b82bb95b524c95cdefb81abef906eded0717e9a1..a83675d8d2f94a8e73cc2c7fa11d0aaf6f78be2c 100644
+index b82bb95b524c95cdefb81abef906eded0717e9a1..eabe9e6a7f99a7ad1f2a9f210f8a7489a89dc4cc 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-@@ -33,7 +33,55 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+@@ -33,7 +33,21 @@ public class GaleWorldConfiguration extends ConfigurationPart {
      public SmallOptimizations smallOptimizations;
      public class SmallOptimizations extends ConfigurationPart {
  
@@ -93,47 +93,13 @@ index b82bb95b524c95cdefb81abef906eded0717e9a1..a83675d8d2f94a8e73cc2c7fa11d0aaf
 +        public MaxProjectileChunkLoads maxProjectileChunkLoads;
 +        public class MaxProjectileChunkLoads extends ConfigurationPart {
 +
-+            /**
-+             * The maximum number of chunks that can be synchronously loaded by all projectiles in one world in a tick.
-+             * Any value < 0 means no maximum.
-+             * <ul>
-+             *     <li><i>Default</i>: 10</li>
-+             *     <li><i>Vanilla</i>: -1</li>
-+             * </ul>
-+             */
 +            public int perTick = 10;
 +
 +            public PerProjectile perProjectile;
 +            public class PerProjectile extends ConfigurationPart {
-+
-+                /**
-+                 * The maximum number of chunks that can be synchronously loaded by a projectile throughout its lifetime.
-+                 * Any value < 0 means no maximum.
-+                 * <ul>
-+                 *     <li><i>Default</i>: 10</li>
-+                 *     <li><i>Vanilla</i>: -1</li>
-+                 * </ul>
-+                 */
 +                public int max = 10;
-+
-+                /**
-+                 * Whether to set the planar velocity of projectiles that cross the {@link #max} threshold
-+                 * to zero, so that they stop attempting to cross chunk boundaries.
-+                 * This has no effect if {@link #removeFromWorldAfterReachLimit} is true.
-+                 * <ul>
-+                 *     <li><i>Default</i>: false</li>
-+                 * </ul>
-+                 */
 +                public boolean resetMovementAfterReachLimit = false;
-+
-+                /**
-+                 * Whether to remove projectiles that cross the {@link #max} threshold from the world entirely.
-+                 * <ul>
-+                 *     <li><i>Default</i>: false</li>
-+                 * </ul>
-+                 */
 +                public boolean removeFromWorldAfterReachLimit = false;
-+
 +            }
 +
 +        }

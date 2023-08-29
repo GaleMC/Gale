@@ -44,18 +44,18 @@ index 9501e5f25f5c4d3069e554d4dc82b0e094156682..e81afb79d66321f70eb40c43d3bd7b92
                              }
                          }
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index 5021cc0b7a0f99ec53d565862add241428311dc3..6b528eab517aed9c00c75b4bf6e1a7b21194c343 100644
+index 7c781eabbb6df5df9f9f2cbdeef4e116ca30b645..168e1ae2e3cd1c4f5a2c10670d79aa2a41b95635 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-@@ -71,6 +71,7 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
-         // Gale end - Pufferfish - make chat order verification configurable
+@@ -48,6 +48,7 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+         public boolean verifyChatOrder = true; // Gale - Pufferfish - make chat order verification configurable
  
          public IncludeInTimingsReport includeInTimingsReport;
 +
          public class IncludeInTimingsReport extends ConfigurationPart {
  
              // Gale start - include server.properties in timings
-@@ -106,4 +107,11 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+@@ -83,4 +84,11 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
  
      }
  

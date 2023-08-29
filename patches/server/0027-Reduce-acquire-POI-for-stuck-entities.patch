@@ -71,30 +71,17 @@ index d4c91e0a0c64fcb7f1145de3f30134cb1f1f8ee6..aed7e9affaae1e0d1e3324a41e581843
                          long2ObjectMap.long2ObjectEntrySet().removeIf((entry) -> {
                              return !entry.getValue().isStillValid(time);
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index a83675d8d2f94a8e73cc2c7fa11d0aaf6f78be2c..b993c2276d14c0a384898e9705a1af6fa6d585cf 100644
+index eabe9e6a7f99a7ad1f2a9f210f8a7489a89dc4cc..8a0416775d00148bf3478b51d92b00d9d485c667 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-@@ -83,6 +83,26 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+@@ -49,6 +49,13 @@ public class GaleWorldConfiguration extends ConfigurationPart {
          }
          // Gale end - Airplane - reduce projectile chunk loading
  
 +        public ReducedIntervals reducedIntervals;
 +        public class ReducedIntervals extends ConfigurationPart {
 +
-+            // Gale start - Airplane - reduce acquire POI for stuck entities
-+            /**
-+             * Extra interval (on top of the regular interval)
-+             * for entities that are stuck (e.g. in a vehicle) to attempt to acquire a POI.
-+             * If they become unstuck during this time, they will immediately be free to acquire a POI again.
-+             * Given in ticks.
-+             * Any value < 0 behaves like 0.
-+             * <ul>
-+             *     <li><i>Default</i>: 200 (10 seconds)</li>
-+             *     <li><i>Vanilla</i>: 0</li>
-+             * </ul>
-+             */
-+            public int acquirePoiForStuckEntity = 200;
-+            // Gale end - Airplane - reduce acquire POI for stuck entities
++            public int acquirePoiForStuckEntity = 60; // Gale - Airplane - reduce acquire POI for stuck entities
 +
 +        }
 +

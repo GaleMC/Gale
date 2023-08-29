@@ -42,7 +42,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 diff --git a/src/main/java/net/minecraft/world/entity/projectile/AbstractArrow.java b/src/main/java/net/minecraft/world/entity/projectile/AbstractArrow.java
-index 7226be19248a1ffb8ff2c89b55882529d33a6c0c..cff4d09af11d1741bf3301b457555d71e77e801c 100644
+index fa885337085348308604e50049ecc5bb52023884..6d113b2445ff56cbf2b22f4dfedea4bda746b583 100644
 --- a/src/main/java/net/minecraft/world/entity/projectile/AbstractArrow.java
 +++ b/src/main/java/net/minecraft/world/entity/projectile/AbstractArrow.java
 @@ -312,7 +312,7 @@ public abstract class AbstractArrow extends Projectile {
@@ -55,17 +55,14 @@ index 7226be19248a1ffb8ff2c89b55882529d33a6c0c..cff4d09af11d1741bf3301b457555d71
  
      @Override
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index 1b5367474c69b2073a643287a29e0beda4a9f08a..c57275584b56d9d32d4b5f303423ffeb1de19854 100644
+index a091dc6407580c9818424ae9428e0a15489f5c24..de850d184d57452529c5b6e2bfe2adf48360be3b 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-@@ -274,7 +274,9 @@ public class GaleWorldConfiguration extends ConfigurationPart {
-          */
-         public double entityWakeUpDurationRatioStandardDeviation = 0.2;
-         // Gale end - variable entity wake-up duration
--        
-+
+@@ -126,6 +126,7 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+ 
+         }
+ 
 +        public boolean arrowMovementResetsDespawnCounter = true; // Gale - Purpur - make arrow movement resetting despawn counter configurable
-+
-         public Fixes fixes;
-         public class Fixes extends ConfigurationPart {
+         public double entityWakeUpDurationRatioStandardDeviation = 0.2; // Gale - variable entity wake-up duration
+         public boolean tryRespawnEnderDragonAfterEndCrystalPlace = true; // Gale - Pufferfish - make ender dragon respawn attempt after placing end crystals configurable
  

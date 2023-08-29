@@ -60,28 +60,14 @@ index 6ad84442f7722f709c7430a1b22a59957852c28b..559e85f266614f08e5b383e41f9898b2
      public boolean hurt(DamageSource source, float amount) {
          if (this.isInvulnerableTo(source)) {
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index b993c2276d14c0a384898e9705a1af6fa6d585cf..d34ee90eaf160a72d4898feed13d94b0b61eded3 100644
+index 8a0416775d00148bf3478b51d92b00d9d485c667..08a02055b535c024cc806db17bb45fd333a56929 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-@@ -101,6 +101,21 @@ public class GaleWorldConfiguration extends ConfigurationPart {
-             public int acquirePoiForStuckEntity = 200;
-             // Gale end - Airplane - reduce acquire POI for stuck entities
+@@ -53,6 +53,7 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+         public class ReducedIntervals extends ConfigurationPart {
  
-+            // Gale start - Pufferfish - reduce in wall checks
-+            /**
-+             * Interval at which to check whether an entity is stuck in a wall, to deal suffocation damage.
-+             * Since after dealing damage, there is an interval (this may change in the future, but approximately
-+             * 1 second) at which entities cannot take repeated damage, delaying the suffocation check by less is
-+             * almost unnoticeable.
-+             * Any value <= 0 behaves like 1.
-+             * <ul>
-+             *     <li><i>Default</i>: 10 (twice per second)</li>
-+             *     <li><i>Vanilla</i>: 1</li>
-+             * </ul>
-+             */
-+            public int checkStuckInWall = 10;
-+            // Gale end - Pufferfish - reduce in wall checks
-+
+             public int acquirePoiForStuckEntity = 60; // Gale - Airplane - reduce acquire POI for stuck entities
++            public int checkStuckInWall = 10; // Gale - Pufferfish - reduce in wall checks
+ 
          }
  
-     }

@@ -31,10 +31,10 @@ index 69de848ce633f9ce40828f025391f7c189d07b43..6fefed8e329aa85b6edd0e5981db2336
  
      public void updateEntireScoreboard(ServerScoreboard scoreboard, ServerPlayer player) {
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index 3523b5ac7ccc53e57b32c207d2ba00042d4b1951..8f51ae95c357e3873a33bcc89e5e134a66e4577b 100644
+index 66f40d92fe9cfec68af2c9b7f35f203066129d62..77c236afd2aa49abb1725efda0a6eb34552e4a16 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-@@ -121,6 +121,7 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+@@ -98,6 +98,7 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
          public boolean unrecognizedRecipes = false; // Gale - Purpur - do not log unrecognized recipes
          public boolean legacyMaterialInitialization = false; // Gale - Purpur - do not log legacy Material initialization
          public boolean nullIdDisconnections = true; // Gale - Pufferfish - do not log disconnections with null id

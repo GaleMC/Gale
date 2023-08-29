@@ -59,20 +59,20 @@ index 18eaccb39a4c81338a8cbebe3de03934913ac2a4..a1466d29b896c06f67a6f110270377fd
              }
              // Paper end - fix sand duping
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index b3822132cbb34dde90754aa2ee5439433ea4df4b..636892ac5af6b4c1989c12cf15b75d965f60512a 100644
+index f8a561d91686d6df89a7374ca223972e435978c9..bd47caa947f10cb90cef5f060a9106143782d940 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-@@ -274,6 +274,13 @@ public class GaleWorldConfiguration extends ConfigurationPart {
-          */
-         public double entityWakeUpDurationRatioStandardDeviation = 0.2;
-         // Gale end - variable entity wake-up duration
-+        
+@@ -96,6 +96,13 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+     public GameplayMechanics gameplayMechanics;
+     public class GameplayMechanics extends ConfigurationPart {
+ 
 +        public Fixes fixes;
 +        public class Fixes extends ConfigurationPart {
 +
 +            public boolean sandDuping = true; // Gale - Purpur - make sand duping fix configurable
 +
 +        }
- 
++
+         public double entityWakeUpDurationRatioStandardDeviation = 0.2; // Gale - variable entity wake-up duration
          public boolean tryRespawnEnderDragonAfterEndCrystalPlace = true; // Gale - Pufferfish - make ender dragon respawn attempt after placing end crystals configurable
  

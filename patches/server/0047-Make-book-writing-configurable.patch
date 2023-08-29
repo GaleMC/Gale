@@ -68,29 +68,17 @@ index 2e23147f807c6620b54d3047fe24a3847900712c..9ae9eff03fa9b240ed736eaa97fee0da
      }
  }
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index 5ade5d2ff3a68cf9e0240fc86e4b63432cb899c0..be4e05851e94f943b6382ba5bb9f0750c95bdad4 100644
+index 5ade5d2ff3a68cf9e0240fc86e4b63432cb899c0..346fdf6f8a76539fa9ca46015ee122417e4a8102 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-@@ -35,6 +35,25 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+@@ -35,6 +35,13 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
  
      }
  
 +    public GameplayMechanics gameplayMechanics;
 +    public class GameplayMechanics extends ConfigurationPart {
 +
-+        // Gale start - Pufferfish - make book writing configurable
-+        /**
-+         * Whether books should be writeable.
-+         * Servers that anticipate being a target for duping may want to consider disabling this option.
-+         * <br>
-+         * If set to false, players with the permission {@code gale.writebooks} can still use books.
-+         * <ul>
-+         *     <li><i>Default</i>: true</li>
-+         *     <li><i>Vanilla</i>: true</li>
-+         * </ul>
-+         */
-+        public boolean enableBookWriting = true;
-+        // Gale end - Pufferfish - make book writing configurable
++        public boolean enableBookWriting = true; // Gale - Pufferfish - make book writing configurable
 +
 +    }
 +

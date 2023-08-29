@@ -45,7 +45,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 diff --git a/src/main/java/net/minecraft/world/entity/player/Player.java b/src/main/java/net/minecraft/world/entity/player/Player.java
-index af8b5282df19c92c5f1394dc9d889012ce509f32..f070bd0eca4a55445f436c9520a89aabb5f55d12 100644
+index af8b5282df19c92c5f1394dc9d889012ce509f32..d8f32cad7a97e1dcbef938c4788c64934d8b45bc 100644
 --- a/src/main/java/net/minecraft/world/entity/player/Player.java
 +++ b/src/main/java/net/minecraft/world/entity/player/Player.java
 @@ -117,6 +117,7 @@ import net.minecraft.world.phys.AABB;
@@ -56,66 +56,61 @@ index af8b5282df19c92c5f1394dc9d889012ce509f32..f070bd0eca4a55445f436c9520a89aab
  import org.slf4j.Logger;
  import org.bukkit.craftbukkit.entity.CraftHumanEntity;
  import org.bukkit.craftbukkit.event.CraftEventFactory;
-@@ -286,19 +287,24 @@ public abstract class Player extends LivingEntity {
+@@ -151,6 +152,7 @@ public abstract class Player extends LivingEntity {
+     protected static final EntityDataAccessor<Byte> DATA_PLAYER_MAIN_HAND = SynchedEntityData.defineId(Player.class, EntityDataSerializers.BYTE);
+     protected static final EntityDataAccessor<CompoundTag> DATA_SHOULDER_LEFT = SynchedEntityData.defineId(Player.class, EntityDataSerializers.COMPOUND_TAG);
+     protected static final EntityDataAccessor<CompoundTag> DATA_SHOULDER_RIGHT = SynchedEntityData.defineId(Player.class, EntityDataSerializers.COMPOUND_TAG);
++    public static int increaseTimeStatisticsInterval; // Gale - Hydrinity - increase time statistics in intervals - store as static field for fast access
+     private long timeEntitySatOnShoulder;
+     private final Inventory inventory = new Inventory(this);
+     protected PlayerEnderChestContainer enderChestInventory = new PlayerEnderChestContainer(this); // CraftBukkit - add "this" to constructor
+@@ -286,19 +288,23 @@ public abstract class Player extends LivingEntity {
          this.moveCloak();
          if (!this.level().isClientSide) {
              this.foodData.tick(this);
 -            this.awardStat(Stats.PLAY_TIME);
 -            this.awardStat(Stats.TOTAL_WORLD_TIME);
 +            // Gale start - Hydrinity - increase time statistics in intervals
-+            int interval = Math.max(1, GaleGlobalConfiguration.get().smallOptimizations.reducedIntervals.increaseTimeStatistics);
-+            if (interval == 1 || this.tickCount % interval == 0) {
-+            this.awardStat(Stats.PLAY_TIME, interval);
-+            this.awardStat(Stats.TOTAL_WORLD_TIME, interval);
++            if (increaseTimeStatisticsInterval == 1 || this.tickCount % increaseTimeStatisticsInterval == 0) {
++            this.awardStat(Stats.PLAY_TIME, increaseTimeStatisticsInterval);
++            this.awardStat(Stats.TOTAL_WORLD_TIME, increaseTimeStatisticsInterval);
 +            // Gale end - Hydrinity - increase time statistics in intervals
              if (this.isAlive()) {
 -                this.awardStat(Stats.TIME_SINCE_DEATH);
-+                this.awardStat(Stats.TIME_SINCE_DEATH, interval); // Gale - Hydrinity - increase time statistics in intervals
++                this.awardStat(Stats.TIME_SINCE_DEATH, increaseTimeStatisticsInterval); // Gale - Hydrinity - increase time statistics in intervals
              }
  
              if (this.isDiscrete()) {
 -                this.awardStat(Stats.CROUCH_TIME);
-+                this.awardStat(Stats.CROUCH_TIME, interval); // Gale - Hydrinity - increase time statistics in intervals
++                this.awardStat(Stats.CROUCH_TIME, increaseTimeStatisticsInterval); // Gale - Hydrinity - increase time statistics in intervals
              }
  
              if (!this.isSleeping()) {
 -                this.awardStat(Stats.TIME_SINCE_REST);
-+                this.awardStat(Stats.TIME_SINCE_REST, interval); // Gale - Hydrinity - increase time statistics in intervals
++                this.awardStat(Stats.TIME_SINCE_REST, increaseTimeStatisticsInterval); // Gale - Hydrinity - increase time statistics in intervals
              }
 +            } // Gale - Hydrinity - increase time statistics in intervals
          }
  
          int i = 29999999;
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index d0fd9e755375c25d3db153ec52eabab3ce8d4066..4114088e56a7974b2da84ff90ab66f72ed538b61 100644
+index 7e9a36bf9a619c68a8e3e123fa47c0c845cb52e4..84331e863c6ae0cd634b41ddf859571a300ae5f3 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-@@ -28,7 +28,29 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+@@ -28,7 +28,17 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
      public SmallOptimizations smallOptimizations;
      public class SmallOptimizations extends ConfigurationPart {
  
 -        public int dummyValue = 0;
 +        public ReducedIntervals reducedIntervals;
-+        public class ReducedIntervals extends ConfigurationPart {
++        public class ReducedIntervals extends ConfigurationPart.Post {
 +
-+            // Gale start - Hydrinity - increase time statistics in intervals
-+            /**
-+             * The interval at which to increase the time-related statistics such as total playtime, time since
-+             * the last death, etc.
-+             * For example:
-+             * <ul>
-+             *     <li>If this value is set to 20, the total playtime in ticks will be increased by 20 every second.</li>
-+             *     <li>If this value is set to 100, the total playtime in ticks will be increased by 100 every 5 seconds.</li>
-+             * </ul>
-+             * Given in ticks.
-+             * Any value <= 0 behaves like 1.
-+             * <ul>
-+             *     <li><i>Default</i>: 100 (5 seconds)</li>
-+             *     <li><i>Vanilla</i>: 1</li>
-+             * </ul>
-+             */
-+            public int increaseTimeStatistics = 100;
-+            // Gale end - Hydrinity - increase time statistics in intervals
++            public int increaseTimeStatistics = 20; // Gale - Hydrinity - increase time statistics in intervals
++
++            @Override
++            public void postProcess() {
++                net.minecraft.world.entity.player.Player.increaseTimeStatisticsInterval = Math.max(1, increaseTimeStatistics); // Gale - Hydrinity - increase time statistics in intervals - store as static field for fast access
++            }
 +
 +        }
  

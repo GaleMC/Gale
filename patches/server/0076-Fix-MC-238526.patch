@@ -49,10 +49,10 @@ index cd2ce5bcb8c30e4657cd0e340d80544c7e805905..db3574e4ec9bad32bbbcd9d7ab9607da
      }
  }
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index 18a4ab9f8549fac95d703d9fff4b74e4ae6a9b4f..1c3624965d9fc1acb406014e3001a0a4920afd2c 100644
+index 49b820a62483f9612b1a0beb7e5dc416f6e60585..c6f87ddbb9a14e76a6fd8faebfb0390de9f7a81a 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-@@ -281,6 +281,11 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+@@ -102,6 +102,11 @@ public class GaleWorldConfiguration extends ConfigurationPart {
              public boolean sandDuping = true; // Gale - Purpur - make sand duping fix configurable
              public boolean tripwireDuping = true; // Gale - Leaf - make tripwire duping fix configurable
  
@@ -63,4 +63,4 @@ index 18a4ab9f8549fac95d703d9fff4b74e4ae6a9b4f..1c3624965d9fc1acb406014e3001a0a4
 +
          }
  
-         public boolean tryRespawnEnderDragonAfterEndCrystalPlace = true; // Gale - Pufferfish - make ender dragon respawn attempt after placing end crystals configurable
+         public double entityWakeUpDurationRatioStandardDeviation = 0.2; // Gale - variable entity wake-up duration

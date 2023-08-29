@@ -65,10 +65,10 @@ index 87fb10096fc9dade33c663234b1cecc34d3d77bb..cb2c6dcdd2be476d0434e7f771bbb251
              }
  
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index 578f393ab5c4088ed1f60d39b908968f3507b651..98355899e6307bc9471e2af247e8f3286a86e6dc 100644
+index 39504daeead241c03c9fd657456a309e44643302..38f4a4ee657e481fa55d0f6543c31355b64a7f8d 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-@@ -287,6 +287,11 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+@@ -108,6 +108,11 @@ public class GaleWorldConfiguration extends ConfigurationPart {
              public boolean mc238526 = false;
              // Gale end - Purpur - fix MC-238526
  
@@ -79,4 +79,4 @@ index 578f393ab5c4088ed1f60d39b908968f3507b651..98355899e6307bc9471e2af247e8f328
 +
          }
  
-         public boolean tryRespawnEnderDragonAfterEndCrystalPlace = true; // Gale - Pufferfish - make ender dragon respawn attempt after placing end crystals configurable
+         public double entityWakeUpDurationRatioStandardDeviation = 0.2; // Gale - variable entity wake-up duration

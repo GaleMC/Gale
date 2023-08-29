@@ -34,28 +34,16 @@ index dfeb3e336e06ef01f5401a362755030db942bb07..518b40a27a8d4d015caa7e67d3558396
  
                                          if (NaturalSpawner.isValidEmptySpawnBlock(world, blockposition1, iblockdata, fluid, EntityType.PHANTOM)) {
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index 6f019ba3e732988ce60cbaa0e5494791c78ec21a..e20a48ef23e3eb186f6564102c9146de206282c3 100644
+index a6949c198f9530eda5c38019cc978876538391f4..566d33b127879c4c84557fce4ea4eb1c8c1130d5 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-@@ -268,6 +268,23 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+@@ -92,6 +92,11 @@ public class GaleWorldConfiguration extends ConfigurationPart {
  
          }
  
 +        public LoadChunks loadChunks;
 +        public class LoadChunks extends ConfigurationPart {
-+
-+            // Gale start - MultiPaper - don't load chunks to spawn phantoms
-+            /**
-+             * Whether to load chunks to spawn phantoms. If false,
-+             * attempts to spawn a phantom in unloaded chunks will do nothing.
-+             * <ul>
-+             *     <li><i>Default</i>: false</li>
-+             *     <li><i>Vanilla</i>: true</li>
-+             * </ul>
-+             */
-+            public boolean toSpawnPhantoms = false;
-+            // Gale end - MultiPaper - don't load chunks to spawn phantoms
-+
++            public boolean toSpawnPhantoms = false; // Gale - MultiPaper - don't load chunks to spawn phantoms
 +        }
 +
      }

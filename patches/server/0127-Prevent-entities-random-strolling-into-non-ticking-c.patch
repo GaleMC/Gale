@@ -36,14 +36,14 @@ index 216929c838446c3c14d9b9906ffa625ef35fcbc8..39035605197bad2eb2fd0c4942c5d43b
              } else {
                  this.wantedX = vec3.x;
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-index faf9ece6dfea15efaae6d7d6501e3a0ae47aed59..0c8a2a18da5b86bd5b20d83b3a705651362cf870 100644
+index 6c9eacf9b4ec0a2eead062bd69a037c5c2d8722f..4a4a8360c4286e06d88049512bf44237d2622f01 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
-@@ -319,6 +319,7 @@ public class GaleWorldConfiguration extends ConfigurationPart {
-         public double entityWakeUpDurationRatioStandardDeviation = 0.2;
-         // Gale end - variable entity wake-up duration
+@@ -140,6 +140,7 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+         }
  
-+        public boolean entitiesCanRandomStrollIntoNonTickingChunks = true; // Gale - MultiPaper - prevent entities random strolling into non-ticking chunks
          public boolean arrowMovementResetsDespawnCounter = true; // Gale - Purpur - make arrow movement resetting despawn counter configurable
++        public boolean entitiesCanRandomStrollIntoNonTickingChunks = true; // Gale - MultiPaper - prevent entities random strolling into non-ticking chunks
+         public double entityWakeUpDurationRatioStandardDeviation = 0.2; // Gale - variable entity wake-up duration
          public boolean hideFlamesOnEntitiesWithFireResistance = false; // Gale - Slice - hide flames on entities with fire resistance
- 
+         public boolean tryRespawnEnderDragonAfterEndCrystalPlace = true; // Gale - Pufferfish - make ender dragon respawn attempt after placing end crystals configurable

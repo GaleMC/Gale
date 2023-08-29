@@ -46,26 +46,14 @@ index cc7222cc7e53e8ae693e4e94ad53391db7a663c4..9d1d7033fdd2ae65b8fd323e9199b9d5
                          continue;
                      }
 diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-index 25f07bb3a2c212dca6e25100014c7edbe280f011..a40d4237804300fbb939ad2212827d9bf46a3bf0 100644
+index 67c94cd227449b6371a4635a1884d47ec5221997..1cc02389bf53cf4c77145117a68b83505c4a5d6b 100644
 --- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
 +++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
-@@ -89,6 +89,19 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
-         public int premiumAccountSlowLoginTimeout = -1;
-         // Gale end - make slow login timeout configurable
+@@ -52,6 +52,7 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
  
-+        // Gale start - MultiPaper - ignore null legacy structure data
-+        /**
-+         * Whether to ignore any legacy structure data, for which the NBT tag parser returns null for some reason.
-+         * If true, no warning will be given when this happens.
-+         * If false, an exception will be thrown in the console when this happens.
-+         * <ul>
-+         *     <li><i>Default</i>: false</li>
-+         *     <li><i>Vanilla</i>: false</li>
-+         * </ul>
-+         */
-+        public boolean ignoreNullLegacyStructureData = false;
-+        // Gale end - MultiPaper - ignore null legacy structure data
-+
+         public boolean verifyChatOrder = true; // Gale - Pufferfish - make chat order verification configurable
+         public int premiumAccountSlowLoginTimeout = -1; // Gale - make slow login timeout configurable
++        public boolean ignoreNullLegacyStructureData = false; // Gale - MultiPaper - ignore null legacy structure data
+ 
          public IncludeInTimingsReport includeInTimingsReport;
  
-         public class IncludeInTimingsReport extends ConfigurationPart {
