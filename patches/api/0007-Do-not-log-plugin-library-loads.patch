@@ -37,7 +37,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 diff --git a/src/main/java/org/bukkit/plugin/java/JavaPluginLoader.java b/src/main/java/org/bukkit/plugin/java/JavaPluginLoader.java
-index eaefbb00e9993d54906cc8cf35cf753c0d6c7707..12fe20a5a05dc3780def4c0cb3de0b291c2a8185 100644
+index eaefbb00e9993d54906cc8cf35cf753c0d6c7707..92d20e70d26318fbaed8adffd21c6b77336eb9c5 100644
 --- a/src/main/java/org/bukkit/plugin/java/JavaPluginLoader.java
 +++ b/src/main/java/org/bukkit/plugin/java/JavaPluginLoader.java
 @@ -56,6 +56,13 @@ public final class JavaPluginLoader implements PluginLoader {
@@ -48,14 +48,14 @@ index eaefbb00e9993d54906cc8cf35cf753c0d6c7707..12fe20a5a05dc3780def4c0cb3de0b29
 +    public static boolean SuppressLibraryLoaderLogger = false; // This is not set by Gale, but is included for compatibility with Purpur plugins
 +    public static boolean logDownloads = true;
 +    public static boolean logStartLoadLibrariesForPlugin = true;
-+    public static boolean logLibrariesLoaded = true;
++    public static boolean logLibraryLoaded = true;
 +    // Gale end - Purpur - do not log plugin library loads
 +
      /**
       * This class was not meant to be constructed explicitly
       *
 diff --git a/src/main/java/org/bukkit/plugin/java/LibraryLoader.java b/src/main/java/org/bukkit/plugin/java/LibraryLoader.java
-index e4b6f278a811acbb0070e311c5c3bdaff7b00474..354abafef044532bacfbc55d1d7355528c960df9 100644
+index e4b6f278a811acbb0070e311c5c3bdaff7b00474..a749856a6a4189d1f5aa3f193f5fa6a9dd7b13f1 100644
 --- a/src/main/java/org/bukkit/plugin/java/LibraryLoader.java
 +++ b/src/main/java/org/bukkit/plugin/java/LibraryLoader.java
 @@ -65,6 +65,7 @@ public class LibraryLoader
@@ -78,7 +78,7 @@ index e4b6f278a811acbb0070e311c5c3bdaff7b00474..354abafef044532bacfbc55d1d735552
              }
  
              jarFiles.add( url );
-+            if (JavaPluginLoader.logLibrariesLoaded && !JavaPluginLoader.SuppressLibraryLoaderLogger) // Gale - Purpur - do not log plugin library loads
++            if (JavaPluginLoader.logLibraryLoaded && !JavaPluginLoader.SuppressLibraryLoaderLogger) // Gale - Purpur - do not log plugin library loads
              logger.log( Level.INFO, "[{0}] Loaded library {1}", new Object[]
              {
                  java.util.Objects.requireNonNullElseGet(desc.getPrefix(), desc::getName), file // Paper - use configured log prefix
