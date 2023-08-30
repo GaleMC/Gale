@@ -1,0 +1,25 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Martijn Muijsers <martijnmuijsers@live.nl>
+Date: Wed, 30 Aug 2023 19:01:50 +0200
+Subject: [PATCH] Initialize line of sight cache with low capacity
+
+License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+Gale - https://galemc.org
+
+diff --git a/src/main/java/net/minecraft/world/entity/ai/sensing/Sensing.java b/src/main/java/net/minecraft/world/entity/ai/sensing/Sensing.java
+index ed440b9a84ac0e4619c075491515fa072d6aebec..57472cb54e9fd83e980e3c57f28d6e6643f422e8 100644
+--- a/src/main/java/net/minecraft/world/entity/ai/sensing/Sensing.java
++++ b/src/main/java/net/minecraft/world/entity/ai/sensing/Sensing.java
+@@ -7,8 +7,10 @@ import net.minecraft.world.entity.Mob;
+ 
+ public class Sensing {
+     private final Mob mob;
+-    private final IntSet seen = new IntOpenHashSet();
+-    private final IntSet unseen = new IntOpenHashSet();
++    // Gale start - initialize line of sight cache with low capacity
++    private final IntSet seen = new IntOpenHashSet(2);
++    private final IntSet unseen = new IntOpenHashSet(2);
++    // Gale end - initialize line of sight cache with low capacity
+ 
+     public Sensing(Mob owner) {
+         this.mob = owner;

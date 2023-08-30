@@ -7,7 +7,7 @@ License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/net/minecraft/util/Mth.java b/src/main/java/net/minecraft/util/Mth.java
-index 7327f3bb1c1f764ae1da88af27b1e9fb03fb89d9..aaefd728bb1a9fc398e55fe30c9337d51cf43785 100644
+index 7327f3bb1c1f764ae1da88af27b1e9fb03fb89d9..72ede18890a7bf3dba1473e10319339ac0bbfa69 100644
 --- a/src/main/java/net/minecraft/util/Mth.java
 +++ b/src/main/java/net/minecraft/util/Mth.java
 @@ -139,14 +139,26 @@ public class Mth {
@@ -25,12 +25,12 @@ index 7327f3bb1c1f764ae1da88af27b1e9fb03fb89d9..aaefd728bb1a9fc398e55fe30c9337d5
      }
  
 +    // Gale start - faster floating-point positive modulo
-+    public static float positiveModuloForPositiveDivisor(float dividend, float divisor) {
++    public static float positiveModuloForPositiveIntegerDivisor(float dividend, float divisor) {
 +        var modulo = dividend % divisor;
 +        return modulo < 0 ? modulo + divisor : modulo;
 +    }
 +
-+    public static double positiveModuloForPositiveDivisor(double dividend, double divisor) {
++    public static double positiveModuloForPositiveIntegerDivisor(double dividend, double divisor) {
 +        var modulo = dividend % divisor;
 +        return modulo < 0 ? modulo + divisor : modulo;
 +    }
@@ -40,7 +40,7 @@ index 7327f3bb1c1f764ae1da88af27b1e9fb03fb89d9..aaefd728bb1a9fc398e55fe30c9337d5
          return a % b == 0;
      }
 diff --git a/src/main/java/net/minecraft/world/level/levelgen/blending/Blender.java b/src/main/java/net/minecraft/world/level/levelgen/blending/Blender.java
-index a6434f2c2d1ddb33e7c51d0a099fd127d8a785e6..aeecd8fc0b9d514990e1fa1f1c790fa61d664a0b 100644
+index a6434f2c2d1ddb33e7c51d0a099fd127d8a785e6..a7972d196c354ff175728f2b8e99590181c65451 100644
 --- a/src/main/java/net/minecraft/world/level/levelgen/blending/Blender.java
 +++ b/src/main/java/net/minecraft/world/level/levelgen/blending/Blender.java
 @@ -141,7 +141,7 @@ public class Blender {
@@ -48,7 +48,7 @@ index a6434f2c2d1ddb33e7c51d0a099fd127d8a785e6..aeecd8fc0b9d514990e1fa1f1c790fa6
          double d = 1.0D;
          double e = height + 0.5D;
 -        double f = Mth.positiveModulo(e, 8.0D);
-+        double f = Mth.positiveModuloForPositiveDivisor(e, 8.0D); // Gale - faster floating-point positive modulo
++        double f = Mth.positiveModuloForPositiveIntegerDivisor(e, 8.0D); // Gale - faster floating-point positive modulo
          return 1.0D * (32.0D * (e - 128.0D) - 3.0D * (e - 120.0D) * f + 3.0D * f * f) / (128.0D * (32.0D - 3.0D * f));
      }
  
