@@ -1,4 +1,5 @@
-import io.papermc.paperweight.tasks.CollectATsFromPatches
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.gradle.api.tasks.testing.logging.TestLogEvent
 import io.papermc.paperweight.util.path
 import org.gradle.configurationcache.extensions.capitalized
 import kotlin.io.path.deleteRecursively
@@ -8,22 +9,6 @@ plugins {
     `maven-publish`
     id("com.github.johnrengelman.shadow") version "8.1.1" apply false
     id("io.papermc.paperweight.patcher") version "1.5.5"
-    id("com.github.ManifestClasspath") version "0.1.0-RELEASE"
-}
-
-val paperMavenPublicUrl = "https://repo.papermc.io/repository/maven-public/"
-
-repositories {
-    mavenCentral()
-    maven(paperMavenPublicUrl) {
-        content { onlyForConfigurations(configurations.paperclip.name) }
-    }
-}
-
-dependencies {
-    remapper("net.fabricmc:tiny-remapper:0.8.6:fat")
-    decompiler("net.minecraftforge:forgeflower:2.0.627.2")
-    paperclip("io.papermc:paperclip:3.0.3")
 }
 
 allprojects {
@@ -37,8 +22,10 @@ allprojects {
     }
 }
 
+val paperMavenPublicUrl = "https://repo.papermc.io/repository/maven-public/"
+
 subprojects {
-    tasks.withType<JavaCompile> {
+    tasks.withType<JavaCompile>().configureEach {
         options.encoding = Charsets.UTF_8.name()
         options.release.set(17)
     }
@@ -48,11 +35,33 @@ subprojects {
     tasks.withType<ProcessResources> {
         filteringCharset = Charsets.UTF_8.name()
     }
+    tasks.withType<Test> {
+        testLogging {
+            showStackTraces = true
+            exceptionFormat = TestExceptionFormat.FULL
+            events(TestLogEvent.STANDARD_OUT)
+        }
+    }
 
     repositories {
         mavenCentral()
         maven(paperMavenPublicUrl)
     }
+}
+
+repositories {
+    mavenCentral()
+    maven(paperMavenPublicUrl) {
+        content {
+            onlyForConfigurations(configurations.paperclip.name)
+        }
+    }
+}
+
+dependencies {
+    remapper("net.fabricmc:tiny-remapper:0.8.6:fat")
+    decompiler("net.minecraftforge:forgeflower:2.0.627.2")
+    paperclip("io.papermc:paperclip:3.0.3")
 }
 
 paperweight {
@@ -73,9 +82,24 @@ paperweight {
 }
 
 // Uncomment while updating for a new Minecraft version
-//tasks.withType<CollectATsFromPatches> {
+//tasks.withType<io.papermc.paperweight.tasks.CollectATsFromPatches> {
 //    extraPatchDir.set(layout.projectDirectory.dir("patches/unapplied/server"))
 //}
+// tasks.withType<io.papermc.paperweight.tasks.RebuildGitPatches> {
+//     filterPatches.set(false)
+// }
+
+tasks.register("printMinecraftVersion") {
+    doLast {
+        println(providers.gradleProperty("mcVersion").get().trim())
+    }
+}
+
+tasks.register("printGaleVersion") { // Gale - branding changes
+    doLast {
+        println(project.version)
+    }
+}
 
 // Gale start - branding changes - package license into jar
 for (classifier in arrayOf("mojmap", "reobf")) {

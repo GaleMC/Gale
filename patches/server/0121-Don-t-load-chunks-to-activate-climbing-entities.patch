@@ -28,7 +28,7 @@ index 286356ccb4f6938a857a58d4478f00aa84f00ee1..206f8e45b3ba1c0b1f25246b61cb6a2d
          return this.chunkPosition;
      }
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index 2f252bbe2946ea3228933b4b8c91a4e46fe99705..a35891723fad4fe984566c41cdd728004f8f371e 100644
+index c7e0aa9ea247a14441858c4d4d03151e4c61abdd..3ead02cf0b5ddbaeb8ac99c30c90753d94dafd22 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
 @@ -1979,19 +1979,43 @@ public abstract class LivingEntity extends Entity implements Attackable {

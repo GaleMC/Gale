@@ -31,7 +31,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index e1f8f3480bfda2bc3c042d0b57cbb051ad3d95bc..6ad84442f7722f709c7430a1b22a59957852c28b 100644
+index e832b6ce0e253a5696b50ee5956ef69762560261..607a5ad9164085842cd802fcf9f15357d9d8ef29 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
 @@ -142,7 +142,6 @@ import org.bukkit.event.entity.EntityTeleportEvent;

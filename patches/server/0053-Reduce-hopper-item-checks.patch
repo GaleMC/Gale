@@ -17,7 +17,7 @@ Licensed under: MIT (https://opensource.org/licenses/MIT)
 Only do an item "suck in" action once per second
 
 diff --git a/src/main/java/net/minecraft/world/entity/item/ItemEntity.java b/src/main/java/net/minecraft/world/entity/item/ItemEntity.java
-index a85f3a9b52748b32eece5364c59d0aa282f91a22..a54e0c2759a3987dc74dfdd8e61962841122a5f6 100644
+index d39f31e7cf315c7cdc1daab28164380e44dd8341..2639acd2c16c178ac134dd04e0cdc83dad1aa1d6 100644
 --- a/src/main/java/net/minecraft/world/entity/item/ItemEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/item/ItemEntity.java
 @@ -14,11 +14,13 @@ import net.minecraft.world.entity.Entity;

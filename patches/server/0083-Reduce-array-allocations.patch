@@ -346,7 +346,7 @@ index a2920b8a9eff77d9c5d1d7f70ad3abdacba8f0fa..43f402d9032e4570a81a80e412215598
      protected CipherBase(Cipher cipher) {
          this.cipher = cipher;
 diff --git a/src/main/java/net/minecraft/network/Connection.java b/src/main/java/net/minecraft/network/Connection.java
-index cf20f0983fc25b26cf92b9d3a28746b1909fc56b..f20738fbfbc85a73e43898ec2b15c3a834ba7099 100644
+index 52cb6476604c98465f81ff9e8d8344d7536a8868..98aa13ba9b5d2ac6ddac8e825f76e3c6211dc0d2 100644
 --- a/src/main/java/net/minecraft/network/Connection.java
 +++ b/src/main/java/net/minecraft/network/Connection.java
 @@ -21,7 +21,6 @@ import io.netty.channel.epoll.EpollSocketChannel;
@@ -399,7 +399,7 @@ index 8a68baf6bd46b59cf57c94ffe5651d47a7cae99c..bd7fa1b2a6fed82ce66fe2b8e3498e4d
      private static final FormattedText TEXT_NULL = FormattedText.of("null");
      private final String key;
 diff --git a/src/main/java/net/minecraft/server/Main.java b/src/main/java/net/minecraft/server/Main.java
-index dae36c6452ccd57a436dd918547b64d59957ab0a..f06cafd80d7c027ca97e50bcb45ad520d17c7e55 100644
+index a7ebf851a65231074c89a24f30de4ac2fb5b63e4..cb4a30bdf9beb4b1296ff47a6f6f299f0534b481 100644
 --- a/src/main/java/net/minecraft/server/Main.java
 +++ b/src/main/java/net/minecraft/server/Main.java
 @@ -93,7 +93,7 @@ public class Main {
@@ -680,7 +680,7 @@ index 97ff19efa0b3943ccb7a6e02cba6ed2fea61adac..b2ae2bd8bd4ff3cb6457e8c08172e348
      private EquipmentSlot(EquipmentSlot.Type type, int entityId, int armorStandId, String name) {
          this.type = type;
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index 559e85f266614f08e5b383e41f9898b2cca28513..506cbd835df841608d0d26a2a9313ee3434bf1ab 100644
+index 597866e969e0f5deddaaaedd9b1618edd507bae9..d1267b31ec49d3b0faf1fab57fe53f3058ccca21 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
 @@ -3099,7 +3099,7 @@ public abstract class LivingEntity extends Entity implements Attackable {
@@ -798,7 +798,7 @@ index 2bfbdaeb2b0d99dfd956cd5936403fe8b0eeae64..84f1c4c3ded4f201899f3c74e639349b
      public Enchantments() {}
  
 diff --git a/src/main/java/net/minecraft/world/level/Level.java b/src/main/java/net/minecraft/world/level/Level.java
-index db481e39fca1d6fd6dcd0c076f413b0f191fb0b3..8e84db48bb2658ce9d24c31f413aa23924839731 100644
+index 761e3c07726bdead7acf9769b9a973750b7d0335..aaa83188bc5c9da1ab7a50bd3f97a420e242a714 100644
 --- a/src/main/java/net/minecraft/world/level/Level.java
 +++ b/src/main/java/net/minecraft/world/level/Level.java
 @@ -12,6 +12,8 @@ import java.util.function.Consumer;
@@ -810,7 +810,7 @@ index db481e39fca1d6fd6dcd0c076f413b0f191fb0b3..8e84db48bb2658ce9d24c31f413aa239
  import net.minecraft.CrashReport;
  import net.minecraft.CrashReportCategory;
  import net.minecraft.core.BlockPos;
-@@ -1518,7 +1520,7 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
+@@ -1517,7 +1519,7 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
      public org.bukkit.entity.Entity[] getChunkEntities(int chunkX, int chunkZ) {
          io.papermc.paper.world.ChunkEntitySlices slices = ((ServerLevel)this).getEntityLookup().getChunk(chunkX, chunkZ);
          if (slices == null) {

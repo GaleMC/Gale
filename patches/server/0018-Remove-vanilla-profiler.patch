@@ -1094,7 +1094,7 @@ index e8485fb900b25e911a858678a833852731cb2ace..6a3b3370eb0c2670c13e3133ac86a9b1
              }
          } else {
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index e11d7283662834047b2ff81a2fd25a4263792deb..056d7f857cbda68792ee27b35f14fc6872fd90e1 100644
+index 78c98f38bc263664ea4cd344670243a7d372885c..e832b6ce0e253a5696b50ee5956ef69762560261 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
 @@ -405,7 +405,6 @@ public abstract class LivingEntity extends Entity implements Attackable {
@@ -1607,7 +1607,7 @@ index 8f97c9df726ac20cfce7bdddd5dd4f8c5aa76c35..8f2c0dcb0ca69ea1b09bb055c6a94949
              }
  
 diff --git a/src/main/java/net/minecraft/world/level/Level.java b/src/main/java/net/minecraft/world/level/Level.java
-index f95aa6362605c10145a212ed4b7df42ad443f4cf..baf53980acfe52ec23b7f2f2183c2287c7b15d74 100644
+index d37848e2b361f5c3a893036c8710a3b41622d7f2..0097cc2d0856d782764d3a128f14440aed805bdb 100644
 --- a/src/main/java/net/minecraft/world/level/Level.java
 +++ b/src/main/java/net/minecraft/world/level/Level.java
 @@ -129,7 +129,6 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
@@ -1635,7 +1635,7 @@ index f95aa6362605c10145a212ed4b7df42ad443f4cf..baf53980acfe52ec23b7f2f2183c2287
          this.levelData = worlddatamutable;
          this.dimensionTypeRegistration = holder;
          this.dimensionTypeId = (ResourceKey) holder.unwrapKey().orElseThrow(() -> {
-@@ -863,9 +861,6 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
+@@ -947,9 +945,6 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
      }
  
      protected void tickBlockEntities() {
@@ -1645,7 +1645,7 @@ index f95aa6362605c10145a212ed4b7df42ad443f4cf..baf53980acfe52ec23b7f2f2183c2287
          timings.tileEntityPending.startTiming(); // Spigot
          this.tickingBlockEntities = true;
          if (!this.pendingBlockEntityTickers.isEmpty()) {
-@@ -910,7 +905,6 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
+@@ -994,7 +989,6 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
          timings.tileEntityTick.stopTiming(); // Spigot
          this.tickingBlockEntities = false;
          co.aikar.timings.TimingHistory.tileEntityTicks += this.blockEntityTickers.size(); // Paper
@@ -1653,7 +1653,7 @@ index f95aa6362605c10145a212ed4b7df42ad443f4cf..baf53980acfe52ec23b7f2f2183c2287
          spigotConfig.currentPrimedTnt = 0; // Spigot
      }
  
-@@ -1103,7 +1097,6 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
+@@ -1187,7 +1181,6 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
  
      @Override
      public List<Entity> getEntities(@Nullable Entity except, AABB box, Predicate<? super Entity> predicate) {
@@ -1661,7 +1661,7 @@ index f95aa6362605c10145a212ed4b7df42ad443f4cf..baf53980acfe52ec23b7f2f2183c2287
          List<Entity> list = Lists.newArrayList();
          ((ServerLevel)this).getEntityLookup().getEntities(except, box, list, predicate); // Paper - optimise this call
          return list;
-@@ -1122,7 +1115,6 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
+@@ -1206,7 +1199,6 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
      }
  
      public <T extends Entity> void getEntities(EntityTypeTest<Entity, T> filter, AABB box, Predicate<? super T> predicate, List<? super T> result, int limit) {
@@ -1669,7 +1669,7 @@ index f95aa6362605c10145a212ed4b7df42ad443f4cf..baf53980acfe52ec23b7f2f2183c2287
          // Paper start - optimise this call
          //TODO use limit
          if (filter instanceof net.minecraft.world.entity.EntityType entityTypeTest) {
-@@ -1379,11 +1371,11 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
+@@ -1463,11 +1455,11 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
      }
  
      public ProfilerFiller getProfiler() {
