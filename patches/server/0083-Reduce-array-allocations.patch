@@ -469,7 +469,7 @@ index efbc8483a51c5272ca81747c82dc65e7f0f5c232..9879599c38db4f3332c347b6b0c26034
          return ret;
      }
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 3bb1b56fc189c0fc3aca2a65155e5ea5eadc7a87..76bea01e27d4e77296237998f0783565b1c3d1c8 100644
+index badc98edc1d42946cabd47d542d8eeb736a6c5e5..a0f4a867c1b7711322cfca832a2e86a79f114a6e 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -29,6 +29,8 @@ import java.util.function.UnaryOperator;
@@ -531,7 +531,7 @@ index 3bb1b56fc189c0fc3aca2a65155e5ea5eadc7a87..76bea01e27d4e77296237998f0783565
              return;
          }
          // Paper end
-@@ -3364,7 +3362,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -3343,7 +3341,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
          // Paper start
          if (!org.bukkit.Bukkit.isPrimaryThread()) {
              if (this.recipeSpamPackets.addAndGet(io.papermc.paper.configuration.GlobalConfiguration.get().spamLimiter.recipeSpamIncrement) > io.papermc.paper.configuration.GlobalConfiguration.get().spamLimiter.recipeSpamLimit) {
@@ -693,10 +693,10 @@ index 597866e969e0f5deddaaaedd9b1618edd507bae9..d1267b31ec49d3b0faf1fab57fe53f30
  
          for (int j = 0; j < i; ++j) {
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index 3bc50cc77bc8723dd607134f795aae55784aa657..fa47779f1007325ee77f2b43195bf1892a2d7d65 100644
+index d00ce4ce7296fb0b647a82f231ce7d45b22a2ee2..ab0aa4b86bf782792177dec7adf8f7ca5599ad22 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
-@@ -1047,7 +1047,7 @@ public abstract class Mob extends LivingEntity implements Targeting {
+@@ -1054,7 +1054,7 @@ public abstract class Mob extends LivingEntity implements Targeting {
      @Override
      protected void dropCustomDeathLoot(DamageSource source, int lootingMultiplier, boolean allowDrops) {
          super.dropCustomDeathLoot(source, lootingMultiplier, allowDrops);
@@ -705,7 +705,7 @@ index 3bc50cc77bc8723dd607134f795aae55784aa657..fa47779f1007325ee77f2b43195bf189
          int j = aenumitemslot.length;
  
          for (int k = 0; k < j; ++k) {
-@@ -1109,7 +1109,7 @@ public abstract class Mob extends LivingEntity implements Targeting {
+@@ -1116,7 +1116,7 @@ public abstract class Mob extends LivingEntity implements Targeting {
              }
  
              boolean flag = true;
@@ -714,7 +714,7 @@ index 3bc50cc77bc8723dd607134f795aae55784aa657..fa47779f1007325ee77f2b43195bf189
              int j = aenumitemslot.length;
  
              for (int k = 0; k < j; ++k) {
-@@ -1196,7 +1196,7 @@ public abstract class Mob extends LivingEntity implements Targeting {
+@@ -1203,7 +1203,7 @@ public abstract class Mob extends LivingEntity implements Targeting {
          float f = localDifficulty.getSpecialMultiplier();
  
          this.enchantSpawnedWeapon(random, f);
@@ -723,7 +723,7 @@ index 3bc50cc77bc8723dd607134f795aae55784aa657..fa47779f1007325ee77f2b43195bf189
          int i = aenumitemslot.length;
  
          for (int j = 0; j < i; ++j) {
-@@ -1415,7 +1415,7 @@ public abstract class Mob extends LivingEntity implements Targeting {
+@@ -1422,7 +1422,7 @@ public abstract class Mob extends LivingEntity implements Targeting {
                  t0.setInvulnerable(this.isInvulnerable());
                  if (flag) {
                      t0.setCanPickUpLoot(this.canPickUpLoot());
@@ -746,10 +746,10 @@ index 25ed5571b24e590bc95056020d84496492b53298..087acc992a83b2a7e40a0e24f00e283c
  
          for (int j = 0; j < i; ++j) {
 diff --git a/src/main/java/net/minecraft/world/item/ItemStack.java b/src/main/java/net/minecraft/world/item/ItemStack.java
-index 879cc823d56625867eb73bb621db6a13f40ad81c..3d589c9698129ab2a09093425d0bb97c5a3897f9 100644
+index d138660e459b2d09ba9dd7ae2bf3da499d9ae25c..5530b4916b24c9fb42db0f9f28a282a4b9b90443 100644
 --- a/src/main/java/net/minecraft/world/item/ItemStack.java
 +++ b/src/main/java/net/minecraft/world/item/ItemStack.java
-@@ -1019,7 +1019,7 @@ public final class ItemStack {
+@@ -1020,7 +1020,7 @@ public final class ItemStack {
          int k;
  
          if (ItemStack.shouldShowInTooltip(i, ItemStack.TooltipPart.MODIFIERS)) {
@@ -798,7 +798,7 @@ index 2bfbdaeb2b0d99dfd956cd5936403fe8b0eeae64..84f1c4c3ded4f201899f3c74e639349b
      public Enchantments() {}
  
 diff --git a/src/main/java/net/minecraft/world/level/Level.java b/src/main/java/net/minecraft/world/level/Level.java
-index 761e3c07726bdead7acf9769b9a973750b7d0335..aaa83188bc5c9da1ab7a50bd3f97a420e242a714 100644
+index 10770a2ff21b3dc4ec8ea413a1be68a27f83022f..bf19dbc64090a14b30d47687c66bf92bf3417ac6 100644
 --- a/src/main/java/net/minecraft/world/level/Level.java
 +++ b/src/main/java/net/minecraft/world/level/Level.java
 @@ -12,6 +12,8 @@ import java.util.function.Consumer;

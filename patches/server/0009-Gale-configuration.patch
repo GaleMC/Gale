@@ -381,7 +381,7 @@ index 18aac3da3c88f33b1a71a5920a8daa27e9723913..513916690d2579760f59edecb1a273f4
          this.convertable = convertable_conversionsession;
          this.uuid = WorldUUID.getUUID(convertable_conversionsession.levelDirectory.path().toFile());
 diff --git a/src/main/java/net/minecraft/world/level/Level.java b/src/main/java/net/minecraft/world/level/Level.java
-index 773bfdd3ed457a352b5329f280c0d10297d579ba..d37848e2b361f5c3a893036c8710a3b41622d7f2 100644
+index 7d54c79f46f99f5500e9cb1f486037cafb27ee3a..76180ed9a5ff711e570f78d89f2d42729e481499 100644
 --- a/src/main/java/net/minecraft/world/level/Level.java
 +++ b/src/main/java/net/minecraft/world/level/Level.java
 @@ -1,10 +1,7 @@
@@ -457,10 +457,10 @@ index 773bfdd3ed457a352b5329f280c0d10297d579ba..d37848e2b361f5c3a893036c8710a3b4
          this.world = new CraftWorld((ServerLevel) this, gen, biomeProvider, env);
  
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index 0f2d8cc6d8a6f6fb53658c0f49de3b76cc716ea1..04dfa4f59921ec5fcea6fb6989847fc5164ccfda 100644
+index a566fd576c0b82a6fd3ea8182d08bdd23370fed0..93a4415ee80a01eb494c8c86d2d94b2bdf1da9a8 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-@@ -1057,6 +1057,7 @@ public final class CraftServer implements Server {
+@@ -1035,6 +1035,7 @@ public final class CraftServer implements Server {
  
          org.spigotmc.SpigotConfig.init((File) console.options.valueOf("spigot-settings")); // Spigot
          this.console.paperConfigurations.reloadConfigs(this.console);
@@ -468,7 +468,7 @@ index 0f2d8cc6d8a6f6fb53658c0f49de3b76cc716ea1..04dfa4f59921ec5fcea6fb6989847fc5
          for (ServerLevel world : this.console.getAllLevels()) {
              // world.serverLevelData.setDifficulty(config.difficulty); // Paper - per level difficulty
              world.setSpawnSettings(world.serverLevelData.getDifficulty() != Difficulty.PEACEFUL && config.spawnMonsters, config.spawnAnimals); // Paper - per level difficulty (from MinecraftServer#setDifficulty(ServerLevel, Difficulty, boolean))
-@@ -2932,6 +2933,14 @@ public final class CraftServer implements Server {
+@@ -2910,6 +2911,14 @@ public final class CraftServer implements Server {
              return CraftServer.this.console.paperConfigurations.createLegacyObject(CraftServer.this.console);
          }
  

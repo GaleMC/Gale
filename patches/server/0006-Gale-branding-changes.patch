@@ -221,7 +221,7 @@ index 94a9ed024d3859793618152ea559a168bbcbb5e2..e60008693e017bec1b4eb49c84be3898
 -<http://www.gnu.org/philosophy/why-not-lgpl.html>.
 +<https://www.gnu.org/philosophy/why-not-lgpl.html>.
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 123c2c1bdc4ba5b887910bc613a43bc60be1c99e..9606c6954f2c53dbbda7e7235cf37308822fea02 100644
+index f1873e896d0ac0b943e08564aea4d35ebbd5896f..b36949c1b5bd2c5af1ee7496c8b8372fe263ad79 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -88,7 +88,7 @@ tasks.jar {
@@ -233,9 +233,9 @@ index 123c2c1bdc4ba5b887910bc613a43bc60be1c99e..9606c6954f2c53dbbda7e7235cf37308
              "Implementation-Vendor" to date, // Paper
              "Specification-Title" to "Bukkit",
              "Specification-Version" to project.version,
-@@ -228,3 +228,22 @@ tasks.registerRunTask("runDev") {
-     description = "Spin up a non-relocated Mojang-mapped test server"
-     classpath(sourceSets.main.map { it.runtimeClasspath })
+@@ -235,3 +235,22 @@ tasks.registerRunTask("runDev") {
+     classpath(runtimeClasspathForRunDev)
+     jvmArgs("-DPaper.isRunDev=true")
  }
 +
 +// Gale start - package license into jar
@@ -455,7 +455,7 @@ index 67ee3a4ca8a6cdeb275653d492a1fea8037c51fb..3f31b91ac6c9cb4d2b19536b6a6a2ab0
  
      public SystemReport fillSystemReport(SystemReport details) {
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index ec4b73321205b472f19fa5bd4ad95893020d1340..0f2d8cc6d8a6f6fb53658c0f49de3b76cc716ea1 100644
+index 1150a114e56899758264aa678db4e9ec3e78befc..a566fd576c0b82a6fd3ea8182d08bdd23370fed0 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 @@ -265,7 +265,7 @@ import javax.annotation.Nullable; // Paper
@@ -709,7 +709,7 @@ index 0000000000000000000000000000000000000000..9b4bc17fed9dc7251159687082cf8de6
 +
 +}
 diff --git a/src/main/java/org/spigotmc/WatchdogThread.java b/src/main/java/org/spigotmc/WatchdogThread.java
-index 98fba0288be9ed2cb18ffba5cf81148157dd4fcf..08bdaab86269b0a24e61b3c9d69c18aca1a1d1f7 100644
+index 50c72e5db369a180f425eaaa0411cb8871bc3463..b66caf636cbb4b6a56584ad710600ad2c3fb17d2 100644
 --- a/src/main/java/org/spigotmc/WatchdogThread.java
 +++ b/src/main/java/org/spigotmc/WatchdogThread.java
 @@ -155,14 +155,20 @@ public final class WatchdogThread extends io.papermc.paper.util.TickThread // Pa

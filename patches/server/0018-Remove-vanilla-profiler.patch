@@ -496,7 +496,7 @@ index 4a610b712acfe0b1b4dcf4988bc22c6a71616050..e49e1f2afdade4dc16aa5239d60c0dcf
  
                  ++j;
 diff --git a/src/main/java/net/minecraft/server/level/ChunkMap.java b/src/main/java/net/minecraft/server/level/ChunkMap.java
-index 65d947df910d60f478e7a449eb161e5105e2c0c9..a9e79b340814dfb2d60d51332a8a581298015e4f 100644
+index fb6cbcc4839aef7dc4bd4a49613f892b07aab353..014198da4981b9e1f2e3eec95bfea66be54168e6 100644
 --- a/src/main/java/net/minecraft/server/level/ChunkMap.java
 +++ b/src/main/java/net/minecraft/server/level/ChunkMap.java
 @@ -75,7 +75,6 @@ import net.minecraft.server.level.progress.ChunkProgressListener;
@@ -507,7 +507,7 @@ index 65d947df910d60f478e7a449eb161e5105e2c0c9..a9e79b340814dfb2d60d51332a8a5812
  import net.minecraft.util.thread.BlockableEventLoop;
  import net.minecraft.util.thread.ProcessorHandle;
  import net.minecraft.util.thread.ProcessorMailbox;
-@@ -637,20 +636,14 @@ public class ChunkMap extends ChunkStorage implements ChunkHolder.PlayerProvider
+@@ -640,20 +639,14 @@ public class ChunkMap extends ChunkStorage implements ChunkHolder.PlayerProvider
      }
  
      protected void tick(BooleanSupplier shouldKeepTicking) {
@@ -883,7 +883,7 @@ index b382da838acc04a1c5d89064b4fa43bcdd38ae71..e4f35f91a1b1b4c42c09602c19129fe4
                  this.connection.send(new ClientboundPlayerAbilitiesPacket(this.getAbilities()));
                  playerlist.sendLevelInfo(this, worldserver);
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 3c0651fa5a5db880202c9a3805a6455269c5f16d..c513978f5de138353ca32e264cc5b06ba664a041 100644
+index ab58827001b3b42e44d7f701c390480fed1fa1f1..59499e1c55fe40d719b2281febb6ef0a0cad6c2d 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -397,7 +397,6 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
@@ -1187,7 +1187,7 @@ index 78c98f38bc263664ea4cd344670243a7d372885c..e832b6ce0e253a5696b50ee5956ef697
          if (((ServerLevel) this.level()).hasEntityMoveEvent && !(this instanceof net.minecraft.world.entity.player.Player)) {
              if (this.xo != this.getX() || this.yo != this.getY() || this.zo != this.getZ() || this.yRotO != this.getYRot() || this.xRotO != this.getXRot()) {
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index e2a25c29ec74147b3e66aa0b3deb85a8f6ee53a5..3bc50cc77bc8723dd607134f795aae55784aa657 100644
+index a99d737f71277ea3082816c7a7fc47ab3a201d30..d00ce4ce7296fb0b647a82f231ce7d45b22a2ee2 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
 @@ -143,8 +143,10 @@ public abstract class Mob extends LivingEntity implements Targeting {
@@ -1607,7 +1607,7 @@ index 8f97c9df726ac20cfce7bdddd5dd4f8c5aa76c35..8f2c0dcb0ca69ea1b09bb055c6a94949
              }
  
 diff --git a/src/main/java/net/minecraft/world/level/Level.java b/src/main/java/net/minecraft/world/level/Level.java
-index d37848e2b361f5c3a893036c8710a3b41622d7f2..0097cc2d0856d782764d3a128f14440aed805bdb 100644
+index 76180ed9a5ff711e570f78d89f2d42729e481499..fdd0f3baf70779825ef1f7d61173bd6f15842319 100644
 --- a/src/main/java/net/minecraft/world/level/Level.java
 +++ b/src/main/java/net/minecraft/world/level/Level.java
 @@ -129,7 +129,6 @@ public abstract class Level implements LevelAccessor, AutoCloseable {

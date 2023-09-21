@@ -13,7 +13,7 @@ As part of: Pufferfish (https://github.com/pufferfish-gg/Pufferfish)
 Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index c6acd641d1d76478a3c0063206f162414db69b7a..de92727565e7ab53645f53da4a73e3b2ea6cf8ca 100644
+index b7a9ee2e561da30d48f9ff1c00cacd1fcf9c6977..340db3dd7fddcc95c51c0e956bf1164f6113068a 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -95,6 +95,7 @@ tasks.withType<JavaCompile> {
@@ -24,7 +24,7 @@ index c6acd641d1d76478a3c0063206f162414db69b7a..de92727565e7ab53645f53da4a73e3b2
  }
  // Gale end - hide irrelevant compilation warnings
  
-@@ -158,6 +159,7 @@ tasks.withType<Javadoc> {
+@@ -163,6 +164,7 @@ tasks.withType<Javadoc> {
      }
  
      options.addStringOption("Xdoclint:none", "-quiet") // Gale - hide irrelevant compilation warnings

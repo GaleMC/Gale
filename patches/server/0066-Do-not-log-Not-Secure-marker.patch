@@ -7,10 +7,10 @@ License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 Gale - https://galemc.org
 
 diff --git a/src/main/java/io/papermc/paper/adventure/ChatProcessor.java b/src/main/java/io/papermc/paper/adventure/ChatProcessor.java
-index 774fb97912f766589f3548f659618ad554e0503f..bec9a8ca016f23352ba51e5f70ecb9a0b66b0385 100644
+index e4fd372a1d585887287253a02531cd192929377b..397f985756c5bc6c11a32c844d536000dd922ed1 100644
 --- a/src/main/java/io/papermc/paper/adventure/ChatProcessor.java
 +++ b/src/main/java/io/papermc/paper/adventure/ChatProcessor.java
-@@ -43,6 +43,7 @@ import org.bukkit.event.player.PlayerChatEvent;
+@@ -44,6 +44,7 @@ import org.bukkit.event.player.PlayerChatEvent;
  import org.checkerframework.checker.nullness.qual.NonNull;
  import org.checkerframework.checker.nullness.qual.Nullable;
  import org.checkerframework.framework.qual.DefaultQualifier;
@@ -18,7 +18,7 @@ index 774fb97912f766589f3548f659618ad554e0503f..bec9a8ca016f23352ba51e5f70ecb9a0
  
  import static net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection;
  
-@@ -353,7 +354,7 @@ public final class ChatProcessor {
+@@ -355,7 +356,7 @@ public final class ChatProcessor {
  
          private void sendToServer(final ChatType.Bound chatType, final @Nullable Function<Audience, net.minecraft.network.chat.Component> msgFunction) {
              final PlayerChatMessage toConsoleMessage = msgFunction == null ? ChatProcessor.this.message : ChatProcessor.this.message.withUnsignedContent(msgFunction.apply(ChatProcessor.this.server.console));

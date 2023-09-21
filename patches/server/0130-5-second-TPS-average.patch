@@ -79,10 +79,10 @@ index 203598a379f944f44ff38bdd2007387cc7bc3176..350d503d7f03c63c0e3e2155a75035b9
                      tps5.add(currentTps, diff);
                      tps15.add(currentTps, diff);
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index c451746873a2e4cc79225d91995b10877037bcba..a1802efea9175cb1ffe02c555bee21643f355389 100644
+index ea4e524f792f1cabfa11db6543e4ae2f39734913..87e020d6eecd1f564f24f164d7338b5f21bfa197 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-@@ -2901,8 +2901,27 @@ public final class CraftServer implements Server {
+@@ -2879,8 +2879,27 @@ public final class CraftServer implements Server {
          };
      }
  
