@@ -27,7 +27,7 @@ index 1b9d997c31ab281ce9f4719f53b0ad78a430789d..758cb80e64520ff085c4ef5ca8b2ed77
              pair("bukkit", mapAsJSON(Bukkit.spigot().getBukkitConfig(), null)),
              // Gale start - Gale configuration - include in timings
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServerProperties.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServerProperties.java
-index 818289e831e3dad29345c43265e2efd7689bc500..37c647ec9eff5fb2729dc83efed7920bc0227f34 100644
+index c5598adb8cbcbcf7277c2fd4dd72c243d44d9700..4cd514fd09689c0d1527a53dfe8cb6acb280c1ee 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServerProperties.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServerProperties.java
 @@ -68,6 +68,7 @@ public class DedicatedServerProperties extends Settings<DedicatedServerPropertie
@@ -38,7 +38,7 @@ index 818289e831e3dad29345c43265e2efd7689bc500..37c647ec9eff5fb2729dc83efed7920b
      public final int serverPort;
      @Nullable
      public final Boolean announcePlayerAchievements;
-@@ -100,12 +101,13 @@ public class DedicatedServerProperties extends Settings<DedicatedServerPropertie
+@@ -100,13 +101,14 @@ public class DedicatedServerProperties extends Settings<DedicatedServerPropertie
      public final boolean hideOnlinePlayers;
      public final int entityBroadcastRangePercentage;
      public final String textFilteringConfig;
@@ -48,20 +48,21 @@ index 818289e831e3dad29345c43265e2efd7689bc500..37c647ec9eff5fb2729dc83efed7920b
      public final Settings<DedicatedServerProperties>.MutableValue<Integer> playerIdleTimeout;
      public final Settings<DedicatedServerProperties>.MutableValue<Boolean> whiteList;
      public final boolean enforceSecureProfile;
+     public final boolean logIPs;
 -    private final DedicatedServerProperties.WorldDimensionData worldDimensionData;
 +    public final DedicatedServerProperties.WorldDimensionData worldDimensionData; // Gale - include server.properties in timings - private -> public
      public final WorldOptions worldOptions;
  
      public final String rconIp; // Paper - Add rcon ip
-@@ -156,6 +158,7 @@ public class DedicatedServerProperties extends Settings<DedicatedServerPropertie
-         this.whiteList = this.getMutable("white-list", false);
+@@ -158,6 +160,7 @@ public class DedicatedServerProperties extends Settings<DedicatedServerPropertie
          this.enforceSecureProfile = this.get("enforce-secure-profile", true);
+         this.logIPs = this.get("log-ips", true);
          String s = this.get("level-seed", "");
 +        this.levelSeed = s; // Gale - include server.properties in timings
          boolean flag = this.get("generate-structures", true);
          long i = WorldOptions.parseSeed(s).orElse(WorldOptions.randomSeed());
  
-@@ -165,7 +168,10 @@ public class DedicatedServerProperties extends Settings<DedicatedServerPropertie
+@@ -167,7 +170,10 @@ public class DedicatedServerProperties extends Settings<DedicatedServerPropertie
          }, new JsonObject()), (String) this.get("level-type", (s1) -> {
              return s1.toLowerCase(Locale.ROOT);
          }, WorldPresets.NORMAL.location().toString()));
@@ -113,10 +114,10 @@ index 8f8fd98f96cd390ba43033521982a13044df91cf..dbb0f523608a9208e8c656898b18ce1b
  }
 diff --git a/src/main/java/org/galemc/gale/configuration/timingsexport/VanillaServerPropertiesTimingsExport.java b/src/main/java/org/galemc/gale/configuration/timingsexport/VanillaServerPropertiesTimingsExport.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..9d9ee3f38f04cfc4fcab00b8ff5558e75674da11
+index 0000000000000000000000000000000000000000..139d946346594d2a59a8b2930c4eae794c880dbc
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/configuration/timingsexport/VanillaServerPropertiesTimingsExport.java
-@@ -0,0 +1,128 @@
+@@ -0,0 +1,129 @@
 +// Gale - include server.properties in timings
 +
 +package org.galemc.gale.configuration.timingsexport;
@@ -187,6 +188,7 @@ index 0000000000000000000000000000000000000000..9d9ee3f38f04cfc4fcab00b8ff5558e7
 +//            json.put("level-seed", String.valueOf(properties.levelSeed));
 +//        }
 +        Optional.ofNullable(properties.worldDimensionData).ifPresent(worldDimensionData -> json.put("level-type", String.valueOf(worldDimensionData.levelType())));
++        json.put("log-ips", String.valueOf(properties.logIPs));
 +        json.put("max-chained-neighbor-updates", String.valueOf(properties.maxChainedNeighborUpdates));
 +        json.put("max-players", String.valueOf(properties.maxPlayers));
 +        json.put("max-tick-time", String.valueOf(properties.maxTickTime));

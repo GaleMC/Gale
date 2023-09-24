@@ -1,0 +1,231 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Martijn Muijsers <martijnmuijsers@live.nl>
+Date: Thu, 24 Nov 2022 23:03:52 +0100
+Subject: [PATCH] Reduce hopper item checks
+
+License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+Gale - https://galemc.org
+
+This patch is based on the following patch:
+"Improve Hopper Performance"
+By: Aikar <aikar@aikar.co>
+As part of: EmpireCraft (https://github.com/starlis/empirecraft)
+Licensed under: MIT (https://opensource.org/licenses/MIT)
+
+* EmpireCraft description *
+
+Only do an item "suck in" action once per second
+
+diff --git a/src/main/java/net/minecraft/world/entity/item/ItemEntity.java b/src/main/java/net/minecraft/world/entity/item/ItemEntity.java
+index eb0351aa12eebcefab1d1d14641fc3c60cbbcab8..760e54d74fc027e631e45b07b729d060511d5bfd 100644
+--- a/src/main/java/net/minecraft/world/entity/item/ItemEntity.java
++++ b/src/main/java/net/minecraft/world/entity/item/ItemEntity.java
+@@ -14,11 +14,13 @@ import net.minecraft.world.entity.Entity;
+ import net.minecraft.world.entity.EntityType;
+ import net.minecraft.world.entity.MoverType;
+ import net.minecraft.world.entity.TraceableEntity;
++import net.minecraft.world.entity.vehicle.MinecartHopper;
+ import net.minecraft.world.item.Item;
+ import net.minecraft.world.item.ItemStack;
+ import net.minecraft.world.item.Items;
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.gameevent.GameEvent;
++import net.minecraft.world.phys.AABB;
+ import net.minecraft.world.phys.Vec3;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.nbt.CompoundTag;
+@@ -209,11 +211,31 @@ public class ItemEntity extends Entity implements TraceableEntity {
+                 }
+                 // CraftBukkit end
+                 this.discard();
++                return; // Gale - EMC - reduce hopper item checks
+             }
++            this.markNearbyHopperCartsAsImmune(); // Gale - EMC - reduce hopper item checks
+ 
+         }
+     }
+ 
++    // Gale start - EMC - reduce hopper item checks
++    private void markNearbyHopperCartsAsImmune() {
++        var config = level().galeConfig().smallOptimizations.reducedIntervals.checkNearbyItem.hopper.minecart;
++        // No need to mark hopper minecarts as immune if they can pull every tick anyway
++        if (config.interval <= 1) {
++            return;
++        }
++        if (config.temporaryImmunity.duration > 0 && this.isAlive() && this.onGround && !this.isRemoved() && (config.temporaryImmunity.nearbyItemMaxAge == -1 || this.age <= config.temporaryImmunity.nearbyItemMaxAge) && this.age % Math.max(1, config.temporaryImmunity.checkForMinecartNearItemInterval) == 0 && config.temporaryImmunity.maxItemHorizontalDistance >= 0 && config.temporaryImmunity.maxItemVerticalDistance >= 0) {
++            AABB aabb = this.getBoundingBox().inflate(config.temporaryImmunity.maxItemHorizontalDistance, config.temporaryImmunity.maxItemVerticalDistance, config.temporaryImmunity.maxItemHorizontalDistance);
++            for (Entity entity : this.level().getEntities(this, aabb)) {
++                if (entity instanceof MinecartHopper) {
++                    ((MinecartHopper) entity).pickupImmunity = MinecraftServer.currentTick + config.temporaryImmunity.duration;
++                }
++            }
++        }
++    }
++    // Gale end - EMC - reduce hopper item checks
++
+     // Spigot start - copied from above
+     @Override
+     public void inactiveTick() {
+@@ -233,7 +255,13 @@ public class ItemEntity extends Entity implements TraceableEntity {
+             }
+             // CraftBukkit end
+             this.discard();
++            return; // Gale - EMC - reduce hopper item checks
++        }
++        // Gale start - EMC - reduce hopper item checks
++        if (level().galeConfig().smallOptimizations.reducedIntervals.checkNearbyItem.hopper.minecart.temporaryImmunity.checkForMinecartNearItemWhileInactive) {
++            this.markNearbyHopperCartsAsImmune();
+         }
++        // Gale end - EMC - reduce hopper item checks
+     }
+     // Spigot end
+ 
+diff --git a/src/main/java/net/minecraft/world/entity/vehicle/MinecartHopper.java b/src/main/java/net/minecraft/world/entity/vehicle/MinecartHopper.java
+index fc35cfc9d045f3e5b6a50af1d0ba83b6e322091f..41e23b4e0df3f3561925dad87624f4e445831a52 100644
+--- a/src/main/java/net/minecraft/world/entity/vehicle/MinecartHopper.java
++++ b/src/main/java/net/minecraft/world/entity/vehicle/MinecartHopper.java
+@@ -17,6 +17,7 @@ import net.minecraft.world.level.block.state.BlockState;
+ 
+ public class MinecartHopper extends AbstractMinecartContainer implements Hopper {
+     private boolean enabled = true;
++    public int pickupImmunity = 0; // Gale - EMC - reduce hopper item checks
+ 
+     public MinecartHopper(EntityType<? extends MinecartHopper> type, Level world) {
+         super(type, world);
+@@ -132,4 +133,12 @@ public class MinecartHopper extends AbstractMinecartContainer implements Hopper
+     }
+     // Paper end
+ 
++    // Gale start - EMC - reduce hopper item checks
++    private long tickAttempts = 0;
++    @Override
++    public long getAndIncrementAttemptCounter() {
++        return tickAttempts++;
++    }
++    // Gale end EMC - - reduce hopper item checks
++
+ }
+diff --git a/src/main/java/net/minecraft/world/level/block/entity/Hopper.java b/src/main/java/net/minecraft/world/level/block/entity/Hopper.java
+index a05acf709735b40ca86f978508c63a86065fd405..3752b4ba7fb0d680d4b4a61bf44d54d5ab11815c 100644
+--- a/src/main/java/net/minecraft/world/level/block/entity/Hopper.java
++++ b/src/main/java/net/minecraft/world/level/block/entity/Hopper.java
+@@ -14,6 +14,8 @@ public interface Hopper extends Container {
+         return SUCK;
+     }
+ 
++    long getAndIncrementAttemptCounter(); // Gale - EMC - reduce hopper item checks
++
+     double getLevelX();
+ 
+     double getLevelY();
+diff --git a/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java
+index f30278bb704ecfb5746e798b97e6e945bc6bfce7..f44372ec510273c8507865cd079f60bbd6fc586c 100644
+--- a/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java
++++ b/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java
+@@ -11,6 +11,7 @@ import net.minecraft.core.Direction;
+ import net.minecraft.core.NonNullList;
+ import net.minecraft.nbt.CompoundTag;
+ import net.minecraft.network.chat.Component;
++import net.minecraft.server.MinecraftServer;
+ import net.minecraft.world.CompoundContainer;
+ import net.minecraft.world.Container;
+ import net.minecraft.world.ContainerHelper;
+@@ -20,6 +21,7 @@ import net.minecraft.world.entity.Entity;
+ import net.minecraft.world.entity.EntitySelector;
+ import net.minecraft.world.entity.item.ItemEntity;
+ import net.minecraft.world.entity.player.Player;
++import net.minecraft.world.entity.vehicle.MinecartHopper;
+ import net.minecraft.world.inventory.AbstractContainerMenu;
+ import net.minecraft.world.inventory.HopperMenu;
+ import net.minecraft.world.item.ItemStack;
+@@ -575,7 +577,7 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
+                 return false;
+             }
+             // Paper end
+-        } else {
++        } else if (shouldSuckIn(world, hopper)) { // Gale - EMC - reduce hopper item checks
+             Iterator iterator = HopperBlockEntity.getItemsAtAndAbove(world, hopper).iterator();
+ 
+             ItemEntity entityitem;
+@@ -590,6 +592,7 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
+ 
+             return true;
+         }
++        return false; // Gale - EMC - reduce hopper item checks
+     }
+ 
+     @io.papermc.paper.annotation.DoNotUse // Paper - method unused as logic is inlined above
+@@ -900,6 +903,31 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
+         return first.getCount() < first.getMaxStackSize() && first.is(second.getItem()) && first.getDamageValue() == second.getDamageValue() && ((first.isEmpty() && second.isEmpty()) || java.util.Objects.equals(first.getTag(), second.getTag())); // Paper - used to return true for full itemstacks?!
+     }
+ 
++    // Gale start - EMC - reduce hopper item checks
++    private long tickAttempts = 0;
++    @Override
++    public long getAndIncrementAttemptCounter() {
++        return tickAttempts++;
++    }
++    private static boolean shouldSuckIn(Level world, Hopper hopper) {
++        int suckInterval;
++        if (hopper instanceof MinecartHopper minecartHopper) {
++            if (minecartHopper.pickupImmunity > MinecraftServer.currentTick) {
++                return true;
++            }
++            suckInterval = world.galeConfig().smallOptimizations.reducedIntervals.checkNearbyItem.hopper.minecart.interval;
++        } else {
++            suckInterval = world.galeConfig().smallOptimizations.reducedIntervals.checkNearbyItem.hopper.interval;
++        }
++        if (suckInterval <= 1) {
++            return true;
++        }
++
++        final int hopperId = (int) hopper.getLevelX() + (int) hopper.getLevelY() + (int) hopper.getLevelZ();
++        return (hopper.getAndIncrementAttemptCounter() + hopperId) % suckInterval == 0;
++    }
++    // Gale end - EMC - reduce hopper item checks
++
+     @Override
+     public double getLevelX() {
+         return (double) this.worldPosition.getX() + 0.5D;
+diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
+index 00a327bd0e4e0f2def0bb29d5ecff4f0ec4ba1eb..c869a559b67ecdfb8f9617e1f54fb9c28bb3c766 100644
+--- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
++++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
+@@ -57,6 +57,37 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+             public int acquirePoiForStuckEntity = 60; // Gale - Airplane - reduce acquire POI for stuck entities
+             public int checkStuckInWall = 10; // Gale - Pufferfish - reduce in wall checks
+ 
++            public CheckNearbyItem checkNearbyItem;
++            public class CheckNearbyItem extends ConfigurationPart {
++
++                // Gale start - EMC - reduce hopper item checks
++                public Hopper hopper;
++                public class Hopper extends ConfigurationPart {
++
++                    public int interval = 20;
++
++                    public Minecart minecart;
++                    public class Minecart extends ConfigurationPart {
++
++                        public int interval = 20;
++
++                        public TemporaryImmunity temporaryImmunity;
++                        public class TemporaryImmunity extends ConfigurationPart {
++                            public int duration = 100;
++                            public int nearbyItemMaxAge = 1200;
++                            public int checkForMinecartNearItemInterval = 20;
++                            public boolean checkForMinecartNearItemWhileInactive = true;
++                            public double maxItemHorizontalDistance = 24.0;
++                            public double maxItemVerticalDistance = 4.0;
++                        }
++
++                    }
++
++                }
++                // Gale end - EMC - reduce hopper item checks
++
++            }
++
+         }
+ 
+     }

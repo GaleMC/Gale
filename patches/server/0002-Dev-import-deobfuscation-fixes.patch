@@ -93,10 +93,19 @@ index 50a9f33aa31e9273c7c52d4bb2b02f0f884f7ba5..19779298b2b2ecbe30f9308dad1d8037
              });
              return Collections.unmodifiableCollection(list);
 diff --git a/src/main/java/net/minecraft/util/ExtraCodecs.java b/src/main/java/net/minecraft/util/ExtraCodecs.java
-index 066d423dc908080157586555ba01053a2477d570..9402ba85ebb8260d7bd29ddf8cf871b77aa2e783 100644
+index 607f32b856c6c1fb81d3f1604f3bf3fb240d713f..251f94885bd7758d8804def5ae9d3acd62cfd7ac 100644
 --- a/src/main/java/net/minecraft/util/ExtraCodecs.java
 +++ b/src/main/java/net/minecraft/util/ExtraCodecs.java
-@@ -247,7 +247,7 @@ public class ExtraCodecs {
+@@ -223,7 +223,7 @@ public class ExtraCodecs {
+         }) : DataResult.success(is[0]);
+     }, Character::toString);
+     public static Codec<String> RESOURCE_PATH_CODEC = validate(Codec.STRING, (path) -> {
+-        return !ResourceLocation.isValidPath(path) ? DataResult.error(() -> {
++        return !ResourceLocation.isValidResourceLocation(path) ? DataResult.error(() -> { // Gale - dev import deobfuscation fixes
+             return "Invalid string to use as a resource path element: " + path;
+         }) : DataResult.success(path);
+     });
+@@ -261,7 +261,7 @@ public class ExtraCodecs {
              return ImmutableList.of(leftFunction.apply(pair), rightFunction.apply(pair));
          });
          Codec<I> codec3 = RecordCodecBuilder.<Pair>create((instance) -> {
@@ -105,7 +114,7 @@ index 066d423dc908080157586555ba01053a2477d570..9402ba85ebb8260d7bd29ddf8cf871b7
          }).comapFlatMap((pair) -> {
              return combineFunction.apply((P)pair.getFirst(), (P)pair.getSecond());
          }, (pair) -> {
-@@ -278,7 +278,7 @@ public class ExtraCodecs {
+@@ -286,7 +286,7 @@ public class ExtraCodecs {
                  Optional<Pair<A, T>> optional = dataResult.resultOrPartial(mutableObject::setValue);
                  return optional.isPresent() ? dataResult : DataResult.error(() -> {
                      return "(" + (String)mutableObject.getValue() + " -> using default)";
@@ -114,15 +123,6 @@ index 066d423dc908080157586555ba01053a2477d570..9402ba85ebb8260d7bd29ddf8cf871b7
              }
  
              public <T> DataResult<T> coApply(DynamicOps<T> dynamicOps, A objectx, DataResult<T> dataResult) {
-@@ -565,7 +565,7 @@ public class ExtraCodecs {
- 
-     static record LazyInitializedCodec<A>(Supplier<Codec<A>> delegate) implements Codec<A> {
-         LazyInitializedCodec {
--            supplier = Suppliers.memoize(supplier::get);
-+            delegate = Suppliers.memoize(delegate::get); // Gale - dev import deobfuscation fixes
-         }
- 
-         public <T> DataResult<Pair<A, T>> decode(DynamicOps<T> dynamicOps, T object) {
 diff --git a/src/main/java/net/minecraft/util/datafix/fixes/ChunkProtoTickListFix.java b/src/main/java/net/minecraft/util/datafix/fixes/ChunkProtoTickListFix.java
 index 2e650637afede22d314bbe4dd4e91806ce88dcc3..8081a24eb5a533a55cdca3c882ccc61255b8a76c 100644
 --- a/src/main/java/net/minecraft/util/datafix/fixes/ChunkProtoTickListFix.java
@@ -196,10 +196,10 @@ index 2e650637afede22d314bbe4dd4e91806ce88dcc3..8081a24eb5a533a55cdca3c882ccc612
  
      public static final class PoorMansPalettedContainer {
 diff --git a/src/main/java/net/minecraft/world/entity/monster/Zoglin.java b/src/main/java/net/minecraft/world/entity/monster/Zoglin.java
-index c1abeb62f63d2f8fb891efec8f76c6736b8f7f75..b056e29671f0a8437387c990fc96a9f3c1d614a2 100644
+index b79c86272f12c4b1173ea494cbe09e1ecdc23533..05b4c054327bb86cf3b08e45916aac31aa9e000b 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/Zoglin.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/Zoglin.java
-@@ -182,7 +182,7 @@ public class Zoglin extends Monster implements Enemy, HoglinBase {
+@@ -184,7 +184,7 @@ public class Zoglin extends Monster implements Enemy, HoglinBase {
  
      @Override
      public Brain<Zoglin> getBrain() {
@@ -222,10 +222,10 @@ index d02ee11066fc4f07ccb110b09b86d895ff90d4f2..5d1a30e09870a5a535c71a2e44b8e693
  
      @Override
 diff --git a/src/main/java/net/minecraft/world/item/BrushItem.java b/src/main/java/net/minecraft/world/item/BrushItem.java
-index 0279e3fc7aed675ccf66aa68a11ff94a6dc6abe6..d025232b43af3cb8dc28dff2e3e05c72e490901d 100644
+index d2ae20ec96a51c5d217c3695d53eda492f9090bc..e111bbbba63ec53d709f23ad12b96c2d3766a146 100644
 --- a/src/main/java/net/minecraft/world/item/BrushItem.java
 +++ b/src/main/java/net/minecraft/world/item/BrushItem.java
-@@ -82,8 +82,10 @@ public class BrushItem extends Item {
+@@ -86,8 +86,10 @@ public class BrushItem extends Item {
                              BlockEntity var18 = world.getBlockEntity(blockPos);
                              if (var18 instanceof BrushableBlockEntity) {
                                  BrushableBlockEntity brushableBlockEntity = (BrushableBlockEntity)var18;

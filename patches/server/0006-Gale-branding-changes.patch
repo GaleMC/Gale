@@ -221,7 +221,7 @@ index 94a9ed024d3859793618152ea559a168bbcbb5e2..e60008693e017bec1b4eb49c84be3898
 -<http://www.gnu.org/philosophy/why-not-lgpl.html>.
 +<https://www.gnu.org/philosophy/why-not-lgpl.html>.
 diff --git a/build.gradle.kts b/build.gradle.kts
-index f1873e896d0ac0b943e08564aea4d35ebbd5896f..b36949c1b5bd2c5af1ee7496c8b8372fe263ad79 100644
+index 4bac924d8c6d6792065e7dfaade297139100cfbc..16503dd71bbd7f181d0d100367a89cfd1735496e 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -88,7 +88,7 @@ tasks.jar {
@@ -427,10 +427,10 @@ index c5d5648f4ca603ef2b1df723b58f9caf4dd3c722..e45e6b44b2a8f2cdae6e0048a812b921
                  .completer(new ConsoleCommandCompleter(this.server))
                  .option(LineReader.Option.COMPLETE_IN_WORD, true);
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 67ee3a4ca8a6cdeb275653d492a1fea8037c51fb..3f31b91ac6c9cb4d2b19536b6a6a2ab0f1b0df20 100644
+index 97745f0bab8d82d397c6c2a5775aed92bca0a034..9fcc6138a8c639aed75e2f8142de92e72c03c085 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -920,7 +920,13 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -908,7 +908,13 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          shutdownThread = Thread.currentThread();
          org.spigotmc.WatchdogThread.doStop(); // Paper
          if (!isSameThread()) {
@@ -445,7 +445,7 @@ index 67ee3a4ca8a6cdeb275653d492a1fea8037c51fb..3f31b91ac6c9cb4d2b19536b6a6a2ab0
              while (this.getRunningThread().isAlive()) {
                  this.getRunningThread().stop();
                  try {
-@@ -1692,7 +1698,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1697,7 +1703,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
  
      @DontObfuscate
      public String getServerModName() {
@@ -455,10 +455,10 @@ index 67ee3a4ca8a6cdeb275653d492a1fea8037c51fb..3f31b91ac6c9cb4d2b19536b6a6a2ab0
  
      public SystemReport fillSystemReport(SystemReport details) {
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index 1150a114e56899758264aa678db4e9ec3e78befc..a566fd576c0b82a6fd3ea8182d08bdd23370fed0 100644
+index fcd5096d64edfaf6bce3ecce8c9b9afb84462786..da6196e8161c48cda84a7d72d22d04970c75cb78 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-@@ -265,7 +265,7 @@ import javax.annotation.Nullable; // Paper
+@@ -267,7 +267,7 @@ import javax.annotation.Nullable; // Paper
  import javax.annotation.Nonnull; // Paper
  
  public final class CraftServer implements Server {
@@ -481,10 +481,10 @@ index d7ce4971d9271dbeff4adb9d852e4e7bdf60bf03..3dd7ee2e099199550b885947d33d8b27
                  // (async tasks must live with race-conditions if they attempt to cancel between these few lines of code)
              }
 diff --git a/src/main/java/org/bukkit/craftbukkit/util/CraftMagicNumbers.java b/src/main/java/org/bukkit/craftbukkit/util/CraftMagicNumbers.java
-index 719e7103f7dfdc30f1cefd24a3fa572fa0ac8b1e..4cb83b8ae5f1e1769d620d92b700986014456963 100644
+index 96f6e0554baf5915dd1f5b93f3bcfe7a13393c29..7f4e0a4bff74bcb56f455f3ea76bb1d96d71e1ad 100644
 --- a/src/main/java/org/bukkit/craftbukkit/util/CraftMagicNumbers.java
 +++ b/src/main/java/org/bukkit/craftbukkit/util/CraftMagicNumbers.java
-@@ -470,7 +470,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
+@@ -452,7 +452,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
  
      @Override
      public com.destroystokyo.paper.util.VersionFetcher getVersionFetcher() {
@@ -693,7 +693,7 @@ index 0000000000000000000000000000000000000000..7fee1c2779ab390586b2d3f75f568908
 +}
 diff --git a/src/main/java/org/galemc/gale/version/GaleVersionFetcher.java b/src/main/java/org/galemc/gale/version/GaleVersionFetcher.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..9b4bc17fed9dc7251159687082cf8de60dd49ba4
+index 0000000000000000000000000000000000000000..3d674eca7d20202d8f811c5c3e3946a12046028a
 --- /dev/null
 +++ b/src/main/java/org/galemc/gale/version/GaleVersionFetcher.java
 @@ -0,0 +1,11 @@
@@ -704,7 +704,7 @@ index 0000000000000000000000000000000000000000..9b4bc17fed9dc7251159687082cf8de6
 +public class GaleVersionFetcher extends AbstractPaperVersionFetcher {
 +
 +    public GaleVersionFetcher() {
-+        super("ver/1.20.1", "https://github.com/GaleMC/Gale", "Gale", "GaleMC", "GaleMC", "Gale");
++        super("ver/1.20.2", "https://github.com/GaleMC/Gale", "Gale", "GaleMC", "GaleMC", "Gale");
 +    }
 +
 +}

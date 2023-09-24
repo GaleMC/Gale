@@ -1,0 +1,33 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Martijn Muijsers <martijnmuijsers@live.nl>
+Date: Thu, 22 Dec 2022 15:47:39 +0100
+Subject: [PATCH] Server thread priority environment variable
+
+License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+Gale - https://galemc.org
+
+diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
+index 63a8b5624183f19e21813482babda9a0a0061479..909e00c433fc869104dbe4a633c82f92304880d0 100644
+--- a/src/main/java/net/minecraft/server/MinecraftServer.java
++++ b/src/main/java/net/minecraft/server/MinecraftServer.java
+@@ -183,6 +183,8 @@ import co.aikar.timings.MinecraftTimings; // Paper
+ 
+ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTask> implements ServerInfo, CommandSource, AutoCloseable {
+ 
++    public static final int SERVER_THREAD_PRIORITY = Integer.getInteger("gale.thread.priority.server", -1); // Gale - server thread priority environment variable
++
+     private static MinecraftServer SERVER; // Paper
+     public static final Logger LOGGER = LogUtils.getLogger();
+     public static final net.kyori.adventure.text.logger.slf4j.ComponentLogger COMPONENT_LOGGER = net.kyori.adventure.text.logger.slf4j.ComponentLogger.logger(LOGGER.getName()); // Paper
+@@ -310,6 +312,11 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+         S s0 = serverFactory.apply(thread); // CraftBukkit - decompile error
+ 
+         atomicreference.set(s0);
++        // Gale start - server thread priority environment variable
++        if (SERVER_THREAD_PRIORITY > 0) {
++            thread.setPriority(SERVER_THREAD_PRIORITY);
++        }
++        // Gale end - server thread priority environment variable
+         thread.start();
+         return s0;
+     }

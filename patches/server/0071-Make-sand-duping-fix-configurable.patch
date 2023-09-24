@@ -1,0 +1,78 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Martijn Muijsers <martijnmuijsers@live.nl>
+Date: Tue, 29 Nov 2022 16:06:11 +0100
+Subject: [PATCH] Make sand duping fix configurable
+
+License: MIT (https://opensource.org/licenses/MIT)
+Gale - https://galemc.org
+
+This patch is based on the following patch:
+"Add toggle for sand duping fix"
+By: William Blake Galbreath <blake.galbreath@gmail.com>
+As part of: Purpur (https://github.com/PurpurMC/Purpur)
+Licensed under: MIT (https://opensource.org/licenses/MIT)
+
+* Purpur copyright *
+
+MIT License
+
+Copyright (c) 2019-2022 PurpurMC
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+diff --git a/src/main/java/net/minecraft/world/entity/item/FallingBlockEntity.java b/src/main/java/net/minecraft/world/entity/item/FallingBlockEntity.java
+index 9105418b29c89f092378da11b14e3d324332a2ba..b8454f977c5b5690bffa70a063f7c349905abaae 100644
+--- a/src/main/java/net/minecraft/world/entity/item/FallingBlockEntity.java
++++ b/src/main/java/net/minecraft/world/entity/item/FallingBlockEntity.java
+@@ -133,7 +133,7 @@ public class FallingBlockEntity extends Entity {
+     @Override
+     public void tick() {
+         // Paper start - fix sand duping
+-        if (this.isRemoved()) {
++        if (this.level().galeConfig().gameplayMechanics.fixes.sandDuping && this.isRemoved()) { // Gale - Purpur - make sand duping fix configurable
+             return;
+         }
+         // Paper end - fix sand duping
+@@ -150,7 +150,7 @@ public class FallingBlockEntity extends Entity {
+             this.move(MoverType.SELF, this.getDeltaMovement());
+ 
+             // Paper start - fix sand duping
+-            if (this.isRemoved()) {
++            if (this.level().galeConfig().gameplayMechanics.fixes.sandDuping && this.isRemoved()) { // Gale - Purpur - make sand duping fix configurable
+                 return;
+             }
+             // Paper end - fix sand duping
+diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
+index f8a561d91686d6df89a7374ca223972e435978c9..bd47caa947f10cb90cef5f060a9106143782d940 100644
+--- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
++++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
+@@ -96,6 +96,13 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+     public GameplayMechanics gameplayMechanics;
+     public class GameplayMechanics extends ConfigurationPart {
+ 
++        public Fixes fixes;
++        public class Fixes extends ConfigurationPart {
++
++            public boolean sandDuping = true; // Gale - Purpur - make sand duping fix configurable
++
++        }
++
+         public double entityWakeUpDurationRatioStandardDeviation = 0.2; // Gale - variable entity wake-up duration
+         public boolean tryRespawnEnderDragonAfterEndCrystalPlace = true; // Gale - Pufferfish - make ender dragon respawn attempt after placing end crystals configurable
+ 

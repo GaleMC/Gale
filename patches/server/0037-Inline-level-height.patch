@@ -31,18 +31,18 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 diff --git a/src/main/java/net/minecraft/world/level/Level.java b/src/main/java/net/minecraft/world/level/Level.java
-index 013b445da073ba0e97eb5f80879f122286e1d2c5..708a188e22e8936a6d53ed77f8a2e07525b61e6a 100644
+index 72f8910ebc1c486f5f3df19718a38ea066c8ee7b..fa262fdb15a82bf5dd0a03730677ecb777ab99bd 100644
 --- a/src/main/java/net/minecraft/world/level/Level.java
 +++ b/src/main/java/net/minecraft/world/level/Level.java
-@@ -272,6 +272,15 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
+@@ -209,6 +209,15 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
  
      public abstract ResourceKey<LevelStem> getTypeKey();
  
 +    // Gale start - Airplane - inline level height
-+    private final int minBuildHeight, minSection, height, maxBuildHeight, maxSection;
++    private final int minBuildHeight, levelHeightAccessorMinSection, height, maxBuildHeight, levelHeightAccessorMaxSection;
 +    @Override public final int getMaxBuildHeight() { return this.maxBuildHeight; }
-+    @Override public final int getMinSection() { return this.minSection; }
-+    @Override public final int getMaxSection() { return this.maxSection; }
++    @Override public final int getMinSection() { return this.levelHeightAccessorMinSection; }
++    @Override public final int getMaxSection() { return this.levelHeightAccessorMaxSection; }
 +    @Override public final int getMinBuildHeight() { return this.minBuildHeight; }
 +    @Override public final int getHeight() { return this.height; }
 +    // Gale end - Airplane - inline level height
@@ -50,16 +50,16 @@ index 013b445da073ba0e97eb5f80879f122286e1d2c5..708a188e22e8936a6d53ed77f8a2e075
      protected Level(WritableLevelData worlddatamutable, ResourceKey<Level> resourcekey, RegistryAccess iregistrycustom, Holder<DimensionType> holder, boolean flag, boolean flag1, long i, int j, org.bukkit.generator.ChunkGenerator gen, org.bukkit.generator.BiomeProvider biomeProvider, org.bukkit.World.Environment env, java.util.function.Function<org.spigotmc.SpigotWorldConfig, io.papermc.paper.configuration.WorldConfiguration> paperWorldConfigCreator, java.util.function.Function<org.spigotmc.SpigotWorldConfig, GaleWorldConfiguration> galeWorldConfigCreator, java.util.concurrent.Executor executor) { // Paper - Async-Anti-Xray - Pass executor // Gale - Gale configuration // Gale - Purpur - remove vanilla profiler
          this.spigotConfig = new org.spigotmc.SpigotWorldConfig(((net.minecraft.world.level.storage.PrimaryLevelData) worlddatamutable).getLevelName()); // Spigot
          this.paperConfig = paperWorldConfigCreator.apply(this.spigotConfig); // Paper
-@@ -294,6 +303,13 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
+@@ -231,6 +240,13 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
          });
          final DimensionType dimensionmanager = (DimensionType) holder.value();
  
 +        // Gale start - Airplane - inline level height
-+        this.minBuildHeight = dimensionmanager.minY();
-+        this.minSection = SectionPos.blockToSectionCoord(this.minBuildHeight);
-+        this.height = dimensionmanager.height();
-+        this.maxBuildHeight = this.minBuildHeight + this.height;
-+        this.maxSection = SectionPos.blockToSectionCoord(this.maxBuildHeight - 1) + 1;
++        this.minBuildHeight = LevelAccessor.super.getMinBuildHeight();
++        this.levelHeightAccessorMinSection = LevelAccessor.super.getMinSection();
++        this.height = LevelAccessor.super.getHeight();
++        this.maxBuildHeight = LevelAccessor.super.getMaxBuildHeight();
++        this.levelHeightAccessorMaxSection = LevelAccessor.super.getMaxSection();
 +        // Gale end - Airplane - inline level height
          this.dimension = resourcekey;
          this.isClientSide = flag;
