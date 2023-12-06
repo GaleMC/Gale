@@ -3,7 +3,7 @@ import java.util.Locale
 pluginManagement {
     repositories {
         gradlePluginPortal()
-        maven("https://repo.galemc.org/repository/maven-public/")
+        //maven("https://repo.galemc.org/repository/maven-public/") // Dreeam - site is down, fallback to papermc's default repo
         maven("https://repo.papermc.io/repository/maven-public/")
     }
 }

@@ -1,0 +1,35 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Martijn Muijsers <martijnmuijsers@live.nl>
+Date: Wed, 30 Aug 2023 20:17:20 +0200
+Subject: [PATCH] Reduce skull ItemStack lookups for reduced visibility
+
+License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+Gale - https://galemc.org
+
+This patch is based on the following patch:
+"feat: reduce sensor work"
+By: peaches94 <peachescu94@gmail.com>
+As part of: Petal (https://github.com/Bloom-host/Petal)
+Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+
+* Petal description *
+
+this patch is focused around the sensors used for ai
+delete the line of sight cache less often and use a faster nearby comparison
+
+diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
+index f1d48ef527782a43df595c4b68e8be7838b5400f..37db21b3d2426dec69f378669b2ba8f0c8130bfc 100644
+--- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
++++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
+@@ -1023,10 +1023,9 @@ public abstract class LivingEntity extends Entity implements Attackable {
+         }
+ 
+         if (entity != null) {
+-            ItemStack itemstack = this.getItemBySlot(EquipmentSlot.HEAD);
+             EntityType<?> entitytypes = entity.getType();
+ 
+-            if (entitytypes == EntityType.SKELETON && itemstack.is(Items.SKELETON_SKULL) || entitytypes == EntityType.ZOMBIE && itemstack.is(Items.ZOMBIE_HEAD) || entitytypes == EntityType.PIGLIN && itemstack.is(Items.PIGLIN_HEAD) || entitytypes == EntityType.PIGLIN_BRUTE && itemstack.is(Items.PIGLIN_HEAD) || entitytypes == EntityType.CREEPER && itemstack.is(Items.CREEPER_HEAD)) {
++            if (entitytypes == EntityType.SKELETON && this.getItemBySlot(EquipmentSlot.HEAD).is(Items.SKELETON_SKULL) || entitytypes == EntityType.ZOMBIE && this.getItemBySlot(EquipmentSlot.HEAD).is(Items.ZOMBIE_HEAD) || entitytypes == EntityType.PIGLIN && this.getItemBySlot(EquipmentSlot.HEAD).is(Items.PIGLIN_HEAD) || entitytypes == EntityType.PIGLIN_BRUTE && this.getItemBySlot(EquipmentSlot.HEAD).is(Items.PIGLIN_HEAD) || entitytypes == EntityType.CREEPER && this.getItemBySlot(EquipmentSlot.HEAD).is(Items.CREEPER_HEAD)) { // Gale - Petal - reduce skull ItemStack lookups for reduced visibility
+                 d0 *= 0.5D;
+             }
+         }

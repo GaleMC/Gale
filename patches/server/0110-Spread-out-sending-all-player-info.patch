@@ -1,0 +1,186 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Martijn Muijsers <martijnmuijsers@live.nl>
+Date: Tue, 29 Nov 2022 23:18:57 +0100
+Subject: [PATCH] Spread out sending all player info
+
+License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+Gale - https://galemc.org
+
+This patch is based on the following patch:
+"Spread out and optimise player list ticksSpread out and optimise player list ticks"
+By: James Lyne <jim+github@not-null.co.uk>
+As part of: Purpur (https://github.com/PurpurMC/Purpur)
+Licensed under: MIT (https://opensource.org/licenses/MIT)
+
+* Purpur copyright *
+
+MIT License
+
+Copyright (c) 2019-2022 PurpurMC
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
+index 1f7faf3ad062bf2bc0a0b4a4e6549914a05f0f9d..45eefa9fd18950fbd913cef7c1e78f7d188d4d90 100644
+--- a/src/main/java/net/minecraft/server/players/PlayerList.java
++++ b/src/main/java/net/minecraft/server/players/PlayerList.java
+@@ -13,6 +13,8 @@ import java.net.SocketAddress;
+ import java.nio.file.Path;
+ import java.text.SimpleDateFormat;
+ import java.time.Instant;
++import java.util.ArrayList;
++import java.util.Arrays;
+ import java.util.Collection;
+ import java.util.EnumSet;
+ import java.util.Iterator;
+@@ -135,10 +137,11 @@ public abstract class PlayerList {
+     public static final Component CHAT_FILTERED_FULL = Component.translatable("chat.filtered_full");
+     public static final Component DUPLICATE_LOGIN_DISCONNECT_MESSAGE = Component.translatable("multiplayer.disconnect.duplicate_login");
+     private static final Logger LOGGER = LogUtils.getLogger();
+-    private static final int SEND_PLAYER_INFO_INTERVAL = 600;
++    public static final int SEND_PLAYER_INFO_INTERVAL = 600; // Gale - Purpur - spread out sending all player info - private -> public
+     private static final SimpleDateFormat BAN_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
+     private final MinecraftServer server;
+     public final List<ServerPlayer> players = new java.util.concurrent.CopyOnWriteArrayList(); // CraftBukkit - ArrayList -> CopyOnWriteArrayList: Iterator safety
++    private final ServerPlayer[][] sendAllPlayerInfoBuckets = new ServerPlayer[SEND_PLAYER_INFO_INTERVAL][]; // Gale - Purpur - spread out sending all player info
+     private final Map<UUID, ServerPlayer> playersByUUID = Maps.newHashMap();
+     private final UserBanList bans;
+     private final IpBanList ipBans;
+@@ -329,6 +332,7 @@ public abstract class PlayerList {
+ 
+         // entityplayer.connection.send(ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(this.players)); // CraftBukkit - replaced with loop below
+         this.players.add(player);
++        this.addToSendAllPlayerInfoBuckets(player); // Gale - Purpur - spread out sending all player info
+         this.playersByName.put(player.getScoreboardName().toLowerCase(java.util.Locale.ROOT), player); // Spigot
+         this.playersByUUID.put(player.getUUID(), player);
+         // this.broadcastAll(ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(List.of(entityplayer))); // CraftBukkit - replaced with loop below
+@@ -673,6 +677,7 @@ public abstract class PlayerList {
+         entityplayer.retireScheduler(); // Paper - Folia schedulers
+         entityplayer.getAdvancements().stopListening();
+         this.players.remove(entityplayer);
++        this.removeFromSendAllPlayerInfoBuckets(entityplayer); // Gale - Purpur - spread out sending all player info
+         this.playersByName.remove(entityplayer.getScoreboardName().toLowerCase(java.util.Locale.ROOT)); // Spigot
+         this.server.getCustomBossEvents().onPlayerDisconnect(entityplayer);
+         UUID uuid = entityplayer.getUUID();
+@@ -834,6 +839,7 @@ public abstract class PlayerList {
+         // Paper end
+         entityplayer.stopRiding(); // CraftBukkit
+         this.players.remove(entityplayer);
++        this.removeFromSendAllPlayerInfoBuckets(entityplayer); // Gale - Purpur - spread out sending all player info
+         this.playersByName.remove(entityplayer.getScoreboardName().toLowerCase(java.util.Locale.ROOT)); // Spigot
+         entityplayer.serverLevel().removePlayerImmediately(entityplayer, Entity.RemovalReason.DISCARDED);
+         BlockPos blockposition = entityplayer.getRespawnPosition();
+@@ -970,6 +976,7 @@ public abstract class PlayerList {
+         if (!entityplayer.connection.isDisconnected()) {
+             worldserver1.addRespawnedPlayer(entityplayer1);
+             this.players.add(entityplayer1);
++            this.addToSendAllPlayerInfoBuckets(entityplayer1); // Gale - Purpur - spread out sending all player info
+             this.playersByName.put(entityplayer1.getScoreboardName().toLowerCase(java.util.Locale.ROOT), entityplayer1); // Spigot
+             this.playersByUUID.put(entityplayer1.getUUID(), entityplayer1);
+         }
+@@ -1022,20 +1029,55 @@ public abstract class PlayerList {
+         this.sendPlayerPermissionLevel(player, i);
+     }
+ 
+-    public void tick() {
+-        if (++this.sendAllPlayerInfoIn > 600) {
+-            // CraftBukkit start
+-            for (int i = 0; i < this.players.size(); ++i) {
+-                final ServerPlayer target = (ServerPlayer) this.players.get(i);
++    // Gale start - Purpur - spread out sending all player info
++
++    private void addToSendAllPlayerInfoBuckets(ServerPlayer player) {
++        ServerPlayer[] sendAllPlayerInfoBucket = this.sendAllPlayerInfoBuckets[player.sendAllPlayerInfoBucketIndex];
++        if (sendAllPlayerInfoBucket == null) {
++            this.sendAllPlayerInfoBuckets[player.sendAllPlayerInfoBucketIndex] = new ServerPlayer[]{player};
++        } else {
++            this.sendAllPlayerInfoBuckets[player.sendAllPlayerInfoBucketIndex] = sendAllPlayerInfoBucket = Arrays.copyOf(sendAllPlayerInfoBucket, sendAllPlayerInfoBucket.length + 1);
++            sendAllPlayerInfoBucket[sendAllPlayerInfoBucket.length - 1] = player;
++        }
++    }
++
++    private void removeFromSendAllPlayerInfoBuckets(ServerPlayer player) {
++        ServerPlayer[] sendAllPlayerInfoBucket = this.sendAllPlayerInfoBuckets[player.sendAllPlayerInfoBucketIndex];
++        if (sendAllPlayerInfoBucket != null) {
++            if (sendAllPlayerInfoBucket.length == 1) {
++                if (sendAllPlayerInfoBucket[0] == player) {
++                    this.sendAllPlayerInfoBuckets[player.sendAllPlayerInfoBucketIndex] = null;
++                }
++                return;
++            }
++            for (int i = 0; i < sendAllPlayerInfoBucket.length; i++) {
++                if (sendAllPlayerInfoBucket[i] == player) {
++                    sendAllPlayerInfoBucket[i] = sendAllPlayerInfoBucket[sendAllPlayerInfoBucket.length - 1];
++                    this.sendAllPlayerInfoBuckets[player.sendAllPlayerInfoBucketIndex] = Arrays.copyOf(sendAllPlayerInfoBucket, sendAllPlayerInfoBucket.length - 1);
++                }
++            }
++        }
++    }
+ 
++    // Gale end - Purpur - spread out sending all player info
++
++    public void tick() {
++        // Gale start - Purpur - spread out sending all player info
++        ServerPlayer[] sendAllPlayerInfoBucket = this.sendAllPlayerInfoBuckets[this.sendAllPlayerInfoIn];
++        if (sendAllPlayerInfoBucket != null) {
++            for (ServerPlayer target : sendAllPlayerInfoBucket) {
++                // Gale end - Purpur - spread out sending all player info
+                 target.connection.send(new ClientboundPlayerInfoUpdatePacket(EnumSet.of(ClientboundPlayerInfoUpdatePacket.Action.UPDATE_LATENCY), this.players.stream().filter(new Predicate<ServerPlayer>() {
+                     @Override
+                     public boolean test(ServerPlayer input) {
+                         return target.getBukkitEntity().canSee(input.getBukkitEntity());
+                     }
+                 }).collect(Collectors.toList())));
++                // Gale start - Purpur - spread out sending all player info
+             }
+-            // CraftBukkit end
++        }
++        if (++this.sendAllPlayerInfoIn >= SEND_PLAYER_INFO_INTERVAL) {
++            // Gale end - Purpur - spread out sending all player info
+             this.sendAllPlayerInfoIn = 0;
+         }
+ 
+diff --git a/src/main/java/net/minecraft/world/entity/player/Player.java b/src/main/java/net/minecraft/world/entity/player/Player.java
+index fc4b9144cb093fe84b0d5cb27f0efee23c7a39ed..ff17428fc260f4737cda81bca5f4fdb8e50dbd67 100644
+--- a/src/main/java/net/minecraft/world/entity/player/Player.java
++++ b/src/main/java/net/minecraft/world/entity/player/Player.java
+@@ -39,6 +39,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
+ import net.minecraft.resources.ResourceLocation;
+ import net.minecraft.server.level.ServerLevel;
+ import net.minecraft.server.level.ServerPlayer;
++import net.minecraft.server.players.PlayerList;
+ import net.minecraft.sounds.SoundEvent;
+ import net.minecraft.sounds.SoundEvents;
+ import net.minecraft.sounds.SoundSource;
+@@ -199,12 +200,15 @@ public abstract class Player extends LivingEntity {
+     }
+     // CraftBukkit end
+ 
++    public final int sendAllPlayerInfoBucketIndex; // Gale - Purpur - spread out sending all player info
++
+     public Player(Level world, BlockPos pos, float yaw, GameProfile gameProfile) {
+         super(EntityType.PLAYER, world);
+         this.lastItemInMainHand = ItemStack.EMPTY;
+         this.cooldowns = this.createItemCooldowns();
+         this.lastDeathLocation = Optional.empty();
+         this.setUUID(gameProfile.getId());
++        this.sendAllPlayerInfoBucketIndex = Math.floorMod(this.uuid.hashCode(), PlayerList.SEND_PLAYER_INFO_INTERVAL); // Gale - Purpur - spread out sending all player info
+         this.gameProfile = gameProfile;
+         this.inventoryMenu = new InventoryMenu(this.inventory, !world.isClientSide, this);
+         this.containerMenu = this.inventoryMenu;

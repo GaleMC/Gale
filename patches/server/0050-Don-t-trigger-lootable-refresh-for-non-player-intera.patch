@@ -1,0 +1,26 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Martijn Muijsers <martijnmuijsers@live.nl>
+Date: Thu, 24 Nov 2022 22:07:56 +0100
+Subject: [PATCH] Don't trigger lootable refresh for non-player interaction
+
+License: MIT (https://opensource.org/licenses/MIT)
+Gale - https://galemc.org
+
+This patch is based on the following patch:
+"Don't trigger Lootable Refresh for non player interaction"
+By: Aikar <aikar@aikar.co>
+As part of: EmpireCraft (https://github.com/starlis/empirecraft)
+Licensed under: MIT (https://opensource.org/licenses/MIT)
+
+diff --git a/src/main/java/net/minecraft/world/level/block/entity/RandomizableContainerBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/RandomizableContainerBlockEntity.java
+index b71638976cacf542662beb1f77fc40182be65215..5ac1667dd79389195f656eff97f83a2dafaf1c28 100644
+--- a/src/main/java/net/minecraft/world/level/block/entity/RandomizableContainerBlockEntity.java
++++ b/src/main/java/net/minecraft/world/level/block/entity/RandomizableContainerBlockEntity.java
+@@ -70,6 +70,7 @@ public abstract class RandomizableContainerBlockEntity extends BaseContainerBloc
+     }
+ 
+     public void unpackLootTable(@Nullable Player player) {
++        if (player == null) return; // Gale - EMC - don't trigger lootable refresh for non-player interaction
+         if (this.level != null && this.lootableData.shouldReplenish(player) && this.level.getServer() != null) { // Paper - don't unpack loot table if not in world
+             LootTable lootTable = this.level.getServer().getLootData().getLootTable(this.lootTable);
+             if (player instanceof ServerPlayer) {

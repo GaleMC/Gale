@@ -1,0 +1,59 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Martijn Muijsers <martijnmuijsers@live.nl>
+Date: Sun, 25 Dec 2022 23:39:05 +0100
+Subject: [PATCH] Ignore null legacy structure data
+
+License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+Gale - https://galemc.org
+
+This patch is based on the following patch:
+"Add null check in LegacyStructureDataHandler"
+By: PureGero <puregero@gmail.com>
+As part of: MultiPaper (https://github.com/MultiPaper/MultiPaper)
+Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+
+diff --git a/src/main/java/net/minecraft/world/level/levelgen/structure/LegacyStructureDataHandler.java b/src/main/java/net/minecraft/world/level/levelgen/structure/LegacyStructureDataHandler.java
+index 541314ba47ea158e4751aa4e853117f8861fad82..eb61a0f1cea465884baa17c2d0a0768d46c9dcd0 100644
+--- a/src/main/java/net/minecraft/world/level/levelgen/structure/LegacyStructureDataHandler.java
++++ b/src/main/java/net/minecraft/world/level/levelgen/structure/LegacyStructureDataHandler.java
+@@ -20,6 +20,7 @@ import net.minecraft.util.datafix.DataFixTypes;
+ import net.minecraft.world.level.ChunkPos;
+ import net.minecraft.world.level.dimension.LevelStem;
+ import net.minecraft.world.level.storage.DimensionDataStorage;
++import org.galemc.gale.configuration.GaleGlobalConfiguration;
+ 
+ public class LegacyStructureDataHandler {
+ 
+@@ -172,6 +173,7 @@ public class LegacyStructureDataHandler {
+ 
+     private void populateCaches(@Nullable DimensionDataStorage persistentStateManager) {
+         if (persistentStateManager != null) {
++            boolean ignoreNullLegacyStructureData = GaleGlobalConfiguration.get().misc.ignoreNullLegacyStructureData; // Gale - MultiPaper - ignore null legacy structure data
+             Iterator iterator = this.legacyKeys.iterator();
+ 
+             while (iterator.hasNext()) {
+@@ -179,7 +181,11 @@ public class LegacyStructureDataHandler {
+                 CompoundTag nbttagcompound = new CompoundTag();
+ 
+                 try {
+-                    nbttagcompound = persistentStateManager.readTagFromDisk(s, DataFixTypes.SAVED_DATA_STRUCTURE_FEATURE_INDICES, 1493).getCompound("data").getCompound("Features");
++                    // Gale start - MultiPaper - ignore null legacy structure data
++                    CompoundTag tag = persistentStateManager.readTagFromDisk(s, DataFixTypes.SAVED_DATA_STRUCTURE_FEATURE_INDICES, 1493);
++                    if (ignoreNullLegacyStructureData && tag == null) continue;
++                    nbttagcompound = tag.getCompound("data").getCompound("Features");
++                    // Gale end - MultiPaper - ignore null legacy structure data
+                     if (nbttagcompound.isEmpty()) {
+                         continue;
+                     }
+diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
+index f53328d3be9238c01bf2ec9b6ed0a854696a60f0..f83fa90b2ed4a60d5f3b305a99ae16498a20aef1 100644
+--- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
++++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
+@@ -53,6 +53,7 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+ 
+         public boolean verifyChatOrder = true; // Gale - Pufferfish - make chat order verification configurable
+         public int premiumAccountSlowLoginTimeout = -1; // Gale - make slow login timeout configurable
++        public boolean ignoreNullLegacyStructureData = false; // Gale - MultiPaper - ignore null legacy structure data
+ 
+         public IncludeInTimingsReport includeInTimingsReport;
+ 

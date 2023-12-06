@@ -1,0 +1,49 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Martijn Muijsers <martijnmuijsers@live.nl>
+Date: Wed, 23 Nov 2022 23:32:51 +0100
+Subject: [PATCH] Optimize entity coordinate key
+
+License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+Gale - https://galemc.org
+
+This patch is based on the following patch:
+"Optimize entity coordinate key"
+By: Kevin Raneri <kevin.raneri@gmail.com>
+As part of: Pufferfish (https://github.com/pufferfish-gg/Pufferfish)
+Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+
+* Pufferfish description *
+
+When executing getCoordinateKey for entities (a hotpath), the JVM is
+required to repeatedly cast doubles to longs. The performance impact of
+this depends on the CPU architecture, but generally switching between
+FPU and ALU incurs a significant performance hit. The casted/rounded
+data is already available in the blockPosition struct, so we use that
+instead of re-doing the casting.
+
+diff --git a/src/main/java/io/papermc/paper/util/MCUtil.java b/src/main/java/io/papermc/paper/util/MCUtil.java
+index 4fd889d717a22c84ebd092d80739c6e7f1fb8534..a7f0c7c0618f004315570801334d52ce3ec4b4e2 100644
+--- a/src/main/java/io/papermc/paper/util/MCUtil.java
++++ b/src/main/java/io/papermc/paper/util/MCUtil.java
+@@ -211,7 +211,7 @@ public final class MCUtil {
+     }
+ 
+     public static long getCoordinateKey(final Entity entity) {
+-        return ((long)(MCUtil.fastFloor(entity.getZ()) >> 4) << 32) | ((MCUtil.fastFloor(entity.getX()) >> 4) & 0xFFFFFFFFL);
++        return ((long)(entity.blockPosition.getZ() >> 4) << 32) | ((entity.blockPosition.getX() >> 4) & 0xFFFFFFFFL); // Gale - Pufferfish - optimize entity coordinate key - eliminate double->long cast in hotpath
+     }
+ 
+     public static long getCoordinateKey(final ChunkPos pair) {
+diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
+index 55306f3aaed98307ed0ac662351d18e274095a01..ec0c8205959d451c5f8c15f0aa11d0115f1d8125 100644
+--- a/src/main/java/net/minecraft/world/entity/Entity.java
++++ b/src/main/java/net/minecraft/world/entity/Entity.java
+@@ -306,7 +306,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+     public double yo;
+     public double zo;
+     private Vec3 position;
+-    private BlockPos blockPosition;
++    public BlockPos blockPosition; // Gale - Pufferfish - optimize entity coordinate key - private -> public
+     private ChunkPos chunkPosition;
+     private Vec3 deltaMovement;
+     private float yRot;

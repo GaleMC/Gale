@@ -1,0 +1,116 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Martijn Muijsers <martijnmuijsers@live.nl>
+Date: Sat, 24 Dec 2022 23:30:35 +0100
+Subject: [PATCH] Make max interaction distance configurable
+
+License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+Gale - https://galemc.org
+
+diff --git a/src/main/java/net/minecraft/server/level/ServerPlayerGameMode.java b/src/main/java/net/minecraft/server/level/ServerPlayerGameMode.java
+index 106a312aba249d1e83e4b535fc6e741e04ccfd14..58e3ac1e155fcd352efcc90401e4e13ae4c6a2ca 100644
+--- a/src/main/java/net/minecraft/server/level/ServerPlayerGameMode.java
++++ b/src/main/java/net/minecraft/server/level/ServerPlayerGameMode.java
+@@ -174,7 +174,7 @@ public class ServerPlayerGameMode {
+     private void debugLogging(BlockPos pos, boolean success, int sequence, String reason) {}
+ 
+     public void handleBlockBreakAction(BlockPos pos, ServerboundPlayerActionPacket.Action action, Direction direction, int worldHeight, int sequence) {
+-        if (this.player.getEyePosition().distanceToSqr(Vec3.atCenterOf(pos)) > ServerGamePacketListenerImpl.MAX_INTERACTION_DISTANCE) {
++        if (this.player.getEyePosition().distanceToSqr(Vec3.atCenterOf(pos)) > ServerGamePacketListenerImpl.getMaxInteractionDistanceSquared(this.player.level())) { // Gale - make max interaction distance configurable
+             if (true) return; // Paper - Don't notify if unreasonably far away
+             this.debugLogging(pos, false, sequence, "too far");
+         } else if (pos.getY() >= worldHeight) {
+diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
+index f81ec0b6e542ac697769f6b7392d62e9e0aac0a6..477c343670599ba16dc34a5d4c07392ae1cc873b 100644
+--- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
++++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
+@@ -247,7 +247,7 @@ import org.bukkit.inventory.SmithingInventory;
+ public class ServerGamePacketListenerImpl extends ServerCommonPacketListenerImpl implements ServerGamePacketListener, ServerPlayerConnection, TickablePacketListener {
+ 
+     static final Logger LOGGER = LogUtils.getLogger();
+-    public static final double MAX_INTERACTION_DISTANCE = Mth.square(6.0D);
++    public static final double DEFAULT_MAX_INTERACTION_DISTANCE_SQUARED = Mth.square(6.0D); // Gale - make max interaction distance configurable
+     private static final int NO_BLOCK_UPDATES_TO_ACK = -1;
+     private static final int TRACKED_MESSAGE_DISCONNECT_THRESHOLD = 4096;
+     private static final Component CHAT_VALIDATION_FAILED = Component.translatable("multiplayer.disconnect.chat_validation_failed");
+@@ -327,6 +327,13 @@ public class ServerGamePacketListenerImpl extends ServerCommonPacketListenerImpl
+     private boolean hasMoved; // Spigot
+     // CraftBukkit end
+ 
++    // Gale start - make max interaction distance configurable
++    public static double getMaxInteractionDistanceSquared(Level level) {
++        var config = level.galeConfig().gameplayMechanics;
++        return config.playerMaxInteractionDistance < 0 ? ServerGamePacketListenerImpl.DEFAULT_MAX_INTERACTION_DISTANCE_SQUARED : config.playerMaxInteractionDistanceSquared;
++    }
++    // Gale end - make max interaction distance configurable
++
+     @Override
+     public void tick() {
+         if (this.ackBlockChangesUpTo > -1) {
+@@ -1901,7 +1908,7 @@ public class ServerGamePacketListenerImpl extends ServerCommonPacketListenerImpl
+             BlockPos blockposition = movingobjectpositionblock.getBlockPos();
+             Vec3 vec3d1 = Vec3.atCenterOf(blockposition);
+ 
+-            if (this.player.getEyePosition().distanceToSqr(vec3d1) <= ServerGamePacketListenerImpl.MAX_INTERACTION_DISTANCE) {
++            if (this.player.getEyePosition().distanceToSqr(vec3d1) <= ServerGamePacketListenerImpl.getMaxInteractionDistanceSquared(this.player.level())) { // Gale - make max interaction distance configurable
+                 Vec3 vec3d2 = vec3d.subtract(vec3d1);
+                 double d0 = 1.0000001D;
+ 
+@@ -2716,7 +2723,7 @@ public class ServerGamePacketListenerImpl extends ServerCommonPacketListenerImpl
+ 
+             AABB axisalignedbb = entity.getBoundingBox();
+ 
+-            if (axisalignedbb.distanceToSqr(this.player.getEyePosition()) < ServerGamePacketListenerImpl.MAX_INTERACTION_DISTANCE) {
++            if (axisalignedbb.distanceToSqr(this.player.getEyePosition()) < ServerGamePacketListenerImpl.getMaxInteractionDistanceSquared(this.player.level())) { // Gale - make max interaction distance configurable
+                 packet.dispatch(new ServerboundInteractPacket.Handler() {
+                     private void performInteraction(InteractionHand enumhand, ServerGamePacketListenerImpl.EntityInteraction playerconnection_a, PlayerInteractEntityEvent event) { // CraftBukkit
+                         ItemStack itemstack = ServerGamePacketListenerImpl.this.player.getItemInHand(enumhand);
+diff --git a/src/main/java/net/minecraft/world/item/BrushItem.java b/src/main/java/net/minecraft/world/item/BrushItem.java
+index e111bbbba63ec53d709f23ad12b96c2d3766a146..72718684cf99a3b74ea7dce1e2e9d7a3c4b88d7e 100644
+--- a/src/main/java/net/minecraft/world/item/BrushItem.java
++++ b/src/main/java/net/minecraft/world/item/BrushItem.java
+@@ -30,7 +30,6 @@ import net.minecraft.world.phys.Vec3;
+ public class BrushItem extends Item {
+     public static final int ANIMATION_DURATION = 10;
+     private static final int USE_DURATION = 200;
+-    private static final double MAX_BRUSH_DISTANCE = Math.sqrt(ServerGamePacketListenerImpl.MAX_INTERACTION_DISTANCE) - 1.0D;
+ 
+     public BrushItem(Item.Properties settings) {
+         super(settings);
+@@ -112,7 +111,7 @@ public class BrushItem extends Item {
+     private HitResult calculateHitResult(LivingEntity user) {
+         return ProjectileUtil.getHitResultOnViewVector(user, (entity) -> {
+             return !entity.isSpectator() && entity.isPickable();
+-        }, MAX_BRUSH_DISTANCE);
++        }, Math.sqrt(ServerGamePacketListenerImpl.getMaxInteractionDistanceSquared(user.level())) - 1.0D); // Gale - make max interaction distance configurable
+     }
+ 
+     private void spawnDustParticles(Level world, BlockHitResult hitResult, BlockState state, Vec3 userRotation, HumanoidArm arm) {
+diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
+index 492a279f080432b2340007be159d9bcba02f174b..68373c02373d9452613710915beb0d5951c2b531 100644
+--- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
++++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
+@@ -9,6 +9,7 @@ import io.papermc.paper.configuration.PaperConfigurations;
+ import net.minecraft.resources.ResourceLocation;
+ import org.slf4j.Logger;
+ import org.spigotmc.SpigotWorldConfig;
++import org.spongepowered.configurate.objectmapping.meta.PostProcess;
+ import org.spongepowered.configurate.objectmapping.meta.Setting;
+ 
+ @SuppressWarnings({"FieldCanBeLocal", "FieldMayBeFinal", "NotNullFieldNotInitialized", "InnerClassMayBeStatic"})
+@@ -132,6 +133,16 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+         public boolean hideFlamesOnEntitiesWithFireResistance = false; // Gale - Slice - hide flames on entities with fire resistance
+         public boolean tryRespawnEnderDragonAfterEndCrystalPlace = true; // Gale - Pufferfish - make ender dragon respawn attempt after placing end crystals configurable
+ 
++        // Gale start - make max interaction distance configurable
++        public double playerMaxInteractionDistance = -1.0;
++        public transient double playerMaxInteractionDistanceSquared;
++        // Gale end - make max interaction distance configurable
++
++        @PostProcess
++        public void postProcess() {
++            this.playerMaxInteractionDistanceSquared = this.playerMaxInteractionDistance * this.playerMaxInteractionDistance; // Gale - make max interaction distance configurable
++        }
++
+     }
+ 
+ }

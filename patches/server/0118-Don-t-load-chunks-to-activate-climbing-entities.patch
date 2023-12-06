@@ -1,0 +1,92 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Martijn Muijsers <martijnmuijsers@live.nl>
+Date: Sun, 25 Dec 2022 19:39:38 +0100
+Subject: [PATCH] Don't load chunks to activate climbing entities
+
+License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+Gale - https://galemc.org
+
+diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
+index 92b5d832427af60a5a0efc33c54f7ba49a0de9c4..f27b32d5e1acf83527930f25a7b026d243bf4d26 100644
+--- a/src/main/java/net/minecraft/world/entity/Entity.java
++++ b/src/main/java/net/minecraft/world/entity/Entity.java
+@@ -4565,6 +4565,16 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+         return this.feetBlockState;
+     }
+ 
++    // Gale start - don't load chunks to activate climbing entities
++    public @Nullable BlockState getFeetBlockStateIfLoaded() {
++        if (this.feetBlockState == null) {
++            this.feetBlockState = this.level.getBlockStateIfLoaded(this.blockPosition());
++        }
++
++        return this.feetBlockState;
++    }
++    // Gale end - don't load chunks to activate climbing entities
++
+     public ChunkPos chunkPosition() {
+         return this.chunkPosition;
+     }
+diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
+index ad7b59a9b49d3d9c4a506fef24412b065b904578..61178e3e8a64b4d01db0ce5361d0e1edc6d746e5 100644
+--- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
++++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
+@@ -2018,19 +2018,43 @@ public abstract class LivingEntity extends Entity implements Attackable {
+ 
+     public boolean onClimbableCached() {
+         if (!this.blockPosition().equals(this.lastClimbingPosition)) {
+-            this.cachedOnClimbable = this.onClimbable();
+-            this.lastClimbingPosition = this.blockPosition();
++            // Gale start - don't load chunks to activate climbing entities
++            Boolean onClimbableIfLoaded = this.onClimbable(this.level().galeConfig().smallOptimizations.loadChunks.toActivateClimbingEntities);
++            if (onClimbableIfLoaded != null) {
++                this.cachedOnClimbable = onClimbableIfLoaded;
++                this.lastClimbingPosition = this.blockPosition();
++            } else {
++                this.cachedOnClimbable = false;
++                this.lastClimbingPosition = null;
++            }
++            // Gale end - don't load chunks to activate climbing entities
+         }
+         return this.cachedOnClimbable;
+     }
+     // Gale end - Airplane - cache on climbable check
+ 
+     public boolean onClimbable() {
++        // Gale start - don't load chunks to activate climbing entities
++        return onClimbable(true);
++    }
++
++    public Boolean onClimbable(boolean loadChunk) {
++        // Gale end - don't load chunks to activate climbing entities
+         if (this.isSpectator()) {
+             return false;
+         } else {
+             BlockPos blockposition = this.blockPosition();
+-            BlockState iblockdata = this.getFeetBlockState();
++            // Gale start - don't load chunks to activate climbing entities
++            BlockState iblockdata;
++            if (loadChunk) {
++                iblockdata = this.getFeetBlockState();
++            } else {
++                iblockdata = this.getFeetBlockStateIfLoaded();
++                if (iblockdata == null) {
++                    return null;
++                }
++            }
++            // Gale end - don't load chunks to activate climbing entities
+ 
+             if (iblockdata.is(BlockTags.CLIMBABLE)) {
+                 this.lastClimbablePos = Optional.of(blockposition);
+diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
+index 7c9ae73edd465e7cfc365ca45c298b6a384faba3..ef86f9e4b7f91b79f657b04cf3f745f3828719a9 100644
+--- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
++++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
+@@ -96,6 +96,7 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+         public LoadChunks loadChunks;
+         public class LoadChunks extends ConfigurationPart {
+             public boolean toSpawnPhantoms = false; // Gale - MultiPaper - don't load chunks to spawn phantoms
++            public boolean toActivateClimbingEntities = false; // Gale - don't load chunks to activate climbing entities
+         }
+ 
+     }

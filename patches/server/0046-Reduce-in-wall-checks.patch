@@ -1,0 +1,73 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Martijn Muijsers <martijnmuijsers@live.nl>
+Date: Thu, 24 Nov 2022 10:31:38 +0100
+Subject: [PATCH] Reduce in wall checks
+
+License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+Gale - https://galemc.org
+
+This patch is based on the following patch:
+"Optimize suffocation"
+By: Kevin Raneri <kevin.raneri@gmail.com>
+As part of: Pufferfish (https://github.com/pufferfish-gg/Pufferfish)
+Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+
+* Pufferfish description *
+
+The isInWall check to determine suffocation is quite expensive, and
+often is completely unnecessary to check. We do two things here to
+improve this:
+
+1. We only check for suffocation once per 20 ticks. The maximum
+no-damage ticks value means that this change should be extremely
+difficult, if not impossible, for players to notice.
+
+2. We additionally execute a check to see if the player can even take
+damage in the first place. This check doesn't improve performance much
+but is so much cheaper than the suffocation check that it's worth
+keeping it.
+
+diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
+index 5f7e49d291e93373ba828aafc57fa6df0cd1a3e9..1794f5d1a8cc912fdd75a18ceccb536f48ab4686 100644
+--- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
++++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
+@@ -412,7 +412,10 @@ public abstract class LivingEntity extends Entity implements Attackable {
+             boolean flag = this instanceof net.minecraft.world.entity.player.Player;
+ 
+             if (!this.level().isClientSide) {
+-                if (this.isInWall()) {
++                // Gale start - Pufferfish - reduce in wall checks
++                long checkStuckInWallInterval = this.level().galeConfig().smallOptimizations.reducedIntervals.checkStuckInWall;
++                if ((checkStuckInWallInterval <= 1 || (tickCount % checkStuckInWallInterval == 0 && couldPossiblyBeHurt(1.0F))) && this.isInWall()) {
++                    // Gale end - Pufferfish - reduce in wall checks
+                     this.hurt(this.damageSources().inWall(), 1.0F);
+                 } else if (flag && !this.level().getWorldBorder().isWithinBounds(this.getBoundingBox())) {
+                     double d0 = this.level().getWorldBorder().getDistanceToBorder(this) + this.level().getWorldBorder().getDamageSafeZone();
+@@ -1406,6 +1409,15 @@ public abstract class LivingEntity extends Entity implements Attackable {
+         return this.getHealth() <= 0.0F;
+     }
+ 
++    // Gale start - Pufferfish - reduce in wall checks
++    public boolean couldPossiblyBeHurt(float amount) {
++        if ((float) this.invulnerableTime > (float) this.invulnerableDuration / 2.0F && amount <= this.lastHurt) {
++            return false;
++        }
++        return true;
++    }
++    // Gale end - Pufferfish - reduce in wall checks
++
+     @Override
+     public boolean hurt(DamageSource source, float amount) {
+         if (this.isInvulnerableTo(source)) {
+diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
+index 8a0416775d00148bf3478b51d92b00d9d485c667..08a02055b535c024cc806db17bb45fd333a56929 100644
+--- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
++++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
+@@ -53,6 +53,7 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+         public class ReducedIntervals extends ConfigurationPart {
+ 
+             public int acquirePoiForStuckEntity = 60; // Gale - Airplane - reduce acquire POI for stuck entities
++            public int checkStuckInWall = 10; // Gale - Pufferfish - reduce in wall checks
+ 
+         }
+ 

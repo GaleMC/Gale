@@ -1,0 +1,33 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Martijn Muijsers <martijnmuijsers@live.nl>
+Date: Wed, 30 Nov 2022 23:44:41 +0100
+Subject: [PATCH] Skip negligible planar movement multiplication
+
+License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+Gale - https://galemc.org
+
+diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
+index 07ac9b9928e5450e9ff42b82aeacfcb874eb8da0..a11ab3630fdc5848440e0df0f450337b02ca965a 100644
+--- a/src/main/java/net/minecraft/world/entity/Entity.java
++++ b/src/main/java/net/minecraft/world/entity/Entity.java
+@@ -1230,9 +1230,19 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+                 }
+ 
+                 this.tryCheckInsideBlocks();
++
++                // Gale start - skip negligible planar movement multiplication
++                Vec3 oldDeltaMovement = this.getDeltaMovement();
++                if (oldDeltaMovement.x < -1e-6 || oldDeltaMovement.x > 1e-6 || oldDeltaMovement.z < -1e-6 || oldDeltaMovement.z > 1e-6) {
++                // Gale end - skip negligible planar movement multiplication
+                 float f = this.getBlockSpeedFactor();
+ 
+-                this.setDeltaMovement(this.getDeltaMovement().multiply((double) f, 1.0D, (double) f));
++                // Gale start - skip negligible planar movement multiplication
++                if (f < 1 - 1e-6 || f > 1 + 1e-6) {
++                this.setDeltaMovement(oldDeltaMovement.multiply((double) f, 1.0D, (double) f));
++                }
++                }
++                // Gale end - skip negligible planar movement multiplication
+                 // Paper start - remove expensive streams from here
+                 boolean noneMatch = true;
+                 AABB fireSearchBox = this.getBoundingBox().deflate(1.0E-6D);

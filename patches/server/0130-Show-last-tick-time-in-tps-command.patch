@@ -1,0 +1,102 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Martijn Muijsers <martijnmuijsers@live.nl>
+Date: Sat, 26 Nov 2022 21:02:58 +0100
+Subject: [PATCH] Show last tick time in /tps command
+
+License: MIT (https://opensource.org/licenses/MIT)
+Gale - https://galemc.org
+
+This patch is based on the following patch:
+"Add getLastTickMs api"
+By: tr7zw <tr7zw@live.de>
+As part of: YAPFA (https://github.com/tr7zw/YAPFA)
+Licensed under: MIT (https://opensource.org/licenses/MIT)
+
+* YAPFA copyright *
+
+Copyright 2020 tr7zw
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
+index f83fa90b2ed4a60d5f3b305a99ae16498a20aef1..7f85aef54e10e27800fc031f9b18398dd7e573f9 100644
+--- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
++++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
+@@ -95,6 +95,14 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+             public boolean sendMultiple = true; // Gale - Purpur - send multiple keep-alive packets
+         }
+ 
++        // Gale start - YAPFA - last tick time - in TPS command
++        public LastTickTimeInTpsCommand lastTickTimeInTpsCommand;
++        public class LastTickTimeInTpsCommand extends ConfigurationPart {
++            public boolean enabled = false;
++            public boolean addOversleep = false;
++        }
++        // Gale end - YAPFA - last tick time - in TPS command
++
+     }
+ 
+     public LogToConsole logToConsole;
+diff --git a/src/main/java/org/spigotmc/TicksPerSecondCommand.java b/src/main/java/org/spigotmc/TicksPerSecondCommand.java
+index 0e5e3e25e498c5bd0aedc1cf2481270ee1d4d55e..7a5f8a8c8be08dd94cf782dbb9bcb6c52d8c75d4 100644
+--- a/src/main/java/org/spigotmc/TicksPerSecondCommand.java
++++ b/src/main/java/org/spigotmc/TicksPerSecondCommand.java
+@@ -1,9 +1,12 @@
+ package org.spigotmc;
+ 
++import net.kyori.adventure.text.format.NamedTextColor;
++import net.kyori.adventure.text.format.TextColor;
+ import net.minecraft.server.MinecraftServer;
+ import org.bukkit.ChatColor;
+ import org.bukkit.command.Command;
+ import org.bukkit.command.CommandSender;
++import org.galemc.gale.configuration.GaleGlobalConfiguration;
+ 
+ public class TicksPerSecondCommand extends Command
+ {
+@@ -42,6 +45,24 @@ public class TicksPerSecondCommand extends Command
+         builder.append(net.kyori.adventure.text.Component.text("TPS from last 5s, 1m, 5m, 15m: ", net.kyori.adventure.text.format.NamedTextColor.GOLD)); // Gale - Purpur - 5 second TPS average
+         builder.append(net.kyori.adventure.text.Component.join(net.kyori.adventure.text.JoinConfiguration.commas(true), tpsAvg));
+         sender.sendMessage(builder.asComponent());
++        // Gale start - YAPFA - last tick time - in TPS command
++        if (GaleGlobalConfiguration.get().misc.lastTickTimeInTpsCommand.enabled) {
++            long lastTickProperTime = MinecraftServer.lastTickProperTime;
++            long lastTickOversleepTime = MinecraftServer.lastTickOversleepTime;
++            var lastTickTimeMessage = net.kyori.adventure.text.Component.text("Last tick: ")
++                .append(formatTickTimeDuration(lastTickProperTime, 44, 50, 51));
++            if (GaleGlobalConfiguration.get().misc.lastTickTimeInTpsCommand.addOversleep) {
++                lastTickTimeMessage = lastTickTimeMessage.append(net.kyori.adventure.text.Component.text(" self + "))
++                    .append(formatTickTimeDuration(lastTickOversleepTime, Math.max(1, 51 - lastTickProperTime), Math.max(2, 52 - lastTickProperTime), Math.max(3, 53 - lastTickProperTime)))
++                    .append(net.kyori.adventure.text.Component.text(" oversleep = "))
++                    .append(formatTickTimeDuration(lastTickProperTime + lastTickOversleepTime, 51, 52, 53));
++            }
++            lastTickTimeMessage = lastTickTimeMessage.color(net.kyori.adventure.text.format.NamedTextColor.GOLD);
++            sender.sendMessage(
++                lastTickTimeMessage
++            );
++        }
++        // Gale end - YAPFA - last tick time - in TPS command
+         if (args.length > 0 && args[0].equals("mem") && sender.hasPermission("bukkit.command.tpsmemory")) {
+             sender.sendMessage(net.kyori.adventure.text.Component.text()
+                 .append(net.kyori.adventure.text.Component.text("Current Memory Usage: ", net.kyori.adventure.text.format.NamedTextColor.GOLD))
+@@ -66,4 +87,16 @@ public class TicksPerSecondCommand extends Command
+         return net.kyori.adventure.text.Component.text(amount, color);
+         // Paper end
+     }
++
++    // Gale start - YAPFA - last tick time - in TPS command
++    private static final TextColor safeColor = NamedTextColor.GREEN;
++    private static final TextColor closeColor = NamedTextColor.YELLOW;
++    private static final TextColor problematicColor = TextColor.color(0xf77c1e);
++    private static final TextColor severeColor = NamedTextColor.RED;
++    public static net.kyori.adventure.text.Component formatTickTimeDuration(long ms, long safeLimit, long closeLimit, long nonSevereLimit) {
++        return net.kyori.adventure.text.Component.text(ms + " ", ms <= safeLimit ? safeColor : ms <= closeLimit ? closeColor : ms <= nonSevereLimit ? problematicColor : severeColor)
++            .append(net.kyori.adventure.text.Component.text("ms", net.kyori.adventure.text.format.NamedTextColor.GOLD));
++    }
++    // Gale end - YAPFA - last tick time - in TPS command
++
+ }
