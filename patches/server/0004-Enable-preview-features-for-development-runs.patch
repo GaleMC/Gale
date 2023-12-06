@@ -1,0 +1,20 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Martijn Muijsers <martijnmuijsers@live.nl>
+Date: Mon, 13 Feb 2023 21:18:44 +0100
+Subject: [PATCH] Enable preview features for development runs
+
+License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+Gale - https://galemc.org
+
+diff --git a/build.gradle.kts b/build.gradle.kts
+index ecd65a51efc9a43426e880ef85e13d71c8cc9537..9f224f18f9f31a9d890b4af4de990b017a126ffd 100644
+--- a/build.gradle.kts
++++ b/build.gradle.kts
+@@ -194,6 +194,7 @@ fun TaskContainer.registerRunTask(
+     val memoryGb = providers.gradleProperty("paper.runMemoryGb").getOrElse("2")
+     minHeapSize = "${memoryGb}G"
+     maxHeapSize = "${memoryGb}G"
++    jvmArgs("--enable-preview") // Gale - enable preview features for development runs
+ 
+     doFirst {
+         workingDir.mkdirs()

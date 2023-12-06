@@ -1,0 +1,49 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Martijn Muijsers <martijnmuijsers@live.nl>
+Date: Wed, 30 Nov 2022 20:38:15 +0100
+Subject: [PATCH] Prevent entities random strolling into non-ticking chunks
+
+License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+Gale - https://galemc.org
+
+This patch is based on the following patch:
+"Don't wander into non-ticking chunks"
+By: PureGero <puregero@gmail.com>
+As part of: MultiPaper (https://github.com/MultiPaper/MultiPaper)
+Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+
+diff --git a/src/main/java/net/minecraft/world/entity/ai/goal/RandomStrollGoal.java b/src/main/java/net/minecraft/world/entity/ai/goal/RandomStrollGoal.java
+index 676e1580849e8942eb41c7a3a80f464138b22764..9e4d0493aa814a392742c9ddc1815211e9b9b186 100644
+--- a/src/main/java/net/minecraft/world/entity/ai/goal/RandomStrollGoal.java
++++ b/src/main/java/net/minecraft/world/entity/ai/goal/RandomStrollGoal.java
+@@ -2,6 +2,9 @@ package net.minecraft.world.entity.ai.goal;
+ 
+ import java.util.EnumSet;
+ import javax.annotation.Nullable;
++
++import net.minecraft.core.BlockPos;
++import net.minecraft.server.level.ServerLevel;
+ import net.minecraft.world.entity.PathfinderMob;
+ import net.minecraft.world.entity.ai.util.DefaultRandomPos;
+ import net.minecraft.world.phys.Vec3;
+@@ -49,7 +52,7 @@ public class RandomStrollGoal extends Goal {
+             }
+ 
+             Vec3 vec3 = this.getPosition();
+-            if (vec3 == null) {
++            if (vec3 == null || (!this.mob.level().galeConfig().gameplayMechanics.entitiesCanRandomStrollIntoNonTickingChunks && !((ServerLevel) this.mob.level()).isPositionEntityTicking(BlockPos.containing(vec3)))) { // Gale - MultiPaper - prevent entities random strolling into non-ticking chunks
+                 return false;
+             } else {
+                 this.wantedX = vec3.x;
+diff --git a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
+index bb98290de37db5b4addc85ee2e3a5b5932dd58ee..5fe6f626b63274e33f7c8b46441d17cf4ff9d533 100644
+--- a/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
++++ b/src/main/java/org/galemc/gale/configuration/GaleWorldConfiguration.java
+@@ -141,6 +141,7 @@ public class GaleWorldConfiguration extends ConfigurationPart {
+         }
+ 
+         public boolean arrowMovementResetsDespawnCounter = true; // Gale - Purpur - make arrow movement resetting despawn counter configurable
++        public boolean entitiesCanRandomStrollIntoNonTickingChunks = true; // Gale - MultiPaper - prevent entities random strolling into non-ticking chunks
+         public double entityWakeUpDurationRatioStandardDeviation = 0.2; // Gale - variable entity wake-up duration
+         public boolean hideFlamesOnEntitiesWithFireResistance = false; // Gale - Slice - hide flames on entities with fire resistance
+         public boolean tryRespawnEnderDragonAfterEndCrystalPlace = true; // Gale - Pufferfish - make ender dragon respawn attempt after placing end crystals configurable

@@ -1,0 +1,36 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Martijn Muijsers <martijnmuijsers@live.nl>
+Date: Sat, 24 Dec 2022 22:50:13 +0100
+Subject: [PATCH] Make slow login timeout configurable
+
+License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+Gale - https://galemc.org
+
+diff --git a/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
+index e1f442b204cdf8c58c4f980af1714368ef9a61b9..4dc8365202fe851933545635bd14c7633534ee34 100644
+--- a/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
++++ b/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
+@@ -93,7 +93,10 @@ public class ServerLoginPacketListenerImpl implements ServerLoginPacketListener,
+             this.finishLoginAndWaitForClient(this.authenticatedProfile);
+         }
+ 
+-        if (this.tick++ == 600) {
++        // Gale start - make slow login timeout configurable
++        int slowLoginTimeout = GaleGlobalConfiguration.get().misc.premiumAccountSlowLoginTimeout;
++        if (this.tick++ >= (slowLoginTimeout < 1 ? MAX_TICKS_BEFORE_LOGIN : slowLoginTimeout)) {
++            // Gale end - make slow login timeout configurable
+             this.disconnect(Component.translatable("multiplayer.disconnect.slow_login"));
+         }
+ 
+diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
+index d6d5bb73db5eb3f620e2c0d4858a96901f364462..f53328d3be9238c01bf2ec9b6ed0a854696a60f0 100644
+--- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
++++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
+@@ -52,6 +52,7 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+     public class Misc extends ConfigurationPart {
+ 
+         public boolean verifyChatOrder = true; // Gale - Pufferfish - make chat order verification configurable
++        public int premiumAccountSlowLoginTimeout = -1; // Gale - make slow login timeout configurable
+ 
+         public IncludeInTimingsReport includeInTimingsReport;
+ 

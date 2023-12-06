@@ -1,0 +1,38 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Martijn Muijsers <martijnmuijsers@live.nl>
+Date: Wed, 30 Nov 2022 12:56:43 +0100
+Subject: [PATCH] Specific interval TPS API
+
+License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+Gale - https://galemc.org
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+index 05e81adc990eaea4fd4d78ef7f53efd6ae8df35f..b105cf508e1d605155ac9248e7701bee6efc3953 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+@@ -2947,6 +2947,25 @@ public final class CraftServer implements Server {
+         };
+     }
+ 
++    // Gale start - specific interval TPS API
++
++    @Override
++    public double get1MinuteTPSAverage() {
++        return net.minecraft.server.MinecraftServer.getServer().tps1.getAverage();
++    }
++
++    @Override
++    public double get5MinuteTPSAverage() {
++        return net.minecraft.server.MinecraftServer.getServer().tps5.getAverage();
++    }
++
++    @Override
++    public double get15MinuteTPSAverage() {
++        return net.minecraft.server.MinecraftServer.getServer().tps15.getAverage();
++    }
++
++    // Gale end - specific interval TPS API
++
+     @Override
+     public long[] getTickTimes() {
+         return getServer().tickTimes5s.getTimes();

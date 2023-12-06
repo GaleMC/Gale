@@ -1,0 +1,27 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Martijn Muijsers <martijnmuijsers@live.nl>
+Date: Thu, 1 Dec 2022 17:26:18 +0100
+Subject: [PATCH] Use timin.gs by default
+
+License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+Gale - https://galemc.org
+
+This patch is based on the following patch:
+"Optimize default values for configs"
+By: etil2jz <81570777+etil2jz@users.noreply.github.com>
+As part of: Mirai (https://github.com/etil2jz/Mirai)
+Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+
+diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
+index a6f58b3457b7477015c5c6d969e7d83017dd3fa1..53c7802053d01f7d4c92afbd92607605720db7b0 100644
+--- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
++++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
+@@ -97,7 +97,7 @@ public class GlobalConfiguration extends ConfigurationPart {
+     public class Timings extends ConfigurationPart {
+         public boolean enabled = true;
+         public boolean verbose = true;
+-        public String url = "https://timings.aikar.co/";
++        public String url = "https://timin.gs/"; // Gale - use timin.gs by default
+         public boolean serverNamePrivacy = false;
+         public List<String> hiddenConfigEntries = List.of(
+             "database",

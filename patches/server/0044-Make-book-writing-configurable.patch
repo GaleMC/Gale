@@ -1,0 +1,87 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Martijn Muijsers <martijnmuijsers@live.nl>
+Date: Mon, 26 Dec 2022 02:11:29 +0100
+Subject: [PATCH] Make book writing configurable
+
+License: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+Gale - https://galemc.org
+
+This patch is based on the following patch:
+"Add option to disable books"
+By: Kevin Raneri <kevin.raneri@gmail.com>
+As part of: Pufferfish (https://github.com/pufferfish-gg/Pufferfish)
+Licensed under: GPL-3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
+
+* Pufferfish description *
+
+Books are commonly the target of duping-related exploits. If you
+anticipate that your server will be an early target of duping attacks in
+the event that new exploits are found, you may want to consider removing
+the ability for non-privileged players to edit books. This patch allows
+you to easily disable books, should you want to preemptively remove this
+functionality before additional exploits are found.
+
+diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
+index 65bb221993147a558995b36fb835f7b82e0eb4bd..11c0f81a6966ba07be793cd6778a5ce14b156898 100644
+--- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
++++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
+@@ -178,6 +178,8 @@ import net.minecraft.world.phys.Vec3;
+ import net.minecraft.world.phys.shapes.BooleanOp;
+ import net.minecraft.world.phys.shapes.Shapes;
+ import net.minecraft.world.phys.shapes.VoxelShape;
++import org.bukkit.craftbukkit.util.permissions.CraftDefaultPermissions;
++import org.galemc.gale.configuration.GaleGlobalConfiguration;
+ import org.slf4j.Logger;
+ 
+ // CraftBukkit start
+@@ -1119,6 +1121,11 @@ public class ServerGamePacketListenerImpl extends ServerCommonPacketListenerImpl
+ 
+     @Override
+     public void handleEditBook(ServerboundEditBookPacket packet) {
++        // Gale start - Pufferfish - make book writing configurable
++        if (!(GaleGlobalConfiguration.get().gameplayMechanics.enableBookWriting || this.player.getBukkitEntity().hasPermission(CraftDefaultPermissions.writeBooks) || this.player.getBukkitEntity().hasPermission("pufferfish.usebooks"))) {
++            return;
++        }
++        // Gale end - Pufferfish - make book writing configurable
+         // Paper start
+         if (!this.cserver.isPrimaryThread()) {
+             List<String> pageList = packet.getPages();
+diff --git a/src/main/java/org/bukkit/craftbukkit/util/permissions/CraftDefaultPermissions.java b/src/main/java/org/bukkit/craftbukkit/util/permissions/CraftDefaultPermissions.java
+index 0a808c5d242b2d9bea82d9d219227fbaf5741bf4..7d66126c1f5957c109a2426d53f5d0072886309b 100644
+--- a/src/main/java/org/bukkit/craftbukkit/util/permissions/CraftDefaultPermissions.java
++++ b/src/main/java/org/bukkit/craftbukkit/util/permissions/CraftDefaultPermissions.java
+@@ -7,6 +7,8 @@ public final class CraftDefaultPermissions {
+     private static final String ROOT = "minecraft";
+     public static final String GALE_ROOT = "gale"; // Gale - set Gale permissions root
+ 
++    public static final String writeBooks = GALE_ROOT + ".writebooks"; // Gale - Pufferfish - make book writing configurable
++
+     private CraftDefaultPermissions() {}
+ 
+     public static void registerCorePermissions() {
+@@ -19,6 +21,7 @@ public final class CraftDefaultPermissions {
+         DefaultPermissions.registerPermission(CraftDefaultPermissions.ROOT + ".debugstick.always", "Gives the user the ability to use the debug stick in all game modes", org.bukkit.permissions.PermissionDefault.FALSE/* , parent */); // Paper - should not have this parent, as it's not a "vanilla" utility
+         DefaultPermissions.registerPermission(CraftDefaultPermissions.ROOT + ".commandblock", "Gives the user the ability to use command blocks.", org.bukkit.permissions.PermissionDefault.OP, parent); // Paper
+         // Spigot end
++        DefaultPermissions.registerPermission(writeBooks, "Gives the user the ability to write books even when writing books is disabled in the Gale configuration", org.bukkit.permissions.PermissionDefault.OP); // Gale - Pufferfish - make book writing configurable
+         parent.recalculatePermissibles();
+     }
+ }
+diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
+index 5ade5d2ff3a68cf9e0240fc86e4b63432cb899c0..346fdf6f8a76539fa9ca46015ee122417e4a8102 100644
+--- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
++++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
+@@ -35,6 +35,13 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+ 
+     }
+ 
++    public GameplayMechanics gameplayMechanics;
++    public class GameplayMechanics extends ConfigurationPart {
++
++        public boolean enableBookWriting = true; // Gale - Pufferfish - make book writing configurable
++
++    }
++
+     public Misc misc;
+     public class Misc extends ConfigurationPart {
+ 

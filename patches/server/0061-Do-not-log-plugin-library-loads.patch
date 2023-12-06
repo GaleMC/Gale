@@ -1,0 +1,76 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Martijn Muijsers <martijnmuijsers@live.nl>
+Date: Tue, 8 Aug 2023 18:24:01 +0200
+Subject: [PATCH] Do not log plugin library loads
+
+License: MIT (https://opensource.org/licenses/MIT)
+Gale - https://galemc.org
+
+This patch is based on the following patch:
+"Add log suppression for LibraryLoader"
+By: Krakenied <Krakenied1@gmail.com>
+As part of: Purpur (https://github.com/PurpurMC/Purpur)
+Licensed under: MIT (https://opensource.org/licenses/MIT)
+
+* Purpur copyright *
+
+MIT License
+
+Copyright (c) 2019-2022 PurpurMC
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+diff --git a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
+index 5af30bdac9e9315b53d31309956486ca3f0622b5..83fcaa347be906cf42ba853754ac6bda2b39d8f9 100644
+--- a/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
++++ b/src/main/java/org/galemc/gale/configuration/GaleGlobalConfiguration.java
+@@ -4,6 +4,8 @@ package org.galemc.gale.configuration;
+ 
+ import io.papermc.paper.configuration.Configuration;
+ import io.papermc.paper.configuration.ConfigurationPart;
++import org.bukkit.plugin.java.JavaPluginLoader;
++import org.spongepowered.configurate.objectmapping.meta.PostProcess;
+ import org.spongepowered.configurate.objectmapping.meta.Setting;
+ 
+ @SuppressWarnings({"CanBeFinal", "FieldCanBeLocal", "FieldMayBeFinal", "NotNullFieldNotInitialized", "InnerClassMayBeStatic"})
+@@ -98,6 +100,24 @@ public class GaleGlobalConfiguration extends ConfigurationPart {
+             public boolean emptyMessageWarning = false; // Gale - do not log empty message warnings
+         }
+ 
++        // Gale start - Purpur - do not log plugin library loads
++        public PluginLibraryLoader pluginLibraryLoader;
++        public class PluginLibraryLoader extends ConfigurationPart {
++
++            public boolean downloads = true;
++            public boolean startLoadLibrariesForPlugin = true;
++            public boolean libraryLoaded = true;
++
++            @PostProcess
++            public void postProcess() {
++                JavaPluginLoader.logDownloads = this.downloads;
++                JavaPluginLoader.logStartLoadLibrariesForPlugin = this.startLoadLibrariesForPlugin;
++                JavaPluginLoader.logLibraryLoaded = this.libraryLoaded;
++            }
++
++        }
++        // Gale end - Purpur - do not log plugin library loads
++
+     }
+ 
+ }
