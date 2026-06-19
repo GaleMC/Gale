@@ -6,10 +6,10 @@
              if ((!this.isInPowderSnow || !this.canFreeze()) && !this.freezeLocked) { // Paper - Freeze Tick Lock API
 -                this.setTicksFrozen(Math.max(0, this.getTicksFrozen() - 2));
 +                // Gale start - Leaf - only update frozen ticks if changed
-+                int ticksForzen = this.getTicksFrozen();
-+                int newTicksForzen = Math.max(0, ticksForzen - 2);
-+                if (ticksForzen != newTicksForzen) {
-+                    this.setTicksFrozen(newTicksForzen);
++                int ticksFrozen = this.getTicksFrozen();
++                int newTicksFrozen = Math.max(0, ticksFrozen - 2);
++                if (ticksFrozen != newTicksFrozen) {
++                    this.setTicksFrozen(newTicksFrozen);
 +                }
 +                // Gale end - Leaf - only update frozen ticks if changed
              }
