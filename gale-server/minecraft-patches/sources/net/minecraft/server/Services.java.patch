@@ -1,0 +1,27 @@
+--- a/net/minecraft/server/Services.java
++++ b/net/minecraft/server/Services.java
+@@ -25,7 +_,8 @@
+     // Paper start - add paper configuration files
+     public record PaperServices(
+         io.papermc.paper.configuration.PaperConfigurations configurations,
+-        io.papermc.paper.profile.PaperFilledProfileCache filledProfileCache
++        io.papermc.paper.profile.PaperFilledProfileCache filledProfileCache,
++        org.galemc.gale.configuration.GaleConfigurations galeConfigurations // Gale
+     ) {}
+ 
+     public Services(MinecraftSessionService sessionService, ServicesKeySet servicesKeySet, GameProfileRepository profileRepository, UserNameToIdResolver nameToIdCache, ProfileResolver profileResolver) {
+@@ -46,9 +_,13 @@
+         final java.nio.file.Path legacyConfigPath = ((File) options.valueOf("paper-settings")).toPath();
+         final java.nio.file.Path configDirPath = ((File) options.valueOf("paper-settings-directory")).toPath();
+         io.papermc.paper.configuration.PaperConfigurations paperConfigurations = io.papermc.paper.configuration.PaperConfigurations.setup(legacyConfigPath, configDirPath, nameCacheDir.toPath(), (File) options.valueOf("spigot-settings"));
++        // Gale start - add gale configuration files
++        org.galemc.gale.configuration.GaleConfigurations galeConfigurations = org.galemc.gale.configuration.GaleConfigurations.setup(legacyConfigPath);
++        // Gale end - add gale configuration files
+         PaperServices paperServices = new PaperServices(
+             paperConfigurations,
+-            new io.papermc.paper.profile.PaperFilledProfileCache()
++            new io.papermc.paper.profile.PaperFilledProfileCache(),
++            galeConfigurations
+         );
+         ProfileResolver profileResolver = new ProfileResolver.Cached(sessionService, profileCache, paperServices.filledProfileCache());
+         return new Services(sessionService, serviceAccess.getServicesKeySet(), profileRepository, profileCache, profileResolver, paperServices);
