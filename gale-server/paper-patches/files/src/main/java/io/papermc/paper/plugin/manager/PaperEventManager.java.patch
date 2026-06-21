@@ -1,28 +1,26 @@
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: RuleGaed <rulegaed@users.noreply.github.com>
-Date: Sat, 20 Jun 2026 00:00:00 +0300
-Subject: [PATCH] Skip event if no listeners
-
-diff --git a/src/main/java/io/papermc/paper/plugin/manager/PaperEventManager.java b/src/main/java/io/papermc/paper/plugin/manager/PaperEventManager.java
-index 7ce9ebba8..a654b4771 100644
 --- a/src/main/java/io/papermc/paper/plugin/manager/PaperEventManager.java
 +++ b/src/main/java/io/papermc/paper/plugin/manager/PaperEventManager.java
-@@ -36,15 +36,15 @@ class PaperEventManager {
-
+@@ -36,14 +_,21 @@
+ 
      // SimplePluginManager
      public void callEvent(@NotNull Event event) {
++        // Gale start - Skip Bukkit callEvent early if no listeners
 +        RegisteredListener[] listeners = event.getHandlers().getRegisteredListeners();
 +        if (listeners.length == 0) return;
++        // Gale end - Skip Bukkit callEvent early if no listeners
 +
          if (event.isAsynchronous() && this.server.isPrimaryThread()) {
              throw new IllegalStateException(event.getEventName() + " may only be triggered asynchronously.");
          } else if (!event.isAsynchronous() && !this.server.isPrimaryThread() && !this.server.isStopping()) {
              throw new IllegalStateException(event.getEventName() + " may only be triggered synchronously.");
          }
-
+ 
 -        HandlerList handlers = event.getHandlers();
 -        RegisteredListener[] listeners = handlers.getRegisteredListeners();
--
++        // Gale start - Skip Bukkit callEvent early if no listeners
++//        HandlerList handlers = event.getHandlers();
++//        RegisteredListener[] listeners = handlers.getRegisteredListeners();
++        // Gale end - Skip Bukkit callEvent early if no listeners
+ 
          for (RegisteredListener registration : listeners) {
              if (!registration.getPlugin().isEnabled()) {
-                 continue;

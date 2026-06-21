@@ -1,12 +1,10 @@
 --- a/net/minecraft/world/level/Level.java
 +++ b/net/minecraft/world/level/Level.java
-@@ -171,6 +_,9 @@
+@@ -171,6 +_,7 @@
          return this.paperConfig;
      }
      // Paper end - add paper world config
-+    // Gale start - add gale world config
-+    public final org.galemc.gale.configuration.GaleWorldConfiguration galeConfig;
-+    // Gale end - add gale world config
++    public final org.galemc.gale.configuration.GaleWorldConfiguration galeConfig; // Gale - Configuration - Add world config
  
      public static @Nullable BlockPos lastPhysicsProblem; // Spigot
      public final Map<ServerExplosion.CacheKey, Float> explosionDensityCache = new java.util.HashMap<>(); // Paper - Optimize explosions
@@ -14,8 +12,8 @@
          org.bukkit.World.Environment environment, // Paper
          java.util.function.Function<org.spigotmc.SpigotWorldConfig, // Spigot - create per world config
          io.papermc.paper.configuration.WorldConfiguration> paperWorldConfigCreator, // Paper - create paper world config
-+        java.util.function.Function<org.spigotmc.SpigotWorldConfig, // Gale - create per world config
-+        org.galemc.gale.configuration.GaleWorldConfiguration> galeWorldConfigCreator, // Gale - create gale world config
++        java.util.function.Function<org.spigotmc.SpigotWorldConfig, // Gale - Configuration - Create world config
++        org.galemc.gale.configuration.GaleWorldConfiguration> galeWorldConfigCreator, // Gale - Configuration - Create world config
          java.util.concurrent.Executor executor // Paper - Anti-Xray
      ) {
          // Paper start - getblock optimisations - cache world height/sections
@@ -23,7 +21,7 @@
          final org.bukkit.NamespacedKey worldKey = CraftNamespacedKey.fromMinecraft(dimension.identifier()); // Paper
          this.spigotConfig = new org.spigotmc.SpigotWorldConfig(bukkitName, worldKey); // Spigot
          this.paperConfig = paperWorldConfigCreator.apply(this.spigotConfig); // Paper - create paper world config
-+        this.galeConfig = galeWorldConfigCreator.apply(this.spigotConfig); // Gale - create gale world config
++        this.galeConfig = galeWorldConfigCreator.apply(this.spigotConfig); // Gale - Configuration - Create world config
          this.generator = generator;
          this.world = new CraftWorld((ServerLevel) this, worldKey, biomeProvider, environment);
  

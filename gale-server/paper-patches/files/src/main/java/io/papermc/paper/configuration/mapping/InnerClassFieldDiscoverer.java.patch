@@ -1,0 +1,24 @@
+--- a/src/main/java/io/papermc/paper/configuration/mapping/InnerClassFieldDiscoverer.java
++++ b/src/main/java/io/papermc/paper/configuration/mapping/InnerClassFieldDiscoverer.java
+@@ -3,6 +_,7 @@
+ import io.leangen.geantyref.GenericTypeReflector;
+ import io.papermc.paper.configuration.ConfigurationPart;
+ import io.papermc.paper.configuration.WorldConfiguration;
++import org.galemc.gale.configuration.GaleWorldConfiguration; // Gale - Configuration
+ import java.lang.annotation.Annotation;
+ import java.lang.reflect.AnnotatedType;
+ import java.lang.reflect.Field;
+@@ -100,4 +_,13 @@
+     public static FieldDiscoverer<?> globalConfig(final List<Definition<?, ?, ? extends FieldProcessor.Factory<?, ?>>> fieldProcessors) {
+         return create(Collections.emptyMap(), fieldProcessors);
+     }
++
++    // Gale start - Configuration
++    public static FieldDiscoverer<?> galeWorldConfig(final GaleWorldConfiguration worldConfiguration, final List<Definition<?, ?, ? extends FieldProcessor.Factory<?, ?>>> fieldProcessors) {
++        final Map<Class<?>, Object> overrides = Map.of(
++            GaleWorldConfiguration.class, worldConfiguration
++        );
++        return create(overrides, fieldProcessors);
++    }
++    // Gale end - Configuration
+ }

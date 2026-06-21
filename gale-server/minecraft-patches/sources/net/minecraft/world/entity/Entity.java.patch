@@ -1,43 +1,42 @@
 --- a/net/minecraft/world/entity/Entity.java
 +++ b/net/minecraft/world/entity/Entity.java
-@@ -280,6 +280,7 @@ public abstract class Entity
+@@ -280,6 +_,7 @@
      public float yRotO;
      public float xRotO;
      private AABB bb = INITIAL_AABB;
-+    private boolean boundingBoxChanged = false; // Gale - skip entity move if movement is zero
++    private boolean boundingBoxChanged = false; // Gale - Skip entity move if movement is zero
      public boolean onGround;
      public boolean horizontalCollision;
      public boolean verticalCollision;
-@@ -1182,7 +1183,19 @@ public abstract class Entity
+@@ -1182,7 +_,18 @@
                  return;
              }
              // Paper end
 -
-+            // Gale start - skip entity move if movement is zero
++            // Gale start - Skip entity move if movement is zero
 +            if (!this.boundingBoxChanged && delta.equals(Vec3.ZERO)) {
 +                this.horizontalCollision = false;
 +                this.verticalCollision = false;
 +                this.verticalCollisionBelow = false;
 +                this.minorHorizontalCollision = false;
 +                this.setOnGroundWithMovement(false, false, Vec3.ZERO);
-+                boundingBoxChanged = false;
 +                profiler.pop();
 +                return;
 +            }
 +            boundingBoxChanged = false;
-+            // Gale end - skip entity move if movement is zero
++            // Gale end - Skip entity move if movement is zero
              delta = this.maybeBackOffFromEdge(delta, moverType);
              Vec3 movement = this.collide(delta);
              double movementLength = movement.lengthSqr();
-@@ -4580,6 +4593,11 @@ public abstract class Entity
+@@ -4580,6 +_,11 @@
      }
  
      public final void setBoundingBox(final AABB bb) {
-+        // Gale start - skip entity move if movement is zero
++        // Gale start - Skip entity move if movement is zero
 +        if (!this.bb.equals(bb)) {
 +            this.boundingBoxChanged = true;
 +        }
-+        // Gale end - skip entity move if movement is zero
++        // Gale end - Skip entity move if movement is zero
          // CraftBukkit start - block invalid bounding boxes
          double minX = bb.minX,
                  minY = bb.minY,

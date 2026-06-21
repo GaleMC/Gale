@@ -1,0 +1,11 @@
+--- a/src/main/java/io/papermc/paper/configuration/PaperConfigurations.java
++++ b/src/main/java/io/papermc/paper/configuration/PaperConfigurations.java
+@@ -482,7 +_,7 @@
+     }
+ 
+     // Symlinks are not correctly checked in createDirectories
+-    static void createDirectoriesSymlinkAware(Path path) throws IOException {
++    public static void createDirectoriesSymlinkAware(Path path) throws IOException { // Gale - Configuration - Make public
+         if (!Files.isDirectory(path)) {
+             Files.createDirectories(path);
+         }

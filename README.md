@@ -43,3 +43,36 @@ Gale prioritizes trust and reliability. If you wish to try more experimental sof
 Paperweight files are licensed under MIT.
 Patches are licensed under GPL-3.0, unless indicated differently in their header.
 Binaries are licensed under GPL-3.0.
+
+## Patches
+
+All changes are listed below. Changes are maintained by the Gale team.
+
+* **Branding**\
+  Server identifies as Gale, with appropriate branding in console, watchdog, and version output.
+* **Configuration**\
+  Adds Gale configuration files
+* **Allocate zero or one block destruction packets** (original by [vytskalt](https://github.com/vytskalt))\
+  Leaf: `Reduce-block-destruction-packet-allocations.patch`
+* **Cache Identifier toString and hashCode** (original by [OverwriteMC](https://github.com/OverwriteMC))\
+  Lazily cache `Identifier` `toString()` and `hashCode()`.\
+  Leaf: `Cache-identifier-toString-and-hash.patch`
+* **Only update frozen ticks if changed** (original by [hayanesuru](https://github.com/hayanesuru))\
+  Leaf: `Only-update-frozen-ticks-if-changed.patch`
+* **Optimize matching item checks**\
+  Leaf: `Optimize-matching-item-checks.patch`
+* **Optimize pushable selector** (original by [OverwriteMC](https://github.com/OverwriteMC))\
+  Avoid duplicated `Bukkit#isPushable` check, already checked inside the `Bukkit#canCollideWithBukkit`.\
+  Leaf: `Optimize-pushable-selector.patch`
+* **Replace division by multiplication** (original by [2No2Name](https://github.com/2No2Name))\
+  Multiplication is faster than division in every environment.\
+  Leaf: `Replace-division-by-multiplication-in-CubePointRange.patch`
+* **Skip Bukkit callEvent early if no listeners** (original by [lilingfengdev](https://github.com/lilingfengdev))\
+  Leaf: `Skip-event-if-no-listeners.patch`
+* **Skip cloning advancement criteria** (original by [etil2jz](https://github.com/etil2jz))\
+  Leaf: `Skip-cloning-advancement-criteria.patch`
+* **Skip entity move if movement is zero** (original by [ishland](https://github.com/ishland))\
+  Run a simplified version of `Entity#move()` if the movement delta is zero.\
+  Leaf: `Skip-entity-move-if-movement-is-zero.patch`
+* **Store mob counts in an array** (original by [ishland](https://github.com/ishland))\
+  Leaf: `Store-mob-counts-in-an-array.patch`

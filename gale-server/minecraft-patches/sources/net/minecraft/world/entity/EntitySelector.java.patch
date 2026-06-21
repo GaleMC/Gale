@@ -1,24 +1,24 @@
 --- a/net/minecraft/world/entity/EntitySelector.java
 +++ b/net/minecraft/world/entity/EntitySelector.java
-@@ -47,9 +47,8 @@
+@@ -47,9 +_,8 @@
          Team.CollisionRule ownCollisionRule = ownTeam == null ? Team.CollisionRule.ALWAYS : ownTeam.getCollisionRule();
          return ownCollisionRule == Team.CollisionRule.NEVER
              ? Predicates.alwaysFalse()
 -            : NO_SPECTATORS.and(
 -                input -> {
 -                    if (!input.isPushable() || !input.canCollideWithBukkit(entity) || !entity.canCollideWithBukkit(input)) { // CraftBukkit - collidable API // Paper - Climbing should not bypass cramming gamerule
-+            : input -> { // Gale start - Leaf - optimize pushable selector
-+                    if (input.isSpectator() /*|| !pushedEntity.isPushable()*/ || !input.canCollideWithBukkit(entity) || !entity.canCollideWithBukkit(input)) { // CraftBukkit - collidable API // Paper - Climbing should not bypass cramming gamerule // Gale end - Leaf - optimize pushable selector
++            : input -> { // Gale - Optimize pushable selector
++                    if (input.isSpectator() /*|| !pushedEntity.isPushable()*/ || !input.canCollideWithBukkit(entity) || !entity.canCollideWithBukkit(input)) { // CraftBukkit - collidable API // Paper - Climbing should not bypass cramming gamerule // Gale - Optimize pushable selector
                          return false;
                      }
  
-@@ -69,8 +68,7 @@
+@@ -69,8 +_,7 @@
                      } else {
                          return false;
                      }
 -                }
 -            );
-+                }; // Gale - Leaf - optimize pushable selector
++                }; // Gale - Optimize pushable selector
      }
  
      public static Predicate<Entity> notRiding(final Entity entity) {

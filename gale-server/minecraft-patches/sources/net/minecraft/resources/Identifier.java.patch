@@ -1,45 +1,58 @@
 --- a/net/minecraft/resources/Identifier.java
 +++ b/net/minecraft/resources/Identifier.java
-@@ -26,6 +26,10 @@
+@@ -26,6 +_,10 @@
      public static final String PAPER_NAMESPACE = "paper"; // Paper
      private final String namespace;
      private final String path;
-+    // Gale start - Cache identifier toString and hash
-+    private String identifierStr;
-+    private int hash;
-+    // Gale end - Cache identifier toString and hash
++    // Gale start - Cache Identifier toString and hashCode
++    private @Nullable String cachedString;
++    private int cachedHashCode;
++    // Gale end - Cache Identifier toString and hashCode
  
      private Identifier(final String namespace, final String path) {
          assert isValidNamespace(namespace);
-@@ -131,7 +135,14 @@
+@@ -50,7 +_,11 @@
+     }
+ 
+     public static Identifier parse(final String identifier) {
+-        return bySeparator(identifier, ':');
++        // Gale start - Cache Identifier toString and hashCode
++        Identifier toReturn = bySeparator(identifier, ':');
++        toReturn.cachedString = identifier;
++        return toReturn;
++        // Gale end - Cache Identifier toString and hashCode
+     }
+ 
+     public static Identifier withDefaultNamespace(final String path) {
+@@ -131,7 +_,14 @@
  
      @Override
      public String toString() {
 -        return this.namespace + ":" + this.path;
-+        // Gale start - Cache identifier toString and hash
-+        String identifierStr = this.identifierStr;
-+        if (identifierStr == null) {
-+            identifierStr = this.namespace + ":" + this.path;
-+            this.identifierStr = identifierStr;
++        // Gale start - Cache Identifier toString and hashCode
++        String string = this.cachedString;
++        if (string == null) {
++            string = this.namespace + ":" + this.path;
++            this.cachedString = string;
 +        }
-+        return identifierStr;
-+        // Gale end - Cache identifier toString and hash
++        return string;
++        // Gale end - Cache Identifier toString and hashCode
      }
  
      @Override
-@@ -141,7 +152,14 @@
+@@ -141,7 +_,14 @@
  
      @Override
      public int hashCode() {
 -        return 31 * this.namespace.hashCode() + this.path.hashCode();
-+        // Gale start - Cache identifier toString and hash
-+        int hash = this.hash;
-+        if (hash == 0) {
-+            hash = 31 * this.namespace.hashCode() + this.path.hashCode();
-+            this.hash = hash;
++        // Gale start - Cache Identifier toString and hashCode
++        int hashCode = this.cachedHashCode;
++        if (hashCode == 0) {
++            hashCode = 31 * this.namespace.hashCode() + this.path.hashCode();
++            this.cachedHashCode = hashCode;
 +        }
-+        return hash;
-+        // Gale end - Cache identifier toString and hash
++        return hashCode;
++        // Gale end - Cache Identifier toString and hashCode
      }
  
      @Override

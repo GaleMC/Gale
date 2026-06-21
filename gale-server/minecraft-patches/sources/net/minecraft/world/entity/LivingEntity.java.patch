@@ -1,17 +1,17 @@
 --- a/net/minecraft/world/entity/LivingEntity.java
 +++ b/net/minecraft/world/entity/LivingEntity.java
-@@ -3147,7 +3147,13 @@
+@@ -3793,7 +_,13 @@
          if (this.level() instanceof ServerLevel serverLevel) {
              profiler.push("freezing");
              if ((!this.isInPowderSnow || !this.canFreeze()) && !this.freezeLocked) { // Paper - Freeze Tick Lock API
 -                this.setTicksFrozen(Math.max(0, this.getTicksFrozen() - 2));
-+                // Gale start - Leaf - only update frozen ticks if changed
++                // Gale start - Leaf - Only update frozen ticks if changed
 +                int ticksFrozen = this.getTicksFrozen();
 +                int newTicksFrozen = Math.max(0, ticksFrozen - 2);
 +                if (ticksFrozen != newTicksFrozen) {
 +                    this.setTicksFrozen(newTicksFrozen);
 +                }
-+                // Gale end - Leaf - only update frozen ticks if changed
++                // Gale end - Leaf - Only update frozen ticks if changed
              }
  
              this.removeFrost();

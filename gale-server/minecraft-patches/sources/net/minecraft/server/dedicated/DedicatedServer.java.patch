@@ -4,10 +4,10 @@
          // Paper start - initialize global and world-defaults configuration
          this.paperConfigurations.initializeGlobalConfiguration(this.registryAccess());
          this.paperConfigurations.initializeWorldDefaultsConfiguration(this.registryAccess());
-+        // Gale start - initialize gale configuration
++        // Gale start - Configuration - Initialize configuration
 +        this.galeConfigurations.initializeGlobalConfiguration(this.registryAccess());
 +        this.galeConfigurations.initializeWorldDefaultsConfiguration(this.registryAccess());
-+        // Gale end - initialize gale configuration
++        // Gale end - Configuration - Initialize configuration
          // Paper end - initialize global and world-defaults configuration
          this.server.spark.enableEarlyIfRequested(); // Paper - spark
          // Paper start - fix converting txt to json file; convert old users earlier after PlayerList creation but before file load/save
