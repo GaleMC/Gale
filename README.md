@@ -64,7 +64,7 @@ Features originating from other projects are carefully verified and updated as p
   </li>
   <li>
     <i>Configuration</i><br>
-    Adds Gale configuration files
+    Gale configuration files.
   </li>
   <li>
     <i>Allocate zero or one block destruction packets</i> (original by <a href="https://github.com/vytskalt">vytskalt</a>)<br>
