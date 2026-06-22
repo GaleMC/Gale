@@ -1,0 +1,11 @@
+--- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
++++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
+@@ -181,7 +_,7 @@
+             @MergeMap
+             public Reference2IntMap<MobCategory> spawnLimits = Util.make(new Reference2IntOpenHashMap<>(NaturalSpawner.SPAWNING_CATEGORIES.length), map -> Arrays.stream(NaturalSpawner.SPAWNING_CATEGORIES).forEach(mobCategory -> map.put(mobCategory, -1)));
+             @MergeMap
+-            public Map<MobCategory, DespawnRangePair> despawnRanges = Arrays.stream(MobCategory.values()).collect(Collectors.toMap(Function.identity(), category -> DespawnRangePair.createDefault()));
++            public Map<MobCategory, DespawnRangePair> despawnRanges = new java.util.EnumMap<>(Arrays.stream(MobCategory.values()).collect(Collectors.toMap(Function.identity(), category -> DespawnRangePair.createDefault()))); // Gale - Store despawn ranges in enum map
+             public DespawnRange.Shape despawnRangeShape = DespawnRange.Shape.ELLIPSOID;
+             @MergeMap
+             public Reference2IntMap<MobCategory> ticksPerSpawn = Util.make(new Reference2IntOpenHashMap<>(NaturalSpawner.SPAWNING_CATEGORIES.length), map -> Arrays.stream(NaturalSpawner.SPAWNING_CATEGORIES).forEach(mobCategory -> map.put(mobCategory, -1)));

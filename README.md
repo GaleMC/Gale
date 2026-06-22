@@ -1,7 +1,7 @@
 <img src="logo.png" alt="Gale logo" align="right" width="26%">
 <div align="center">
   <h1>Gale</h1>
-  <h3>A reliable high-performance Minecraft server fork.</h3>
+  <h3>The reliable high-performance Minecraft server fork.</h3>
 
 [![Discord](https://img.shields.io/discord/1045402468416233592?color=5865F2&label=discord&style=for-the-badge)](https://discord.com/invite/gwezNT8c24)
 [![Latest version](https://img.shields.io/badge/Latest_version-26.2-4fa31a?style=for-the-badge)](https://github.com/GaleMC/Gale/actions)
@@ -11,6 +11,11 @@
 
 Gale is a drop-in replacement for [Paper](https://github.com/PaperMC/Paper)
 that improves performance reliably and without changing game mechanics.
+
+## Installation
+
+* Download the latest dev build from [GitHub Actions](https://github.com/GaleMC/Gale/actions)
+* Replace the Paper server `.jar` file with the Gale `.jar` file
 
 ## Benefits
 
@@ -82,16 +87,24 @@ Features originating from other projects are carefully verified and updated as p
     Leaf: <code>Cache-world-generator-sea-level.patch</code>
   </li>
   <li>
-    <i>Check targeting range before getting visibility</i> (original by <a href="https://github.com/PaulBGD">PaulBGD</a><br>
+    <i>Check targeting range before getting visibility</i> (original by <a href="https://github.com/PaulBGD">PaulBGD</a>)<br>
     Check targeting range before computing visibility distance,
     because the latter is more expensive.<br>
     Leaf: <code>Check-targeting-range-before-getting-visibility.patch</code>
+  </li>
+  <li>
+    <i>Don't iterate over empty tick effect collections</i> ((original by <a href="https://github.com/hayanesuru">hayanesuru</a>)<br>
+    Leaf: part of <code>optimize-tickEffects.patch</code>
   </li>
   <li>
     <i>Initialize sensing with low capacity</i><br>
     Most mobs only ever target at most 1 entity (typically a nearby player or a mob farm bait entity)<br>
     so we create their sensing cache with an initial capacity of 2 instead of 16.<br>
     Leaf: <code>Initialize-line-of-sight-cache-with-low-capacity.patch</code>
+  </li>
+  <li>
+    <i>Minimize size of packed dirty synched entity data item list</i> (original by <a href="https://github.com/hayanesuru">hayanesuru</a>)<br>
+    Leaf: <code>Optimize-SynchedEntityData-packDirty.patch</code>
   </li>
   <li>
     <i>Only update frozen ticks if changed</i> (original by <a href="https://github.com/hayanesuru">hayanesuru</a>)<br>
@@ -175,6 +188,10 @@ Features originating from other projects are carefully verified and updated as p
     Sort the checks in <code>LivingEntity#tryAddFrost()</code>
     in ascending order of cost.<br>
     Leaf: <code>Check-frozen-ticks-before-landing-block.patch</code>
+  </li>
+  <li>
+    <i>Store despawn ranges in enum map</i> (original by <a href="https://github.com/hayanesuru">hayanesuru</a>)<br>
+    Leaf: part of <code>optimize-despawn.patch</code>
   </li>
   <li>
     <i>Store mob counts in an array</i> (original by <a href="https://github.com/ishland">ishland</a>)<br>

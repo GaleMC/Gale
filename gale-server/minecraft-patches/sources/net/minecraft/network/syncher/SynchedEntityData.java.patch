@@ -1,0 +1,19 @@
+--- a/net/minecraft/network/syncher/SynchedEntityData.java
++++ b/net/minecraft/network/syncher/SynchedEntityData.java
+@@ -84,7 +_,15 @@
+         }
+ 
+         this.isDirty = false;
+-        List<SynchedEntityData.DataValue<?>> result = new ArrayList<>();
++        // Gale start - Minimize size of packed dirty synched entity data item list
++        int count = 0;
++        for (SynchedEntityData.DataItem<?> dataItem : this.itemsById) {
++            if (dataItem.isDirty()) {
++                count++;
++            }
++        }
++        ArrayList<SynchedEntityData.DataValue<?>> result = new ArrayList<>(count);
++        // Gale end - Minimize end of packed dirty synched entity data item list
+ 
+         for (SynchedEntityData.DataItem<?> dataItem : this.itemsById) {
+             if (dataItem.isDirty()) {
