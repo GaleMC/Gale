@@ -116,7 +116,11 @@ Features originating from other projects are carefully verified and updated as p
   </li>
   <li>
     <i>Optimize registry values</i><br>
-    Optimize registry value to id conversion, and optimize maps that use registry values as keys.<br>
+    Optimize registry value to id conversion, and optimize maps that use registry values as keys.
+  </li>
+  <li>
+    <i>Optimize tag checks</i><br>
+    Store the tags for each registry value in an efficient data structure.
   </li>
   <li>
     <i>Pre-compute biome fiddle table</i> (original by <a href="https://github.com/hayanesuru">hayanesuru</a>)<br>

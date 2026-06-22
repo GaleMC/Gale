@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/decoration/painting/PaintingVariant.java
 +++ b/net/minecraft/world/entity/decoration/painting/PaintingVariant.java
-@@ -14,7 +_,26 @@
+@@ -14,7 +_,38 @@
  import net.minecraft.resources.RegistryFixedCodec;
  import net.minecraft.util.ExtraCodecs;
  
@@ -24,6 +24,18 @@
 +    public Identifier assetId() { return this.assetId; }
 +    public Optional<Component> title() { return this.title; }
 +    public Optional<Component> author() { return this.author; }
++    private int cachedHashCode;
++    @Override
++    public boolean equals(Object obj) {
++        return obj instanceof PaintingVariant other && other.width == this.width && other.height == this.height && java.util.Objects.equals(other.assetId, this.assetId) && java.util.Objects.equals(other.title, this.title) && java.util.Objects.equals(other.author, this.author);
++    }
++    @Override
++    public int hashCode() {
++        if (this.cachedHashCode == 0) {
++            this.cachedHashCode = java.util.Objects.hash(this.width, this.height, this.assetId, this.title, this.author);
++        }
++        return this.cachedHashCode;
++    }
 +    // Gale end - Optimize registry values - Value to id - Implement
      public static final Codec<PaintingVariant> DIRECT_CODEC = RecordCodecBuilder.create(
          i -> i.group(

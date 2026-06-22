@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/saveddata/maps/MapDecorationType.java
 +++ b/net/minecraft/world/level/saveddata/maps/MapDecorationType.java
-@@ -9,7 +_,26 @@
+@@ -9,7 +_,38 @@
  import net.minecraft.network.codec.StreamCodec;
  import net.minecraft.resources.Identifier;
  
@@ -24,6 +24,18 @@
 +    public int mapColor() { return this.mapColor; }
 +    public boolean explorationMapElement() { return this.explorationMapElement; }
 +    public boolean trackCount() { return this.trackCount; }
++    private int cachedHashCode;
++    @Override
++    public boolean equals(Object obj) {
++        return obj instanceof MapDecorationType other && java.util.Objects.equals(other.assetId, this.assetId) && other.showOnItemFrame == this.showOnItemFrame && other.mapColor == this.mapColor && other.explorationMapElement == this.explorationMapElement && other.trackCount == this.trackCount;
++    }
++    @Override
++    public int hashCode() {
++        if (this.cachedHashCode == 0) {
++            this.cachedHashCode = java.util.Objects.hash(this.assetId, this.showOnItemFrame, this.mapColor, this.explorationMapElement, this.trackCount);
++        }
++        return this.cachedHashCode;
++    }
 +    // Gale end - Optimize registry values - Value to id - Implement
      public static final int NO_MAP_COLOR = -1;
      public static final Codec<Holder<MapDecorationType>> CODEC = BuiltInRegistries.MAP_DECORATION_TYPE.holderByNameCodec();

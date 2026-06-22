@@ -1,6 +1,15 @@
 --- a/net/minecraft/core/Holder.java
 +++ b/net/minecraft/core/Holder.java
-@@ -134,6 +_,7 @@
+@@ -129,11 +_,15 @@
+ 
+     non-sealed class Reference<T> implements Holder<T> {
+         private final HolderOwner<T> owner;
+-        private @Nullable Set<TagKey<T>> tags;
++        // Gale start - Optimize tag checks
++        private java.util.@Nullable List<TagKey<T>> tagsList;
++        private java.util.@Nullable BitSet tagsBitSet;
++        // Gale end - Optimize tag checks
+         private @Nullable DataComponentMap components;
          private final Holder.Reference.Type type;
          private @Nullable ResourceKey<T> key;
          private @Nullable T value;
@@ -8,3 +17,68 @@
  
          protected Reference(final Holder.Reference.Type type, final HolderOwner<T> owner, final @Nullable ResourceKey<T> key, final @Nullable T value) {
              this.owner = owner;
+@@ -178,17 +_,19 @@
+             return this.key() == key;
+         }
+ 
+-        private Set<TagKey<T>> boundTags() {
+-            if (this.tags == null) {
+-                throw new IllegalStateException("Tags not bound");
+-            } else {
+-                return this.tags;
+-            }
+-        }
++        // Gale start - Optimize tag checks
++//        private Set<TagKey<T>> boundTags() {
++//            if (this.tags == null) {
++//                throw new IllegalStateException("Tags not bound");
++//            } else {
++//                return this.tags;
++//            }
++//        }
++        // Gale end - Optimize tag checks
+ 
+         @Override
+         public boolean is(final TagKey<T> tag) {
+-            return this.boundTags().contains(tag);
++            return this.tagsBitSet.get(tag.indexInRegistry); // Gale - Optimize tag checks
+         }
+ 
+         @Override
+@@ -248,7 +_,26 @@
+         }
+ 
+         void bindTags(final Collection<TagKey<T>> tags) {
+-            this.tags = it.unimi.dsi.fastutil.objects.ReferenceSets.unmodifiable(new it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet<>(tags)); // Paper - use reference set because TagKey are interned
++            // Gale start - Optimize tag checks
++            if (tags.isEmpty()) {
++                this.tagsList = java.util.Collections.emptyList();
++                this.tagsBitSet = new java.util.BitSet(0);
++            } else {
++                java.util.ArrayList<TagKey<T>> tagsList = (java.util.ArrayList<TagKey<T>>) tags;
++                tagsList.trimToSize();
++                this.tagsList = tagsList;
++                int highestIndex = 0;
++                for (TagKey<T> tag : tagsList) {
++                    if (tag.indexInRegistry > highestIndex) {
++                        highestIndex = tag.indexInRegistry;
++                    }
++                }
++                this.tagsBitSet = new java.util.BitSet(highestIndex + 1);
++                for (TagKey<T> tag : tagsList) {
++                    this.tagsBitSet.set(tag.indexInRegistry);
++                }
++            }
++            // Gale end - Optimize tag checks
+         }
+ 
+         public void bindComponents(final DataComponentMap components) {
+@@ -257,7 +_,7 @@
+ 
+         @Override
+         public Stream<TagKey<T>> tags() {
+-            return this.boundTags().stream();
++            return this.tagsList.stream(); // Gale - Optimize tag checks
+         }
+ 
+         @Override
