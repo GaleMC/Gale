@@ -105,6 +105,10 @@ Features originating from other projects are carefully verified and updated as p
     Leaf: <code>Optimize-pushable-selector.patch</code>
   </li>
   <li>
+    <i>Optimize registry values</i><br>
+    Optimize registry value to id conversion, and optimize maps that use registry values as keys.<br>
+  </li>
+  <li>
     <i>Pre-compute biome fiddle table</i> (original by <a href="https://github.com/hayanesuru">hayanesuru</a>)<br>
     Leaf: part of <code>cache-biome-for-mob-spawning-and-advancements.patch</code>
   </li>

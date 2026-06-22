@@ -1,0 +1,10 @@
+--- a/net/minecraft/core/Holder.java
++++ b/net/minecraft/core/Holder.java
+@@ -134,6 +_,7 @@
+         private final Holder.Reference.Type type;
+         private @Nullable ResourceKey<T> key;
+         private @Nullable T value;
++        public int idInRegistry; // Gale - Optimize registry values - Holder to id - Store
+ 
+         protected Reference(final Holder.Reference.Type type, final HolderOwner<T> owner, final @Nullable ResourceKey<T> key, final @Nullable T value) {
+             this.owner = owner;

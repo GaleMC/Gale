@@ -1,0 +1,19 @@
+--- a/net/minecraft/core/MappedRegistry.java
++++ b/net/minecraft/core/MappedRegistry.java
+@@ -136,6 +_,8 @@
+         int newId = this.byId.size();
+         this.byId.add(holder);
+         this.toId.put(value, newId);
++        if (value instanceof org.galemc.gale.registry.idawarevalue.IdAwareRegistryValue idAwareValue) idAwareValue.setIdInRegistry(newId); // Gale - Optimize registry values - Value to id - Store
++        holder.idInRegistry = newId; // Gale - Optimize registry values - Holder to id - Store
+         this.registrationInfos.put(key, registrationInfo);
+         this.registryLifecycle = this.registryLifecycle.add(registrationInfo.lifecycle());
+         this.temporaryUnfrozenMap.put(key.identifier(), value); // Paper - support pre-filling in registry mod API
+@@ -156,6 +_,7 @@
+ 
+     @Override
+     public int getId(final @Nullable T thing) {
++        if (thing instanceof org.galemc.gale.registry.idawarevalue.IdAwareRegistryValue idAwareValue) return idAwareValue.getIdInRegistry(); // Gale - Optimize registry values - Value to id - Quick return
+         return this.toId.getInt(thing);
+     }
+ 

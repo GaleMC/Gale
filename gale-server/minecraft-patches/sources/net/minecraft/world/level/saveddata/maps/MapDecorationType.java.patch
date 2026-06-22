@@ -1,0 +1,30 @@
+--- a/net/minecraft/world/level/saveddata/maps/MapDecorationType.java
++++ b/net/minecraft/world/level/saveddata/maps/MapDecorationType.java
+@@ -9,7 +_,26 @@
+ import net.minecraft.network.codec.StreamCodec;
+ import net.minecraft.resources.Identifier;
+ 
+-public record MapDecorationType(Identifier assetId, boolean showOnItemFrame, int mapColor, boolean explorationMapElement, boolean trackCount) {
++// Gale start - Optimize registry values - Value to id - Implement
++public final class MapDecorationType extends org.galemc.gale.registry.idawarevalue.FieldIdAwareRegistryValue {
++    private final Identifier assetId;
++    private final boolean showOnItemFrame;
++    private final int mapColor;
++    private final boolean explorationMapElement;
++    private final boolean trackCount;
++    public MapDecorationType(Identifier assetId, boolean showOnItemFrame, int mapColor, boolean explorationMapElement, boolean trackCount) {
++        this.assetId = assetId;
++        this.showOnItemFrame = showOnItemFrame;
++        this.mapColor = mapColor;
++        this.explorationMapElement = explorationMapElement;
++        this.trackCount = trackCount;
++    }
++    public Identifier assetId() { return this.assetId; }
++    public boolean showOnItemFrame() { return this.showOnItemFrame; }
++    public int mapColor() { return this.mapColor; }
++    public boolean explorationMapElement() { return this.explorationMapElement; }
++    public boolean trackCount() { return this.trackCount; }
++    // Gale end - Optimize registry values - Value to id - Implement
+     public static final int NO_MAP_COLOR = -1;
+     public static final Codec<Holder<MapDecorationType>> CODEC = BuiltInRegistries.MAP_DECORATION_TYPE.holderByNameCodec();
+     public static final StreamCodec<RegistryFriendlyByteBuf, Holder<MapDecorationType>> STREAM_CODEC = ByteBufCodecs.holderRegistry(

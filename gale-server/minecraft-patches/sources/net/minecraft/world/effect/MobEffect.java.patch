@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/effect/MobEffect.java
++++ b/net/minecraft/world/effect/MobEffect.java
+@@ -36,7 +_,7 @@
+ import net.minecraft.world.flag.FeatureFlags;
+ import org.jspecify.annotations.Nullable;
+ 
+-public class MobEffect implements FeatureElement {
++public class MobEffect extends org.galemc.gale.registry.idawarevalue.FieldIdAwareRegistryValue implements FeatureElement { // Gale - Optimize registry values - Value to id - Implement
+     public static final Codec<Holder<MobEffect>> CODEC = BuiltInRegistries.MOB_EFFECT.holderByNameCodec();
+     public static final StreamCodec<RegistryFriendlyByteBuf, Holder<MobEffect>> STREAM_CODEC = ByteBufCodecs.holderRegistry(Registries.MOB_EFFECT);
+     private static final int AMBIENT_ALPHA = Mth.floor(38.25F);

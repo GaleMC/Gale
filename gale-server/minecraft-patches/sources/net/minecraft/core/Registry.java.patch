@@ -1,0 +1,10 @@
+--- a/net/minecraft/core/Registry.java
++++ b/net/minecraft/core/Registry.java
+@@ -145,6 +_,7 @@
+         return new IdMap<Holder<T>>() {
+             @Override
+             public int getId(final Holder<T> thing) {
++                if (thing instanceof Holder.Reference<?> reference) return reference.idInRegistry; // Gale - Optimize registry values - Value to id - Quick return
+                 return Registry.this.getId(thing.value());
+             }
+ 
