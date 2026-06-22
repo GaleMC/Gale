@@ -1,16 +1,64 @@
 --- a/net/minecraft/resources/Identifier.java
 +++ b/net/minecraft/resources/Identifier.java
-@@ -26,6 +_,10 @@
+@@ -15,7 +_,27 @@
+ import net.minecraft.network.codec.StreamCodec;
+ import org.jspecify.annotations.Nullable;
+ 
+-public final class Identifier implements Comparable<Identifier> {
++// Gale start - Subclass Identifier if namespace is non-default
++public sealed class Identifier implements Comparable<Identifier> {
++    private final class NonDefaultNamespaceIdentifier extends Identifier {
++
++        private final String namespace;
++
++        private NonDefaultNamespaceIdentifier(String namespace, String path) {
++            super(path);
++            assert isValidNamespace(namespace);
++            // Paper start - Validate Identifier
++            // Check for the max network string length (capped at Short.MAX_VALUE) as well as the max bytes of a StringTag (length written as an unsigned short)
++            final int length = namespace.length() + path.length() + 1;
++            if (length > Short.MAX_VALUE || io.netty.buffer.ByteBufUtil.utf8MaxBytes(length) > 2 * Short.MAX_VALUE + 1) {
++                throw new IdentifierException("Identifier too long: " + length);
++            }
++            // Paper end - Validate Identifier
++            this.namespace = namespace;
++        }
++
++    }
++    // Gale end - Subclass Identifier if namespace is non-default
+     public static final Codec<Identifier> CODEC = Codec.STRING.<Identifier>comapFlatMap(Identifier::read, Identifier::toString).stable();
+     public static final StreamCodec<ByteBuf, Identifier> STREAM_CODEC = ByteBufCodecs.STRING_UTF8.map(Identifier::parse, Identifier::toString);
+     public static final SimpleCommandExceptionType ERROR_INVALID = new SimpleCommandExceptionType(Component.translatable("argument.id.invalid"));
+@@ -24,20 +_,24 @@
+     public static final String REALMS_NAMESPACE = "realms";
+     public static final String ALLOWED_NAMESPACE_CHARACTERS = "[a-z0-9_.-]";
      public static final String PAPER_NAMESPACE = "paper"; // Paper
-     private final String namespace;
+-    private final String namespace;
++//    private final String namespace; // Gale - Subclass Identifier if namespace is non-default
      private final String path;
 +    // Gale start - Cache Identifier toString and hashCode
 +    private @Nullable String cachedString;
 +    private int cachedHashCode;
 +    // Gale end - Cache Identifier toString and hashCode
  
-     private Identifier(final String namespace, final String path) {
-         assert isValidNamespace(namespace);
+-    private Identifier(final String namespace, final String path) {
+-        assert isValidNamespace(namespace);
++    private Identifier(final String path) { // Gale - Subclass Identifier if namespace is non-default
++//        assert isValidNamespace(namespace); // Gale - Subclass Identifier if namespace is non-default
+         assert isValidPath(path);
+         // Paper start - Validate Identifier
+         // Check for the max network string length (capped at Short.MAX_VALUE) as well as the max bytes of a StringTag (length written as an unsigned short)
+-        final int length = namespace.length() + path.length() + 1;
++        final int length = DEFAULT_NAMESPACE.length() + path.length() + 1;
+         if (length > Short.MAX_VALUE || io.netty.buffer.ByteBufUtil.utf8MaxBytes(length) > 2 * Short.MAX_VALUE + 1) {
+             throw new IdentifierException("Identifier too long: " + length);
+         }
+         // Paper end - Validate Identifier
+-        this.namespace = namespace;
++//        this.namespace = namespace; // Gale - Subclass Identifier if namespace is non-default
+         this.path = path;
+     }
+ 
 @@ -50,7 +_,11 @@
      }
  
