@@ -1,6 +1,32 @@
 --- a/net/minecraft/world/entity/LivingEntity.java
 +++ b/net/minecraft/world/entity/LivingEntity.java
-@@ -3793,7 +_,13 @@
+@@ -561,17 +_,15 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
+     }
+ 
+     protected void tryAddFrost() {
+-        if (!this.getBlockStateOnLegacy().isAir()) {
+-            int ticksFrozen = this.getTicksFrozen();
+-            if (ticksFrozen > 0) {
+-                AttributeInstance speed = this.getAttribute(Attributes.MOVEMENT_SPEED);
+-                if (speed == null) {
+-                    return;
+-                }
+-
+-                float slowAmount = -0.05F * this.getPercentFrozen();
+-                speed.addTransientModifier(new AttributeModifier(SPEED_MODIFIER_POWDER_SNOW_ID, slowAmount, AttributeModifier.Operation.ADD_VALUE));
++        int ticksFrozen = this.getTicksFrozen();
++        if (ticksFrozen > 0) {
++            AttributeInstance speed = this.getBlockStateOnLegacy().isAir() ? null : this.getAttribute(Attributes.MOVEMENT_SPEED); // Gale - Lithium - check frozen ticks before landing block
++            if (speed == null) {
++                return;
+             }
++
++            float slowAmount = -0.05F * this.getPercentFrozen();
++            speed.addTransientModifier(new AttributeModifier(SPEED_MODIFIER_POWDER_SNOW_ID, slowAmount, AttributeModifier.Operation.ADD_VALUE));
+         }
+     }
+ 
+@@ -3791,7 +_,13 @@
          if (this.level() instanceof ServerLevel serverLevel) {
              profiler.push("freezing");
              if ((!this.isInPowderSnow || !this.canFreeze()) && !this.freezeLocked) { // Paper - Freeze Tick Lock API
