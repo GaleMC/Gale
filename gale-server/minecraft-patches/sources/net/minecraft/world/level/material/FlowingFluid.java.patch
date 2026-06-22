@@ -1,0 +1,20 @@
+--- a/net/minecraft/world/level/material/FlowingFluid.java
++++ b/net/minecraft/world/level/material/FlowingFluid.java
+@@ -397,7 +_,7 @@
+         final FluidState testFluidState
+     ) {
+         return !this.isSourceBlockOfThisType(testFluidState)
+-            && canHoldAnyFluid(testState)
++            && testState.isAny(org.dreeam.leaf.util.BlockMasks.CAN_HOLD_ANY_FLUID) // Gale - Pre-compute block state predicates - Apply
+             && canPassThroughWall(direction, level, sourcePos, sourceState, testPos, testState);
+     }
+ 
+@@ -479,7 +_,7 @@
+     }
+ 
+     private static boolean canHoldFluid(final BlockGetter level, final BlockPos pos, final BlockState state, final Fluid newFluid) {
+-        return canHoldAnyFluid(state) && canHoldSpecificFluid(level, pos, state, newFluid);
++        return state.isAny(org.dreeam.leaf.util.BlockMasks.CAN_HOLD_ANY_FLUID) && canHoldSpecificFluid(level, pos, state, newFluid); // Gale - Pre-compute block state predicates - Apply
+     }
+ 
+     private static boolean canHoldSpecificFluid(final BlockGetter level, final BlockPos pos, final BlockState state, final Fluid newFluid) {

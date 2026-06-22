@@ -7,7 +7,7 @@
 -                double modifier = this.testInvisible ? target.getVisibilityPercent(targeter) : 1.0;
 -                double visibilityDistance = Math.max(this.range * modifier, 2.0);
                  double distanceToSqr = targeter.distanceToSqr(target.getX(), target.getY(), target.getZ());
-+                // Gale start - Airplane - check targeting range before getting visibility
++                // Gale start - Check targeting range before getting visibility
 +                double followRangeRaw = this.range;
 +
 +                if (distanceToSqr > followRangeRaw * followRangeRaw) {
@@ -16,7 +16,7 @@
 +
 +                double modifier = this.testInvisible ? target.getVisibilityPercent(targeter) : 1.0;
 +                double visibilityDistance = Math.max(followRangeRaw * modifier, 2.0);
-+                // Gale end - Airplane - check targeting range before getting visibility
++                // Gale end - Check targeting range before getting visibility
                  if (distanceToSqr > visibilityDistance * visibilityDistance) {
                      return false;
                  }

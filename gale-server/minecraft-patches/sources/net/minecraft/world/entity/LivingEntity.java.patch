@@ -16,18 +16,27 @@
  
                  float slowAmount = -0.05F * this.getPercentFrozen();
                  speed.addTransientModifier(new AttributeModifier(SPEED_MODIFIER_POWDER_SNOW_ID, slowAmount, AttributeModifier.Operation.ADD_VALUE));
+@@ -2160,7 +_,7 @@
+         } else {
+             BlockPos ladderCheckPos = this.blockPosition();
+             BlockState state = this.getInBlockState();
+-            if (this.isFallFlying() && state.is(BlockTags.CAN_GLIDE_THROUGH)) {
++            if (this.isFallFlying() && state.isAny(org.dreeam.leaf.util.BlockMasks.CAN_GLIDE_THROUGH_TAG)) { // Gale - Pre-compute block state predicates - Apply
+                 return false;
+             } else if (state.is(BlockTags.CLIMBABLE)) {
+                 this.lastClimbablePos = Optional.of(ladderCheckPos);
 @@ -3793,7 +_,13 @@
          if (this.level() instanceof ServerLevel serverLevel) {
              profiler.push("freezing");
              if ((!this.isInPowderSnow || !this.canFreeze()) && !this.freezeLocked) { // Paper - Freeze Tick Lock API
 -                this.setTicksFrozen(Math.max(0, this.getTicksFrozen() - 2));
-+                // Gale start - Leaf - Only update frozen ticks if changed
++                // Gale start - Only update frozen ticks if changed
 +                int ticksFrozen = this.getTicksFrozen();
 +                int newTicksFrozen = Math.max(0, ticksFrozen - 2);
 +                if (ticksFrozen != newTicksFrozen) {
 +                    this.setTicksFrozen(newTicksFrozen);
 +                }
-+                // Gale end - Leaf - Only update frozen ticks if changed
++                // Gale end - Only update frozen ticks if changed
              }
  
              this.removeFrost();

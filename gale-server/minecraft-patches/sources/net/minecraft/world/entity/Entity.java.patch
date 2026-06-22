@@ -46,6 +46,29 @@
                  profiler.pop();
              }
          }
+@@ -1456,7 +_,7 @@
+     }
+ 
+     private boolean isStateClimbable(final BlockState state) {
+-        return state.is(BlockTags.CLIMBABLE) || state.is(Blocks.POWDER_SNOW);
++        return state.isAny(org.dreeam.leaf.util.BlockMasks.CLIMBABLE_TAG_OR_POWDER_SNOW_CLASS); // Gale - Pre-compute block state predicates - Apply
+     }
+ 
+     private boolean vibrationAndSoundEffectsFromBlock(
+@@ -1540,9 +_,10 @@
+             }
+ 
+             BlockState belowState = this.level().getBlockState(getOnPos);
+-            return (!(offset <= 0.5) || !belowState.is(BlockTags.FENCES))
+-                    && !belowState.is(BlockTags.WALLS)
+-                    && !(belowState.getBlock() instanceof FenceGateBlock)
++            // Gale start - Pre-compute block state predicates - Apply
++            return (!(offset <= 0.5) || !belowState.isAny(org.dreeam.leaf.util.BlockMasks.FENCES_TAG))
++                    && !belowState.isAny(org.dreeam.leaf.util.BlockMasks.WALLS_TAG_OR_FENCE_GATE_CLASS)
++            // Gale end - Pre-compute block state predicates - Apply
+                 ? getOnPos.atY(Mth.floor(this.position.y - offset))
+                 : getOnPos;
+         } else {
 @@ -4580,6 +_,11 @@
      }
  

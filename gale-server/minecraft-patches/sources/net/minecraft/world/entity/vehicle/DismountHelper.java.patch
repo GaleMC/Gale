@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/vehicle/DismountHelper.java
++++ b/net/minecraft/world/entity/vehicle/DismountHelper.java
+@@ -55,7 +_,7 @@
+ 
+     public static VoxelShape nonClimbableShape(final BlockGetter level, final BlockPos pos) {
+         BlockState blockState = level.getBlockState(pos);
+-        return !blockState.is(BlockTags.CLIMBABLE) && (!(blockState.getBlock() instanceof TrapDoorBlock) || !blockState.getValue(TrapDoorBlock.OPEN))
++        return !blockState.isAny(org.dreeam.leaf.util.BlockMasks.CLIMBABLE_TAG_OR_TRAP_DOOR_CLASS_AND_OPEN_PROPERTY_IS_TRUE) // Gale - Pre-compute block state predicates - Apply
+             ? blockState.getCollisionShape(level, pos)
+             : Shapes.empty();
+     }

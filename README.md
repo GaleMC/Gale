@@ -82,10 +82,10 @@ Features originating from other projects are carefully verified and updated as p
     Leaf: <code>Cache-world-generator-sea-level.patch</code>
   </li>
   <li>
-    <i>Sort tryAddFrost checks</i> (original by <a href="https://github.com/2No2Name">2No2Name</a>)<br>
-    Sort the checks in <code>LivingEntity#tryAddFrost()</code>
-    in ascending order of cost.<br>
-    Leaf: <code>Check-frozen-ticks-before-landing-block.patch</code>
+    <i>Check targeting range before getting visibility</i> (original by <a href="https://github.com/PaulBGD">PaulBGD</a><br>
+    Check targeting range before computing visibility distance,
+    because the latter is more expensive.<br>
+    Leaf: <code>Check-targeting-range-before-getting-visibility.patch</code>
   </li>
   <li>
     <i>Initialize sensing with low capacity</i><br>
@@ -128,6 +128,17 @@ Features originating from other projects are carefully verified and updated as p
     Leaf: part of <code>cache-biome-for-mob-spawning-and-advancements.patch</code>
   </li>
   <li>
+    <i>Pre-compute block state predicates</i> (original by <a href="https://github.com/hayanesuru">hayanesuru</a>)<br>
+    Pre-computes some commonly tested predicates on <code>BlockBehaviour</code>.<br>
+    Leaf:
+    <ul>
+      <li>part of <code>Cache-block-state-tags.patch</code></li>
+      <li><code>optimize-canHoldAnyFluid.patch</code></li>
+      <li>part of <code>optimize-getOnPos.patch</code></li>
+      <li><code>optimize-isStateClimbable.patch</code></li>
+    </ul>
+  </li>
+  <li>
     <i>Replace division by multiplication</i> (original by <a href="https://github.com/2No2Name">2No2Name</a>)<br>
     Multiplication is faster than division in every environment.<br>
     Leaf: <code>Replace-division-by-multiplication-in-CubePointRange.patch</code>
@@ -139,6 +150,10 @@ Features originating from other projects are carefully verified and updated as p
   <li>
     <i>Skip cloning advancement criteria</i> (original by <a href="https://github.com/etil2jz">etil2jz</a>)<br>
     Leaf: <code>Skip-cloning-advancement-criteria.patch</code>
+  </li>
+  <li>
+    <i>Skip enderman teleport if requires main thread chunk load</i> (original by <a href="https://github.com/PaulBGD">PaulBGD</a>)<br>
+    Leaf: <code>Reduce-enderman-teleport-chunk-lookups.patch</code>
   </li>
   <li>
     <i>Skip entity move if movement is zero</i> (original by <a href="https://github.com/ishland">ishland</a>)<br>
@@ -154,6 +169,12 @@ Features originating from other projects are carefully verified and updated as p
   <li>
     <i>Skip PlayerCommandSendEvent if no listeners</i> (original by <a href="https://github.com/billygalbreath">BillyGalbreath</a>)<br>
     Leaf: <code>Skip-PlayerCommandSendEvent-if-there-are-no-listener.patch</code>
+  </li>
+  <li>
+    <i>Sort tryAddFrost checks</i> (original by <a href="https://github.com/2No2Name">2No2Name</a>)<br>
+    Sort the checks in <code>LivingEntity#tryAddFrost()</code>
+    in ascending order of cost.<br>
+    Leaf: <code>Check-frozen-ticks-before-landing-block.patch</code>
   </li>
   <li>
     <i>Store mob counts in an array</i> (original by <a href="https://github.com/ishland">ishland</a>)<br>

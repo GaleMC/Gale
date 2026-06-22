@@ -1,0 +1,3 @@
+# This file is auto generated, any changes may be overridden!
+# See CONTRIBUTING.md on how to add access transformers.
+public net.minecraft.world.level.material.FlowingFluid canHoldAnyFluid(Lnet/minecraft/world/level/block/state/BlockState;)Z

@@ -1,0 +1,15 @@
+--- a/net/minecraft/world/level/block/state/BlockBehaviour.java
++++ b/net/minecraft/world/level/block/state/BlockBehaviour.java
+@@ -490,6 +_,12 @@
+         private boolean emptyCollisionShape;
+         private boolean emptyConstantCollisionShape;
+         private VoxelShape constantCollisionShape;
++        // Gale start - Pre-compute block state predicates
++        private int predicateFlags;
++        public boolean isAny(int predicateMask) {
++            return (this.predicateFlags & predicateMask) != 0;
++        }
++        // Gale end - Pre-compute block state predicates
+ 
+         private static void initCaches(final VoxelShape shape, final boolean neighbours) {
+             ((ca.spottedleaf.moonrise.patches.collisions.shape.CollisionVoxelShape)shape).moonrise$isFullBlock();
