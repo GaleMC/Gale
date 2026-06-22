@@ -1,0 +1,26 @@
+--- a/net/minecraft/world/level/block/entity/BlockEntityType.java
++++ b/net/minecraft/world/level/block/entity/BlockEntityType.java
+@@ -17,6 +_,14 @@
+     public BlockEntityType(final BlockEntityType.BlockEntitySupplier<? extends T> factory, final Set<Block> validBlocks) {
+         this.factory = factory;
+         this.validBlocks = validBlocks;
++        // Gale start - Optimize BlockEntityType#isValid
++        for (Block validBlock : validBlocks) {
++            if (validBlock.blockEntityType != null) {
++                throw new IllegalStateException("Duplicate block entity type");
++            }
++            validBlock.blockEntityType = this;
++        }
++        // Gale end - Optimize BlockEntityType#isValid
+     }
+ 
+     public T create(final BlockPos worldPosition, final BlockState blockState) {
+@@ -24,7 +_,7 @@
+     }
+ 
+     public boolean isValid(final BlockState state) {
+-        return this.validBlocks.contains(state.getBlock());
++        return state.getBlock().blockEntityType == this; // Gale - Optimize BlockEntityType#isValid
+     }
+ 
+     @Deprecated

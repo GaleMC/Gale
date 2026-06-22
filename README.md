@@ -98,6 +98,11 @@ Features originating from other projects are carefully verified and updated as p
     Leaf: <code>Only-update-frozen-ticks-if-changed.patch</code>
   </li>
   <li>
+    <i>Optimize BlockEntityType#isValid</i> (original by <a href="https://github.com/hayanesuru">hayanesuru</a>)<br>
+    Store the corresponding block entity inside <code>Block</code> directly.<br>
+    Leaf: <code>Optimize-BlockEntityType-isValid.patch</code>
+  </li>
+  <li>
     <i>Optimize entity data serializer list</i><br>
     Make <code>EntityDataSerializers#SERIALIZERS</code> a simple list
     and store the index in each <code>EntityDataSerializer</code> directly.

@@ -9,6 +9,14 @@
      private static final LoadingCache<VoxelShape, Boolean> SHAPE_FULL_BLOCK_CACHE = CacheBuilder.newBuilder()
          .maximumSize(512L)
          .weakKeys()
+@@ -127,6 +_,7 @@
+     }
+     // Paper end - Protect Bedrock and End Portal/Frames from being destroyed
+     private @Nullable Item item;
++    public net.minecraft.world.level.block.entity.@Nullable BlockEntityType<?> blockEntityType = null; // Gale - Optimize BlockEntityType#isValid
+     private static final int CACHE_SIZE = 256;
+     private static final ThreadLocal<Object2ByteLinkedOpenHashMap<Block.ShapePairKey>> OCCLUSION_CACHE = ThreadLocal.withInitial(() -> {
+         Object2ByteLinkedOpenHashMap<Block.ShapePairKey> map = new Object2ByteLinkedOpenHashMap<Block.ShapePairKey>(256, 0.25F) {
 @@ -148,8 +_,7 @@
              return 0;
          }
