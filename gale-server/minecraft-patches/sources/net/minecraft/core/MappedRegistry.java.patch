@@ -1,0 +1,10 @@
+--- a/net/minecraft/core/MappedRegistry.java
++++ b/net/minecraft/core/MappedRegistry.java
+@@ -136,6 +_,7 @@
+         int newId = this.byId.size();
+         this.byId.add(holder);
+         this.toId.put(value, newId);
++        if (value instanceof org.galemc.gale.registry.valuebasedmap.RegistryIdAware registryIdAware) registryIdAware.setIdInRegistry(newId); // Gale - Registry values can be id-aware
+         this.registrationInfos.put(key, registrationInfo);
+         this.registryLifecycle = this.registryLifecycle.add(registrationInfo.lifecycle());
+         this.temporaryUnfrozenMap.put(key.identifier(), value); // Paper - support pre-filling in registry mod API

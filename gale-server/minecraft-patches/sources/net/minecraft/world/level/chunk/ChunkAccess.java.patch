@@ -1,0 +1,13 @@
+--- a/net/minecraft/world/level/chunk/ChunkAccess.java
++++ b/net/minecraft/world/level/chunk/ChunkAccess.java
+@@ -73,8 +_,8 @@
+     protected final @Nullable BlendingData blendingData;
+     public final Map<Heightmap.Types, Heightmap> heightmaps = Maps.newEnumMap(Heightmap.Types.class);
+     // Paper - rewrite chunk system
+-    private final Map<Structure, StructureStart> structureStarts = Maps.newHashMap();
+-    private final Map<Structure, LongSet> structuresRefences = Maps.newHashMap();
++    private final org.galemc.gale.registry.valuebasedmap.RegistryIdAware2ObjectArrayMap<Structure, StructureStart> structureStarts = Structure.createRegistryIdAwareMap(); // Gale - Optimize maps with registry values as keys - Chunk access structures
++    private final org.galemc.gale.registry.valuebasedmap.RegistryIdAware2ObjectArrayMap<Structure, LongSet> structuresRefences = Structure.createRegistryIdAwareMap(); // Gale - Optimize maps with registry values as keys - Chunk access structures
+     protected final Map<BlockPos, CompoundTag> pendingBlockEntities = Maps.newHashMap();
+     public final Map<BlockPos, BlockEntity> blockEntities = new Object2ObjectOpenHashMap<>();
+     protected final LevelHeightAccessor levelHeightAccessor;
