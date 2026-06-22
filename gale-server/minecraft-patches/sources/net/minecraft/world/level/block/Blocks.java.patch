@@ -1,0 +1,9 @@
+--- a/net/minecraft/world/level/block/Blocks.java
++++ b/net/minecraft/world/level/block/Blocks.java
+@@ -6002,5 +_,6 @@
+                 state.initCache();
+             }
+         }
++        Block.BLOCK_STATE_REGISTRY.trimToSize(); // Gale - Optimize global block state palette
+     }
+ }

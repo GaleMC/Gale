@@ -34,7 +34,7 @@
  
 -                float blockSpeedFactor = this.getBlockSpeedFactor();
 -                this.setDeltaMovement(this.getDeltaMovement().multiply(blockSpeedFactor, 1.0, blockSpeedFactor));
-+                // Gale start - skip negligible planar movement multiplication
++                // Gale start - Skip negligible planar movement multiplication
 +                Vec3 currentDelta = this.getDeltaMovement();
 +                if (currentDelta.x < -1.0E-6D || currentDelta.x > 1.0E-6D || currentDelta.z < -1.0E-6D || currentDelta.z > 1.0E-6D) {
 +                    float blockSpeedFactor = this.getBlockSpeedFactor();
@@ -42,7 +42,7 @@
 +                        this.setDeltaMovement(currentDelta.multiply(blockSpeedFactor, 1.0D, blockSpeedFactor));
 +                    }
 +                }
-+                // Gale end - skip negligible planar movement multiplication
++                // Gale end - Skip negligible planar movement multiplication
                  profiler.pop();
              }
          }

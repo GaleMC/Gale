@@ -5,7 +5,7 @@
  
  public class EntityDataSerializers {
 -    private static final CrudeIncrementalIntIdentityHashBiMap<EntityDataSerializer<?>> SERIALIZERS = CrudeIncrementalIntIdentityHashBiMap.create(16);
-+    private static final List<EntityDataSerializer<?>> SERIALIZERS = new it.unimi.dsi.fastutil.objects.ObjectArrayList<>(); // Gale - Optimize entity data serializer list
++    private static final it.unimi.dsi.fastutil.objects.ObjectArrayList<EntityDataSerializer<?>> SERIALIZERS = new it.unimi.dsi.fastutil.objects.ObjectArrayList<>(); // Gale - Optimize entity data serializer list
      public static final EntityDataSerializer<Byte> BYTE = EntityDataSerializer.forValueType(ByteBufCodecs.BYTE);
      public static final EntityDataSerializer<Integer> INT = EntityDataSerializer.forValueType(ByteBufCodecs.VAR_INT);
      public static final EntityDataSerializer<Long> LONG = EntityDataSerializer.forValueType(ByteBufCodecs.VAR_LONG);
@@ -37,3 +37,10 @@
      }
  
      private EntityDataSerializers() {
+@@ -226,5 +_,6 @@
+         registerSerializer(QUATERNION);
+         registerSerializer(RESOLVABLE_PROFILE);
+         registerSerializer(HUMANOID_ARM);
++        SERIALIZERS.trim(); // Gale - Optimize entity data serializer list
+     }
+ }

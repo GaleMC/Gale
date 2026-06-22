@@ -1,0 +1,9 @@
+--- a/net/minecraft/world/level/block/state/BlockState.java
++++ b/net/minecraft/world/level/block/state/BlockState.java
+@@ -27,4 +_,6 @@
+     protected BlockState asState() {
+         return this;
+     }
++
++    public int indexInRegistry; // Gale - Optimize entity data serializer list
+ }

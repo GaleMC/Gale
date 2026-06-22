@@ -99,8 +99,11 @@ Features originating from other projects are carefully verified and updated as p
   <li>
     <i>Optimize entity data serializer list</i><br>
     Make <code>EntityDataSerializers#SERIALIZERS</code> a simple list
-    and store the index in each <code>DataSerializer</code> directly.<br>
-    Leaf: <code>Optimize-matching-item-checks.patch</code>
+    and store the index in each <code>EntityDataSerializer</code> directly.
+  </li>
+  <li>
+    <i>Optimize global block state palette</i><br>
+    Store the index in <code>Block#BLOCK_STATE_REGISTRY</code> in each <code>BlockState</code> directly.
   </li>
   <li>
     <i>Optimize matching item checks</i><br>
@@ -136,6 +139,12 @@ Features originating from other projects are carefully verified and updated as p
     <i>Skip entity move if movement is zero</i> (original by <a href="https://github.com/ishland">ishland</a>)<br>
     Run a simplified version of <code>Entity#move()</code> if the movement delta is zero.<br>
     Leaf: <code>Skip-entity-move-if-movement-is-zero.patch</code>
+  </li>
+  <li>
+    <i>Skip negligible planar movement multiplication</i><br>
+    Skip calling <code>Entity#getBlockSpeedFactor()</code> from <code>Entity#move()</code>
+    when planar delta movement is negligible (within 1.0E-6 threshold).<br>
+    Leaf: <code>Skip-negligible-planar-movement-multiplication.patch</code>
   </li>
   <li>
     <i>Skip PlayerCommandSendEvent if no listeners</i> (original by <a href="https://github.com/billygalbreath">BillyGalbreath</a>)<br>

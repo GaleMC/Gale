@@ -1,0 +1,11 @@
+--- a/net/minecraft/core/IdMapper.java
++++ b/net/minecraft/core/IdMapper.java
+@@ -11,7 +_,7 @@
+ 
+ public class IdMapper<T> implements IdMap<T> {
+     private int nextId;
+-    private final Reference2IntMap<T> tToId;
++    protected Reference2IntMap<T> tToId;
+     private final List<T> idToT;
+ 
+     public IdMapper() {
