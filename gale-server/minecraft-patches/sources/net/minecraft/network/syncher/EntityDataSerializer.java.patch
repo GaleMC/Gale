@@ -1,0 +1,52 @@
+--- a/net/minecraft/network/syncher/EntityDataSerializer.java
++++ b/net/minecraft/network/syncher/EntityDataSerializer.java
+@@ -13,13 +_,45 @@
+     T copy(T value);
+ 
+     static <T> EntityDataSerializer<T> forValueType(final StreamCodec<? super RegistryFriendlyByteBuf, T> codec) {
+-        return (ForValueType<T>)() -> codec;
++        return new ForValueType<>(codec); // Gale - Optimize entity data serializer list
+     }
+ 
+-    interface ForValueType<T> extends EntityDataSerializer<T> {
++    // Gale start - Optimize entity data serializer list
++    class ForValueType<T> extends AbstractEntityDataSerializer<T> {
+         @Override
+-        default T copy(final T value) {
++        public T copy(final T value) {
+             return value;
+         }
+-    }
++
++        private final StreamCodec<? super RegistryFriendlyByteBuf, T> codec;
++
++        @Override
++        public StreamCodec<? super RegistryFriendlyByteBuf, T> codec() {
++            return this.codec;
++        }
++
++        public ForValueType(StreamCodec<? super RegistryFriendlyByteBuf, T> codec) {
++            this.codec = codec;
++        }
++    }
++
++    void setIndexInList(int index);
++
++    int getIndexInList();
++
++    abstract class AbstractEntityDataSerializer<T> implements EntityDataSerializer<T> {
++        private int indexInList;
++
++        @Override
++        public void setIndexInList(int index) {
++            this.indexInList = index;
++        }
++
++        @Override
++        public int getIndexInList() {
++            return this.indexInList;
++        }
++    }
++    // Gale end - Optimize entity data serializer list
++
+ }

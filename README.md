@@ -8,7 +8,8 @@
 
 ## About
 
-Gale is a high-performance fork of [Paper](https://github.com/PaperMC/Paper) that puts reliability first.
+Gale is a drop-in replacement for [Paper](https://github.com/PaperMC/Paper)
+that improves performance reliably and without changing game mechanics.
 
 ## Benefits
 
@@ -94,6 +95,12 @@ Features originating from other projects are carefully verified and updated as p
   <li>
     <i>Only update frozen ticks if changed</i> (original by <a href="https://github.com/hayanesuru">hayanesuru</a>)<br>
     Leaf: <code>Only-update-frozen-ticks-if-changed.patch</code>
+  </li>
+  <li>
+    <i>Optimize entity data serializer list</i><br>
+    Make <code>EntityDataSerializers#SERIALIZERS</code> a simple list
+    and store the index in each <code>DataSerializer</code> directly.<br>
+    Leaf: <code>Optimize-matching-item-checks.patch</code>
   </li>
   <li>
     <i>Optimize matching item checks</i><br>
