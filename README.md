@@ -210,7 +210,9 @@ Features originating from other projects are carefully verified and updated as p
     Leaf: <code>Check-frozen-ticks-before-landing-block.patch</code>
   </li>
   <li>
-    <i>Store canSee in a fast-access format</i>
+    <i>Store canSee in a fast-access format</i><br>
+    Complement the map that backs <code>canSee</code>
+    by a packed boolean array for fast operations.
   </li>
   <li>
     <i>Store despawn ranges in enum map</i> (original by <a href="https://github.com/hayanesuru">hayanesuru</a>)<br>
@@ -221,7 +223,9 @@ Features originating from other projects are carefully verified and updated as p
     Leaf: <code>Store-mob-counts-in-an-array.patch</code>
   </li>
   <li>
-    <i>Store seenBy in a fast-access format</i>
+    <i>Store seenBy in a fast-access format</i><br>
+    Replace the <code>seenBy</code> set by a list (for fast iteration)
+    and packed boolean array (for fast contains checks).
   </li>
   <li>
     <i>Update boss bar within tick</i> (original by <a href="https://github.com/jellysquid3">jellysquid3</a>)<br>
