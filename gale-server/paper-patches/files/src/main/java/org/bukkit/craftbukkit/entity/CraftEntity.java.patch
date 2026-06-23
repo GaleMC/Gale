@@ -46,7 +46,7 @@
 +    }
 +
 +    public void unsetVisibilityInverted(CraftPlayer player) {
-+        this.packedVisibilityInversions.unset(player.packedVisibilityInversionsWordIndex, player.packedVisibilityInversionsWordMask);
++        this.packedVisibilityInversions.unsetUnsafe(player.packedVisibilityInversionsWordIndex, player.packedVisibilityInversionsWordMask);
 +    }
 +    // Gale end - Store canSee in a fast-access format
 +

@@ -57,7 +57,7 @@
 +                            }
 +                            writeI++;
 +                        } else {
-+                            this.seenByPackedArray.unset(conn.packedSeenByWordIndex, conn.packedSeenByWordMask);
++                            this.seenByPackedArray.unsetUnsafe(conn.packedSeenByWordIndex, conn.packedSeenByWordMask);
 +                            this.afterRemovePlayer(player, readI == size - 1 && writeI == 0);
 +                        }
 +                    }
@@ -102,7 +102,7 @@
 +                        }
 +                        writeI++;
 +                    } else {
-+                        this.seenByPackedArray.unset(conn.packedSeenByWordIndex, conn.packedSeenByWordMask);
++                        this.seenByPackedArray.unsetUnsafe(conn.packedSeenByWordIndex, conn.packedSeenByWordMask);
 +                        this.afterRemovePlayer(player, readI == size - 1 && writeI == 0);
 +                    }
 +                }
@@ -191,7 +191,7 @@
 +            // Gale start - Store seenBy in a fast-access format
 +            net.minecraft.server.network.ServerGamePacketListenerImpl connection = player.connection;
 +            if (this.seenByPackedArray.get(connection.packedSeenByWordIndex, connection.packedSeenByWordMask)) {
-+                this.seenByPackedArray.unset(connection.packedSeenByWordIndex, connection.packedSeenByWordMask);
++                this.seenByPackedArray.unsetUnsafe(connection.packedSeenByWordIndex, connection.packedSeenByWordMask);
 +                this.seenByList.remove(connection);
 +                this.afterRemovePlayer(player, this.seenByList.isEmpty());
 +                // Gale end - Store seenBy in a fast-access format

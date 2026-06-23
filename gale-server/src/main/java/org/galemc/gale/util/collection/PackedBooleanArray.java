@@ -22,6 +22,12 @@ public class PackedBooleanArray {
     }
 
     public void unset(int wordIndex, long wordMask) {
+        if (wordIndex < this.array.length) {
+            this.unsetUnsafe(wordIndex, wordMask);
+        }
+    }
+
+    public void unsetUnsafe(int wordIndex, long wordMask) {
         this.array[wordIndex] &= ~wordMask;
     }
 
