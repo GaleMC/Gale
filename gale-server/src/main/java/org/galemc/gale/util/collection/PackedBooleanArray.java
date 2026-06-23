@@ -29,10 +29,8 @@ public class PackedBooleanArray {
         this.array = EmptyArrays.LONG;
     }
 
-    public static final PackedBooleanArray EMPTY = new PackedBooleanArray(EmptyArrays.LONG);
-
     public static PackedBooleanArray createEmpty() {
-        return EMPTY;
+        return new PackedBooleanArray(EmptyArrays.LONG);
     }
 
     public static PackedBooleanArray createWithInitial(int wordIndex, long wordMask) {
