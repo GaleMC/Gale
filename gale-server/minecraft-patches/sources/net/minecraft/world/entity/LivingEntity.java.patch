@@ -41,6 +41,16 @@
                  return false;
              } else if (state.is(BlockTags.CLIMBABLE)) {
                  this.lastClimbablePos = Optional.of(ladderCheckPos);
+@@ -2687,7 +_,7 @@
+                     this.playSound(deathSound, this.getSoundVolume(), (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
+                 }
+-
+-                if (!(this instanceof Player)) {
++
++                if (!(this instanceof Player) && this.level().isClientSide()) { // Gale - Guard death event handling against server-side replay
+                     this.setHealth(0.0F);
+                     this.die(this.damageSources().generic());
+                 }
 @@ -3793,7 +_,13 @@
          if (this.level() instanceof ServerLevel serverLevel) {
              profiler.push("freezing");
