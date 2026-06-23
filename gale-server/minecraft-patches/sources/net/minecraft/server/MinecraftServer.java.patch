@@ -16,3 +16,35 @@
      }
  
      protected abstract boolean initServer() throws IOException;
+@@ -1370,6 +_,11 @@
+ 
+                 try (Profiler.Scope ignored = Profiler.use(this.createProfiler())) {
+                     this.processPacketsAndTick(sprinting);
++                    // Gale start - Simulate next tick
++                    org.galemc.gale.async.SimulationFlag.REAL = false;
++                    this.processPacketsAndTick(true);
++                    org.galemc.gale.async.SimulationFlag.REAL = true;
++                    // Gale end - Simulate next tick
+                     ProfilerFiller profiler = Profiler.get();
+                     profiler.push("nextTickWait");
+                     this.mayHaveDelayedTasks = true;
+@@ -1698,8 +_,8 @@
+         profiler.push("tick");
+         this.tickFrame.start();
+         // Paper - improve tick loop - moved into runAllTasksAtTickStart
+-        this.runAllTasksAtTickStart(); // Paper - improve tick loop
+-        this.tickServer(sprinting ? () -> false : this::haveTime);
++        if (org.galemc.gale.async.SimulationFlag.REAL) this.runAllTasksAtTickStart(); // Paper - improve tick loop // Gale - Simulate next tick
++        if (org.galemc.gale.async.SimulationFlag.REAL) this.tickServer(sprinting ? () -> false : this::haveTime);
+         // Paper start - rewrite chunk system
+         final Throwable crash = this.chunkSystemCrash;
+         if (crash != null) {
+@@ -1708,7 +_,7 @@
+         }
+         // Paper end - rewrite chunk system
+         this.tickFrame.end();
+-        this.recordEndOfTick(); // Paper - improve tick loop
++        if (org.galemc.gale.async.SimulationFlag.REAL) this.recordEndOfTick(); // Paper - improve tick loop // Gale - Simulate next tick
+         profiler.pop();
+     }
+ 
