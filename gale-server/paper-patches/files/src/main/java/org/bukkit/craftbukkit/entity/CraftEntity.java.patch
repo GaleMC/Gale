@@ -4,11 +4,11 @@
      // Paper start - Folia shedulers
      public final io.papermc.paper.threadedregions.EntityScheduler taskScheduler = new io.papermc.paper.threadedregions.EntityScheduler(this);
      private final io.papermc.paper.threadedregions.scheduler.FoliaEntityScheduler apiScheduler = new io.papermc.paper.threadedregions.scheduler.FoliaEntityScheduler(this);
-+    private long[] packedVisibilityInversions; // Gale - Store canSee in a fast-access format
++    private org.galemc.gale.util.collection.PackedBooleanArray packedVisibilityInversions; // Gale - Store canSee in a fast-access format
  
      @Override
      public final io.papermc.paper.threadedregions.scheduler.EntityScheduler getScheduler() {
-@@ -113,6 +_,24 @@
+@@ -113,6 +_,23 @@
          this.server = server;
          this.entity = entity;
          this.entityType = CraftEntityType.minecraftToBukkit(entity.getType());
@@ -19,44 +19,78 @@
 +            for (CraftPlayer player : onlinePlayers) {
 +                if (player.invertedVisibilityEntities.containsKey(uuid)) {
 +                    if (this.packedVisibilityInversions == null) {
-+                        this.packedVisibilityInversions = new long[player.packedVisibilityInversionsWordIndex + 1];
-+                    } else if (player.packedVisibilityInversionsWordIndex >= this.packedVisibilityInversions.length) {
-+                        this.packedVisibilityInversions = java.util.Arrays.copyOf(this.packedVisibilityInversions, player.packedVisibilityInversionsWordIndex + 1);
++                        this.packedVisibilityInversions = org.galemc.gale.util.collection.PackedBooleanArray.createWithInitial(player.packedVisibilityInversionsWordIndex, player.packedVisibilityInversionsWordMask);
++                    } else {
++                        this.packedVisibilityInversions.set(player.packedVisibilityInversionsWordIndex, player.packedVisibilityInversionsWordMask);
 +                    }
-+                    this.packedVisibilityInversions[player.packedVisibilityInversionsWordIndex] |= player.packedVisibilityInversionsWordMask;
 +                }
 +            }
 +        } else {
-+            this.packedVisibilityInversions = org.galemc.gale.util.array.EmptyArrays.LONG;
++            this.packedVisibilityInversions = org.galemc.gale.util.collection.PackedBooleanArray.createEmpty();
 +        }
 +        // Gale end - Store canSee in a fast-access format
      }
  
      public static <T extends Entity> CraftEntity getEntity(CraftServer server, T entity) {
-@@ -725,6 +_,26 @@
-     public boolean isVisibleByDefault() {
+@@ -726,6 +_,20 @@
          return this.getHandle().visibleByDefault;
      }
-+
+ 
 +    // Gale start - Store canSee in a fast-access format
 +    public boolean isVisibilityInvertedFor(CraftPlayer player) {
-+        if (player.packedVisibilityInversionsWordIndex >= this.packedVisibilityInversions.length) {
-+            return false;
-+        }
-+        return (this.packedVisibilityInversions[player.packedVisibilityInversionsWordIndex] & player.packedVisibilityInversionsWordMask) != 0;
++        return this.packedVisibilityInversions.get(player.packedVisibilityInversionsWordIndex, player.packedVisibilityInversionsWordMask);
 +    }
 +
 +    public void setVisibilityInverted(CraftPlayer player) {
-+        if (player.packedVisibilityInversionsWordIndex >= this.packedVisibilityInversions.length) {
-+            this.packedVisibilityInversions = java.util.Arrays.copyOf(this.packedVisibilityInversions, player.packedVisibilityInversionsWordIndex + 1);
-+        }
-+        this.packedVisibilityInversions[player.packedVisibilityInversionsWordIndex] |= player.packedVisibilityInversionsWordMask;
++        this.packedVisibilityInversions.set(player.packedVisibilityInversionsWordIndex, player.packedVisibilityInversionsWordMask);
 +    }
 +
 +    public void unsetVisibilityInverted(CraftPlayer player) {
-+        this.packedVisibilityInversions[player.packedVisibilityInversionsWordIndex] &= ~player.packedVisibilityInversionsWordMask;
++        this.packedVisibilityInversions.unset(player.packedVisibilityInversionsWordIndex, player.packedVisibilityInversionsWordMask);
 +    }
 +    // Gale end - Store canSee in a fast-access format
- 
++
      @Override
      public Set<Player> getTrackedBy() {
+         Preconditions.checkState(!this.entity.generation, "Cannot get tracking players during world generation");
+@@ -735,7 +_,7 @@
+         ChunkMap.TrackedEntity entityTracker = world.getChunkSource().chunkMap.entityMap.get(this.getEntityId());
+ 
+         if (entityTracker != null) {
+-            for (ServerPlayerConnection connection : entityTracker.seenBy) {
++            for (ServerPlayerConnection connection : entityTracker.seenByList) { // Gale - Store seenBy in a fast-access format
+                 players.add(connection.getPlayer().getBukkitEntity());
+             }
+         }
+@@ -752,7 +_,10 @@
+         ChunkMap.TrackedEntity entityTracker = world.getChunkSource().chunkMap.entityMap.get(this.getEntityId());
+         if (entityTracker == null) return false;
+ 
+-        return entityTracker.seenBy.contains(((CraftPlayer) player).getHandle().connection);
++        // Gale start - Store seenBy in a fast-access format
++        net.minecraft.server.network.ServerGamePacketListenerImpl connection = ((CraftPlayer) player).getHandle().connection;
++        return entityTracker.seenByPackedArray.get(connection.packedSeenByWordIndex, connection.packedSeenByWordMask);
++        // Gale end - Store seenBy in a fast-access format
+     }
+ 
+     @Override
+@@ -1070,7 +_,7 @@
+             return;
+         }
+ 
+-        for (final ServerPlayerConnection connection : entityTracker.seenBy) {
++        for (final ServerPlayerConnection connection : entityTracker.seenByList) { // Gale - Store seenBy in a fast-access format
+             this.getHandle().resendPossiblyDesyncedEntityData(connection.getPlayer());
+         }
+     }
+@@ -1215,8 +_,8 @@
+             return java.util.Collections.emptySet();
+         }
+ 
+-        Set<org.bukkit.entity.Player> set = new java.util.HashSet<>(tracker.seenBy.size());
+-        for (net.minecraft.server.network.ServerPlayerConnection connection : tracker.seenBy) {
++        Set<org.bukkit.entity.Player> set = new java.util.HashSet<>(tracker.seenByList.size()); // Gale - Store seenBy in a fast-access format
++        for (net.minecraft.server.network.ServerPlayerConnection connection : tracker.seenByList) { // Gale - Store seenBy in a fast-access format
+             set.add(connection.getPlayer().getBukkitEntity().getPlayer());
+         }
+         return set;

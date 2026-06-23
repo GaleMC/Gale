@@ -5,7 +5,7 @@
  public class FishingHook extends Projectile {
      private static final Logger LOGGER = LogUtils.getLogger();
 -    private final RandomSource syncronizedRandom = RandomSource.create();
-+    private final RandomSource syncronizedRandom; // Gale - Patina - reduce RandomSource instances
++    private final RandomSource syncronizedRandom; // Gale - Reduce RandomSource instances
      private boolean biting;
      public int outOfWaterTime;
      private static final int MAX_OUT_OF_WATER_TIME = 10;
@@ -13,7 +13,7 @@
          this.minWaitTime = level.paperConfig().fishingTimeRange.minimum;
          this.maxWaitTime = level.paperConfig().fishingTimeRange.maximum;
          // Paper end - Configurable fishing time ranges
-+        this.syncronizedRandom = level.getRandom(); // Gale - Patina - reduce RandomSource instances
++        this.syncronizedRandom = level.getRandom(); // Gale - Reduce RandomSource instances
      }
  
      public FishingHook(final EntityType<? extends FishingHook> type, final Level level) {

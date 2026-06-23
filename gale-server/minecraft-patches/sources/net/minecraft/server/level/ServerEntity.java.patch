@@ -1,0 +1,15 @@
+--- a/net/minecraft/server/level/ServerEntity.java
++++ b/net/minecraft/server/level/ServerEntity.java
+@@ -69,10 +_,10 @@
+     private boolean wasRiding;
+     private boolean wasOnGround;
+     private @Nullable List<SynchedEntityData.DataValue<?>> trackedDataValues;
+-    private final Set<net.minecraft.server.network.ServerPlayerConnection> trackedPlayers; // Paper
++    private final List<net.minecraft.server.network.ServerGamePacketListenerImpl> trackedPlayers; // Paper // Gale - Store seenBy in a fast-access format
+ 
+     public ServerEntity(
+-        final ServerLevel level, final Entity entity, final int updateInterval, final boolean trackDelta, final ServerEntity.Synchronizer synchronizer, final Set<net.minecraft.server.network.ServerPlayerConnection> trackedPlayers // Paper
++        final ServerLevel level, final Entity entity, final int updateInterval, final boolean trackDelta, final ServerEntity.Synchronizer synchronizer, final List<net.minecraft.server.network.ServerGamePacketListenerImpl> trackedPlayers // Paper // Gale - Store seenBy in a fast-access format
+     ) {
+         this.trackedPlayers = trackedPlayers; // Paper
+         this.level = level;

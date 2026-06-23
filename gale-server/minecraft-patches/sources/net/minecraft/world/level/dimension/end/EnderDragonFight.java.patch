@@ -5,7 +5,7 @@
              .lookup(Registries.CONFIGURED_FEATURE)
              .flatMap(registry -> registry.get(EndFeatures.END_GATEWAY_DELAYED))
 -            .ifPresent(endGateway -> endGateway.value().place(this.level, this.level.getChunkSource().getGenerator(), RandomSource.create(), pos));
-+            .ifPresent(endGateway -> endGateway.value().place(this.level, this.level.getChunkSource().getGenerator(), this.level.getRandom(), pos)); // Gale - Patina - reduce RandomSource instances
++            .ifPresent(endGateway -> endGateway.value().place(this.level, this.level.getChunkSource().getGenerator(), this.level.getRandom(), pos)); // Gale - Reduce RandomSource instances
      }
  
      public void spawnExitPortal(final boolean activated) {

@@ -93,6 +93,12 @@ Features originating from other projects are carefully verified and updated as p
     Leaf: <code>Check-targeting-range-before-getting-visibility.patch</code>
   </li>
   <li>
+    <i>Delay canSee check in entity collisions</i><br>
+    Perform other checks before <code>canSee</code>,
+    because the latter is more expensive.<br>
+    Leaf: <code>Reduce-canSee-work.patch</code>
+  </li>
+  <li>
     <i>Don't iterate over empty tick effect collections</i> ((original by <a href="https://github.com/hayanesuru">hayanesuru</a>)<br>
     Leaf: part of <code>optimize-tickEffects.patch</code>
   </li>
@@ -155,6 +161,11 @@ Features originating from other projects are carefully verified and updated as p
     </ul>
   </li>
   <li>
+    <i>Reduce RandomSource instances</i> (original by <a href="https://github.com/foss-mc">foss-mc</a>)<br>
+    Re-use <code>RandomSource</code> instances where it doesn't affect game mechanics.<br>
+    Leaf: <code>Reduce-RandomSource-instances.patch</code>
+  </li>
+  <li>
     <i>Replace division by multiplication</i> (original by <a href="https://github.com/2No2Name">2No2Name</a>)<br>
     Multiplication is faster than division in every environment.<br>
     Leaf: <code>Replace-division-by-multiplication-in-CubePointRange.patch</code>
@@ -187,6 +198,12 @@ Features originating from other projects are carefully verified and updated as p
     Leaf: <code>Skip-PlayerCommandSendEvent-if-there-are-no-listener.patch</code>
   </li>
   <li>
+    <i>Skip canSee self check for chunk map player update</i> (original by <a href="https://github.com/MrPowerGamerBR">MrPowerGamerBR</a>)<br>
+    Skip the self check in <code>CraftPlayer#canSee</code> if called from <code>ChunkMap#updatePlayer</code>,
+    as it is checked already at that point.<br>
+    Leaf: <code>SparklyPaper-Optimize-canSee-checks.patch</code>
+  </li>
+  <li>
     <i>Sort tryAddFrost checks</i> (original by <a href="https://github.com/2No2Name">2No2Name</a>)<br>
     Sort the checks in <code>LivingEntity#tryAddFrost()</code>
     in ascending order of cost.<br>
@@ -204,6 +221,9 @@ Features originating from other projects are carefully verified and updated as p
     Leaf: <code>Store-mob-counts-in-an-array.patch</code>
   </li>
   <li>
+    <i>Store seenBy in a fast-access format</i>
+  </li>
+  <li>
     <i>Update boss bar within tick</i> (original by <a href="https://github.com/jellysquid3">jellysquid3</a>)<br>
     Performs boss bar update code at most once per tick during <code>tick()</code>,
     instead of every time <code>updateBossbar()</code> is called.
@@ -215,5 +235,10 @@ Features originating from other projects are carefully verified and updated as p
     Use <code>it.unimi.dsi.fastutil</code> collections
     instead of other (such as <code>java.util</code>) collections.<br>
     Leaf: <code>Replace-throttle-tracker-map-with-optimized-collecti.patch</code>
+  </li>
+  <li>
+    <i>Use linked collections</i><br>
+    Use linked data structures for collections that are frequently iterated over.<br>
+    Leaf: <code>Use-linked-map-for-entity-trackers.patch</code>
   </li>
 </ul></h6>

@@ -25,3 +25,34 @@
          this.generator = generator;
          this.world = new CraftWorld((ServerLevel) this, worldKey, biomeProvider, environment);
  
+@@ -900,10 +_,12 @@
+         for (int i = 0, len = entities.size(); i < len; ++i) {
+             Entity entity = entities.get(i);
+ 
+-            if (checkCanSee && source instanceof net.minecraft.server.level.ServerPlayer && entity instanceof net.minecraft.server.level.ServerPlayer
+-                && !((net.minecraft.server.level.ServerPlayer) source).getBukkitEntity().canSee(((net.minecraft.server.level.ServerPlayer) entity).getBukkitEntity())) {
+-                continue;
+-            }
++            // Gale start - Delay canSee check in entity collisions
++//            if (checkCanSee && source instanceof net.minecraft.server.level.ServerPlayer && entity instanceof net.minecraft.server.level.ServerPlayer
++//                && !((net.minecraft.server.level.ServerPlayer) source).getBukkitEntity().canSee(((net.minecraft.server.level.ServerPlayer) entity).getBukkitEntity())) {
++//                continue;
++//            }
++            // Gale end - Delay canSee check in entity collisions
+ 
+             // !entity.isRemoved() && entity.blocksBuilding && (source == null || !entity.isPassengerOfSameVehicle(source))
+             // elide the last check since vanilla calls with source = null
+@@ -911,6 +_,13 @@
+             if (entity.isRemoved() || !entity.blocksBuilding) {
+                 continue;
+             }
++
++            // Gale start - Delay canSee check in entity collisions
++            if (checkCanSee && source instanceof net.minecraft.server.level.ServerPlayer && entity instanceof net.minecraft.server.level.ServerPlayer
++                && !((net.minecraft.server.level.ServerPlayer) source).getBukkitEntity().canSee(((net.minecraft.server.level.ServerPlayer) entity).getBukkitEntity())) {
++                continue;
++            }
++            // Gale end - Delay canSee check in entity collisions
+ 
+             if (net.minecraft.world.phys.shapes.Shapes.joinIsNotEmpty(shape, net.minecraft.world.phys.shapes.Shapes.create(entity.getBoundingBox()), net.minecraft.world.phys.shapes.BooleanOp.AND)) {
+                 return false;

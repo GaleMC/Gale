@@ -121,6 +121,22 @@
  
          return true;
      }
+@@ -1968,8 +_,14 @@
+         }
+ 
+         ChunkMap.TrackedEntity entry = tracker.entityMap.get(other.getId());
+-        if (entry != null && !entry.seenBy.contains(this.getHandle().connection)) {
++        // Gale start - Store seenBy in a fast-access format
++        if (entry != null) {
++            ServerPlayer handle = this.getHandle();
++            ServerGamePacketListenerImpl connection = handle.connection;
++            if (!entry.seenByPackedArray.get(connection.packedSeenByWordIndex, connection.packedSeenByWordMask)) {
++            // Gale end - Store seenBy in a fast-access format
+             entry.updatePlayer(this.getHandle());
++            } // Gale - Store seenBy in a fast-access format
+         }
+ 
+         this.server.getPluginManager().callEvent(new PlayerShowEntityEvent(this, entity));
 @@ -2014,7 +_,13 @@
              return;
          }
@@ -167,12 +183,20 @@
  
      @Override
      public boolean canSee(Player player) {
-@@ -2058,7 +_,7 @@
+@@ -2058,8 +_,14 @@
  
      @Override
      public boolean canSee(org.bukkit.entity.Entity entity) {
 -        return this.equals(entity) || entity.isVisibleByDefault() ^ this.invertedVisibilityEntities.containsKey(entity.getUniqueId()); // SPIGOT-7312: Can always see self
+-    }
 +        return this.equals(entity) || entity.isVisibleByDefault() ^ (!this.invertedVisibilityEntities.isEmpty() && ((CraftEntity) entity).isVisibilityInvertedFor(this)); // SPIGOT-7312: Can always see self // Gale - Store canSee in a fast-access format
-     }
++    }
++
++    // Gale start - Skip canSee self check for chunk map player update
++    public boolean canSeeSkipSelfCheck(org.bukkit.entity.Entity entity) {
++        return entity.isVisibleByDefault() ^ (!this.invertedVisibilityEntities.isEmpty() && ((CraftEntity) entity).isVisibilityInvertedFor(this)); // SPIGOT-7312: Can always see self // Gale - Store canSee in a fast-access format
++    }
++    // Gale end - Skip canSee self check for chunk map player update
  
      public boolean canSeePlayer(UUID uuid) {
+         org.bukkit.entity.Entity entity = this.getServer().getPlayer(uuid);
