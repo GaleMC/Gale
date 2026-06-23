@@ -1,0 +1,43 @@
+--- a/net/minecraft/world/entity/Mob.java
++++ b/net/minecraft/world/entity/Mob.java
+@@ -169,6 +_,7 @@
+         if (level instanceof ServerLevel) {
+             this.registerGoals();
+         }
++        this.updateMustDespawnBecauseOfPeacefulDifficulty(); // Gale - Compute peaceful despawn reactively
+     }
+ 
+     protected void registerGoals() {
+@@ -485,6 +_,7 @@
+         this.aware = input.getBooleanOr("Bukkit.Aware", true); // CraftBukkit
+         // Paper start - allow changing despawnInPeaceful
+         this.despawnInPeacefulOverride = readDespawnInPeacefulOverride(input);
++        this.updateMustDespawnBecauseOfPeacefulDifficulty(); // Gale - Compute peaceful despawn reactively
+     }
+     public static net.kyori.adventure.util.TriState readDespawnInPeacefulOverride(ValueInput input) {
+         return input.read("Paper.DespawnInPeacefulOverride", io.papermc.paper.util.PaperCodecs.TRI_STATE_CODEC).orElse(net.kyori.adventure.util.TriState.NOT_SET);
+@@ -790,9 +_,23 @@
+     }
+     // Paper end - allow changing despawnInPeaceful
+ 
++    // Gale start - Compute peaceful despawn reactively
++    private boolean mustDespawnBecauseOfPeacefulDifficulty;
++
++    public void updateMustDespawnBecauseOfPeacefulDifficulty() {
++        this.mustDespawnBecauseOfPeacefulDifficulty = this.level().getDifficulty() == Difficulty.PEACEFUL && this.shouldDespawnInPeaceful();
++    }
++
++    @Override
++    public void setLevel(final Level level) {
++        super.setLevel(level);
++        this.updateMustDespawnBecauseOfPeacefulDifficulty();
++    }
++    // Gale end - Compute peaceful despawn reactively
++
+     @Override
+     public void checkDespawn() {
+-        if (this.level().getDifficulty() == Difficulty.PEACEFUL && this.shouldDespawnInPeaceful()) { // Paper - allow changing despawnInPeaceful
++        if (this.mustDespawnBecauseOfPeacefulDifficulty) { // Paper - allow changing despawnInPeaceful // Gale - Compute peaceful despawn reactively
+             this.discard(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
+         } else if (!this.isPersistenceRequired() && !this.requiresCustomPersistence()) {
+             Entity player = this.level().findNearbyPlayer(this, -1.0, EntitySelector.PLAYER_AFFECTS_SPAWNING); // Paper - Affects Spawning API
