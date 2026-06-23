@@ -1,0 +1,15 @@
+--- a/src/main/java/org/bukkit/craftbukkit/CraftOfflinePlayer.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftOfflinePlayer.java
+@@ -184,7 +_,11 @@
+             return false;
+         }
+ 
+-        return this.getUniqueId().equals(other.getUniqueId());
++        // Gale start - Inline player UUID comparison
++        UUID uuid1 = this.getUniqueId();
++        UUID uuid2 = other.getUniqueId();
++        return uuid1.getMostSignificantBits() == uuid2.getMostSignificantBits() && uuid1.getLeastSignificantBits() == uuid2.getLeastSignificantBits();
++        // Gale end - Inline player UUID comparison
+     }
+ 
+     @Override

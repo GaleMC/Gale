@@ -97,6 +97,9 @@ Features originating from other projects are carefully verified and updated as p
     Leaf: part of <code>optimize-tickEffects.patch</code>
   </li>
   <li>
+    <i>Inline player UUID comparison</i>
+  </li>
+  <li>
     <i>Initialize sensing with low capacity</i><br>
     Most mobs only ever target at most 1 entity (typically a nearby player or a mob farm bait entity)<br>
     so we create their sensing cache with an initial capacity of 2 instead of 16.<br>
@@ -188,6 +191,9 @@ Features originating from other projects are carefully verified and updated as p
     Sort the checks in <code>LivingEntity#tryAddFrost()</code>
     in ascending order of cost.<br>
     Leaf: <code>Check-frozen-ticks-before-landing-block.patch</code>
+  </li>
+  <li>
+    <i>Store canSee in a fast-access format</i>
   </li>
   <li>
     <i>Store despawn ranges in enum map</i> (original by <a href="https://github.com/hayanesuru">hayanesuru</a>)<br>

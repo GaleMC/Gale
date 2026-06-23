@@ -53,7 +53,7 @@
 +            // Gale start - Optimize tag checks
 +            if (tags.isEmpty()) {
 +                this.tagsList = java.util.Collections.emptyList();
-+                this.tagsBitSet = net.minecraft.util.ZeroBitStorage.RAW;
++                this.tagsBitSet = org.galemc.gale.util.array.EmptyArrays.LONG;
 +            } else {
 +                java.util.ArrayList<TagKey<T>> tagsList = (java.util.ArrayList<TagKey<T>>) tags;
 +                tagsList.trimToSize();

@@ -1,0 +1,15 @@
+--- a/net/minecraft/server/ReloadableServerResources.java
++++ b/net/minecraft/server/ReloadableServerResources.java
+@@ -127,5 +_,12 @@
+     public void updateComponentsAndStaticRegistryTags() {
+         this.postponedTags.forEach(Registry.PendingTags::apply);
+         this.newComponents.forEach(DataComponentInitializers.PendingComponents::apply);
++        // Gale start - Pre-compute block state predicates - Set
++        for (net.minecraft.world.level.block.Block block : net.minecraft.core.registries.BuiltInRegistries.BLOCK) {
++            for (net.minecraft.world.level.block.state.BlockState state : block.getStateDefinition().getPossibleStates()) {
++                state.initPredicateFlags();
++            }
++        }
++        // Gale end - Pre-compute block state predicates - Set
+     }
+ }

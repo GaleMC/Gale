@@ -1,0 +1,62 @@
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
+@@ -102,6 +_,7 @@
+     // Paper start - Folia shedulers
+     public final io.papermc.paper.threadedregions.EntityScheduler taskScheduler = new io.papermc.paper.threadedregions.EntityScheduler(this);
+     private final io.papermc.paper.threadedregions.scheduler.FoliaEntityScheduler apiScheduler = new io.papermc.paper.threadedregions.scheduler.FoliaEntityScheduler(this);
++    private long[] packedVisibilityInversions; // Gale - Store canSee in a fast-access format
+ 
+     @Override
+     public final io.papermc.paper.threadedregions.scheduler.EntityScheduler getScheduler() {
+@@ -113,6 +_,24 @@
+         this.server = server;
+         this.entity = entity;
+         this.entityType = CraftEntityType.minecraftToBukkit(entity.getType());
++        // Gale start - Store canSee in a fast-access format
++        UUID uuid = entity.getUUID();
++        if (CraftPlayer.occurrencesInInvertedVisibilityEntities.containsKey(uuid)) {
++            List<CraftPlayer> onlinePlayers = (List<CraftPlayer>) org.bukkit.Bukkit.getServer().getOnlinePlayers();
++            for (CraftPlayer player : onlinePlayers) {
++                if (player.invertedVisibilityEntities.containsKey(uuid)) {
++                    if (this.packedVisibilityInversions == null) {
++                        this.packedVisibilityInversions = new long[player.packedVisibilityInversionsWordIndex + 1];
++                    } else if (player.packedVisibilityInversionsWordIndex >= this.packedVisibilityInversions.length) {
++                        this.packedVisibilityInversions = java.util.Arrays.copyOf(this.packedVisibilityInversions, player.packedVisibilityInversionsWordIndex + 1);
++                    }
++                    this.packedVisibilityInversions[player.packedVisibilityInversionsWordIndex] |= player.packedVisibilityInversionsWordMask;
++                }
++            }
++        } else {
++            this.packedVisibilityInversions = org.galemc.gale.util.array.EmptyArrays.LONG;
++        }
++        // Gale end - Store canSee in a fast-access format
+     }
+ 
+     public static <T extends Entity> CraftEntity getEntity(CraftServer server, T entity) {
+@@ -725,6 +_,26 @@
+     public boolean isVisibleByDefault() {
+         return this.getHandle().visibleByDefault;
+     }
++
++    // Gale start - Store canSee in a fast-access format
++    public boolean isVisibilityInvertedFor(CraftPlayer player) {
++        if (player.packedVisibilityInversionsWordIndex >= this.packedVisibilityInversions.length) {
++            return false;
++        }
++        return (this.packedVisibilityInversions[player.packedVisibilityInversionsWordIndex] & player.packedVisibilityInversionsWordMask) != 0;
++    }
++
++    public void setVisibilityInverted(CraftPlayer player) {
++        if (player.packedVisibilityInversionsWordIndex >= this.packedVisibilityInversions.length) {
++            this.packedVisibilityInversions = java.util.Arrays.copyOf(this.packedVisibilityInversions, player.packedVisibilityInversionsWordIndex + 1);
++        }
++        this.packedVisibilityInversions[player.packedVisibilityInversionsWordIndex] |= player.packedVisibilityInversionsWordMask;
++    }
++
++    public void unsetVisibilityInverted(CraftPlayer player) {
++        this.packedVisibilityInversions[player.packedVisibilityInversionsWordIndex] &= ~player.packedVisibilityInversionsWordMask;
++    }
++    // Gale end - Store canSee in a fast-access format
+ 
+     @Override
+     public Set<Player> getTrackedBy() {

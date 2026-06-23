@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/state/BlockBehaviour.java
 +++ b/net/minecraft/world/level/block/state/BlockBehaviour.java
-@@ -490,6 +_,12 @@
+@@ -490,6 +_,13 @@
          private boolean emptyCollisionShape;
          private boolean emptyConstantCollisionShape;
          private VoxelShape constantCollisionShape;
@@ -9,6 +9,7 @@
 +        public boolean isAny(int predicateMask) {
 +            return (this.predicateFlags & predicateMask) != 0;
 +        }
++        public void initPredicateFlags() { this.predicateFlags = org.dreeam.leaf.util.BlockMasks.init(this.asState()); }
 +        // Gale end - Pre-compute block state predicates
  
          private static void initCaches(final VoxelShape shape, final boolean neighbours) {
