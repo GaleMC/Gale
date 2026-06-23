@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/ticks/LevelTicks.java
++++ b/net/minecraft/world/ticks/LevelTicks.java
+@@ -79,6 +_,7 @@
+     }
+ 
+     public void tick(final long currentTick, final int maxTicksToProcess, final BiConsumer<BlockPos, T> output) {
++        if (!org.galemc.gale.async.SimulationFlag.REAL) return; // Gale - Speculative execution based on next tick simulation - Simulate next tick
+         ProfilerFiller profiler = Profiler.get();
+         profiler.push("collect");
+         this.collectTicks(currentTick, maxTicksToProcess, profiler);

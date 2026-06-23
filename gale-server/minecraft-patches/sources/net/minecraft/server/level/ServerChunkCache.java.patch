@@ -1,0 +1,10 @@
+--- a/net/minecraft/server/level/ServerChunkCache.java
++++ b/net/minecraft/server/level/ServerChunkCache.java
+@@ -480,6 +_,7 @@
+ 
+     @Override
+     public void tick(final BooleanSupplier haveTime, final boolean tickChunks) {
++        if (!org.galemc.gale.async.SimulationFlag.REAL) return; // Gale - Speculative execution based on next tick simulation - Simulate next tick
+         ProfilerFiller profiler = Profiler.get();
+         profiler.push("purge");
+         if (this.level.tickRateManager().runsNormally() || !tickChunks || this.level.spigotConfig.unloadFrozenChunks) { // Spigot

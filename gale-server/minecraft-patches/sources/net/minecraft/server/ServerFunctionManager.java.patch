@@ -5,19 +5,19 @@
      public void tick() {
          if (this.server.tickRateManager().runsNormally()) {
 -            if (this.postReload) {
-+            if (org.galemc.gale.async.SimulationFlag.REAL) if (this.postReload) { // Gale - Simulate next tick
++            if (org.galemc.gale.async.SimulationFlag.REAL) if (this.postReload) { // Gale - Speculative execution based on next tick simulation - Simulate next tick
                  this.postReload = false;
                  Collection<CommandFunction<CommandSourceStack>> functions = this.library.getTag(LOAD_FUNCTION_TAG);
                  this.executeTagFunctions(functions, LOAD_FUNCTION_TAG);
              }
  
 -            this.executeTagFunctions(this.ticking, TICK_FUNCTION_TAG);
-+            if (org.galemc.gale.async.SimulationFlag.REAL || !this.postReload) this.executeTagFunctions(this.ticking, TICK_FUNCTION_TAG); // Gale - Simulate next tick
++            if (org.galemc.gale.async.SimulationFlag.REAL || !this.postReload) this.executeTagFunctions(this.ticking, TICK_FUNCTION_TAG); // Gale - Speculative execution based on next tick simulation - Simulate next tick
          }
      }
  
      private void executeTagFunctions(final Collection<CommandFunction<CommandSourceStack>> functions, final Identifier loadFunctionTag) {
-+        if (!org.galemc.gale.async.SimulationFlag.REAL) return; // Gale - Simulate next tick
++        if (!org.galemc.gale.async.SimulationFlag.REAL) return; // Gale - Speculative execution based on next tick simulation - Simulate next tick
          Profiler.get().push(loadFunctionTag::toString);
  
          for (CommandFunction<CommandSourceStack> function : functions) {

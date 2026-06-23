@@ -9,6 +9,52 @@
          this.weatherData = savedDataStorage.computeIfAbsent(WeatherData.TYPE);
          this.weatherData.setLevel(this);
          this.typeKey = typeKey;
+@@ -797,9 +_,12 @@
+     public void tick(final BooleanSupplier haveTime) {
+         ProfilerFiller profiler = Profiler.get();
+         this.handlingTick = true;
++        if (org.galemc.gale.async.SimulationFlag.REAL) { // Gale - Speculative execution based on next tick simulation - Simulate next tick
+         this.environmentAttributes().invalidateTickCache();
++        } // Gale - Speculative execution based on next tick simulation - Simulate next tick
+         TickRateManager tickRateManager = this.tickRateManager();
+         boolean runs = tickRateManager.runsNormally();
++        if (org.galemc.gale.async.SimulationFlag.REAL) { // Gale - Speculative execution based on next tick simulation - Simulate next tick
+         if (runs) {
+             profiler.push("world border");
+             this.getWorldBorder().tick();
+@@ -838,6 +_,7 @@
+         if (runs) {
+             this.tickTime();
+         }
++        } // Gale - Speculative execution based on next tick simulation - Simulate next tick
+ 
+         profiler.push("tickPending");
+         if (!this.isDebug() && runs) {
+@@ -856,13 +_,16 @@
+ 
+         profiler.popPush("chunkSource");
+         this.getChunkSource().tick(haveTime, true);
++        if (org.galemc.gale.async.SimulationFlag.REAL) { // Gale - Speculative execution based on next tick simulation - Simulate next tick
+         profiler.popPush("blockEvents");
+         if (runs) {
+             this.runBlockEvents();
+         }
+ 
++        } // Gale - Speculative execution based on next tick simulation - Simulate next tick
+         this.handlingTick = false;
+         profiler.pop();
++        if (org.galemc.gale.async.SimulationFlag.REAL) { // Gale - Speculative execution based on next tick simulation - Simulate next tick
+         boolean isActive = !paperConfig().unsupportedSettings.disableWorldTickingWhenEmpty || this.chunkSource.hasActiveTickets(); // CraftBukkit - this prevents entity cleanup, other issues on servers with no players // Paper - restore this
+         if (isActive) {
+             this.resetEmptyTime();
+@@ -928,6 +_,7 @@
+ 
+         this.debugSynchronizers.tick(this.server.debugSubscribers());
+         profiler.pop();
++        } // Gale - Speculative execution based on next tick simulation - Simulate next tick
+     }
+ 
+     @Override
 @@ -1716,6 +_,13 @@
  
      @Override

@@ -16,7 +16,7 @@
      protected void tickServer(final BooleanSupplier haveTime) {
          super.tickServer(haveTime);
 -        if (this.jsonRpcServer != null) {
-+        if (org.galemc.gale.async.SimulationFlag.REAL) if (this.jsonRpcServer != null) { // Gale - Simulate next tick
++        if (org.galemc.gale.async.SimulationFlag.REAL) if (this.jsonRpcServer != null) { // Gale - Speculative execution based on next tick simulation - Simulate next tick
              this.jsonRpcServer.tick();
          }
      }

@@ -20,11 +20,11 @@
  
                  try (Profiler.Scope ignored = Profiler.use(this.createProfiler())) {
                      this.processPacketsAndTick(sprinting);
-+                    // Gale start - Simulate next tick
++                    // Gale start - Speculative execution based on next tick simulation - Simulate next tick
 +                    org.galemc.gale.async.SimulationFlag.REAL = false;
 +                    this.processPacketsAndTick(true);
 +                    org.galemc.gale.async.SimulationFlag.REAL = true;
-+                    // Gale end - Simulate next tick
++                    // Gale end - Speculative execution based on next tick simulation - Simulate next tick
                      ProfilerFiller profiler = Profiler.get();
                      profiler.push("nextTickWait");
                      this.mayHaveDelayedTasks = true;
@@ -33,9 +33,9 @@
  
      protected void tickServer(final BooleanSupplier haveTime) {
 -        org.spigotmc.WatchdogThread.tick(); // Spigot
-+        if (org.galemc.gale.async.SimulationFlag.REAL) org.spigotmc.WatchdogThread.tick(); // Spigot // Gale - Simulate next tick
++        if (org.galemc.gale.async.SimulationFlag.REAL) org.spigotmc.WatchdogThread.tick(); // Spigot // Gale - Speculative execution based on next tick simulation - Simulate next tick
          long nano = Util.getNanos();
-+        if (org.galemc.gale.async.SimulationFlag.REAL) { // Gale - Simulate next tick
++        if (org.galemc.gale.async.SimulationFlag.REAL) { // Gale - Speculative execution based on next tick simulation - Simulate next tick
          int emptyTickThreshold = this.pauseWhenEmptySeconds() * 20;
          this.removeDisabledPluginsBlockingSleep(); // Paper - API to allow/disallow tick sleeping
          if (emptyTickThreshold > 0) {
@@ -43,9 +43,9 @@
          new com.destroystokyo.paper.event.server.ServerTickStartEvent(this.tickCount+1).callEvent(); // Paper - Server Tick Events
          this.tickCount++;
          this.tickRateManager.tick();
-+        } // Gale - Simulate next tick
++        } // Gale - Speculative execution based on next tick simulation - Simulate next tick
          this.tickChildren(haveTime);
-+        if (org.galemc.gale.async.SimulationFlag.REAL) { // Gale - Simulate next tick
++        if (org.galemc.gale.async.SimulationFlag.REAL) { // Gale - Speculative execution based on next tick simulation - Simulate next tick
          if (nano - this.lastServerStatus >= STATUS_EXPIRE_TIME_NANOS) {
              this.lastServerStatus = nano;
              this.status = this.buildServerStatus();
@@ -53,7 +53,7 @@
          this.smoothedTickTimeMillis = this.smoothedTickTimeMillis * 0.8F + (float)tickTime / (float)TimeUtil.NANOSECONDS_PER_MILLISECOND * 0.19999999F;
          this.logTickMethodTime(nano);
          profiler.pop();
-+        } // Gale - Simulate next tick
++        } // Gale - Speculative execution based on next tick simulation - Simulate next tick
      }
  
      protected void processPacketsAndTick(final boolean sprinting) {
@@ -62,7 +62,7 @@
          this.tickFrame.start();
          // Paper - improve tick loop - moved into runAllTasksAtTickStart
 -        this.runAllTasksAtTickStart(); // Paper - improve tick loop
-+        if (org.galemc.gale.async.SimulationFlag.REAL) this.runAllTasksAtTickStart(); // Paper - improve tick loop // Gale - Simulate next tick
++        if (org.galemc.gale.async.SimulationFlag.REAL) this.runAllTasksAtTickStart(); // Paper - improve tick loop // Gale - Speculative execution based on next tick simulation - Simulate next tick
          this.tickServer(sprinting ? () -> false : this::haveTime);
          // Paper start - rewrite chunk system
          final Throwable crash = this.chunkSystemCrash;
@@ -71,7 +71,7 @@
          // Paper end - rewrite chunk system
          this.tickFrame.end();
 -        this.recordEndOfTick(); // Paper - improve tick loop
-+        if (org.galemc.gale.async.SimulationFlag.REAL) this.recordEndOfTick(); // Paper - improve tick loop // Gale - Simulate next tick
++        if (org.galemc.gale.async.SimulationFlag.REAL) this.recordEndOfTick(); // Paper - improve tick loop // Gale - Speculative execution based on next tick simulation - Simulate next tick
          profiler.pop();
      }
  
@@ -79,7 +79,7 @@
  
      protected void tickChildren(final BooleanSupplier haveTime) {
          ProfilerFiller profiler = Profiler.get();
-+        if (org.galemc.gale.async.SimulationFlag.REAL) { // Gale - Simulate next tick
++        if (org.galemc.gale.async.SimulationFlag.REAL) { // Gale - Speculative execution based on next tick simulation - Simulate next tick
          this.getPlayerList().getPlayers().forEach(playerx -> playerx.connection.suspendFlushing());
          this.server.getScheduler().mainThreadHeartbeat(); // CraftBukkit
          // Paper start - optimise Folia entity scheduler
@@ -87,13 +87,13 @@
          // Paper end - Folia scheduler API
          io.papermc.paper.adventure.providers.ClickCallbackProviderImpl.ADVENTURE_CLICK_MANAGER.handleQueue(this.tickCount); // Paper
          io.papermc.paper.adventure.providers.ClickCallbackProviderImpl.DIALOG_CLICK_MANAGER.handleQueue(this.tickCount); // Paper
-+        } // Gale - Simulate next tick
++        } // Gale - Speculative execution based on next tick simulation - Simulate next tick
          profiler.push("commandFunctions");
          this.getFunctions().tick();
          profiler.pop();
-+        boolean clocksNeedRewind = false; // Gale - Simulate next tick
++        boolean clocksNeedRewind = false; // Gale - Speculative execution based on next tick simulation - Simulate next tick
          if (this.tickRateManager.runsNormally()) {
-+            clocksNeedRewind = true; // Gale - Simulate next tick
++            clocksNeedRewind = true; // Gale - Speculative execution based on next tick simulation - Simulate next tick
              profiler.push("clocks");
              // Paper start - per-world time
              if (io.papermc.paper.configuration.GlobalConfiguration.get().time.affectsAllWorlds) {
@@ -101,15 +101,48 @@
              profiler.pop();
          }
  
-+        if (org.galemc.gale.async.SimulationFlag.REAL) { // Gale - Simulate next tick
++        if (org.galemc.gale.async.SimulationFlag.REAL) { // Gale - Speculative execution based on next tick simulation - Simulate next tick
          if (this.tickCount % 20 == 0) {
              profiler.push("timeSync");
              this.forceGameTimeSynchronization();
+@@ -1835,7 +_,9 @@
+         this.updateEffectiveRespawnData();
+ 
+         this.isIteratingOverLevels = true; // Paper - Throw exception on world create while being ticked
++        } // Gale - Speculative execution based on next tick simulation - Simulate next tick
+         for (ServerLevel level : this.getAllLevels()) {
++            if (org.galemc.gale.async.SimulationFlag.REAL) { // Gale - Speculative execution based on next tick simulation - Simulate next tick
+             level.hasPhysicsEvent = org.bukkit.event.block.BlockPhysicsEvent.getHandlerList().getRegisteredListeners().length > 0; // Paper - BlockPhysicsEvent
+             level.hasEntityMoveEvent = io.papermc.paper.event.entity.EntityMoveEvent.getHandlerList().getRegisteredListeners().length > 0; // Paper - Add EntityMoveEvent
+             level.updateLagCompensationTick(); // Paper - lag compensation
+@@ -1843,6 +_,7 @@
+             profiler.push(() -> level + " " + level.dimension().identifier());
+             profiler.push("tick");
+ 
++            } // Gale - Speculative execution based on next tick simulation - Simulate next tick
+             try {
+                 level.tick(haveTime);
+             } catch (Throwable t) {
+@@ -1850,11 +_,14 @@
+                 level.fillReportDetails(report);
+                 throw new ReportedException(report);
+             }
++            if (org.galemc.gale.async.SimulationFlag.REAL) { // Gale - Speculative execution based on next tick simulation - Simulate next tick
+ 
+             profiler.pop();
+             profiler.pop();
+             level.explosionDensityCache.clear(); // Paper - Optimize explosions
++            } // Gale - Speculative execution based on next tick simulation - Simulate next tick
+         }
++        if (org.galemc.gale.async.SimulationFlag.REAL) { // Gale - Speculative execution based on next tick simulation - Simulate next tick
+         this.isIteratingOverLevels = false; // Paper - Throw exception on world create while being ticked
+ 
+         profiler.popPush("connection");
 @@ -1883,6 +_,21 @@
  
          profiler.pop();
          this.serverActivityMonitor.tick();
-+        // Gale start - Simulate next tick
++        // Gale start - Speculative execution based on next tick simulation - Simulate next tick
 +        } else {
 +            if (clocksNeedRewind) {
 +                // Paper start - per-world time
@@ -123,7 +156,7 @@
 +                // Paper end - per-world time
 +            }
 +        }
-+        // Gale end - Simulate next tick
++        // Gale end - Speculative execution based on next tick simulation - Simulate next tick
      }
  
      // Paper start - per world respawn data

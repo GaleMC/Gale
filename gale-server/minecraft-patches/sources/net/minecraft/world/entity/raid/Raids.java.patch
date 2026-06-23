@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/entity/raid/Raids.java
++++ b/net/minecraft/world/entity/raid/Raids.java
+@@ -74,6 +_,7 @@
+     }
+ 
+     public void tick(final ServerLevel level) {
++        if (!org.galemc.gale.async.SimulationFlag.REAL) return; // Gale - Speculative execution based on next tick simulation - Simulate next tick
+         this.tick++;
+         Iterator<Raid> raidIterator = this.raidMap.values().iterator();
+ 
