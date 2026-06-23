@@ -1,6 +1,6 @@
 --- a/net/minecraft/tags/TagKey.java
 +++ b/net/minecraft/tags/TagKey.java
-@@ -11,11 +_,35 @@
+@@ -11,11 +_,36 @@
  import net.minecraft.resources.Identifier;
  import net.minecraft.resources.ResourceKey;
  
@@ -15,7 +15,8 @@
 +    }
 +    public ResourceKey<? extends Registry<T>> registry() { return this.registry; }
 +    public Identifier location() { return this.location; }
-+    public int indexInRegistry;
++    public int indexInRegistryWordIndex;
++    public long indexInRegistryWordMask;
 +    private int cachedHashCode;
 +    @Override
 +    public boolean equals(Object obj) {

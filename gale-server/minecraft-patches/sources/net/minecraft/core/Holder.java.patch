@@ -7,7 +7,7 @@
 -        private @Nullable Set<TagKey<T>> tags;
 +        // Gale start - Optimize tag checks
 +        private java.util.@Nullable List<TagKey<T>> tagsList;
-+        private java.util.@Nullable BitSet tagsBitSet;
++        private long @Nullable [] tagsBitSet;
 +        // Gale end - Optimize tag checks
          private @Nullable DataComponentMap components;
          private final Holder.Reference.Type type;
@@ -41,7 +41,7 @@
          @Override
          public boolean is(final TagKey<T> tag) {
 -            return this.boundTags().contains(tag);
-+            return this.tagsBitSet.get(tag.indexInRegistry); // Gale - Optimize tag checks
++            return tag.indexInRegistryWordIndex < this.tagsBitSet.length && (this.tagsBitSet[tag.indexInRegistryWordIndex] & tag.indexInRegistryWordMask) != 0; // Gale - Optimize tag checks
          }
  
          @Override
@@ -53,20 +53,20 @@
 +            // Gale start - Optimize tag checks
 +            if (tags.isEmpty()) {
 +                this.tagsList = java.util.Collections.emptyList();
-+                this.tagsBitSet = new java.util.BitSet(0);
++                this.tagsBitSet = net.minecraft.util.ZeroBitStorage.RAW;
 +            } else {
 +                java.util.ArrayList<TagKey<T>> tagsList = (java.util.ArrayList<TagKey<T>>) tags;
 +                tagsList.trimToSize();
 +                this.tagsList = tagsList;
 +                int highestIndex = 0;
 +                for (TagKey<T> tag : tagsList) {
-+                    if (tag.indexInRegistry > highestIndex) {
-+                        highestIndex = tag.indexInRegistry;
++                    if (tag.indexInRegistryWordIndex > highestIndex) {
++                        highestIndex = tag.indexInRegistryWordIndex;
 +                    }
 +                }
-+                this.tagsBitSet = new java.util.BitSet(highestIndex + 1);
++                this.tagsBitSet = new long[highestIndex + 1];
 +                for (TagKey<T> tag : tagsList) {
-+                    this.tagsBitSet.set(tag.indexInRegistry);
++                    this.tagsBitSet[tag.indexInRegistryWordIndex] |= tag.indexInRegistryWordMask;
 +                }
 +            }
 +            // Gale end - Optimize tag checks

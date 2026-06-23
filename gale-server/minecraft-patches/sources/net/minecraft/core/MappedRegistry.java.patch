@@ -17,14 +17,16 @@
          return this.toId.getInt(thing);
      }
  
-@@ -377,7 +_,12 @@
+@@ -377,7 +_,14 @@
      private void refreshTagsInHolders() {
          Map<Holder.Reference<T>, List<TagKey<T>>> tagsForElement = new IdentityHashMap<>();
          this.byKey.values().forEach(h -> tagsForElement.put((Holder.Reference<T>)h, new ArrayList<>()));
 +        int[] nextIndexInRegistry = {0}; // Gale - Optimize tag checks
          this.allTags.forEach((id, values) -> {
 +            // Gale start - Optimize tag checks
-+            id.indexInRegistry = nextIndexInRegistry[0];
++            int indexInRegistry = nextIndexInRegistry[0]++;
++            id.indexInRegistryWordIndex = indexInRegistry >> 6;
++            id.indexInRegistryWordMask = 1L << indexInRegistry;
 +            nextIndexInRegistry[0]++;
 +            // Gale end - Optimize tag checks
              for (Holder<T> value : values) {
