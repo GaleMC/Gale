@@ -11,3 +11,12 @@
          // Paper end - initialize global and world-defaults configuration
          this.server.spark.enableEarlyIfRequested(); // Paper - spark
          // Paper start - fix converting txt to json file; convert old users earlier after PlayerList creation but before file load/save
+@@ -402,7 +_,7 @@
+     @Override
+     protected void tickServer(final BooleanSupplier haveTime) {
+         super.tickServer(haveTime);
+-        if (this.jsonRpcServer != null) {
++        if (org.galemc.gale.async.SimulationFlag.REAL) if (this.jsonRpcServer != null) { // Gale - Simulate next tick
+             this.jsonRpcServer.tick();
+         }
+     }

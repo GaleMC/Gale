@@ -1,0 +1,66 @@
+--- a/net/minecraft/world/clock/ServerClockManager.java
++++ b/net/minecraft/world/clock/ServerClockManager.java
+@@ -71,9 +_,26 @@
+         boolean advanceTime = this.advanceTime(); // Paper - per-world time
+         if (advanceTime) {
+             this.clocks.values().forEach(ServerClockManager.ClockInstance::tick);
++            // Gale start - Simulate next tick
++            if (org.galemc.gale.async.SimulationFlag.REAL) {
+             this.setDirty();
+-        }
+-    }
++            } else {
++                this.needsRewind = true;
++            }
++            // Gale end - Simulate next tick
++        }
++    }
++
++    // Gale start - Simulate next tick
++    private boolean needsRewind;
++
++    public void rewind() {
++        if (this.needsRewind) {
++            this.needsRewind = false;
++            this.clocks.values().forEach(ServerClockManager.ClockInstance::rewind);
++        }
++    }
++    // Gale end - Simulate next tick
+ 
+     private ServerClockManager.ClockInstance getInstance(final Holder<WorldClock> definition) {
+         ServerClockManager.ClockInstance instance = this.clocks.get(definition);
+@@ -217,12 +_,34 @@
+ 
+         public void tick() {
+             if (!this.paused) {
++                if (!org.galemc.gale.async.SimulationFlag.REAL) return;
++                // Gale start - Simulate next tick
++                if (!org.galemc.gale.async.SimulationFlag.REAL) {
++                    this.oldPartialTick = this.partialTick;
++                    this.oldTotalTicks = this.totalTicks;
++                    this.needsRewind = true;
++                }
++                // Gale end - Simulate next tick
+                 this.partialTick = this.partialTick + this.rate;
+                 int fullTicks = Mth.floor(this.partialTick);
+                 this.partialTick -= fullTicks;
+                 this.totalTicks += fullTicks;
+             }
+         }
++
++        // Gale start - Simulate next tick
++        private long oldTotalTicks;
++        private float oldPartialTick;
++        private boolean needsRewind;
++
++        public void rewind() {
++            if (this.needsRewind) {
++                this.needsRewind = false;
++                this.partialTick = this.oldPartialTick;
++                this.totalTicks += this.oldTotalTicks;
++            }
++        }
++        // Gale end - Simulate next tick
+ 
+         public ClockState packState() {
+             return new ClockState(this.totalTicks, this.partialTick, this.rate, this.paused);
