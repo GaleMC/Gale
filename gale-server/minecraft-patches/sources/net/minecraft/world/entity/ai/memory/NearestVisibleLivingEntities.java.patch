@@ -1,0 +1,15 @@
+--- a/net/minecraft/world/entity/ai/memory/NearestVisibleLivingEntities.java
++++ b/net/minecraft/world/entity/ai/memory/NearestVisibleLivingEntities.java
+@@ -38,7 +_,11 @@
+     }
+ 
+     public Optional<LivingEntity> findClosest(final Predicate<LivingEntity> filter) {
+-        for (LivingEntity nearbyEntity : this.nearbyEntities) {
++        // Gale start - Quick NearestVisibleLivingEntities entity iteration
++        if (this.nearbyEntities.isEmpty()) return Optional.empty();
++        for (int i = 0, size = this.nearbyEntities.size(); i < size; i++) {
++            LivingEntity nearbyEntity = this.nearbyEntities.get(i);
++            // Gale end - Quick NearestVisibleLivingEntities entity iteration
+             if (filter.test(nearbyEntity) && this.lineOfSightTest.test(nearbyEntity)) {
+                 return Optional.of(nearbyEntity);
+             }
