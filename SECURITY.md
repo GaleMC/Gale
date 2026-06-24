@@ -2,7 +2,7 @@
 
 ## Reporting a Vulnerability
 
-If you discover a security vulnerability in Gale, please report it privately by contacting us on [Discord](https://discord.gg/9ygX4GdM).
+If you discover a security vulnerability in Gale, please report it privately by contacting us on [Discord](https://discord.gg/vkUqjJ2xMg).
 
 Please do not report security vulnerabilities through public GitHub issues, pull requests, or discussions.
 

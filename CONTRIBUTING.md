@@ -77,4 +77,4 @@ For more information on access transformers, see Paper's [Access Transformers do
 
 ## Need Help?
 
-Join our [Discord](https://discord.gg/9ygX4GdM) for questions and discussion.
+Join our [Discord](https://discord.gg/vkUqjJ2xMg) for questions and discussion.
