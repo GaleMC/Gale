@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/level/dimension/end/EnderDragonFight.java
 +++ b/net/minecraft/world/level/dimension/end/EnderDragonFight.java
+@@ -176,6 +_,7 @@
+     }
+ 
+     public void tick() {
++        if (!org.galemc.gale.async.SimulationFlag.REAL) return; // Gale - Speculative execution based on next tick simulation - Simulate next tick
+         this.dragonEvent.setVisible(!this.dragonKilled);
+         if (++this.ticksSinceLastPlayerScan >= 20) {
+             this.updatePlayers();
 @@ -465,7 +_,7 @@
              .registryAccess()
              .lookup(Registries.CONFIGURED_FEATURE)

@@ -42,17 +42,25 @@
  
              // !entity.isRemoved() && entity.blocksBuilding && (source == null || !entity.isPassengerOfSameVehicle(source))
              // elide the last check since vanilla calls with source = null
-@@ -911,6 +_,13 @@
-             if (entity.isRemoved() || !entity.blocksBuilding) {
+@@ -912,6 +_,13 @@
                  continue;
              }
-+
+ 
 +            // Gale start - Delay canSee check in entity collisions
 +            if (checkCanSee && source instanceof net.minecraft.server.level.ServerPlayer && entity instanceof net.minecraft.server.level.ServerPlayer
 +                && !((net.minecraft.server.level.ServerPlayer) source).getBukkitEntity().canSee(((net.minecraft.server.level.ServerPlayer) entity).getBukkitEntity())) {
 +                continue;
 +            }
 +            // Gale end - Delay canSee check in entity collisions
- 
++
              if (net.minecraft.world.phys.shapes.Shapes.joinIsNotEmpty(shape, net.minecraft.world.phys.shapes.Shapes.create(entity.getBoundingBox()), net.minecraft.world.phys.shapes.BooleanOp.AND)) {
                  return false;
+             }
+@@ -1486,6 +_,7 @@
+     }
+ 
+     public void tickBlockEntities() {
++        if (!org.galemc.gale.async.SimulationFlag.REAL) return; // Gale - Speculative execution based on next tick simulation - Simulate next tick
+         this.tickingBlockEntities = true;
+         if (!this.pendingBlockEntityTickers.isEmpty()) {
+             this.blockEntityTickers.addAll(this.pendingBlockEntityTickers);

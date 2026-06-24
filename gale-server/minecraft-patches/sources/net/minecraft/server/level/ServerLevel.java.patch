@@ -30,7 +30,7 @@
  
          profiler.push("tickPending");
          if (!this.isDebug() && runs) {
-@@ -856,13 +_,16 @@
+@@ -856,14 +_,17 @@
  
          profiler.popPush("chunkSource");
          this.getChunkSource().tick(haveTime, true);
@@ -43,10 +43,41 @@
 +        } // Gale - Speculative execution based on next tick simulation - Simulate next tick
          this.handlingTick = false;
          profiler.pop();
-+        if (org.galemc.gale.async.SimulationFlag.REAL) { // Gale - Speculative execution based on next tick simulation - Simulate next tick
          boolean isActive = !paperConfig().unsupportedSettings.disableWorldTickingWhenEmpty || this.chunkSource.hasActiveTickets(); // CraftBukkit - this prevents entity cleanup, other issues on servers with no players // Paper - restore this
++        if (org.galemc.gale.async.SimulationFlag.REAL) { // Gale - Speculative execution based on next tick simulation - Simulate next tick
          if (isActive) {
              this.resetEmptyTime();
+         }
+@@ -872,7 +_,8 @@
+             this.emptyTime++;
+         }
+ 
+-        if (this.emptyTime < 300) {
++        } // Gale - Speculative execution based on next tick simulation - Simulate next tick
++        if (org.galemc.gale.async.SimulationFlag.REAL ? this.emptyTime < 300 : isActive || this.emptyTime < 299) { // Gale - Speculative execution based on next tick simulation - Simulate next tick
+             profiler.push("entities");
+             if (this.dragonFight != null && runs) {
+                 profiler.push("dragonFight");
+@@ -886,6 +_,7 @@
+                     entity -> {
+                         if (!entity.isRemoved()) {
+                             if (!tickRateManager.isEntityFrozen(entity)) {
++                                if (!org.galemc.gale.async.SimulationFlag.REAL) return; // Gale - Speculative execution based on next tick simulation - Simulate next tick
+                                 profiler.push("checkDespawn");
+                                 entity.checkDespawn();
+                                 profiler.pop();
+@@ -912,9 +_,10 @@
+             this.tickBlockEntities();
+             profiler.pop();
+             } // Paper - option to disable ticking
+-            this.spigotConfig.currentPrimedTnt = 0; // Spigot
++            if (!org.galemc.gale.async.SimulationFlag.REAL) this.spigotConfig.currentPrimedTnt = 0; // Spigot // Gale - Speculative execution based on next tick simulation - Simulate next tick
+         }
+ 
++        if (org.galemc.gale.async.SimulationFlag.REAL) { // Gale - Speculative execution based on next tick simulation - Simulate next tick
+         profiler.push("entityManagement");
+         // Paper - rewrite chunk system
+         profiler.pop();
 @@ -928,6 +_,7 @@
  
          this.debugSynchronizers.tick(this.server.debugSubscribers());

@@ -1,0 +1,10 @@
+--- a/io/papermc/paper/entity/activation/ActivationRange.java
++++ b/io/papermc/paper/entity/activation/ActivationRange.java
+@@ -122,6 +_,7 @@
+      * @param world
+      */
+     public static void activateEntities(final Level world) {
++        if (!org.galemc.gale.async.SimulationFlag.REAL) return; // Gale - Speculative execution based on next tick simulation - Simulate next tick
+         final int miscActivationRange = world.spigotConfig.miscActivationRange;
+         final int raiderActivationRange = world.spigotConfig.raiderActivationRange;
+         final int animalActivationRange = world.spigotConfig.animalActivationRange;
