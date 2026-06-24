@@ -1,0 +1,52 @@
+--- a/net/minecraft/world/level/EntityGetter.java
++++ b/net/minecraft/world/level/EntityGetter.java
+@@ -118,22 +118,42 @@ public interface EntityGetter extends ca.spottedleaf.moonrise.patches.chunk_syst
+     }
+     // Paper end - Affects Spawning API
+ 
++    // Gale start - Leaf - Slightly optimise getNearestPlayer
+     default @Nullable Player getNearestPlayer(final double x, final double y, final double z, final double range, final @Nullable Predicate<Entity> predicate) {
+-        double best = -1.0;
++        double distance;
++        if (range < 0.0) {
++            distance = Double.MAX_VALUE;
++        } else {
++            distance = range * range;
++        }
+         Player result = null;
+ 
+-        for (Player player : this.players()) {
+-            if (predicate == null || predicate.test(player)) {
+-                double dist = player.distanceToSqr(x, y, z);
+-                if ((range < 0.0 || dist < range * range) && (best == -1.0 || dist < best)) {
+-                    best = dist;
+-                    result = player;
++        List<? extends Player> players = this.players();
++        if (predicate == null) {
++            for (int i = 0, size = players.size(); i < size; i++) {
++                Player target = players.get(i);
++                double targetDist = target.distanceToSqr(x, y, z);
++                if (targetDist < distance) {
++                    distance = targetDist;
++                    result = target;
++                }
++            }
++        } else {
++            for (int i = 0, size = players.size(); i < size; i++) {
++                Player target = players.get(i);
++                if (predicate.test(target)) {
++                    double targetDist = target.distanceToSqr(x, y, z);
++                    if (targetDist < distance) {
++                        distance = targetDist;
++                        result = target;
++                    }
+                 }
+             }
+         }
+ 
+         return result;
+     }
++    // Gale end - Leaf - Slightly optimise getNearestPlayer
+ 
+     // Paper start
+     default List<org.bukkit.entity.HumanEntity> findNearbyBukkitPlayers(double x, double y, double z, double range, @Nullable Predicate<Entity> predicate) {
