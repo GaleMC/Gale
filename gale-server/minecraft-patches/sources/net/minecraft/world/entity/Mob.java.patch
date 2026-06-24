@@ -32,7 +32,7 @@
              return toEquip;
          } else {
              return ItemStack.EMPTY;
-@@ -790,11 +_,33 @@
+@@ -790,11 +_,39 @@
      }
      // Paper end - allow changing despawnInPeaceful
  
@@ -55,6 +55,12 @@
 +
 +    public void updateMayBeNonPersistent() {
 +        this.mayBeNonPersistent = !this.isPersistenceRequired() && !this.isPassenger();
++    }
++
++    @Override
++    public void setVehicle(@Nullable Entity vehicle) {
++        super.setVehicle(vehicle);
++        this.updateMayBeNonPersistent();
 +    }
 +    // Gale end - Compute heuristic persistence reactively
 +

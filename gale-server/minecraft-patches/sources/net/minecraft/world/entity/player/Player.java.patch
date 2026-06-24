@@ -1,0 +1,22 @@
+--- a/net/minecraft/world/entity/player/Player.java
++++ b/net/minecraft/world/entity/player/Player.java
+@@ -2247,4 +_,19 @@
+         public static final Player.BedSleepingProblem NOT_SAFE = new Player.BedSleepingProblem(Component.translatable("block.minecraft.bed.not_safe"));
+         public static final Player.BedSleepingProblem EXPLOSION = new Player.BedSleepingProblem(null); // Paper - Added to properly handle explosions in bed events
+     }
++
++    // Gale start - Optimize player passenger counting
++    @Override
++    public void setVehicle(@Nullable Entity vehicle) {
++        Entity oldVehicle = this.getVehicle();
++        if (oldVehicle == vehicle) return;
++        if (oldVehicle != null) {
++            oldVehicle.decrementPlayerPassengerCount();
++        }
++        super.setVehicle(vehicle);
++        if (vehicle != null) {
++            vehicle.incrementPlayerPassengerCount();
++        }
++    }
++    // Gale end - Optimize player passenger counting
+ }

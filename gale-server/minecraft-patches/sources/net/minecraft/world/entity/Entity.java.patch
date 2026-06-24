@@ -69,21 +69,54 @@
                  ? getOnPos.atY(Mth.floor(this.position.y - offset))
                  : getOnPos;
          } else {
-@@ -3369,6 +_,7 @@
+@@ -3368,7 +_,7 @@
+             }
  
              this.setPose(Pose.STANDING);
-             this.vehicle = entityToRide;
-+            if (this instanceof Mob mob) mob.updateMayBeNonPersistent(); // Gale - Compute heuristic persistence reactively
+-            this.vehicle = entityToRide;
++            this.setVehicle(entityToRide); // Gale - Compute heuristic persistence reactively, Optimize player passenger counting
              this.vehicle.addPassenger(this);
              if (sendEventAndTriggers) {
                  this.level().gameEvent(this, GameEvent.ENTITY_MOUNT, this.vehicle.position);
-@@ -3403,7 +_,8 @@
+@@ -3383,6 +_,30 @@
+         }
+     }
+ 
++    // Gale start - Compute heuristic persistence reactively, Optimize player passenger counting
++    public void setVehicle(@Nullable Entity vehicle) {
++        this.vehicle = vehicle;
++    }
++    // Gale end - Compute heuristic persistence reactively, Optimize player passenger counting
++
++    // Gale start - Optimize player passenger counting
++    private int playerPassengerCount;
++
++    public void incrementPlayerPassengerCount() {
++        this.playerPassengerCount++;
++        if (this.vehicle != null) {
++            this.vehicle.incrementPlayerPassengerCount();
++        }
++    }
++
++    public void decrementPlayerPassengerCount() {
++        this.playerPassengerCount--;
++        if (this.vehicle != null) {
++            this.vehicle.decrementPlayerPassengerCount();
++        }
++    }
++    // Gale end - Optimize player passenger counting
++
+     protected boolean canRide(final Entity vehicle) {
+         return !this.isShiftKeyDown() && this.boardingCooldown <= 0;
+     }
+@@ -3402,8 +_,8 @@
+         // Paper end - Force entity dismount during teleportation
          if (this.vehicle != null) {
              Entity oldVehicle = this.vehicle;
-             this.vehicle = null;
+-            this.vehicle = null;
 -            if (!oldVehicle.removePassenger(this, suppressCancellation)) this.vehicle = oldVehicle; // CraftBukkit // Paper - Force entity dismount during teleportation
-+            if (this instanceof Mob mob) mob.updateMayBeNonPersistent(); // Gale - Compute heuristic persistence reactively
-+            if (!oldVehicle.removePassenger(this, suppressCancellation)) { this.vehicle = oldVehicle; if (this instanceof Mob mob) mob.updateMayBeNonPersistent(); } // CraftBukkit // Paper - Force entity dismount during teleportation // Gale - Compute heuristic persistence reactively
++            this.setVehicle(null); // Gale - Compute heuristic persistence reactively, Optimize player passenger counting
++            if (!oldVehicle.removePassenger(this, suppressCancellation)) this.setVehicle(oldVehicle); // Gale - Compute heuristic persistence reactively, Optimize player passenger counting
              Entity.RemovalReason removalReason = this.getRemovalReason();
              if (removalReason == null || removalReason.shouldDestroy()) {
                  this.level().gameEvent(this, GameEvent.ENTITY_DISMOUNT, oldVehicle.position);
@@ -99,3 +132,26 @@
          // CraftBukkit start - block invalid bounding boxes
          double minX = bb.minX,
                  minY = bb.minY,
+@@ -4717,14 +_,19 @@
+         // Paper end - optimise entity tracker
+     }
+ 
++    // Gale start - Optimize player passenger counting
+     public int countPlayerPassengers() {
+-        return (int)this.getIndirectPassengersStream().filter(e -> e instanceof Player).count();
++        return this.playerPassengerCount;
++    }
++
++    public boolean hasZeroPlayerPassengers() {
++        return this.playerPassengerCount == 0;
+     }
+ 
+     public boolean hasExactlyOnePlayerPassenger() {
+-        if (this.passengers.isEmpty()) { return false; } // Paper - Optimize indirect passenger iteration
+-        return this.countPlayerPassengers() == 1;
++        return this.playerPassengerCount == 1;
+     }
++    // Gale end - Optimize player passenger counting
+ 
+     public Entity getRootVehicle() {
+         Entity result = this;

@@ -141,6 +141,10 @@ Features originating from other projects are carefully verified and updated as p
     Leaf: <code>Optimize-matching-item-checks.patch</code>
   </li>
   <li>
+    <i>Optimize player passenger counting</i><br>
+    Updates player passenger count reactively, instead of calculating it every tick.
+  </li>
+  <li>
     <i>Optimize pushable selector</i> (original by <a href="https://github.com/OverwriteMC">OverwriteMC</a>)<br>
     Avoid duplicated <code>Bukkit#isPushable</code> check, already checked inside the <code>Bukkit#canCollideWithBukkit</code>.<br>
     Leaf: <code>Optimize-pushable-selector.patch</code>
