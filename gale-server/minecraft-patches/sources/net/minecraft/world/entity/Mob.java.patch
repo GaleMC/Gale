@@ -1,0 +1,78 @@
+--- a/net/minecraft/world/entity/Mob.java
++++ b/net/minecraft/world/entity/Mob.java
+@@ -169,6 +_,7 @@
+         if (level instanceof ServerLevel) {
+             this.registerGoals();
+         }
++        this.updateMustDespawnBecauseOfPeacefulDifficulty(); // Gale - Compute peaceful despawn reactively
+     }
+ 
+     protected void registerGoals() {
+@@ -469,6 +_,7 @@
+         boolean persistenceRequired = input.getBooleanOr("PersistenceRequired", false);
+         if (isLevelAtLeast(input, 1) || persistenceRequired) {
+             this.persistenceRequired = persistenceRequired;
++            this.updateMayBeNonPersistent(); // Gale - Compute heuristic persistence reactively
+         }
+         // CraftBukkit end
+         this.dropChances = input.read("drop_chances", DropChances.CODEC).orElse(DropChances.DEFAULT);
+@@ -485,6 +_,7 @@
+         this.aware = input.getBooleanOr("Bukkit.Aware", true); // CraftBukkit
+         // Paper start - allow changing despawnInPeaceful
+         this.despawnInPeacefulOverride = readDespawnInPeacefulOverride(input);
++        this.updateMustDespawnBecauseOfPeacefulDifficulty(); // Gale - Compute peaceful despawn reactively
+     }
+     public static net.kyori.adventure.util.TriState readDespawnInPeacefulOverride(ValueInput input) {
+         return input.read("Paper.DespawnInPeacefulOverride", io.papermc.paper.util.PaperCodecs.TRI_STATE_CODEC).orElse(net.kyori.adventure.util.TriState.NOT_SET);
+@@ -653,6 +_,7 @@
+             ItemStack toEquip = slot.limit(itemStack);
+             this.setItemSlotAndDropWhenKilled(slot, toEquip);
+             this.persistenceRequired = true;
++            this.updateMayBeNonPersistent(); // Gale - Compute heuristic persistence reactively
+             return toEquip;
+         } else {
+             return ItemStack.EMPTY;
+@@ -790,11 +_,33 @@
+     }
+     // Paper end - allow changing despawnInPeaceful
+ 
++    // Gale start - Compute peaceful despawn reactively
++    private boolean mustDespawnBecauseOfPeacefulDifficulty;
++
++    public void updateMustDespawnBecauseOfPeacefulDifficulty() {
++        this.mustDespawnBecauseOfPeacefulDifficulty = this.level().getDifficulty() == Difficulty.PEACEFUL && this.shouldDespawnInPeaceful();
++    }
++
++    @Override
++    public void setLevel(final Level level) {
++        super.setLevel(level);
++        this.updateMustDespawnBecauseOfPeacefulDifficulty();
++    }
++    // Gale end - Compute peaceful despawn reactively
++
++    // Gale start - Compute heuristic persistence reactively
++    private boolean mayBeNonPersistent;
++
++    public void updateMayBeNonPersistent() {
++        this.mayBeNonPersistent = !this.isPersistenceRequired() && !this.isPassenger();
++    }
++    // Gale end - Compute heuristic persistence reactively
++
+     @Override
+     public void checkDespawn() {
+-        if (this.level().getDifficulty() == Difficulty.PEACEFUL && this.shouldDespawnInPeaceful()) { // Paper - allow changing despawnInPeaceful
++        if (this.mustDespawnBecauseOfPeacefulDifficulty) { // Paper - allow changing despawnInPeaceful // Gale - Compute peaceful despawn reactively
+             this.discard(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
+-        } else if (!this.isPersistenceRequired() && !this.requiresCustomPersistence()) {
++        } else if (this.mayBeNonPersistent && !this.requiresCustomPersistence()) { // Gale - Compute heuristic persistence reactively
+             Entity player = this.level().findNearbyPlayer(this, -1.0, EntitySelector.PLAYER_AFFECTS_SPAWNING); // Paper - Affects Spawning API
+             if (player != null) {
+                 // Paper start - Configurable despawn distances
+@@ -1293,6 +_,7 @@
+ 
+     public void setPersistenceRequired() {
+         this.persistenceRequired = true;
++        this.updateMayBeNonPersistent(); // Gale - Compute heuristic persistence reactively
+     }
+ 
+     @Override

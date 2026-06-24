@@ -69,6 +69,24 @@
                  ? getOnPos.atY(Mth.floor(this.position.y - offset))
                  : getOnPos;
          } else {
+@@ -3369,6 +_,7 @@
+ 
+             this.setPose(Pose.STANDING);
+             this.vehicle = entityToRide;
++            if (this instanceof Mob mob) mob.updateMayBeNonPersistent(); // Gale - Compute heuristic persistence reactively
+             this.vehicle.addPassenger(this);
+             if (sendEventAndTriggers) {
+                 this.level().gameEvent(this, GameEvent.ENTITY_MOUNT, this.vehicle.position);
+@@ -3403,7 +_,8 @@
+         if (this.vehicle != null) {
+             Entity oldVehicle = this.vehicle;
+             this.vehicle = null;
+-            if (!oldVehicle.removePassenger(this, suppressCancellation)) this.vehicle = oldVehicle; // CraftBukkit // Paper - Force entity dismount during teleportation
++            if (this instanceof Mob mob) mob.updateMayBeNonPersistent(); // Gale - Compute heuristic persistence reactively
++            if (!oldVehicle.removePassenger(this, suppressCancellation)) { this.vehicle = oldVehicle; if (this instanceof Mob mob) mob.updateMayBeNonPersistent(); } // CraftBukkit // Paper - Force entity dismount during teleportation // Gale - Compute heuristic persistence reactively
+             Entity.RemovalReason removalReason = this.getRemovalReason();
+             if (removalReason == null || removalReason.shouldDestroy()) {
+                 this.level().gameEvent(this, GameEvent.ENTITY_DISMOUNT, oldVehicle.position);
 @@ -4580,6 +_,11 @@
      }
  

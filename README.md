@@ -93,6 +93,14 @@ Features originating from other projects are carefully verified and updated as p
     Leaf: <code>Check-targeting-range-before-getting-visibility.patch</code>
   </li>
   <li>
+    <i>Compute heuristic persistence reactively</i><br>
+    Compute a heuristic for whether mobs are persistent when conditions change, instead of every tick.
+  </li>
+  <li>
+    <i>Compute peaceful despawn reactively</i><br>
+    Compute whether to despawn non-peaceful mobs when conditions change, instead of every tick.
+  </li>
+  <li>
     <i>Delay canSee check in entity collisions</i><br>
     Perform other checks before <code>canSee</code>,
     because the latter is more expensive.<br>
@@ -159,6 +167,11 @@ Features originating from other projects are carefully verified and updated as p
       <li>part of <code>optimize-getOnPos.patch</code></li>
       <li><code>optimize-isStateClimbable.patch</code></li>
     </ul>
+  </li>
+  <li>
+    <i>Predict Halloween</i><br>
+    Pre-compute the epoch milliseconds for Halloween, for faster comparison.<br>
+    Leaf: <code>Predict-Halloween.patch</code>
   </li>
   <li>
     <i>Reduce RandomSource instances</i> (original by <a href="https://github.com/foss-mc">foss-mc</a>)<br>
