@@ -569,7 +569,7 @@ index 0000000000000000000000000000000000000000..9571aae593999d11b3908856b0295a7d
 +            their respective world folder. The files are named %s
 +
 +            Wiki: https://github.com/GaleMC/Gale/wiki
-+            Discord: https://discord.gg/gwezNT8c24""", WORLD_CONFIG_FILE_NAME);
++            Discord: https://discord.gg/vkUqjJ2xMg""", WORLD_CONFIG_FILE_NAME);
 +
 +    private static final String WORLD_DEFAULTS_HEADER = """
 +            This is the world defaults configuration file for Gale.
@@ -583,7 +583,7 @@ index 0000000000000000000000000000000000000000..9571aae593999d11b3908856b0295a7d
 +            the world-specific config file inside each world folder.
 +
 +            Wiki: https://github.com/GaleMC/Gale/wiki
-+            Discord: https://discord.gg/gwezNT8c24""";
++            Discord: https://discord.gg/vkUqjJ2xMg""";
 +
 +    private static final Function<ContextMap, String> WORLD_HEADER = map -> String.format("""
 +        This is a world configuration file for Gale.
