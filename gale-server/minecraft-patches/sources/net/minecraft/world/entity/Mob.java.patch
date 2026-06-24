@@ -32,12 +32,12 @@
              return toEquip;
          } else {
              return ItemStack.EMPTY;
-@@ -790,11 +_,33 @@
+@@ -790,11 +_,34 @@
      }
      // Paper end - allow changing despawnInPeaceful
  
 +    // Gale start - Compute peaceful despawn reactively
-+    private boolean mustDespawnBecauseOfPeacefulDifficulty;
++    protected boolean mustDespawnBecauseOfPeacefulDifficulty;
 +
 +    public void updateMustDespawnBecauseOfPeacefulDifficulty() {
 +        this.mustDespawnBecauseOfPeacefulDifficulty = this.level().getDifficulty() == Difficulty.PEACEFUL && this.shouldDespawnInPeaceful();
@@ -65,9 +65,18 @@
              this.discard(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
 -        } else if (!this.isPersistenceRequired() && !this.requiresCustomPersistence()) {
 +        } else if (this.mayBeNonPersistent && !this.requiresCustomPersistence()) { // Gale - Compute heuristic persistence reactively
++            if (!org.galemc.gale.async.SimulationFlag.REAL) return; // Gale - Speculative execution based on next tick simulation - Simulate next tick
              Entity player = this.level().findNearbyPlayer(this, -1.0, EntitySelector.PLAYER_AFFECTS_SPAWNING); // Paper - Affects Spawning API
              if (player != null) {
                  // Paper start - Configurable despawn distances
+@@ -820,6 +_,7 @@
+                 }
+             }
+         } else {
++            if (!org.galemc.gale.async.SimulationFlag.REAL) return; // Gale - Speculative execution based on next tick simulation - Simulate next tick
+             this.noActionTime = 0;
+         }
+     }
 @@ -1293,6 +_,7 @@
  
      public void setPersistenceRequired() {

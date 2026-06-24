@@ -8,6 +8,14 @@
      public boolean onGround;
      public boolean horizontalCollision;
      public boolean verticalCollision;
+@@ -675,6 +_,7 @@
+     }
+ 
+     public final void discard(org.bukkit.event.entity.EntityRemoveEvent.@Nullable Cause cause) {
++        if (!org.galemc.gale.async.SimulationFlag.REAL) return; // Gale - Speculative execution based on next tick simulation - Simulate next tick
+         this.remove(Entity.RemovalReason.DISCARDED, cause);
+         // CraftBukkit end
+     }
 @@ -1182,7 +_,18 @@
                  return;
              }

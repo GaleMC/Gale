@@ -160,3 +160,24 @@
      }
  
      // Paper start - per world respawn data
+@@ -2055,7 +_,19 @@
+             new io.papermc.paper.event.world.WorldDifficultyChangeEvent(
+                 level.getWorld(), source, org.bukkit.craftbukkit.util.CraftDifficulty.toBukkit(difficulty)
+             ).callEvent();
+-            worldData.setDifficulty(worldData.isHardcore() ? Difficulty.HARD : difficulty);
++            // Gale start - Compute peaceful despawn reactively
++            Difficulty oldDifficulty = worldData.getDifficulty();
++            Difficulty newDifficulty = worldData.isHardcore() ? Difficulty.HARD : difficulty;
++            if (oldDifficulty == newDifficulty) {
++                return;
++            }
++            worldData.setDifficulty(newDifficulty);
++            if ((oldDifficulty == Difficulty.PEACEFUL) != (newDifficulty == Difficulty.PEACEFUL)) {
++                for (net.minecraft.world.entity.Mob mob : level.getEntities(net.minecraft.world.level.entity.EntityTypeTest.forClass(net.minecraft.world.entity.Mob.class), _ -> true)) {
++                    mob.updateMustDespawnBecauseOfPeacefulDifficulty();
++                }
++            }
++            // Gale end - Compute peaceful despawn reactively
+             level.setSpawnSettings(level.isSpawningMonsters());
+             level.players().forEach(this::sendDifficultyUpdate);
+             // Paper end - per level difficulty
