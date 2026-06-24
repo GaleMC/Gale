@@ -51,7 +51,6 @@ For more information on access transformers, see Paper's [Access Transformers do
 - Use the imperative mood ("Move cursor to..." not "Moves cursor to...")
 - Limit the first line to 72 characters or less
 - Reference issues and pull requests after the first line
-- Do not include detailed commit body descriptions
 
 ## Pull Request Process
 
@@ -64,14 +63,21 @@ For more information on access transformers, see Paper's [Access Transformers do
 
 ## Code Style
 
+- Try to minimize changes to Minecraft and Paper classes, if possible
 - Follow the existing code style in the project
 - Use 4 spaces for indentation (no tabs)
 - Use American English spellings (optimize, organize, color)
-- Do not add comments unless necessary for understanding
+
+## AI and Tooling
+
+- Do not submit code you do not fully understand
+- Do not submit obfuscated code
 
 ## Testing
 
 - Ensure your changes compile: `./gradlew applyAllPatches`
+- Verify complex code with tests
+- Measure performance improvement in practice, if it is not clear from code alone
 - Run tests if applicable: `./gradlew test`
 - Verify your patches apply cleanly: `./gradlew applyMinecraftSourcePatches --stacktrace`
 

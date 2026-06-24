@@ -17,4 +17,3 @@ Summarize the changes made.
 - [ ] Patches apply cleanly (`./gradlew applyAllPatches`)
 - [ ] Paperclip jar builds (`./gradlew :gale-server:createPaperclipJar`)
 - [ ] Tests pass (if applicable)
-- [ ] No blank context lines in patches (if applicable)

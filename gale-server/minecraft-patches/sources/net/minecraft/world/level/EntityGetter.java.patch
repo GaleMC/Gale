@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/EntityGetter.java
 +++ b/net/minecraft/world/level/EntityGetter.java
-@@ -118,22 +118,42 @@ public interface EntityGetter extends ca.spottedleaf.moonrise.patches.chunk_syst
+@@ -118,22 +_,42 @@
      }
      // Paper end - Affects Spawning API
  
