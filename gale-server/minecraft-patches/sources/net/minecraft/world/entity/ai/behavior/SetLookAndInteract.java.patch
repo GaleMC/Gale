@@ -1,0 +1,13 @@
+--- a/net/minecraft/world/entity/ai/behavior/SetLookAndInteract.java
++++ b/net/minecraft/world/entity/ai/behavior/SetLookAndInteract.java
+@@ -19,8 +19,8 @@ public class SetLookAndInteract {
+                 .apply(
+                     i,
+                     (lookTarget, interactionTarget, nearestEntities) -> (level, body, timestamp) -> {
+-                        Optional<LivingEntity> closest = i.<NearestVisibleLivingEntities>get(nearestEntities)
+-                            .findClosest(e -> e.distanceToSqr(body) <= interactionRangeSqr && e.is(type));
++                        Optional<LivingEntity> closest = i.get(nearestEntities)
++                            .findClosest(e -> e.is(type) && e.distanceToSqr(body) <= interactionRangeSqr); // Gale - Leaf - optimise SetLookAndInteract
+                         if (closest.isEmpty()) {
+                             return false;
+                         }
