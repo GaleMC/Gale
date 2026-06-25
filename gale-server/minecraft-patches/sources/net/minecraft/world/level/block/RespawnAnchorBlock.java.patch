@@ -27,7 +27,7 @@
  
 +    // Leaf start - Optimize respawn anchor explosion
 +    private static boolean hasWaterFlow(final Level level, final BlockPos secondPos) {
-+        for (Direction direction : Direction.Plane.HORIZONTAL.faces) {
++        for (Direction direction : Direction.Plane.HORIZONTAL) {
 +            final BlockPos neighborPos = secondPos.relative(direction);
 +            if (isWaterThatWouldFlow(neighborPos, level)) {
 +                return true;
