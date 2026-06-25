@@ -20,3 +20,13 @@
              this.jsonRpcServer.tick();
          }
      }
+@@ -922,4 +_,8 @@
+     @Override
+     public int getScaledTrackingDistance(final int range) {
+-        return this.entityBroadcastRangePercentage() * range / 100;
++        // Gale start - Leaf #0221: Optimize getScaledTrackingDistance
++        int p = this.getProperties().entityBroadcastRangePercentage.get();
++        if (p == 100) return range;
++        return p * range / 100;
++        // Gale end - Leaf #0221: Optimize getScaledTrackingDistance
+     }
