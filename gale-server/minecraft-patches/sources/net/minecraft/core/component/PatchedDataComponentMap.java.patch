@@ -1,0 +1,19 @@
+--- a/net/minecraft/core/component/PatchedDataComponentMap.java
++++ b/net/minecraft/core/component/PatchedDataComponentMap.java
+@@ -222,4 +_,15 @@
+     @Override
+     public boolean equals(final Object obj) {
+-        return this == obj || obj instanceof PatchedDataComponentMap otherMap && this.prototype.equals(otherMap.prototype) && this.patch.equals(otherMap.patch);
++        // Gale start - Leaf #0282: Optimize PatchedDataComponentMap equals
++        if (this == obj) return true;
++        if (!(obj instanceof PatchedDataComponentMap otherMap)) return false;
++        if (this.patch.size() != otherMap.patch.size()) {
++            return false;
++        }
++        if (!this.prototype.equals(otherMap.prototype)) {
++            return false;
++        }
++        if (this.patch == otherMap.patch) return true;
++        return this.patch.equals(otherMap.patch);
++        // Gale end - Leaf #0282: Optimize PatchedDataComponentMap equals
+     }
