@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/entity/monster/EnderMan.java
 +++ b/net/minecraft/world/entity/monster/EnderMan.java
+@@ -87,6 +_,7 @@
+     public EnderMan(final EntityType<? extends EnderMan> type, final Level level) {
+         super(type, level);
+         this.setPathfindingMalus(PathType.WATER, -1.0F);
++        this.gale$eventDriven_requiresCustomPersistence_update(); // Gale - Event-driven - Mob#requiresCustomPersistence
+     }
+ 
+     @Override
 @@ -298,11 +_,15 @@
      private boolean teleport(final double x, final double y, final double z) {
          BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(x, y, z);
@@ -18,3 +26,24 @@
          boolean couldStandOn = blockState.blocksMotion();
          boolean isWet = blockState.getFluidState().is(FluidTags.WATER);
          if (couldStandOn && !isWet) {
+@@ -363,6 +_,7 @@
+ 
+     public void setCarriedBlock(final @Nullable BlockState carryingBlock) {
+         this.entityData.set(DATA_CARRY_STATE, Optional.ofNullable(carryingBlock));
++        this.gale$eventDriven_requiresCustomPersistence_update(); // Gale - Event-driven - Mob#requiresCustomPersistence
+     }
+ 
+     public @Nullable BlockState getCarriedBlock() {
+@@ -429,8 +_,10 @@
+     // Paper end
+ 
+     @Override
+-    public boolean requiresCustomPersistence() {
+-        return super.requiresCustomPersistence() || this.getCarriedBlock() != null;
++    // Gale start - Event-driven - Mob#requiresCustomPersistence
++    public boolean gale$eventDriven_requiresCustomPersistence_compute() {
++        return super.gale$eventDriven_requiresCustomPersistence_compute() || this.getCarriedBlock() != null;
++        // Gale end - Event-driven - Mob#requiresCustomPersistence
+     }
+ 
+     private static class EndermanFreezeWhenLookedAt extends Goal {

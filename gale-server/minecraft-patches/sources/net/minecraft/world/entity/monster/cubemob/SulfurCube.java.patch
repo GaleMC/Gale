@@ -1,0 +1,63 @@
+--- a/net/minecraft/world/entity/monster/cubemob/SulfurCube.java
++++ b/net/minecraft/world/entity/monster/cubemob/SulfurCube.java
+@@ -108,6 +_,7 @@
+         super(type, level);
+         this.lookControl = new SulfurCube.SulfurCubeLookControl();
+         this.moveControl = new SulfurCube.SulfurCubeMobMoveControl<>(this);
++        this.gale$eventDriven_requiresCustomPersistence_update(); // Gale - Event-driven - Mob#requiresCustomPersistence
+     }
+ 
+     @Override
+@@ -158,6 +_,7 @@
+     @Override
+     public void setFromBucket(final boolean fromBucket) {
+         this.entityData.set(FROM_BUCKET, fromBucket);
++        this.gale$eventDriven_requiresCustomPersistence_update(); // Gale - Event-driven - Mob#requiresCustomPersistence
+     }
+ 
+     @Override
+@@ -230,9 +_,41 @@
+     }
+ 
+     @Override
+-    public boolean requiresCustomPersistence() {
+-        return super.requiresCustomPersistence() || this.hasBodyItem() || this.fromBucket();
+-    }
++    // Gale start - Event-driven - Mob#requiresCustomPersistence
++    public boolean gale$eventDriven_requiresCustomPersistence_compute() {
++        return super.gale$eventDriven_requiresCustomPersistence_compute() || this.hasBodyItem() || this.fromBucket();
++        // Gale end - Event-driven - Mob#requiresCustomPersistence
++    }
++
++    // Gale start - Event-driven - Mob#requiresCustomPersistence
++    @Override
++    protected net.minecraft.world.entity.EntityEquipment createEquipment() {
++        return new net.minecraft.world.entity.EntityEquipment() {
++
++            @Override
++            public net.minecraft.world.item.ItemStack set(final net.minecraft.world.entity.EquipmentSlot slot, final net.minecraft.world.item.ItemStack itemStack) {
++                net.minecraft.world.item.ItemStack toReturn = super.set(slot, itemStack);
++                if (slot == EquipmentSlot.BODY) {
++                    SulfurCube.this.gale$eventDriven_requiresCustomPersistence_update();
++                }
++                return toReturn;
++            }
++
++            @Override
++            public void setAll(final net.minecraft.world.entity.EntityEquipment equipment) {
++                super.setAll(equipment);
++                SulfurCube.this.gale$eventDriven_requiresCustomPersistence_update();
++            }
++
++            @Override
++            public void clear() {
++                super.clear();
++                SulfurCube.this.gale$eventDriven_requiresCustomPersistence_update();
++            }
++
++        };
++    }
++    // Gale end - Event-driven - Mob#requiresCustomPersistence
+ 
+     @Override
+     public boolean canBeLeashed() {

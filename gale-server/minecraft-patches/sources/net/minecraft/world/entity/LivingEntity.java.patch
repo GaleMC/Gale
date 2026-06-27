@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/entity/LivingEntity.java
 +++ b/net/minecraft/world/entity/LivingEntity.java
+@@ -291,7 +_,7 @@
+     private final EnumMap<EquipmentSlot, Reference2ObjectMap<Enchantment, Set<EnchantmentLocationBasedEffect>>> activeLocationDependentEnchantments = new EnumMap<>(
+         EquipmentSlot.class
+     );
+-    protected final EntityEquipment equipment;
++    protected final EntityEquipment equipment; // Gale - Event-driven - Mob#requiresCustomPersistence - TODO Watch for new writes
+     private Waypoint.Icon locatorBarIcon = new Waypoint.Icon();
+     public @Nullable Vec3 currentImpulseImpactPos;
+     // CraftBukkit start
 @@ -561,13 +_,14 @@
      }
  

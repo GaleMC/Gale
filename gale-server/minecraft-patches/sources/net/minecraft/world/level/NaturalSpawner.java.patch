@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/NaturalSpawner.java
++++ b/net/minecraft/world/level/NaturalSpawner.java
+@@ -86,7 +_,7 @@
+         Object2IntOpenHashMap<MobCategory> mobCounts = new Object2IntOpenHashMap<>();
+ 
+         for (Entity entity : entities) {
+-            if (!(entity instanceof Mob mob && (mob.isPersistenceRequired() || mob.requiresCustomPersistence()))) {
++            if (!(entity instanceof Mob mob && mob.gale$eventDriven_isPersistent)) { // Gale - Event-driven - Mob#isPersistent
+                 MobCategory category = entity.getType().getCategory();
+                 if (category != MobCategory.MISC) {
+                     // Paper start - Only count natural spawns

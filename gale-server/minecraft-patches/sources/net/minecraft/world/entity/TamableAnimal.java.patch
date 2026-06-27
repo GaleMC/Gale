@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/entity/TamableAnimal.java
++++ b/net/minecraft/world/entity/TamableAnimal.java
+@@ -123,6 +_,7 @@
+         } else {
+             this.entityData.set(DATA_FLAGS_ID, (byte)(current & -5));
+         }
++        this.gale$eventDriven_requiresCustomPersistence_update(); // Gale - Event-driven - Mob#requiresCustomPersistence
+ 
+         if (includeSideEffects) {
+             this.applyTamingSideEffects();

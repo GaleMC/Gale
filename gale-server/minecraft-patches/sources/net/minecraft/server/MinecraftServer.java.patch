@@ -165,7 +165,7 @@
                  level.getWorld(), source, org.bukkit.craftbukkit.util.CraftDifficulty.toBukkit(difficulty)
              ).callEvent();
 -            worldData.setDifficulty(worldData.isHardcore() ? Difficulty.HARD : difficulty);
-+            // Gale start - Compute peaceful despawn reactively
++            // Gale start - Event-driven - Mob#mustDespawnBecauseOfPeacefulDifficulty
 +            Difficulty oldDifficulty = worldData.getDifficulty();
 +            Difficulty newDifficulty = worldData.isHardcore() ? Difficulty.HARD : difficulty;
 +            if (oldDifficulty == newDifficulty) {
@@ -174,10 +174,10 @@
 +            worldData.setDifficulty(newDifficulty);
 +            if ((oldDifficulty == Difficulty.PEACEFUL) != (newDifficulty == Difficulty.PEACEFUL)) {
 +                for (net.minecraft.world.entity.Mob mob : level.getEntities(net.minecraft.world.level.entity.EntityTypeTest.forClass(net.minecraft.world.entity.Mob.class), _ -> true)) {
-+                    mob.updateMustDespawnBecauseOfPeacefulDifficulty();
++                    mob.gale$eventDriven_mustDespawnBecauseOfPeacefulDifficulty_update();
 +                }
 +            }
-+            // Gale end - Compute peaceful despawn reactively
++            // Gale end - Event-driven - Mob#mustDespawnBecauseOfPeacefulDifficulty
              level.setSpawnSettings(level.isSpawningMonsters());
              level.players().forEach(this::sendDifficultyUpdate);
              // Paper end - per level difficulty

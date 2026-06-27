@@ -1,6 +1,7 @@
 --- a/net/minecraft/world/level/chunk/LevelChunk.java
 +++ b/net/minecraft/world/level/chunk/LevelChunk.java
-@@ -277,9 +_,16 @@
+@@ -277,12 +_,18 @@
+ 
      public BlockState getBlockStateFinal(final int x, final int y, final int z) {
          // Copied and modified from below
 -        final int sectionIndex = this.getSectionIndex(y);
@@ -21,3 +22,5 @@
 -        return this.sections[sectionIndex].getStates().get((y & 15) << 8 | (z & 15) << 4 | x & 15);
 +        // Leaf end - optimize LevelChunk#getBlockStateFinal
      }
+ 
+     @Override

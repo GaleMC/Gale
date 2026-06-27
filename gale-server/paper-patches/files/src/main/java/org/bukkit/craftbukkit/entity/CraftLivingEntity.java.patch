@@ -1,10 +1,15 @@
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftLivingEntity.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftLivingEntity.java
-@@ -698,6 +_,7 @@
+@@ -697,7 +_,11 @@
+     @Override
      public void setRemoveWhenFarAway(boolean remove) {
          if (this.getHandle() instanceof Mob mob) {
-             mob.persistenceRequired = !remove;
-+            mob.updateMayBeNonPersistent(); // Gale - Compute heuristic persistence reactively
+-            mob.persistenceRequired = !remove;
++            // Gale start - Event-driven - Mob#isPersistent
++            boolean persistenceRequired = !remove;
++            mob.persistenceRequired = persistenceRequired;
++            mob.gale$eventDriven_isPersistent_update();
++            // Gale end - Event-driven - Mob#isPersistent
          }
      }
  

@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/entity/Entity.java
 +++ b/net/minecraft/world/entity/Entity.java
+@@ -266,7 +_,7 @@
+     public boolean blocksBuilding;
+     public ImmutableList<Entity> passengers = ImmutableList.of();
+     protected int boardingCooldown;
+-    private @Nullable Entity vehicle;
++    private @Nullable Entity vehicle; // Gale - Event-driven - Mob#requiresCustomPersistence - TODO Watch for new writes
+     private Level level;
+     public double xo;
+     public double yo;
 @@ -280,6 +_,7 @@
      public float yRotO;
      public float xRotO;
@@ -8,6 +17,15 @@
      public boolean onGround;
      public boolean horizontalCollision;
      public boolean verticalCollision;
+@@ -306,7 +_,7 @@
+     protected boolean wasEyeInWater;
+     public int invulnerableTime;
+     protected boolean firstTick = true;
+-    protected final SynchedEntityData entityData;
++    protected final SynchedEntityData entityData; // Gale - Event-driven - Mob#requiresCustomPersistence - TODO Watch for new writes
+     protected static final EntityDataAccessor<Byte> DATA_SHARED_FLAGS_ID = SynchedEntityData.defineId(Entity.class, EntityDataSerializers.BYTE);
+     protected static final int FLAG_ONFIRE = 0;
+     private static final int FLAG_SHIFT_KEY_DOWN = 1;
 @@ -675,6 +_,7 @@
      }
  
@@ -82,19 +100,17 @@
  
              this.setPose(Pose.STANDING);
 -            this.vehicle = entityToRide;
-+            this.setVehicle(entityToRide); // Gale - Compute heuristic persistence reactively, Optimize player passenger counting
++            this.setVehicle(entityToRide); // Gale - Event-driven - Mob#isPersistent, Optimize player passenger counting
              this.vehicle.addPassenger(this);
              if (sendEventAndTriggers) {
                  this.level().gameEvent(this, GameEvent.ENTITY_MOUNT, this.vehicle.position);
-@@ -3383,6 +_,30 @@
+@@ -3383,6 +_,28 @@
          }
      }
  
-+    // Gale start - Compute heuristic persistence reactively, Optimize player passenger counting
 +    public void setVehicle(@Nullable Entity vehicle) {
 +        this.vehicle = vehicle;
 +    }
-+    // Gale end - Compute heuristic persistence reactively, Optimize player passenger counting
 +
 +    // Gale start - Optimize player passenger counting
 +    private int playerPassengerCount;
@@ -123,8 +139,8 @@
              Entity oldVehicle = this.vehicle;
 -            this.vehicle = null;
 -            if (!oldVehicle.removePassenger(this, suppressCancellation)) this.vehicle = oldVehicle; // CraftBukkit // Paper - Force entity dismount during teleportation
-+            this.setVehicle(null); // Gale - Compute heuristic persistence reactively, Optimize player passenger counting
-+            if (!oldVehicle.removePassenger(this, suppressCancellation)) this.setVehicle(oldVehicle); // Gale - Compute heuristic persistence reactively, Optimize player passenger counting
++            this.setVehicle(null); // Gale - Event-driven - Mob#isPersistent, Optimize player passenger counting
++            if (!oldVehicle.removePassenger(this, suppressCancellation)) this.setVehicle(oldVehicle); // Gale - Event-driven - Mob#isPersistent, Optimize player passenger counting
              Entity.RemovalReason removalReason = this.getRemovalReason();
              if (removalReason == null || removalReason.shouldDestroy()) {
                  this.level().gameEvent(this, GameEvent.ENTITY_DISMOUNT, oldVehicle.position);

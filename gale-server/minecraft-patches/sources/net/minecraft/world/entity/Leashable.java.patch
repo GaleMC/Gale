@@ -1,0 +1,52 @@
+--- a/net/minecraft/world/entity/Leashable.java
++++ b/net/minecraft/world/entity/Leashable.java
+@@ -411,7 +_,7 @@
+                 }
+             );
+         private int delayedLeashHolderId;
+-        public @Nullable Entity leashHolder;
++        public @Nullable Entity leashHolder; // Gale - Event-driven - Mob#isLeashed - TODO Watch for new writes
+         public @Nullable Either<UUID, BlockPos> delayedLeashInfo;
+         public double angularMomentum;
+ 
+@@ -428,10 +_,39 @@
+         }
+ 
+         public void setLeashHolder(final Entity leashHolder) {
+-            this.leashHolder = leashHolder;
++            // Gale start - Event-driven - Mob#isLeashed
++            if (this.leashHolder != leashHolder) {
++                this.leashHolder = leashHolder;
++                if (this.leashHolderListeners != null) {
++                    for (java.lang.ref.WeakReference<Mob> listener : this.leashHolderListeners) {
++                        Mob mob = listener.get();
++                        if (mob != null) {
++                            mob.gale$eventDriven_isLeashed_update();
++                        }
++                    }
++                }
++            }
++            // Gale end - Event-driven - Mob#isLeashed
+             this.delayedLeashInfo = null;
+             this.delayedLeashHolderId = 0;
+         }
++
++        // Gale start - Event-driven - Mob#isLeashed
++        private @Nullable List<java.lang.ref.WeakReference<net.minecraft.world.entity.Mob>> leashHolderListeners;
++
++        public void addLeashHolderListener(java.lang.ref.WeakReference<net.minecraft.world.entity.Mob> listener) {
++            if (this.leashHolderListeners == null) {
++                this.leashHolderListeners = new ArrayList<>(1);
++            }
++            this.leashHolderListeners.add(listener);
++        }
++
++        public void removeLeashHolderListener(java.lang.ref.WeakReference<net.minecraft.world.entity.Mob> listener) {
++            if (this.leashHolderListeners != null) {
++                this.leashHolderListeners.remove(listener);
++            }
++        }
++        // Gale end - Event-driven - Mob#isLeashed
+     }
+ 
+     record Wrench(Vec3 force, double torque) {

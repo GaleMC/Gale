@@ -1,10 +1,6 @@
 --- a/net/minecraft/world/level/block/RespawnAnchorBlock.java
 +++ b/net/minecraft/world/level/block/RespawnAnchorBlock.java
-@@ -159,24 +_,31 @@
-         FluidState fluidBelow = level.getFluidState(pos.below());
-         return !fluidBelow.is(FluidTags.WATER);
-     }
- 
+@@ -163,14 +_,12 @@
      private void explode(final BlockState state, final ServerLevel level, final BlockPos pos) {
          org.bukkit.block.BlockState blockState = org.bukkit.craftbukkit.block.CraftBlock.at(level, pos).getState(); // CraftBukkit - capture BlockState before remove block
          level.removeBlock(pos, false);
@@ -20,11 +16,11 @@
                      ? Optional.of(Blocks.WATER.getExplosionResistance())
                      : super.getBlockExplosionResistance(explosion, levelx, testPos, block, fluid);
              }
-         };
+@@ -178,6 +_,18 @@
          Vec3 boomPos = Vec3.atCenterOf(pos);
          level.explode(null, level.damageSources().badRespawnPointExplosion(boomPos).causingBlockSnapshot(blockState), damageCalculator, boomPos, 5.0F, true, Level.ExplosionInteraction.BLOCK); // CraftBukkit - add state
      }
- 
++
 +    // Leaf start - Optimize respawn anchor explosion
 +    private static boolean hasWaterFlow(final Level level, final BlockPos secondPos) {
 +        for (Direction direction : Direction.Plane.HORIZONTAL) {
@@ -36,5 +32,6 @@
 +        return level.getFluidState(secondPos.above()).is(FluidTags.WATER);
 +    }
 +    // Leaf end - Optimize respawn anchor explosion
-+
+ 
      public static boolean canSetSpawn(final ServerLevel level, final BlockPos pos) {
+         return level.environmentAttributes().getValue(EnvironmentAttributes.RESPAWN_ANCHOR_WORKS, pos);

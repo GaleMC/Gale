@@ -1,0 +1,22 @@
+--- a/net/minecraft/world/entity/animal/nautilus/AbstractNautilus.java
++++ b/net/minecraft/world/entity/animal/nautilus/AbstractNautilus.java
+@@ -93,6 +_,7 @@
+         this.lookControl = new SmoothSwimmingLookControl(this, 10);
+         this.setPathfindingMalus(PathType.WATER, 0.0F);
+         this.createInventory();
++        this.gale$eventDriven_requiresCustomPersistence_update(); // Gale - Event-driven - Mob#requiresCustomPersistence
+     }
+ 
+     @Override
+@@ -535,7 +_,9 @@
+     }
+ 
+     @Override
+-    public boolean requiresCustomPersistence() {
+-        return super.requiresCustomPersistence() || this.isTame();
++    // Gale start - Event-driven - Mob#requiresCustomPersistence
++    public boolean gale$eventDriven_requiresCustomPersistence_compute() {
++        return super.gale$eventDriven_requiresCustomPersistence_compute() || this.isTame();
++        // Gale end - Event-driven - Mob#requiresCustomPersistence
+     }
+ }
