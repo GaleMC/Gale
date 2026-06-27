@@ -1,0 +1,18 @@
+--- a/net/minecraft/world/item/enchantment/Enchantment.java
++++ b/net/minecraft/world/item/enchantment/Enchantment.java
+@@ -124,7 +_,14 @@ public record Enchantment(Component description, Enchantment.EnchantmentDefiniti
+     }
+ 
+     public boolean matchingSlot(final EquipmentSlot slot) {
+-        return this.definition.slots().stream().anyMatch(group -> group.test(slot));
++        // Gale start - Remove stream in matchingSlot
++        for (EquipmentSlotGroup group : this.definition.slots()) {
++            if (group.test(slot)) {
++                return true;
++            }
++        }
++        return false;
++        // Gale end - Remove stream in matchingSlot
+     }
+ 
+     public boolean isPrimaryItem(final ItemStack item) {
