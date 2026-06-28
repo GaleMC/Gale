@@ -5,6 +5,6 @@
  
      public boolean isEntityFrozen(final Entity entity) {
 -        return !this.runsNormally() && !(entity instanceof Player) && entity.countPlayerPassengers() <= 0;
-+        return !this.runsNormally() && !(entity instanceof Player) && entity.hasZeroPlayerPassengers(); // Gale - Optimize player passenger counting
++        return !this.runsNormally() && !(entity instanceof Player) && entity.gale$eventDriven_playerPassengerCount_isZero(); // Gale - Event-driven - Entity#playerPassengerCount
      }
  }

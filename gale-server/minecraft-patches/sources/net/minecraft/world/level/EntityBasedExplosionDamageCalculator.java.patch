@@ -1,13 +1,12 @@
 --- a/net/minecraft/world/level/EntityBasedExplosionDamageCalculator.java
 +++ b/net/minecraft/world/level/EntityBasedExplosionDamageCalculator.java
-@@ -16,7 +_,19 @@
-     @Override
+@@ -17,8 +_,20 @@
      public Optional<Float> getBlockExplosionResistance(
          final Explosion explosion, final BlockGetter level, final BlockPos pos, final BlockState block, final FluidState fluid
      ) {
 -        return super.getBlockExplosionResistance(explosion, level, pos, block, fluid)
 -            .map(resistance -> this.source.getBlockExplosionResistance(explosion, level, pos, block, fluid, resistance));
-+        // Gale start - Leaf #0043: Reduce lambda and Optional allocation in EntityBasedExplosionDamageCalculator
++        // Gale start - Local code optimization - EntityBasedExplosionDamageCalculator#getBlockExplosionResistance (reduce allocations)
 +        Optional<Float> optionalBlastResistance = super.getBlockExplosionResistance(explosion, level, pos, block, fluid);
 +
 +        if (optionalBlastResistance.isPresent()) {
@@ -20,5 +19,7 @@
 +        }
 +
 +        return optionalBlastResistance;
-+        // Gale end - Leaf #0043: Reduce lambda and Optional allocation in EntityBasedExplosionDamageCalculator
++        // Gale end - Local code optimization - EntityBasedExplosionDamageCalculator#getBlockExplosionResistance (reduce allocations)
      }
+ 
+     @Override

@@ -25,11 +25,11 @@
      @Override
      public int getScaledTrackingDistance(final int range) {
 -        return this.entityBroadcastRangePercentage() * range / 100;
-+        // Gale start - Leaf #0221: Optimize getScaledTrackingDistance
++        // Gale start - Local code optimization - DedicatedServer#getScaledTrackingDistance
 +        int p = this.getProperties().entityBroadcastRangePercentage.get();
 +        if (p == 100) return range;
 +        return p * range / 100;
-+        // Gale end - Leaf #0221: Optimize getScaledTrackingDistance
++        // Gale end - Local code optimization - DedicatedServer#getScaledTrackingDistance
      }
  
      public int entityBroadcastRangePercentage() {

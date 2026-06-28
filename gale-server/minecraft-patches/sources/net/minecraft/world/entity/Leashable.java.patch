@@ -1,5 +1,22 @@
 --- a/net/minecraft/world/entity/Leashable.java
 +++ b/net/minecraft/world/entity/Leashable.java
+@@ -371,10 +_,12 @@
+             return null;
+         }
+ 
+-        Entity ntt = entity.level().getEntity(leashData.delayedLeashHolderId);
+-        if (leashData.delayedLeashHolderId != 0 && entity.level().isClientSide() && ntt != null) {
+-            leashData.setLeashHolder(ntt);
+-        }
++        // Gale start - Skip client-side code - Leashable#getLeashHolder
++        // Entity ntt = entity.level().getEntity(leashData.delayedLeashHolderId);
++        // if (leashData.delayedLeashHolderId != 0 && entity.level().isClientSide() && ntt != null) {
++        //     leashData.setLeashHolder(ntt);
++        // }
++        // Gale end - Skip client-side code - Leashable#getLeashHolder
+ 
+         return leashData.leashHolder;
+     }
 @@ -411,7 +_,7 @@
                  }
              );

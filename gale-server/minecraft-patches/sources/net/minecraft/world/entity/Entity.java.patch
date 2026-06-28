@@ -100,35 +100,17 @@
  
              this.setPose(Pose.STANDING);
 -            this.vehicle = entityToRide;
-+            this.setVehicle(entityToRide); // Gale - Event-driven - Mob#isPersistent, Optimize player passenger counting
++            this.setVehicle(entityToRide); // Gale - Event-driven - Mob#isPersistent, Entity#playerPassengerCount
              this.vehicle.addPassenger(this);
              if (sendEventAndTriggers) {
                  this.level().gameEvent(this, GameEvent.ENTITY_MOUNT, this.vehicle.position);
-@@ -3383,6 +_,28 @@
+@@ -3383,6 +_,10 @@
          }
      }
  
 +    public void setVehicle(@Nullable Entity vehicle) {
 +        this.vehicle = vehicle;
 +    }
-+
-+    // Gale start - Optimize player passenger counting
-+    private int playerPassengerCount;
-+
-+    public void incrementPlayerPassengerCount() {
-+        this.playerPassengerCount++;
-+        if (this.vehicle != null) {
-+            this.vehicle.incrementPlayerPassengerCount();
-+        }
-+    }
-+
-+    public void decrementPlayerPassengerCount() {
-+        this.playerPassengerCount--;
-+        if (this.vehicle != null) {
-+            this.vehicle.decrementPlayerPassengerCount();
-+        }
-+    }
-+    // Gale end - Optimize player passenger counting
 +
      protected boolean canRide(final Entity vehicle) {
          return !this.isShiftKeyDown() && this.boardingCooldown <= 0;
@@ -139,8 +121,8 @@
              Entity oldVehicle = this.vehicle;
 -            this.vehicle = null;
 -            if (!oldVehicle.removePassenger(this, suppressCancellation)) this.vehicle = oldVehicle; // CraftBukkit // Paper - Force entity dismount during teleportation
-+            this.setVehicle(null); // Gale - Event-driven - Mob#isPersistent, Optimize player passenger counting
-+            if (!oldVehicle.removePassenger(this, suppressCancellation)) this.setVehicle(oldVehicle); // Gale - Event-driven - Mob#isPersistent, Optimize player passenger counting
++            this.setVehicle(null); // Gale - Event-driven - Mob#isPersistent, Entity#playerPassengerCount
++            if (!oldVehicle.removePassenger(this, suppressCancellation)) this.setVehicle(oldVehicle); // Gale - Event-driven - Mob#isPersistent, Entity#playerPassengerCount
              Entity.RemovalReason removalReason = this.getRemovalReason();
              if (removalReason == null || removalReason.shouldDestroy()) {
                  this.level().gameEvent(this, GameEvent.ENTITY_DISMOUNT, oldVehicle.position);
@@ -156,26 +138,42 @@
          // CraftBukkit start - block invalid bounding boxes
          double minX = bb.minX,
                  minY = bb.minY,
-@@ -4717,14 +_,19 @@
-         // Paper end - optimise entity tracker
+@@ -4718,13 +_,34 @@
      }
  
-+    // Gale start - Optimize player passenger counting
      public int countPlayerPassengers() {
 -        return (int)this.getIndirectPassengersStream().filter(e -> e instanceof Player).count();
-+        return this.playerPassengerCount;
-+    }
-+
-+    public boolean hasZeroPlayerPassengers() {
-+        return this.playerPassengerCount == 0;
++        return this.gale$eventDriven_playerPassengerCount; // Gale - Event-driven - Entity#playerPassengerCount
      }
  
      public boolean hasExactlyOnePlayerPassenger() {
 -        if (this.passengers.isEmpty()) { return false; } // Paper - Optimize indirect passenger iteration
 -        return this.countPlayerPassengers() == 1;
-+        return this.playerPassengerCount == 1;
-     }
-+    // Gale end - Optimize player passenger counting
+-    }
++        return this.gale$eventDriven_playerPassengerCount == 1; // Gale - Event-driven - Entity#playerPassengerCount
++    }
++
++    // Gale start - Event-driven - Entity#playerPassengerCount
++    private int gale$eventDriven_playerPassengerCount;
++
++    public void gale$eventDriven_playerPassengerCount_increment() {
++        this.gale$eventDriven_playerPassengerCount++;
++        if (this.vehicle != null) {
++            this.vehicle.gale$eventDriven_playerPassengerCount_increment();
++        }
++    }
++
++    public void gale$eventDriven_playerPassengerCount_decrement() {
++        this.gale$eventDriven_playerPassengerCount--;
++        if (this.vehicle != null) {
++            this.vehicle.gale$eventDriven_playerPassengerCount_decrement();
++        }
++    }
++
++    public boolean gale$eventDriven_playerPassengerCount_isZero() {
++        return this.gale$eventDriven_playerPassengerCount == 0;
++    }
++    // Gale end - Event-driven - Entity#playerPassengerCount
  
      public Entity getRootVehicle() {
          Entity result = this;

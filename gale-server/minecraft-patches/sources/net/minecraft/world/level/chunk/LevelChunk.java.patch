@@ -1,15 +1,23 @@
 --- a/net/minecraft/world/level/chunk/LevelChunk.java
 +++ b/net/minecraft/world/level/chunk/LevelChunk.java
-@@ -277,12 +_,18 @@
+@@ -275,14 +_,27 @@
+         return this.getBlockStateFinal(x, y, z);
+     }
  
++    // Gale start - Faster implementation for subclass - LevelChunk#getBlockStateFinal
++    @Override
++    public int getSectionIndex(final int blockY) {
++        return (blockY >> 4) - this.minSection;
++    }
++    // Gale end - Faster implementation for subclass - LevelChunk#getBlockStateFinal
++
      public BlockState getBlockStateFinal(final int x, final int y, final int z) {
          // Copied and modified from below
--        final int sectionIndex = this.getSectionIndex(y);
+         final int sectionIndex = this.getSectionIndex(y);
 -        if (sectionIndex < 0 || sectionIndex >= this.sections.length
 -            || this.sections[sectionIndex].nonEmptyBlockCount == 0) {
 -            return Blocks.AIR.defaultBlockState();
-+        // Leaf start - optimize LevelChunk#getBlockStateFinal
-+        final int sectionIndex = (y >> 4) - this.minSection;
++        // Gale start - Local code optimization - LevelChunk#getBlockStateFinal
 +        if (sectionIndex < 0 || sectionIndex >= this.sections.length) {
 +            return AIR_BLOCKSTATE;
 +        } else {
@@ -20,7 +28,7 @@
 +            return section.getStates().get((y & 15) << 8 | (z & 15) << 4 | x & 15);
          }
 -        return this.sections[sectionIndex].getStates().get((y & 15) << 8 | (z & 15) << 4 | x & 15);
-+        // Leaf end - optimize LevelChunk#getBlockStateFinal
++        // Gale end - Local code optimization - LevelChunk#getBlockStateFinal
      }
  
      @Override

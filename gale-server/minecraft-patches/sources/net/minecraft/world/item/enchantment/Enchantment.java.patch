@@ -1,18 +1,83 @@
 --- a/net/minecraft/world/item/enchantment/Enchantment.java
 +++ b/net/minecraft/world/item/enchantment/Enchantment.java
-@@ -124,7 +_,14 @@ public record Enchantment(Component description, Enchantment.EnchantmentDefiniti
+@@ -57,7 +_,53 @@
+ import net.minecraft.world.phys.Vec3;
+ import org.apache.commons.lang3.mutable.MutableFloat;
+ 
+-public record Enchantment(Component description, Enchantment.EnchantmentDefinition definition, HolderSet<Enchantment> exclusiveSet, DataComponentMap effects) {
++// Gale start - Pre-compute - Enchantment#matchingSlot
++public final class Enchantment {
++    private final Component description;
++    private final Enchantment.EnchantmentDefinition definition;
++    private final HolderSet<Enchantment> exclusiveSet;
++    private final DataComponentMap effects;
++    public Enchantment(Component description, Enchantment.EnchantmentDefinition definition, HolderSet<Enchantment> exclusiveSet, DataComponentMap effects) {
++        this.description = description;
++        this.definition = definition;
++        this.exclusiveSet = exclusiveSet;
++        this.effects = effects;
++        EquipmentSlot[] slots = EquipmentSlot.values();
++        this.gale$precompute_matchingSlot = new boolean[slots.length];
++        int count = 0;
++        for (int i = 0; i < slots.length; i++) {
++            this.gale$precompute_matchingSlot[i] = this.gale$precompute_matchingSlot_compute(slots[i]);
++            if (this.gale$precompute_matchingSlot[i]) {
++                count++;
++            }
++        }
++        if (count == 0) {
++            this.gale$precompute_matchingSlots = org.galemc.gale.util.array.EmptyArrays.EQUIPMENT_SLOT;
++        } else {
++            this.gale$precompute_matchingSlots = new EquipmentSlot[count];
++            int j = 0;
++            for (int i = 0; i < slots.length; i++) {
++                if (this.gale$precompute_matchingSlot[i]) {
++                    this.gale$precompute_matchingSlots[j++] = slots[i];
++                }
++            }
++        }
++    }
++    public Component description() { return this.description; }
++    public EnchantmentDefinition definition() { return this.definition; }
++    public HolderSet<Enchantment> exclusiveSet() { return this.exclusiveSet; }
++    public DataComponentMap effects() { return this.effects; }
++
++    /**
++     * Contains a boolean for each {@link EquipmentSlot}.
++     */
++    public final boolean[] gale$precompute_matchingSlot;
++
++    /**
++     * Contains all {@link EquipmentSlot}s for which {@link #matchingSlot} returns true.
++     */
++    public final EquipmentSlot[] gale$precompute_matchingSlots;
++    // Gale end - Pre-compute - Enchantment#matchingSlot
+     public static final int MAX_LEVEL = 255;
+     public static final Codec<Enchantment> DIRECT_CODEC = RecordCodecBuilder.create(
+         i -> i.group(
+@@ -107,8 +_,10 @@
+     public Map<EquipmentSlot, ItemStack> getSlotItems(final LivingEntity entity) {
+         Map<EquipmentSlot, ItemStack> itemStacks = Maps.newEnumMap(EquipmentSlot.class);
+ 
+-        for (EquipmentSlot slot : EquipmentSlot.VALUES) {
+-            if (this.matchingSlot(slot)) {
++        // Gale start - Pre-compute - Enchantment#matchingSlot
++        for (EquipmentSlot slot : this.gale$precompute_matchingSlots) {
++            {
++                // Gale end - Pre-compute - Enchantment#matchingSlot
+                 ItemStack itemStack = entity.getItemBySlot(slot);
+                 if (!itemStack.isEmpty()) {
+                     itemStacks.put(slot, itemStack);
+@@ -124,6 +_,12 @@
      }
  
      public boolean matchingSlot(final EquipmentSlot slot) {
--        return this.definition.slots().stream().anyMatch(group -> group.test(slot));
-+        // Gale start - Remove stream in matchingSlot
-+        for (EquipmentSlotGroup group : this.definition.slots()) {
-+            if (group.test(slot)) {
-+                return true;
-+            }
-+        }
-+        return false;
-+        // Gale end - Remove stream in matchingSlot
++        // Gale start - Pre-compute - Enchantment#matchingSlot
++        return this.gale$precompute_matchingSlot[slot.ordinal()];
++    }
++
++    public boolean gale$precompute_matchingSlot_compute(final EquipmentSlot slot) {
++        // Gale end - Pre-compute - Enchantment#matchingSlot
+         return this.definition.slots().stream().anyMatch(group -> group.test(slot));
      }
  
-     public boolean isPrimaryItem(final ItemStack item) {
