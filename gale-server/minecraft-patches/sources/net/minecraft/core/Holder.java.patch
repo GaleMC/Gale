@@ -5,15 +5,15 @@
      non-sealed class Reference<T> implements Holder<T> {
          private final HolderOwner<T> owner;
 -        private @Nullable Set<TagKey<T>> tags;
-+        // Gale start - Optimize tag checks
++        // Gale start - Pre-compute - Registry tags
 +        private java.util.@Nullable List<TagKey<T>> tagsList;
 +        private long @Nullable [] tagsBitSet;
-+        // Gale end - Optimize tag checks
++        // Gale end - Pre-compute - Registry tags
          private @Nullable DataComponentMap components;
          private final Holder.Reference.Type type;
          private @Nullable ResourceKey<T> key;
          private @Nullable T value;
-+        public int idInRegistry; // Gale - Optimize registry values - Holder to id - Store
++        public int idInRegistry; // Gale - Intrusive values - Registry elements - Holder to id - Store
  
          protected Reference(final Holder.Reference.Type type, final HolderOwner<T> owner, final @Nullable ResourceKey<T> key, final @Nullable T value) {
              this.owner = owner;
@@ -28,7 +28,7 @@
 -                return this.tags;
 -            }
 -        }
-+        // Gale start - Optimize tag checks
++        // Gale start - Pre-compute - Registry tags
 +//        private Set<TagKey<T>> boundTags() {
 +//            if (this.tags == null) {
 +//                throw new IllegalStateException("Tags not bound");
@@ -36,12 +36,12 @@
 +//                return this.tags;
 +//            }
 +//        }
-+        // Gale end - Optimize tag checks
++        // Gale end - Pre-compute - Registry tags
  
          @Override
          public boolean is(final TagKey<T> tag) {
 -            return this.boundTags().contains(tag);
-+            return tag.indexInRegistryWordIndex < this.tagsBitSet.length && (this.tagsBitSet[tag.indexInRegistryWordIndex] & tag.indexInRegistryWordMask) != 0; // Gale - Optimize tag checks
++            return tag.indexInRegistryWordIndex < this.tagsBitSet.length && (this.tagsBitSet[tag.indexInRegistryWordIndex] & tag.indexInRegistryWordMask) != 0; // Gale - Pre-compute - Registry tags
          }
  
          @Override
@@ -50,7 +50,7 @@
  
          void bindTags(final Collection<TagKey<T>> tags) {
 -            this.tags = it.unimi.dsi.fastutil.objects.ReferenceSets.unmodifiable(new it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet<>(tags)); // Paper - use reference set because TagKey are interned
-+            // Gale start - Optimize tag checks
++            // Gale start - Pre-compute - Registry tags
 +            if (tags.isEmpty()) {
 +                this.tagsList = java.util.Collections.emptyList();
 +                this.tagsBitSet = org.galemc.gale.util.array.EmptyArrays.LONG;
@@ -69,7 +69,7 @@
 +                    this.tagsBitSet[tag.indexInRegistryWordIndex] |= tag.indexInRegistryWordMask;
 +                }
 +            }
-+            // Gale end - Optimize tag checks
++            // Gale end - Pre-compute - Registry tags
          }
  
          public void bindComponents(final DataComponentMap components) {
@@ -78,7 +78,7 @@
          @Override
          public Stream<TagKey<T>> tags() {
 -            return this.boundTags().stream();
-+            return this.tagsList.stream(); // Gale - Optimize tag checks
++            return this.tagsList.stream(); // Gale - Pre-compute - Registry tags
          }
  
          @Override

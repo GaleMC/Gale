@@ -5,7 +5,7 @@
  import org.slf4j.Logger;
  
 -public class Item implements ItemLike, FeatureElement {
-+public class Item extends org.galemc.gale.registry.idawarevalue.FieldIdAwareRegistryValue implements ItemLike, FeatureElement { // Gale - Optimize registry values - Value to id - Implement
++public class Item extends org.galemc.gale.registry.idawarevalue.FieldIdAwareRegistryValue implements ItemLike, FeatureElement { // Gale - Intrusive values - Registry elements - Value to id - Implement
      public static final Codec<Holder<Item>> CODEC = BuiltInRegistries.ITEM
          .holderByNameCodec()
          .validate(item -> item.is(Items.AIR.builtInRegistryHolder()) ? DataResult.error(() -> "Item must not be minecraft:air") : DataResult.success(item));
@@ -14,7 +14,7 @@
  
      public static int getId(final Item item) {
 -        return item == null ? 0 : BuiltInRegistries.ITEM.getId(item);
-+        return item == null ? 0 : item.idInRegistry; // Gale - Optimize registry values - Value to id - Quick return
++        return item == null ? 0 : item.idInRegistry; // Gale - Intrusive values - Registry elements - Value to id - Quick return
      }
  
      public static Item byId(final int id) {

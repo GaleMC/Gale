@@ -1,11 +1,11 @@
 --- a/net/minecraft/tags/TagKey.java
 +++ b/net/minecraft/tags/TagKey.java
-@@ -11,11 +_,36 @@
+@@ -11,11 +_,41 @@
  import net.minecraft.resources.Identifier;
  import net.minecraft.resources.ResourceKey;
  
 -public record TagKey<T>(ResourceKey<? extends Registry<T>> registry, Identifier location) {
-+// Gale start - Optimize tag checks
++// Gale start - Pre-compute - Registry tags
 +public final class TagKey<T> {
 +    private final ResourceKey<? extends Registry<T>> registry;
 +    private final Identifier location;
@@ -15,13 +15,17 @@
 +    }
 +    public ResourceKey<? extends Registry<T>> registry() { return this.registry; }
 +    public Identifier location() { return this.location; }
++
 +    public int indexInRegistryWordIndex;
 +    public long indexInRegistryWordMask;
++
 +    private int cachedHashCode;
++
 +    @Override
 +    public boolean equals(Object obj) {
 +        return obj instanceof TagKey other && java.util.Objects.equals(other.registry, this.registry) && java.util.Objects.equals(other.location, this.location);
 +    }
++
 +    @Override
 +    public int hashCode() {
 +        if (this.cachedHashCode == 0) {
@@ -29,13 +33,14 @@
 +        }
 +        return this.cachedHashCode;
 +    }
-+    // Gale end - Optimize tag checks
++
++    // Gale end - Pre-compute - Registry tags
      private static final Interner<TagKey<?>> VALUES = Interners.newWeakInterner();
  
      @Deprecated
 -    public TagKey {
 +    public TagKey() {
-+        this(null, null); // Gale - Optimize tag checks
++        this(null, null); // Gale - Pre-compute - Registry tags
      }
  
      public static <T> Codec<TagKey<T>> codec(final ResourceKey<? extends Registry<T>> registryName) {

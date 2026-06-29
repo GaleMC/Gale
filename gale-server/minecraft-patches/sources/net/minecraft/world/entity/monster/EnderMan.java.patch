@@ -4,7 +4,7 @@
      public EnderMan(final EntityType<? extends EnderMan> type, final Level level) {
          super(type, level);
          this.setPathfindingMalus(PathType.WATER, -1.0F);
-+        this.gale$eventDriven_requiresCustomPersistence_update(); // Gale - Event-driven - Mob#requiresCustomPersistence
++        this.gale$eventDriven_requiresCustomPersistence_update(); // Gale - Event-driven - Mob.requiresCustomPersistence
      }
  
      @Override
@@ -30,7 +30,7 @@
  
      public void setCarriedBlock(final @Nullable BlockState carryingBlock) {
          this.entityData.set(DATA_CARRY_STATE, Optional.ofNullable(carryingBlock));
-+        this.gale$eventDriven_requiresCustomPersistence_update(); // Gale - Event-driven - Mob#requiresCustomPersistence
++        this.gale$eventDriven_requiresCustomPersistence_update(); // Gale - Event-driven - Mob.requiresCustomPersistence
      }
  
      public @Nullable BlockState getCarriedBlock() {
@@ -40,10 +40,10 @@
      @Override
 -    public boolean requiresCustomPersistence() {
 -        return super.requiresCustomPersistence() || this.getCarriedBlock() != null;
-+    // Gale start - Event-driven - Mob#requiresCustomPersistence
++    // Gale start - Event-driven - Mob.requiresCustomPersistence
 +    public boolean gale$eventDriven_requiresCustomPersistence_compute() {
 +        return super.gale$eventDriven_requiresCustomPersistence_compute() || this.getCarriedBlock() != null;
-+        // Gale end - Event-driven - Mob#requiresCustomPersistence
++        // Gale end - Event-driven - Mob.requiresCustomPersistence
      }
  
      private static class EndermanFreezeWhenLookedAt extends Goal {

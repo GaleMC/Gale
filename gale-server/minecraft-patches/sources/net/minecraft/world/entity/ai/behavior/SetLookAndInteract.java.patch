@@ -7,7 +7,7 @@
 -                        Optional<LivingEntity> closest = i.<NearestVisibleLivingEntities>get(nearestEntities)
 -                            .findClosest(e -> e.distanceToSqr(body) <= interactionRangeSqr && e.is(type));
 +                        Optional<LivingEntity> closest = i.get(nearestEntities)
-+                            .findClosest(e -> e.is(type) && e.distanceToSqr(body) <= interactionRangeSqr); // Gale - Check type before distance when testing targets
++                            .findClosest(e -> e.is(type) && e.distanceToSqr(body) <= interactionRangeSqr); // Gale - Do less work - SetLookAndInteract.create()
                          if (closest.isEmpty()) {
                              return false;
                          }

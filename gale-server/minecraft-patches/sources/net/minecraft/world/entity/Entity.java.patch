@@ -5,7 +5,7 @@
      public ImmutableList<Entity> passengers = ImmutableList.of();
      protected int boardingCooldown;
 -    private @Nullable Entity vehicle;
-+    private @Nullable Entity vehicle; // Gale - Event-driven - Mob#requiresCustomPersistence - TODO Watch for new writes
++    private @Nullable Entity vehicle; // Gale - Event-driven - Mob.requiresCustomPersistence - TODO Watch for new writes
      private Level level;
      public double xo;
      public double yo;
@@ -13,7 +13,7 @@
      public float yRotO;
      public float xRotO;
      private AABB bb = INITIAL_AABB;
-+    private boolean boundingBoxChanged = false; // Gale - Skip entity move if movement is zero
++    private boolean boundingBoxChanged = false; // Gale - Do less work - Skip unnecessary Entity.move() code if bounding box and position are unchanged
      public boolean onGround;
      public boolean horizontalCollision;
      public boolean verticalCollision;
@@ -22,7 +22,7 @@
      public int invulnerableTime;
      protected boolean firstTick = true;
 -    protected final SynchedEntityData entityData;
-+    protected final SynchedEntityData entityData; // Gale - Event-driven - Mob#requiresCustomPersistence - TODO Watch for new writes
++    protected final SynchedEntityData entityData; // Gale - Event-driven - Mob.requiresCustomPersistence - TODO Watch for new writes
      protected static final EntityDataAccessor<Byte> DATA_SHARED_FLAGS_ID = SynchedEntityData.defineId(Entity.class, EntityDataSerializers.BYTE);
      protected static final int FLAG_ONFIRE = 0;
      private static final int FLAG_SHIFT_KEY_DOWN = 1;
@@ -39,7 +39,7 @@
              }
              // Paper end
 -
-+            // Gale start - Skip entity move if movement is zero
++            // Gale start - Do less work - Skip unnecessary Entity.move() code if bounding box and position are unchanged
 +            if (!this.boundingBoxChanged && delta.equals(Vec3.ZERO)) {
 +                this.horizontalCollision = false;
 +                this.verticalCollision = false;
@@ -50,7 +50,7 @@
 +                return;
 +            }
 +            boundingBoxChanged = false;
-+            // Gale end - Skip entity move if movement is zero
++            // Gale end - Do less work - Skip unnecessary Entity.move() code if bounding box and position are unchanged
              delta = this.maybeBackOffFromEdge(delta, moverType);
              Vec3 movement = this.collide(delta);
              double movementLength = movement.lengthSqr();
@@ -60,7 +60,7 @@
  
 -                float blockSpeedFactor = this.getBlockSpeedFactor();
 -                this.setDeltaMovement(this.getDeltaMovement().multiply(blockSpeedFactor, 1.0, blockSpeedFactor));
-+                // Gale start - Skip negligible planar movement multiplication
++                // Gale start - Do less work - Skip negligible planar movement multiplication
 +                Vec3 currentDelta = this.getDeltaMovement();
 +                if (currentDelta.x < -1.0E-6D || currentDelta.x > 1.0E-6D || currentDelta.z < -1.0E-6D || currentDelta.z > 1.0E-6D) {
 +                    float blockSpeedFactor = this.getBlockSpeedFactor();
@@ -68,7 +68,7 @@
 +                        this.setDeltaMovement(currentDelta.multiply(blockSpeedFactor, 1.0D, blockSpeedFactor));
 +                    }
 +                }
-+                // Gale end - Skip negligible planar movement multiplication
++                // Gale end - Do less work - Skip negligible planar movement multiplication
                  profiler.pop();
              }
          }
@@ -77,7 +77,7 @@
  
      private boolean isStateClimbable(final BlockState state) {
 -        return state.is(BlockTags.CLIMBABLE) || state.is(Blocks.POWDER_SNOW);
-+        return state.isAny(org.dreeam.leaf.util.BlockMasks.CLIMBABLE_TAG_OR_POWDER_SNOW_CLASS); // Gale - Pre-compute block state predicates - Apply
++        return state.isAny(org.dreeam.leaf.util.BlockMasks.CLIMBABLE_TAG_OR_POWDER_SNOW_CLASS); // Gale - Pre-compute - Common BlockState predicates - Apply
      }
  
      private boolean vibrationAndSoundEffectsFromBlock(
@@ -88,10 +88,10 @@
 -            return (!(offset <= 0.5) || !belowState.is(BlockTags.FENCES))
 -                    && !belowState.is(BlockTags.WALLS)
 -                    && !(belowState.getBlock() instanceof FenceGateBlock)
-+            // Gale start - Pre-compute block state predicates - Apply
++            // Gale start - Pre-compute - Common BlockState predicates - Apply
 +            return (!(offset <= 0.5) || !belowState.isAny(org.dreeam.leaf.util.BlockMasks.FENCES_TAG))
 +                    && !belowState.isAny(org.dreeam.leaf.util.BlockMasks.WALLS_TAG_OR_FENCE_GATE_CLASS)
-+            // Gale end - Pre-compute block state predicates - Apply
++            // Gale end - Pre-compute - Common BlockState predicates - Apply
                  ? getOnPos.atY(Mth.floor(this.position.y - offset))
                  : getOnPos;
          } else {
@@ -100,7 +100,7 @@
  
              this.setPose(Pose.STANDING);
 -            this.vehicle = entityToRide;
-+            this.setVehicle(entityToRide); // Gale - Event-driven - Mob#isPersistent, Entity#playerPassengerCount
++            this.setVehicle(entityToRide); // Gale - Event-driven - Mob.isPersistent, Entity.playerPassengerCount
              this.vehicle.addPassenger(this);
              if (sendEventAndTriggers) {
                  this.level().gameEvent(this, GameEvent.ENTITY_MOUNT, this.vehicle.position);
@@ -121,8 +121,8 @@
              Entity oldVehicle = this.vehicle;
 -            this.vehicle = null;
 -            if (!oldVehicle.removePassenger(this, suppressCancellation)) this.vehicle = oldVehicle; // CraftBukkit // Paper - Force entity dismount during teleportation
-+            this.setVehicle(null); // Gale - Event-driven - Mob#isPersistent, Entity#playerPassengerCount
-+            if (!oldVehicle.removePassenger(this, suppressCancellation)) this.setVehicle(oldVehicle); // Gale - Event-driven - Mob#isPersistent, Entity#playerPassengerCount
++            this.setVehicle(null); // Gale - Event-driven - Mob.isPersistent, Entity.playerPassengerCount
++            if (!oldVehicle.removePassenger(this, suppressCancellation)) this.setVehicle(oldVehicle); // Gale - Event-driven - Mob.isPersistent, Entity.playerPassengerCount
              Entity.RemovalReason removalReason = this.getRemovalReason();
              if (removalReason == null || removalReason.shouldDestroy()) {
                  this.level().gameEvent(this, GameEvent.ENTITY_DISMOUNT, oldVehicle.position);
@@ -130,11 +130,11 @@
      }
  
      public final void setBoundingBox(final AABB bb) {
-+        // Gale start - Skip entity move if movement is zero
++        // Gale start - Do less work - Skip unnecessary Entity.move() code if bounding box and position are unchanged
 +        if (!this.bb.equals(bb)) {
 +            this.boundingBoxChanged = true;
 +        }
-+        // Gale end - Skip entity move if movement is zero
++        // Gale end - Do less work - Skip unnecessary Entity.move() code if bounding box and position are unchanged
          // CraftBukkit start - block invalid bounding boxes
          double minX = bb.minX,
                  minY = bb.minY,
@@ -143,17 +143,17 @@
  
      public int countPlayerPassengers() {
 -        return (int)this.getIndirectPassengersStream().filter(e -> e instanceof Player).count();
-+        return this.gale$eventDriven_playerPassengerCount; // Gale - Event-driven - Entity#playerPassengerCount
++        return this.gale$eventDriven_playerPassengerCount; // Gale - Event-driven - Entity.playerPassengerCount
      }
  
      public boolean hasExactlyOnePlayerPassenger() {
 -        if (this.passengers.isEmpty()) { return false; } // Paper - Optimize indirect passenger iteration
 -        return this.countPlayerPassengers() == 1;
 -    }
-+        return this.gale$eventDriven_playerPassengerCount == 1; // Gale - Event-driven - Entity#playerPassengerCount
++        return this.gale$eventDriven_playerPassengerCount == 1; // Gale - Event-driven - Entity.playerPassengerCount
 +    }
 +
-+    // Gale start - Event-driven - Entity#playerPassengerCount
++    // Gale start - Event-driven - Entity.playerPassengerCount
 +    private int gale$eventDriven_playerPassengerCount;
 +
 +    public void gale$eventDriven_playerPassengerCount_increment() {
@@ -173,7 +173,7 @@
 +    public boolean gale$eventDriven_playerPassengerCount_isZero() {
 +        return this.gale$eventDriven_playerPassengerCount == 0;
 +    }
-+    // Gale end - Event-driven - Entity#playerPassengerCount
++    // Gale end - Event-driven - Entity.playerPassengerCount
  
      public Entity getRootVehicle() {
          Entity result = this;

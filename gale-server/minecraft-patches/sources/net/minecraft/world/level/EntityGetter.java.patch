@@ -5,7 +5,7 @@
  
      default @Nullable Player getNearestPlayer(final double x, final double y, final double z, final double range, final @Nullable Predicate<Entity> predicate) {
 -        double best = -1.0;
-+        // Gale start - Local code optimization - EntityGetter#getNearestPlayer
++        // Gale start - Local code optimization - EntityGetter.getNearestPlayer()
 +        double distance;
 +        if (range < 0.0) {
 +            distance = Double.MAX_VALUE;
@@ -42,7 +42,7 @@
                  }
              }
          }
-+        // Gale end - Local code optimization - EntityGetter#getNearestPlayer
++        // Gale end - Local code optimization - EntityGetter.getNearestPlayer()
  
          return result;
      }

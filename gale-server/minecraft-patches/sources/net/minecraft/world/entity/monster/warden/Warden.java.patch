@@ -5,7 +5,7 @@
          if (this.level() instanceof ServerLevel serverLevel) {
              VibrationSystem.Ticker.tick(serverLevel, this.vibrationData, this.vibrationUser);
 -            if (this.isPersistenceRequired() || this.requiresCustomPersistence()) {
-+            if (this.gale$eventDriven_isPersistent) { // Gale - Event-driven - Mob#isPersistent
++            if (this.gale$eventDriven_isPersistent) { // Gale - Event-driven - Mob.isPersistent
                  WardenAi.setDigCooldown(this);
              }
          }

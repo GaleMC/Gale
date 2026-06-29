@@ -5,7 +5,7 @@
          public static final Player.BedSleepingProblem EXPLOSION = new Player.BedSleepingProblem(null); // Paper - Added to properly handle explosions in bed events
      }
 +
-+    // Gale start - Event-driven - Entity#playerPassengerCount
++    // Gale start - Event-driven - Entity.playerPassengerCount
 +    @Override
 +    public void setVehicle(@Nullable Entity vehicle) {
 +        Entity oldVehicle = this.getVehicle();
@@ -18,5 +18,5 @@
 +            vehicle.gale$eventDriven_playerPassengerCount_increment();
 +        }
 +    }
-+    // Gale end - Event-driven - Entity#playerPassengerCount
++    // Gale end - Event-driven - Entity.playerPassengerCount
  }

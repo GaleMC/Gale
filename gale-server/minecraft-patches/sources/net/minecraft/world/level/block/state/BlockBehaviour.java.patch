@@ -4,13 +4,13 @@
          private boolean emptyCollisionShape;
          private boolean emptyConstantCollisionShape;
          private VoxelShape constantCollisionShape;
-+        // Gale start - Pre-compute block state predicates
++        // Gale start - Pre-compute - Common BlockState predicates
 +        private int predicateFlags;
 +        public boolean isAny(int predicateMask) {
 +            return (this.predicateFlags & predicateMask) != 0;
 +        }
 +        public void initPredicateFlags() { this.predicateFlags = org.dreeam.leaf.util.BlockMasks.init(this.asState()); }
-+        // Gale end - Pre-compute block state predicates
++        // Gale end - Pre-compute - Common BlockState predicates
  
          private static void initCaches(final VoxelShape shape, final boolean neighbours) {
              ((ca.spottedleaf.moonrise.patches.collisions.shape.CollisionVoxelShape)shape).moonrise$isFullBlock();

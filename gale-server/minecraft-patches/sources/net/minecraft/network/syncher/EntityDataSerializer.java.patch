@@ -5,11 +5,11 @@
  
      static <T> EntityDataSerializer<T> forValueType(final StreamCodec<? super RegistryFriendlyByteBuf, T> codec) {
 -        return (ForValueType<T>)() -> codec;
-+        return new ForValueType<>(codec); // Gale - Optimize entity data serializer list
++        return new ForValueType<>(codec); // Gale - Intrusive values - EntityDataSerializers.SERIALIZERS
      }
  
 -    interface ForValueType<T> extends EntityDataSerializer<T> {
-+    // Gale start - Optimize entity data serializer list
++    // Gale start - Intrusive values - EntityDataSerializers.SERIALIZERS
 +    class ForValueType<T> extends AbstractEntityDataSerializer<T> {
          @Override
 -        default T copy(final T value) {
@@ -47,6 +47,6 @@
 +            return this.indexInList;
 +        }
 +    }
-+    // Gale end - Optimize entity data serializer list
++    // Gale end - Intrusive values - EntityDataSerializers.SERIALIZERS
 +
  }

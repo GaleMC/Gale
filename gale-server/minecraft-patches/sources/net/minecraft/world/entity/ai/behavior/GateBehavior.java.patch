@@ -6,14 +6,14 @@
          // Paper end - Perf: Remove streams from hot code
 -        if (this.behaviors.stream().noneMatch(behavior -> behavior.getStatus() == Behavior.Status.RUNNING)) {
 -            this.doStop(level, body, timestamp);
-+        // Gale start - Local code optimization - GateBehavior#tickOrStop (remove stream)
++        // Gale start - Local code optimization - GateBehavior.tickOrStop() (remove stream)
 +        for (final BehaviorControl<? super E> behavior : this.behaviors) {
 +            if (behavior.getStatus() == Behavior.Status.RUNNING) {
 +                return;
 +            }
          }
 +            this.doStop(level, body, timestamp);
-+        // Gale end - Local code optimization - GateBehavior#tickOrStop (remove stream)
++        // Gale end - Local code optimization - GateBehavior.tickOrStop() (remove stream)
      }
  
      @Override

@@ -5,11 +5,11 @@
      public void setDespawnInPeacefulOverride(final TriState state) {
          Preconditions.checkArgument(state != null, "TriState cannot be null");
 -        this.getHandle().despawnInPeacefulOverride = state;
-+        // Gale start - Event-driven - Mob#shouldDespawnInPeaceful
++        // Gale start - Event-driven - Mob.shouldDespawnInPeaceful
 +        net.minecraft.world.entity.Mob handle = this.getHandle();
 +        handle.despawnInPeacefulOverride = state;
 +        handle.gale$eventDriven_gale$shouldDespawnInPeaceful_update();
-+        // Gale end - Event-driven - Mob#shouldDespawnInPeaceful
++        // Gale end - Event-driven - Mob.shouldDespawnInPeaceful
      }
  
      @Override

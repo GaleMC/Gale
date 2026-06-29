@@ -1,20 +1,13 @@
 --- a/net/minecraft/util/SpecialDates.java
 +++ b/net/minecraft/util/SpecialDates.java
-@@ -6,19 +_,41 @@
- import java.util.List;
- 
- public class SpecialDates {
--    public static final MonthDay HALLOWEEN = MonthDay.of(Month.OCTOBER, 31);
-+    // public static final MonthDay HALLOWEEN = MonthDay.of(Month.OCTOBER, 31); // Gale - Predict Halloween
-     public static final List<MonthDay> CHRISTMAS_RANGE = List.of(
-         MonthDay.of(Month.DECEMBER, 24), MonthDay.of(Month.DECEMBER, 25), MonthDay.of(Month.DECEMBER, 26)
+@@ -12,13 +_,35 @@
      );
      public static final MonthDay CHRISTMAS = MonthDay.of(Month.DECEMBER, 24);
      public static final MonthDay NEW_YEAR = MonthDay.of(Month.JANUARY, 1);
-+    // Gale start - Predict Halloween
-+    private static long nextHalloweenStart = Long.MIN_VALUE;
-+    private static long nextHalloweenEnd = Long.MIN_VALUE;
-+    // Gale end - Predict Halloween
++    // Gale start - Cache - SpecialDates.isHalloween()
++    private static long gale$cache_isHalloween_nextStart = Long.MIN_VALUE;
++    private static long gale$cache_isHalloween_nextEnd = Long.MIN_VALUE;
++    // Gale end - Cache - SpecialDates.isHalloween()
  
      public static MonthDay dayNow() {
          return MonthDay.from(ZonedDateTime.now());
@@ -22,10 +15,10 @@
  
      public static boolean isHalloween() {
 -        return HALLOWEEN.equals(dayNow());
-+        // Gale start - Predict Halloween
++        // Gale start - Cache - SpecialDates.isHalloween()
 +        long currentEpochMillis = System.currentTimeMillis();
 +
-+        if (currentEpochMillis >= nextHalloweenEnd) {
++        if (currentEpochMillis >= gale$cache_isHalloween_nextEnd) {
 +            java.time.ZoneId zone = java.time.ZoneId.systemDefault();
 +            java.time.LocalDate today = java.time.LocalDate.now(zone);
 +            int year = today.getYear();
@@ -33,14 +26,14 @@
 +            if (!today.isBefore(nov1)) {
 +                nov1 = nov1.plusYears(1);
 +            }
-+            nextHalloweenEnd = nov1.atStartOfDay(zone)
++            gale$cache_isHalloween_nextEnd = nov1.atStartOfDay(zone)
 +                .toInstant()
 +                .toEpochMilli();
-+            nextHalloweenStart = nextHalloweenEnd - 86_400_000;
++            gale$cache_isHalloween_nextStart = gale$cache_isHalloween_nextEnd - 86_400_000;
 +        }
 +
-+        return currentEpochMillis >= nextHalloweenStart && currentEpochMillis < nextHalloweenEnd;
-+        // Gale end - Predict Halloween
++        return currentEpochMillis >= gale$cache_isHalloween_nextStart && currentEpochMillis < gale$cache_isHalloween_nextEnd;
++        // Gale end - Cache - SpecialDates.isHalloween()
      }
  
      public static boolean isExtendedChristmas() {

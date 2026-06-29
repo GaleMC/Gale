@@ -4,12 +4,12 @@
          return this.getBlockStateFinal(x, y, z);
      }
  
-+    // Gale start - Faster implementation for subclass - LevelChunk#getBlockStateFinal
++    // Gale start - Faster implementation for subclass - LevelChunk.getSectionIndex()
 +    @Override
 +    public int getSectionIndex(final int blockY) {
 +        return (blockY >> 4) - this.minSection;
 +    }
-+    // Gale end - Faster implementation for subclass - LevelChunk#getBlockStateFinal
++    // Gale end - Faster implementation for subclass - LevelChunk.getSectionIndex()
 +
      public BlockState getBlockStateFinal(final int x, final int y, final int z) {
          // Copied and modified from below
@@ -17,7 +17,7 @@
 -        if (sectionIndex < 0 || sectionIndex >= this.sections.length
 -            || this.sections[sectionIndex].nonEmptyBlockCount == 0) {
 -            return Blocks.AIR.defaultBlockState();
-+        // Gale start - Local code optimization - LevelChunk#getBlockStateFinal
++        // Gale start - Local code optimization - LevelChunk.getBlockStateFinal()
 +        if (sectionIndex < 0 || sectionIndex >= this.sections.length) {
 +            return AIR_BLOCKSTATE;
 +        } else {
@@ -28,7 +28,7 @@
 +            return section.getStates().get((y & 15) << 8 | (z & 15) << 4 | x & 15);
          }
 -        return this.sections[sectionIndex].getStates().get((y & 15) << 8 | (z & 15) << 4 | x & 15);
-+        // Gale end - Local code optimization - LevelChunk#getBlockStateFinal
++        // Gale end - Local code optimization - LevelChunk.getBlockStateFinal()
      }
  
      @Override

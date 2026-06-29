@@ -5,16 +5,16 @@
  
      private static class MobCounts {
 -        private final Object2IntMap<MobCategory> counts = new Object2IntOpenHashMap<>(MobCategory.values().length);
-+        private final int[] counts = new int[MobCategory.values().length]; // Gale - Store mob counts in an array
++        private final int[] counts = new int[MobCategory.values().length]; // Gale - Collections - MobCounts.counts (use array)
  
          public void add(final MobCategory category) {
 -            this.counts.computeInt(category, (k, count) -> count == null ? 1 : count + 1);
-+            this.counts[category.ordinal()]++; // Gale - Store mob counts in an array
++            this.counts[category.ordinal()]++; // Gale - Collections - MobCounts.counts (use array)
          }
  
          public boolean canSpawn(final MobCategory category) {
 -            return this.counts.getOrDefault(category, 0) < category.getMaxInstancesPerChunk();
-+            return this.counts[category.ordinal()] < category.getMaxInstancesPerChunk(); // Gale - Store mob counts in an array
++            return this.counts[category.ordinal()] < category.getMaxInstancesPerChunk(); // Gale - Collections - MobCounts.counts (use array)
          }
      }
  }

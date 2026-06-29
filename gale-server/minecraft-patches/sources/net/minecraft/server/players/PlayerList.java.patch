@@ -4,18 +4,18 @@
          // CraftBukkit start
          // this.broadcastAll(new ClientboundPlayerInfoRemovePacket(List.of(player.getUUID())));
          ClientboundPlayerInfoRemovePacket packet = new ClientboundPlayerInfoRemovePacket(List.of(player.getUUID()));
-+        org.bukkit.craftbukkit.entity.CraftPlayer craftPlayer = player.getBukkitEntity(); // Gale - Store canSee in a fast-access format
++        org.bukkit.craftbukkit.entity.CraftPlayer craftPlayer = player.getBukkitEntity(); // Gale - Intrusive values - CraftPlayer.invertedVisibilityEntities
          for (int i = 0; i < this.players.size(); i++) {
              ServerPlayer otherPlayer = this.players.get(i);
  
 -            if (otherPlayer.getBukkitEntity().canSee(player.getBukkitEntity())) {
-+            if (otherPlayer.getBukkitEntity().canSee(craftPlayer)) { // Gale - Store canSee in a fast-access format
++            if (otherPlayer.getBukkitEntity().canSee(craftPlayer)) { // Gale - Intrusive values - CraftPlayer.invertedVisibilityEntities
                  otherPlayer.connection.send(packet);
              } else {
                  otherPlayer.getBukkitEntity().onEntityRemove(player);
              }
          }
-+        craftPlayer.resetCanSee(); // Gale - Store canSee in a fast-access format
++        craftPlayer.resetCanSee(); // Gale - Intrusive values - CraftPlayer.invertedVisibilityEntities
          // This removes the scoreboard (and player reference) for the specific player in the manager
          this.cserver.getScoreboardManager().removePlayer(player.getBukkitEntity());
          // CraftBukkit end

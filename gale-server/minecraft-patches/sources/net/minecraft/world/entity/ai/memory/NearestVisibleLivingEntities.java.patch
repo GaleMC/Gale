@@ -5,11 +5,11 @@
  
      public Optional<LivingEntity> findClosest(final Predicate<LivingEntity> filter) {
 -        for (LivingEntity nearbyEntity : this.nearbyEntities) {
-+        // Gale start - Quick NearestVisibleLivingEntities entity iteration
++        // Gale start - Local code optimization - NearestVisibleLivingEntities.findClosest() (add empty check and size variable)
 +        if (this.nearbyEntities.isEmpty()) return Optional.empty();
 +        for (int i = 0, size = this.nearbyEntities.size(); i < size; i++) {
 +            LivingEntity nearbyEntity = this.nearbyEntities.get(i);
-+            // Gale end - Quick NearestVisibleLivingEntities entity iteration
++            // Gale end - Local code optimization - NearestVisibleLivingEntities.findClosest() (add empty check and size variable)
              if (filter.test(nearbyEntity) && this.lineOfSightTest.test(nearbyEntity)) {
                  return Optional.of(nearbyEntity);
              }

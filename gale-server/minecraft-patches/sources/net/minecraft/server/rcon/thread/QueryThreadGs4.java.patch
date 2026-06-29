@@ -5,7 +5,7 @@
              this.identBytes[3] = buf[6];
              this.ident = new String(this.identBytes, StandardCharsets.UTF_8);
 -            this.challenge = RandomSource.createThreadLocalInstance().nextInt(16777216);
-+            this.challenge = java.util.concurrent.ThreadLocalRandom.current().nextInt(16777216); // Gale - Reduce RandomSource instances
++            this.challenge = java.util.concurrent.ThreadLocalRandom.current().nextInt(16777216); // Gale - Reduce allocations - RandomSource
              this.challengeBytes = String.format(Locale.ROOT, "\t%s%d\u0000", this.ident, this.challenge).getBytes(StandardCharsets.UTF_8);
          }
  

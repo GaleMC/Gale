@@ -5,7 +5,7 @@
          }
  
 -        RandomSource random = RandomSource.createThreadLocalInstance();
-+        RandomSource random = level.getRandom(); // Gale - Reduce RandomSource instances
++        RandomSource random = level.getRandom(); // Gale - Reduce allocations - RandomSource
          double minX = center.x - maxRange;
          double minZ = center.y - maxRange;
          double maxX = center.x + maxRange;

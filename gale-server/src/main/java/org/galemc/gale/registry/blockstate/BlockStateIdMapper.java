@@ -18,7 +18,7 @@ import java.util.Iterator;
  */
 public class BlockStateIdMapper implements IdMap<BlockState> {
 
-    public static final int EXPECTED_BLOCK_STATES = 32366; // As of 26.2
+    public static final int EXPECTED_BLOCK_STATES = 32366; // As of 26.2, TODO keep up-to-date
 
     private final ArrayList<BlockState> idToT;
 

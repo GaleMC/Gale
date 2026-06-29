@@ -5,7 +5,7 @@
      private static final Logger LOGGER = LogUtils.getLogger();
      private final Holder.Reference<Block> builtInRegistryHolder = BuiltInRegistries.BLOCK.createIntrusiveHolder(this);
 -    public static final IdMapper<BlockState> BLOCK_STATE_REGISTRY = new IdMapper<>();
-+    public static final org.galemc.gale.registry.blockstate.BlockStateIdMapper BLOCK_STATE_REGISTRY = new org.galemc.gale.registry.blockstate.BlockStateIdMapper(); // Gale - Optimize global block state palette
++    public static final org.galemc.gale.registry.blockstate.BlockStateIdMapper BLOCK_STATE_REGISTRY = new org.galemc.gale.registry.blockstate.BlockStateIdMapper(); // Gale - Instrusive values - Global block state palette id
      private static final LoadingCache<VoxelShape, Boolean> SHAPE_FULL_BLOCK_CACHE = CacheBuilder.newBuilder()
          .maximumSize(512L)
          .weakKeys()
@@ -15,7 +15,7 @@
  
 -        int id = BLOCK_STATE_REGISTRY.getId(blockState);
 -        return id == -1 ? 0 : id;
-+        return blockState.indexInRegistry; // Gale - Optimize global block state palette
++        return blockState.indexInRegistry; // Gale - Instrusive values - Global block state palette id
      }
  
      public static BlockState stateById(final int idWithData) {

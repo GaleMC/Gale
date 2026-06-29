@@ -4,7 +4,7 @@
          } else {
              this.entityData.set(DATA_FLAGS_ID, (byte)(current & -5));
          }
-+        this.gale$eventDriven_requiresCustomPersistence_update(); // Gale - Event-driven - Mob#requiresCustomPersistence
++        this.gale$eventDriven_requiresCustomPersistence_update(); // Gale - Event-driven - Mob.requiresCustomPersistence
  
          if (includeSideEffects) {
              this.applyTamingSideEffects();

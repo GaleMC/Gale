@@ -6,12 +6,12 @@
          level.removeBlock(pos, false);
 -        boolean anyWaterNeighbors = Direction.Plane.HORIZONTAL.stream().map(pos::relative).anyMatch(neighborPos -> isWaterThatWouldFlow(neighborPos, level));
 -        final boolean inWater = anyWaterNeighbors || level.getFluidState(pos.above()).is(FluidTags.WATER);
-+        // Gale start - Minimize evaluation work - RespawnAnchorBlock#explode
++        // Gale start - Do less work - RespawnAnchorBlock.explode()
 +        // boolean anyWaterNeighbors = Direction.Plane.HORIZONTAL.stream().map(pos::relative).anyMatch(neighborPos -> isWaterThatWouldFlow(neighborPos, level));
 +        // final boolean inWater = anyWaterNeighbors || level.getFluidState(pos.above()).is(FluidTags.WATER);
-+        // Gale end - Minimize evaluation work - RespawnAnchorBlock#explode
++        // Gale end - Do less work - RespawnAnchorBlock.explode()
          ExplosionDamageCalculator damageCalculator = new ExplosionDamageCalculator() {
-+            // Gale start - Minimize evaluation work - RespawnAnchorBlock#explode
++            // Gale start - Do less work - RespawnAnchorBlock.explode()
 +            private boolean gale$inWater_cached;
 +            private boolean gale$inWater_isCached;
 +
@@ -29,14 +29,14 @@
 +                }
 +                return this.gale$inWater_cached;
 +            }
-+            // Gale end - Minimize evaluation work - RespawnAnchorBlock#explode
++            // Gale end - Do less work - RespawnAnchorBlock.explode()
 +
              @Override
              public Optional<Float> getBlockExplosionResistance(
                  final Explosion explosion, final BlockGetter levelx, final BlockPos testPos, final BlockState block, final FluidState fluid
              ) {
 -                return testPos.equals(pos) && inWater
-+                return testPos.equals(pos) && gale$inWater(level, pos) // Gale - Minimize evaluation work - RespawnAnchorBlock#explode
++                return testPos.equals(pos) && gale$inWater(level, pos) // Gale - Do less work - RespawnAnchorBlock.explode()
                      ? Optional.of(Blocks.WATER.getExplosionResistance())
                      : super.getBlockExplosionResistance(explosion, levelx, testPos, block, fluid);
              }

@@ -5,11 +5,11 @@
          }
  
 -        return this.getUniqueId().equals(other.getUniqueId());
-+        // Gale start - Inline player UUID comparison
++        // Gale start - Local code optimization - Inline player UUID comparison
 +        UUID uuid1 = this.getUniqueId();
 +        UUID uuid2 = other.getUniqueId();
 +        return uuid1.getMostSignificantBits() == uuid2.getMostSignificantBits() && uuid1.getLeastSignificantBits() == uuid2.getLeastSignificantBits();
-+        // Gale end - Inline player UUID comparison
++        // Gale end - Local code optimization - Inline player UUID comparison
      }
  
      @Override

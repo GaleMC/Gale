@@ -5,7 +5,7 @@
  import net.minecraft.util.ExtraCodecs;
  
 -public record PaintingVariant(int width, int height, Identifier assetId, Optional<Component> title, Optional<Component> author) {
-+// Gale start - Optimize registry values - Value to id - Implement
++// Gale start - Intrusive values - Registry elements - Value to id - Implement
 +public final class PaintingVariant extends org.galemc.gale.registry.idawarevalue.FieldIdAwareRegistryValue {
 +    private final int width;
 +    private final int height;
@@ -36,7 +36,7 @@
 +        }
 +        return this.cachedHashCode;
 +    }
-+    // Gale end - Optimize registry values - Value to id - Implement
++    // Gale end - Intrusive values - Registry elements - Value to id - Implement
      public static final Codec<PaintingVariant> DIRECT_CODEC = RecordCodecBuilder.create(
          i -> i.group(
                  ExtraCodecs.intRange(1, 16).fieldOf("width").forGetter(PaintingVariant::width),

@@ -5,7 +5,7 @@
      ) {
          return !this.isSourceBlockOfThisType(testFluidState)
 -            && canHoldAnyFluid(testState)
-+            && testState.isAny(org.dreeam.leaf.util.BlockMasks.CAN_HOLD_ANY_FLUID) // Gale - Pre-compute block state predicates - Apply
++            && testState.isAny(org.dreeam.leaf.util.BlockMasks.CAN_HOLD_ANY_FLUID) // Gale - Pre-compute - Common BlockState predicates - Apply
              && canPassThroughWall(direction, level, sourcePos, sourceState, testPos, testState);
      }
  
@@ -14,7 +14,7 @@
  
      private static boolean canHoldFluid(final BlockGetter level, final BlockPos pos, final BlockState state, final Fluid newFluid) {
 -        return canHoldAnyFluid(state) && canHoldSpecificFluid(level, pos, state, newFluid);
-+        return state.isAny(org.dreeam.leaf.util.BlockMasks.CAN_HOLD_ANY_FLUID) && canHoldSpecificFluid(level, pos, state, newFluid); // Gale - Pre-compute block state predicates - Apply
++        return state.isAny(org.dreeam.leaf.util.BlockMasks.CAN_HOLD_ANY_FLUID) && canHoldSpecificFluid(level, pos, state, newFluid); // Gale - Pre-compute - Common BlockState predicates - Apply
      }
  
      private static boolean canHoldSpecificFluid(final BlockGetter level, final BlockPos pos, final BlockState state, final Fluid newFluid) {

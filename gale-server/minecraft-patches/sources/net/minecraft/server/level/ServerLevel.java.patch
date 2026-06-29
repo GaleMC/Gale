@@ -90,13 +90,13 @@
  
      @Override
      public void destroyBlockProgress(final int id, final BlockPos blockPos, final int progress) {
-+        // Gale start - Allocate zero or one block destruction packets
++        // Gale start - Local code optimization - ServerLevel.destroyBlockProgress() (allocate zero or one block destruction packets)
 +        var players = this.server.getPlayerList().getPlayers();
 +        if (players.isEmpty()) {
 +            return;
 +        }
 +        ClientboundBlockDestructionPacket blockDestructionPacket = new ClientboundBlockDestructionPacket(id, blockPos, progress);
-+        // Gale end - Allocate zero or one block destruction packets
++        // Gale end - Local code optimization - ServerLevel.destroyBlockProgress() (allocate zero or one block destruction packets)
          // CraftBukkit start
          Player breakerPlayer = null;
          Entity entity = this.getEntity(id);
@@ -105,7 +105,7 @@
          }
          // Paper end - Add BlockBreakProgressUpdateEvent
 -        for (ServerPlayer player : this.server.getPlayerList().getPlayers()) {
-+        for (ServerPlayer player : players) { // Gale - Allocate zero or one block destruction packets
++        for (ServerPlayer player : players) { // Gale - Local code optimization - ServerLevel.destroyBlockProgress() (allocate zero or one block destruction packets)
              if (player.level() == this && player.getId() != id) {
                  double xd = blockPos.getX() - player.getX();
                  double yd = blockPos.getY() - player.getY();
@@ -114,7 +114,7 @@
                      }
                      // CraftBukkit end
 -                    player.connection.send(new ClientboundBlockDestructionPacket(id, blockPos, progress));
-+                    player.connection.send(blockDestructionPacket); // Gale - Allocate zero or one block destruction packets
++                    player.connection.send(blockDestructionPacket); // Gale - Local code optimization - ServerLevel.destroyBlockProgress() (allocate zero or one block destruction packets)
                  }
              }
          }

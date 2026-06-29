@@ -5,7 +5,7 @@
      private static final int DEFAULT_WAVE = 0;
      private static final boolean DEFAULT_CAN_JOIN_RAID = false;
 -    protected @Nullable Raid raid;
-+    protected @Nullable Raid raid; // Gale - Event-driven - Mob#requiresCustomPersistence - TODO Watch for new writes
++    protected @Nullable Raid raid; // Gale - Event-driven - Mob.requiresCustomPersistence - TODO Watch for new writes
      private int wave = 0;
      private boolean canJoinRaid = false;
      private int ticksOutsideRaid;
@@ -13,7 +13,7 @@
  
      public void setCurrentRaid(final @Nullable Raid raid) {
          this.raid = raid;
-+        this.gale$eventDriven_requiresCustomPersistence_update(); // Gale - Event-driven - Mob#requiresCustomPersistence
++        this.gale$eventDriven_requiresCustomPersistence_update(); // Gale - Event-driven - Mob.requiresCustomPersistence
      }
  
      public @Nullable Raid getCurrentRaid() {
@@ -21,7 +21,7 @@
          if (this.level() instanceof ServerLevel level) {
              input.getInt("RaidId").ifPresent(raidId -> {
                  this.raid = level.getRaids().get(raidId);
-+                this.gale$eventDriven_requiresCustomPersistence_update(); // Gale - Event-driven - Mob#requiresCustomPersistence
++                this.gale$eventDriven_requiresCustomPersistence_update(); // Gale - Event-driven - Mob.requiresCustomPersistence
                  if (this.raid != null) {
                      this.raid.addWaveMob(level, this.wave, this, false);
                      if (this.isPatrolLeader()) {
@@ -31,10 +31,10 @@
      @Override
 -    public boolean requiresCustomPersistence() {
 -        return super.requiresCustomPersistence() || this.getCurrentRaid() != null;
-+    // Gale start - Event-driven - Mob#requiresCustomPersistence
++    // Gale start - Event-driven - Mob.requiresCustomPersistence
 +    public boolean gale$eventDriven_requiresCustomPersistence_compute() {
 +        return super.gale$eventDriven_requiresCustomPersistence_compute() || this.getCurrentRaid() != null;
-+        // Gale end - Event-driven - Mob#requiresCustomPersistence
++        // Gale end - Event-driven - Mob.requiresCustomPersistence
      }
  
      public int getTicksOutsideRaid() {

@@ -7,8 +7,8 @@
 -            : NO_SPECTATORS.and(
 -                input -> {
 -                    if (!input.isPushable() || !input.canCollideWithBukkit(entity) || !entity.canCollideWithBukkit(input)) { // CraftBukkit - collidable API // Paper - Climbing should not bypass cramming gamerule
-+            : input -> { // Gale - Optimize pushable selector
-+                    if (input.isSpectator() /*|| !pushedEntity.isPushable()*/ || !input.canCollideWithBukkit(entity) || !entity.canCollideWithBukkit(input)) { // CraftBukkit - collidable API // Paper - Climbing should not bypass cramming gamerule // Gale - Optimize pushable selector
++            : input -> { // Gale - Do less work - EntitySelector.pushableBy()
++                    if (input.isSpectator() /*|| !pushedEntity.isPushable()*/ || !input.canCollideWithBukkit(entity) || !entity.canCollideWithBukkit(input)) { // CraftBukkit - collidable API // Paper - Climbing should not bypass cramming gamerule // Gale - Do less work - EntitySelector.pushableBy()
                          return false;
                      }
  
@@ -18,7 +18,7 @@
                      }
 -                }
 -            );
-+                }; // Gale - Optimize pushable selector
++                }; // Gale - Do less work - EntitySelector.pushableBy()
      }
  
      public static Predicate<Entity> notRiding(final Entity entity) {

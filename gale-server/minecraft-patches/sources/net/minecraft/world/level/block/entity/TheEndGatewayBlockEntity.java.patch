@@ -5,7 +5,7 @@
  
      private static void spawnGatewayPortal(final ServerLevel level, final BlockPos portalPos, final EndGatewayConfiguration config) {
 -        Feature.END_GATEWAY.place(config, level, level.getChunkSource().getGenerator(), RandomSource.create(), portalPos);
-+        Feature.END_GATEWAY.place(config, level, level.getChunkSource().getGenerator(), level.getRandom(), portalPos); // Gale - Reduce RandomSource instances
++        Feature.END_GATEWAY.place(config, level, level.getChunkSource().getGenerator(), level.getRandom(), portalPos); // Gale - Reduce allocations - RandomSource
      }
  
      @Override

@@ -4,10 +4,10 @@
  
      // SimplePluginManager
      public void callEvent(@NotNull Event event) {
-+        // Gale start - Skip Bukkit callEvent early if no listeners
++        // Gale start - Do less work - Exit Bukkit event call early if no listeners
 +        RegisteredListener[] listeners = event.getHandlers().getRegisteredListeners();
 +        if (listeners.length == 0) return;
-+        // Gale end - Skip Bukkit callEvent early if no listeners
++        // Gale end - Do less work - Exit Bukkit event call early if no listeners
 +
          if (event.isAsynchronous() && this.server.isPrimaryThread()) {
              throw new IllegalStateException(event.getEventName() + " may only be triggered asynchronously.");
@@ -17,10 +17,10 @@
  
 -        HandlerList handlers = event.getHandlers();
 -        RegisteredListener[] listeners = handlers.getRegisteredListeners();
-+        // Gale start - Skip Bukkit callEvent early if no listeners
++        // Gale start - Do less work - Exit Bukkit event call early if no listeners
 +//        HandlerList handlers = event.getHandlers();
 +//        RegisteredListener[] listeners = handlers.getRegisteredListeners();
-+        // Gale end - Skip Bukkit callEvent early if no listeners
++        // Gale end - Do less work - Exit Bukkit event call early if no listeners
  
          for (RegisteredListener registration : listeners) {
              if (!registration.getPlugin().isEnabled()) {

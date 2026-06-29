@@ -6,7 +6,7 @@
      ) {
 -        return super.getBlockExplosionResistance(explosion, level, pos, block, fluid)
 -            .map(resistance -> this.source.getBlockExplosionResistance(explosion, level, pos, block, fluid, resistance));
-+        // Gale start - Local code optimization - EntityBasedExplosionDamageCalculator#getBlockExplosionResistance (reduce allocations)
++        // Gale start - Local code optimization - EntityBasedExplosionDamageCalculator.getBlockExplosionResistance() (reduce allocations)
 +        Optional<Float> optionalBlastResistance = super.getBlockExplosionResistance(explosion, level, pos, block, fluid);
 +
 +        if (optionalBlastResistance.isPresent()) {
@@ -19,7 +19,7 @@
 +        }
 +
 +        return optionalBlastResistance;
-+        // Gale end - Local code optimization - EntityBasedExplosionDamageCalculator#getBlockExplosionResistance (reduce allocations)
++        // Gale end - Local code optimization - EntityBasedExplosionDamageCalculator.getBlockExplosionResistance() (reduce allocations)
      }
  
      @Override

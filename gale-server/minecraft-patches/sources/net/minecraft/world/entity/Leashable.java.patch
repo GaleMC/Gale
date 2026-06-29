@@ -8,12 +8,12 @@
 -        if (leashData.delayedLeashHolderId != 0 && entity.level().isClientSide() && ntt != null) {
 -            leashData.setLeashHolder(ntt);
 -        }
-+        // Gale start - Skip client-side code - Leashable#getLeashHolder
++        // Gale start - Do less work - Skip client-side code - Leashable.getLeashHolder()
 +        // Entity ntt = entity.level().getEntity(leashData.delayedLeashHolderId);
 +        // if (leashData.delayedLeashHolderId != 0 && entity.level().isClientSide() && ntt != null) {
 +        //     leashData.setLeashHolder(ntt);
 +        // }
-+        // Gale end - Skip client-side code - Leashable#getLeashHolder
++        // Gale end - Do less work - Skip client-side code - Leashable.getLeashHolder()
  
          return leashData.leashHolder;
      }
@@ -22,7 +22,7 @@
              );
          private int delayedLeashHolderId;
 -        public @Nullable Entity leashHolder;
-+        public @Nullable Entity leashHolder; // Gale - Event-driven - Mob#isLeashed - TODO Watch for new writes
++        public @Nullable Entity leashHolder; // Gale - Event-driven - Mob.isLeashed - TODO Watch for new writes
          public @Nullable Either<UUID, BlockPos> delayedLeashInfo;
          public double angularMomentum;
  
@@ -31,7 +31,7 @@
  
          public void setLeashHolder(final Entity leashHolder) {
 -            this.leashHolder = leashHolder;
-+            // Gale start - Event-driven - Mob#isLeashed
++            // Gale start - Event-driven - Mob.isLeashed
 +            if (this.leashHolder != leashHolder) {
 +                this.leashHolder = leashHolder;
 +                if (this.leashHolderListeners != null) {
@@ -43,12 +43,12 @@
 +                    }
 +                }
 +            }
-+            // Gale end - Event-driven - Mob#isLeashed
++            // Gale end - Event-driven - Mob.isLeashed
              this.delayedLeashInfo = null;
              this.delayedLeashHolderId = 0;
          }
 +
-+        // Gale start - Event-driven - Mob#isLeashed
++        // Gale start - Event-driven - Mob.isLeashed
 +        private @Nullable List<java.lang.ref.WeakReference<net.minecraft.world.entity.Mob>> leashHolderListeners;
 +
 +        public void addLeashHolderListener(java.lang.ref.WeakReference<net.minecraft.world.entity.Mob> listener) {
@@ -63,7 +63,7 @@
 +                this.leashHolderListeners.remove(listener);
 +            }
 +        }
-+        // Gale end - Event-driven - Mob#isLeashed
++        // Gale end - Event-driven - Mob.isLeashed
      }
  
      record Wrench(Vec3 force, double torque) {

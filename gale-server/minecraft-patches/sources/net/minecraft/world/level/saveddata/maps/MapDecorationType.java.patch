@@ -5,7 +5,7 @@
  import net.minecraft.resources.Identifier;
  
 -public record MapDecorationType(Identifier assetId, boolean showOnItemFrame, int mapColor, boolean explorationMapElement, boolean trackCount) {
-+// Gale start - Optimize registry values - Value to id - Implement
++// Gale start - Intrusive values - Registry elements - Value to id - Implement
 +public final class MapDecorationType extends org.galemc.gale.registry.idawarevalue.FieldIdAwareRegistryValue {
 +    private final Identifier assetId;
 +    private final boolean showOnItemFrame;
@@ -36,7 +36,7 @@
 +        }
 +        return this.cachedHashCode;
 +    }
-+    // Gale end - Optimize registry values - Value to id - Implement
++    // Gale end - Intrusive values - Registry elements - Value to id - Implement
      public static final int NO_MAP_COLOR = -1;
      public static final Codec<Holder<MapDecorationType>> CODEC = BuiltInRegistries.MAP_DECORATION_TYPE.holderByNameCodec();
      public static final StreamCodec<RegistryFriendlyByteBuf, Holder<MapDecorationType>> STREAM_CODEC = ByteBufCodecs.holderRegistry(

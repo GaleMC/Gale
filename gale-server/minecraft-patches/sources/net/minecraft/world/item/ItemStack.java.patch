@@ -5,12 +5,12 @@
  
      public static boolean isSameItem(final ItemStack a, final ItemStack b) {
 -        return a.is(b.getItem());
-+        return a == b || a.is(b.getItem()); // Gale - Optimize matching item checks
++        return a == b || a.is(b.getItem()); // Gale - Local code optimization - Add equality check to ItemStack.isSameItem...()
      }
  
      public static boolean isSameItemSameComponents(final ItemStack a, final ItemStack b) {
 -        return a.is(b.getItem()) && (a.isEmpty() && b.isEmpty() || Objects.equals(a.components, b.components));
-+        return a == b || a.is(b.getItem()) && (a.isEmpty() && b.isEmpty() || Objects.equals(a.components, b.components)); // Gale - Optimize matching item checks
++        return a == b || a.is(b.getItem()) && (a.isEmpty() && b.isEmpty() || Objects.equals(a.components, b.components)); // Gale - Local code optimization - Add equality check to ItemStack.isSameItem...()
      }
  
      public static boolean matchesIgnoringComponents(final ItemStack a, final ItemStack b, final Predicate<DataComponentType<?>> ignoredPredicate) {

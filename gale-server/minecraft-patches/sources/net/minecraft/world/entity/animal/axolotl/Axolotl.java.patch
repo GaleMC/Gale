@@ -4,7 +4,7 @@
          this.setPathfindingMalus(PathType.WATER, 0.0F);
          this.moveControl = new Axolotl.AxolotlMoveControl<>(this);
          this.lookControl = new Axolotl.AxolotlLookControl(this, 20);
-+        this.gale$eventDriven_requiresCustomPersistence_update(); // Gale - Event-driven - Mob#requiresCustomPersistence
++        this.gale$eventDriven_requiresCustomPersistence_update(); // Gale - Event-driven - Mob.requiresCustomPersistence
      }
  
      @Override
@@ -12,7 +12,7 @@
      @Override
      public void setFromBucket(final boolean fromBucket) {
          this.entityData.set(FROM_BUCKET, fromBucket);
-+        this.gale$eventDriven_requiresCustomPersistence_update(); // Gale - Event-driven - Mob#requiresCustomPersistence
++        this.gale$eventDriven_requiresCustomPersistence_update(); // Gale - Event-driven - Mob.requiresCustomPersistence
      }
  
      @Override
@@ -22,10 +22,10 @@
      @Override
 -    public boolean requiresCustomPersistence() {
 -        return super.requiresCustomPersistence() || this.fromBucket();
-+    // Gale start - Event-driven - Mob#requiresCustomPersistence
++    // Gale start - Event-driven - Mob.requiresCustomPersistence
 +    public boolean gale$eventDriven_requiresCustomPersistence_compute() {
 +        return super.gale$eventDriven_requiresCustomPersistence_compute() || this.fromBucket();
-+        // Gale end - Event-driven - Mob#requiresCustomPersistence
++        // Gale end - Event-driven - Mob.requiresCustomPersistence
      }
  
      @Override

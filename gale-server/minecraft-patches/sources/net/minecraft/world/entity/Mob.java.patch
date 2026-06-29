@@ -5,17 +5,17 @@
      private DropChances dropChances = DropChances.DEFAULT;
      private boolean canPickUpLoot = false;
 -    public boolean persistenceRequired = false;
-+    public boolean persistenceRequired = false; // Gale - Event-driven - Mob#isPersistent - TODO Watch for new writes
++    public boolean persistenceRequired = false; // Gale - Event-driven - Mob.isPersistent - TODO Watch for new writes
      private final Map<PathType, Float> pathfindingMalus = Maps.newEnumMap(PathType.class);
      public Optional<ResourceKey<LootTable>> lootTable = Optional.empty();
      public long lootTableSeed;
 -    private Leashable.@Nullable LeashData leashData;
-+    private Leashable.@Nullable LeashData leashData; // Gale - Event-driven - Mob#isLeashed - TODO Watch for new writes
++    private Leashable.@Nullable LeashData leashData; // Gale - Event-driven - Mob.isLeashed - TODO Watch for new writes
      private BlockPos homePosition = BlockPos.ZERO;
      private int homeRadius = -1;
      public boolean aware = true; // CraftBukkit
 -    public net.kyori.adventure.util.TriState despawnInPeacefulOverride = net.kyori.adventure.util.TriState.NOT_SET; // Paper - allow changing despawnInPeaceful
-+    public net.kyori.adventure.util.TriState despawnInPeacefulOverride = net.kyori.adventure.util.TriState.NOT_SET; // Paper - allow changing despawnInPeaceful // Gale - Event-driven - Mob#shouldDespawnInPeaceful - TODO Watch for new writes
++    public net.kyori.adventure.util.TriState despawnInPeacefulOverride = net.kyori.adventure.util.TriState.NOT_SET; // Paper - allow changing despawnInPeaceful // Gale - Event-driven - Mob.shouldDespawnInPeaceful - TODO Watch for new writes
  
      protected Mob(final EntityType<? extends Mob> type, final Level level) {
          super(type, level);
@@ -23,7 +23,7 @@
          if (level instanceof ServerLevel) {
              this.registerGoals();
          }
-+        this.gale$eventDriven_mustDespawnBecauseOfPeacefulDifficulty_update(); // Gale - Event-driven - Mob#mustDespawnBecauseOfPeacefulDifficulty
++        this.gale$eventDriven_mustDespawnBecauseOfPeacefulDifficulty_update(); // Gale - Event-driven - Mob.mustDespawnBecauseOfPeacefulDifficulty
      }
  
      protected void registerGoals() {
@@ -31,7 +31,7 @@
          boolean persistenceRequired = input.getBooleanOr("PersistenceRequired", false);
          if (isLevelAtLeast(input, 1) || persistenceRequired) {
              this.persistenceRequired = persistenceRequired;
-+            this.gale$eventDriven_isPersistent_update(); // Gale - Event-driven - Mob#isPersistent
++            this.gale$eventDriven_isPersistent_update(); // Gale - Event-driven - Mob.isPersistent
          }
          // CraftBukkit end
          this.dropChances = input.read("drop_chances", DropChances.CODEC).orElse(DropChances.DEFAULT);
@@ -39,7 +39,7 @@
          this.aware = input.getBooleanOr("Bukkit.Aware", true); // CraftBukkit
          // Paper start - allow changing despawnInPeaceful
          this.despawnInPeacefulOverride = readDespawnInPeacefulOverride(input);
-+        this.gale$eventDriven_gale$shouldDespawnInPeaceful_update(); // Gale - Event-driven - Mob#shouldDespawnInPeaceful
++        this.gale$eventDriven_gale$shouldDespawnInPeaceful_update(); // Gale - Event-driven - Mob.shouldDespawnInPeaceful
      }
      public static net.kyori.adventure.util.TriState readDespawnInPeacefulOverride(ValueInput input) {
          return input.read("Paper.DespawnInPeacefulOverride", io.papermc.paper.util.PaperCodecs.TRI_STATE_CODEC).orElse(net.kyori.adventure.util.TriState.NOT_SET);
@@ -47,7 +47,7 @@
              ItemStack toEquip = slot.limit(itemStack);
              this.setItemSlotAndDropWhenKilled(slot, toEquip);
              this.persistenceRequired = true;
-+            this.gale$eventDriven_isPersistent_update(); // Gale - Event-driven - Mob#isPersistent
++            this.gale$eventDriven_isPersistent_update(); // Gale - Event-driven - Mob.isPersistent
              return toEquip;
          } else {
              return ItemStack.EMPTY;
@@ -56,16 +56,16 @@
      }
  
 -    public boolean requiresCustomPersistence() {
-+    public boolean gale$eventDriven_requiresCustomPersistence_compute() { // Gale - Event-driven - Mob#requiresCustomPersistence
++    public boolean gale$eventDriven_requiresCustomPersistence_compute() { // Gale - Event-driven - Mob.requiresCustomPersistence
          return this.isPassenger() || this.isLeashed();
      }
  
-+    // Gale start - Event-driven - Mob#requiresCustomPersistence
++    // Gale start - Event-driven - Mob.requiresCustomPersistence
 +    public boolean requiresCustomPersistence() {
 +        return this.gale$eventDriven_requiresCustomPersistence;
 +    }
 +
-+    private boolean gale$eventDriven_requiresCustomPersistence; // Gale - Event-driven - Mob#isPersistent - TODO Watch for new writes
++    private boolean gale$eventDriven_requiresCustomPersistence; // Gale - Event-driven - Mob.isPersistent - TODO Watch for new writes
 +
 +    protected void gale$eventDriven_requiresCustomPersistence_update() {
 +        boolean newValue = this.gale$eventDriven_requiresCustomPersistence_compute();
@@ -80,18 +80,18 @@
 +        super.setVehicle(vehicle);
 +        this.gale$eventDriven_requiresCustomPersistence_update();
 +    }
-+    // Gale end - Event-driven - Mob#requiresCustomPersistence
++    // Gale end - Event-driven - Mob.requiresCustomPersistence
 +
      // Paper start - allow changing despawnInPeaceful
 -    public final boolean shouldDespawnInPeaceful() {
-+    public final boolean gale$eventDriven_shouldDespawnInPeaceful_compute() { // Gale - Event-driven - Mob#shouldDespawnInPeaceful
++    public final boolean gale$eventDriven_shouldDespawnInPeaceful_compute() { // Gale - Event-driven - Mob.shouldDespawnInPeaceful
          return this.despawnInPeacefulOverride.toBooleanOrElse(!this.getType().isTypeAllowedInPeaceful());
      }
      // Paper end - allow changing despawnInPeaceful
  
-+    // Gale start - Event-driven - Mob#shouldDespawnInPeaceful
++    // Gale start - Event-driven - Mob.shouldDespawnInPeaceful
 +    public final boolean shouldDespawnInPeaceful() {
-+        return this.gale$eventDriven_shouldDespawnInPeaceful; // Gale - Event-driven - Mob#shouldDespawnInPeaceful
++        return this.gale$eventDriven_shouldDespawnInPeaceful; // Gale - Event-driven - Mob.shouldDespawnInPeaceful
 +    }
 +
 +    private boolean gale$eventDriven_shouldDespawnInPeaceful;
@@ -103,9 +103,9 @@
 +            this.gale$eventDriven_mustDespawnBecauseOfPeacefulDifficulty_update();
 +        }
 +    }
-+    // Gale end - Event-driven - Mob#shouldDespawnInPeaceful
++    // Gale end - Event-driven - Mob.shouldDespawnInPeaceful
 +
-+    // Gale start - Event-driven - Mob#mustDespawnBecauseOfPeacefulDifficulty
++    // Gale start - Event-driven - Mob.mustDespawnBecauseOfPeacefulDifficulty
 +    protected boolean gale$eventDriven_mustDespawnBecauseOfPeacefulDifficulty;
 +
 +    public void gale$eventDriven_mustDespawnBecauseOfPeacefulDifficulty_update() {
@@ -117,10 +117,10 @@
 +        super.setLevel(level);
 +        this.gale$eventDriven_mustDespawnBecauseOfPeacefulDifficulty_update();
 +    }
-+    // Gale end - Event-driven - Mob#mustDespawnBecauseOfPeacefulDifficulty
++    // Gale end - Event-driven - Mob.mustDespawnBecauseOfPeacefulDifficulty
 +
-+    // Gale start - Event-driven - Mob#isLeashed
-+    private boolean gale$eventDriven_isLeashed; // Gale - Event-driven - Mob#requiresCustomPersistence - TODO Watch for new writes
++    // Gale start - Event-driven - Mob.isLeashed
++    private boolean gale$eventDriven_isLeashed; // Gale - Event-driven - Mob.requiresCustomPersistence - TODO Watch for new writes
 +    private java.lang.ref.@Nullable WeakReference<net.minecraft.world.entity.Mob> leashDataListenerReference;
 +
 +    public void gale$eventDriven_isLeashed_update() {
@@ -135,23 +135,23 @@
 +    public boolean isLeashed() {
 +        return this.gale$eventDriven_isLeashed;
 +    }
-+    // Gale end - Event-driven - Mob#isLeashed
++    // Gale end - Event-driven - Mob.isLeashed
 +
-+    // Gale start - Event-driven - Mob#isPersistent
++    // Gale start - Event-driven - Mob.isPersistent
 +    public boolean gale$eventDriven_isPersistent;
 +
 +    public void gale$eventDriven_isPersistent_update() {
 +        this.gale$eventDriven_isPersistent = this.persistenceRequired && this.gale$eventDriven_requiresCustomPersistence;
 +    }
-+    // Gale end - Event-driven - Mob#isPersistent
++    // Gale end - Event-driven - Mob.isPersistent
 +
      @Override
      public void checkDespawn() {
 -        if (this.level().getDifficulty() == Difficulty.PEACEFUL && this.shouldDespawnInPeaceful()) { // Paper - allow changing despawnInPeaceful
-+        if (this.gale$eventDriven_mustDespawnBecauseOfPeacefulDifficulty) { // Paper - allow changing despawnInPeaceful // Gale - Event-driven - Mob#mustDespawnBecauseOfPeacefulDifficulty
++        if (this.gale$eventDriven_mustDespawnBecauseOfPeacefulDifficulty) { // Paper - allow changing despawnInPeaceful // Gale - Event-driven - Mob.mustDespawnBecauseOfPeacefulDifficulty
              this.discard(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
 -        } else if (!this.isPersistenceRequired() && !this.requiresCustomPersistence()) {
-+        } else if (!this.gale$eventDriven_isPersistent) { // Gale - Event-driven - Mob#isPersistent
++        } else if (!this.gale$eventDriven_isPersistent) { // Gale - Event-driven - Mob.isPersistent
 +            if (!org.galemc.gale.async.SimulationFlag.REAL) return; // Gale - Speculative execution based on next tick simulation - Simulate next tick
              Entity player = this.level().findNearbyPlayer(this, -1.0, EntitySelector.PLAYER_AFFECTS_SPAWNING); // Paper - Affects Spawning API
              if (player != null) {
@@ -168,7 +168,7 @@
  
      public void setPersistenceRequired() {
          this.persistenceRequired = true;
-+        this.gale$eventDriven_isPersistent_update(); // Gale - Event-driven - Mob#isPersistent
++        this.gale$eventDriven_isPersistent_update(); // Gale - Event-driven - Mob.isPersistent
      }
  
      @Override
@@ -177,7 +177,7 @@
      @Override
      public void setLeashData(final Leashable.@Nullable LeashData leashData) {
 -        this.leashData = leashData;
-+        // Gale start - Event-driven - Mob#isLeashed
++        // Gale start - Event-driven - Mob.isLeashed
 +        if (this.leashData != leashData) {
 +            if (this.leashDataListenerReference == null) {
 +                this.leashDataListenerReference = new java.lang.ref.WeakReference<>(this);
@@ -188,7 +188,7 @@
 +            this.gale$eventDriven_isLeashed_update();
 +            leashData.addLeashHolderListener(this.leashDataListenerReference);
 +        }
-+        // Gale end - Event-driven - Mob#isLeashed
++        // Gale end - Event-driven - Mob.isLeashed
      }
  
      @Override

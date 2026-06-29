@@ -33,12 +33,12 @@
 -                && !((net.minecraft.server.level.ServerPlayer) source).getBukkitEntity().canSee(((net.minecraft.server.level.ServerPlayer) entity).getBukkitEntity())) {
 -                continue;
 -            }
-+            // Gale start - Delay canSee check in entity collisions
++            // Gale start - Do less work - Level.checkEntityCollision()
 +//            if (checkCanSee && source instanceof net.minecraft.server.level.ServerPlayer && entity instanceof net.minecraft.server.level.ServerPlayer
 +//                && !((net.minecraft.server.level.ServerPlayer) source).getBukkitEntity().canSee(((net.minecraft.server.level.ServerPlayer) entity).getBukkitEntity())) {
 +//                continue;
 +//            }
-+            // Gale end - Delay canSee check in entity collisions
++            // Gale end - Do less work - Level.checkEntityCollision()
  
              // !entity.isRemoved() && entity.blocksBuilding && (source == null || !entity.isPassengerOfSameVehicle(source))
              // elide the last check since vanilla calls with source = null
@@ -46,12 +46,12 @@
                  continue;
              }
  
-+            // Gale start - Delay canSee check in entity collisions
++            // Gale start - Do less work - Level.checkEntityCollision()
 +            if (checkCanSee && source instanceof net.minecraft.server.level.ServerPlayer && entity instanceof net.minecraft.server.level.ServerPlayer
 +                && !((net.minecraft.server.level.ServerPlayer) source).getBukkitEntity().canSee(((net.minecraft.server.level.ServerPlayer) entity).getBukkitEntity())) {
 +                continue;
 +            }
-+            // Gale end - Delay canSee check in entity collisions
++            // Gale end - Do less work - Level.checkEntityCollision()
 +
              if (net.minecraft.world.phys.shapes.Shapes.joinIsNotEmpty(shape, net.minecraft.world.phys.shapes.Shapes.create(entity.getBoundingBox()), net.minecraft.world.phys.shapes.BooleanOp.AND)) {
                  return false;

@@ -4,6 +4,6 @@
                  state.initCache();
              }
          }
-+        Block.BLOCK_STATE_REGISTRY.trimToSize(); // Gale - Optimize global block state palette
++        Block.BLOCK_STATE_REGISTRY.trimToSize(); // Gale - Instrusive values - Global block state palette id
      }
  }

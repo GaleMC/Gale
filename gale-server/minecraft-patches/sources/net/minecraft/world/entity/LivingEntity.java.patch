@@ -5,7 +5,7 @@
          EquipmentSlot.class
      );
 -    protected final EntityEquipment equipment;
-+    protected final EntityEquipment equipment; // Gale - Event-driven - Mob#requiresCustomPersistence - TODO Watch for new writes
++    protected final EntityEquipment equipment; // Gale - Event-driven - Mob.requiresCustomPersistence - TODO Watch for new writes
      private Waypoint.Icon locatorBarIcon = new Waypoint.Icon();
      public @Nullable Vec3 currentImpulseImpactPos;
      // CraftBukkit start
@@ -14,14 +14,14 @@
  
      protected void tryAddFrost() {
 -        if (!this.getBlockStateOnLegacy().isAir()) {
-+//        if (!this.getBlockStateOnLegacy().isAir()) { // Gale - Sort tryAddFrost checks
++//        if (!this.getBlockStateOnLegacy().isAir()) { // Gale - Do less work - LivingEntity.tryAddFrost()
              int ticksFrozen = this.getTicksFrozen();
              if (ticksFrozen > 0) {
                  AttributeInstance speed = this.getAttribute(Attributes.MOVEMENT_SPEED);
                  if (speed == null) {
                      return;
                  }
-+        if (!this.getBlockStateOnLegacy().isAir()) { // Gale - Sort tryAddFrost checks
++        if (!this.getBlockStateOnLegacy().isAir()) { // Gale - Do less work - LivingEntity.tryAddFrost()
  
                  float slowAmount = -0.05F * this.getPercentFrozen();
                  speed.addTransientModifier(new AttributeModifier(SPEED_MODIFIER_POWDER_SNOW_ID, slowAmount, AttributeModifier.Operation.ADD_VALUE));
@@ -29,7 +29,7 @@
  
      protected void tickEffects() {
          if (this.level() instanceof ServerLevel serverLevel) {
-+            if (!this.activeEffects.isEmpty()) { // Gale - Don't iterate over empty tick effect collections
++            if (!this.activeEffects.isEmpty()) { // Gale - Local code optimization - LivingEntity.tickEffects() (don't iterate over empty effect collection)
              Iterator<Holder<MobEffect>> iterator = this.activeEffects.keySet().iterator();
  
              this.tickingEffects = true; // CraftBukkit
@@ -37,7 +37,7 @@
              }
              // CraftBukkit start
              this.tickingEffects = false;
-+            } // Gale - Don't iterate over empty tick effect collections
++            } // Gale - Local code optimization - LivingEntity.tickEffects() (don't iterate over empty effect collection)
              Runnable task;
              while ((task = this.deferredEffectUpdates.poll()) != null) {
                  task.run();
@@ -46,7 +46,7 @@
              BlockPos ladderCheckPos = this.blockPosition();
              BlockState state = this.getInBlockState();
 -            if (this.isFallFlying() && state.is(BlockTags.CAN_GLIDE_THROUGH)) {
-+            if (this.isFallFlying() && state.isAny(org.dreeam.leaf.util.BlockMasks.CAN_GLIDE_THROUGH_TAG)) { // Gale - Pre-compute block state predicates - Apply
++            if (this.isFallFlying() && state.isAny(org.dreeam.leaf.util.BlockMasks.CAN_GLIDE_THROUGH_TAG)) { // Gale - Pre-compute - Common BlockState predicates - Apply
                  return false;
              } else if (state.is(BlockTags.CLIMBABLE)) {
                  this.lastClimbablePos = Optional.of(ladderCheckPos);
@@ -55,13 +55,13 @@
              profiler.push("freezing");
              if ((!this.isInPowderSnow || !this.canFreeze()) && !this.freezeLocked) { // Paper - Freeze Tick Lock API
 -                this.setTicksFrozen(Math.max(0, this.getTicksFrozen() - 2));
-+                // Gale start - Only update frozen ticks if changed
-+                int ticksFrozen = this.getTicksFrozen();
-+                int newTicksFrozen = Math.max(0, ticksFrozen - 2);
-+                if (ticksFrozen != newTicksFrozen) {
-+                    this.setTicksFrozen(newTicksFrozen);
++                // Gale start - Do less work - Check ticks frozen difference only once
++                int currentTicksFrozen = this.getTicksFrozen();
++                int newTicksFrozen = Math.max(0, currentTicksFrozen - 2);
++                if (newTicksFrozen != currentTicksFrozen) {
++                    this.entityData.set(DATA_TICKS_FROZEN, newTicksFrozen, true);
 +                }
-+                // Gale end - Only update frozen ticks if changed
++                // Gale end - Do less work - Check ticks frozen difference only once
              }
  
              this.removeFrost();

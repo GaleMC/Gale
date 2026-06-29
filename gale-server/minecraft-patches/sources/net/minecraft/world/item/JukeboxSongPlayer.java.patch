@@ -5,7 +5,7 @@
          this.song = song;
          this.ticksSinceSongStarted = 0L;
 -        int songId = level.registryAccess().lookupOrThrow(Registries.JUKEBOX_SONG).getId(this.song.value());
-+        int songId = song instanceof Holder.Reference<JukeboxSong> reference ? reference.idInRegistry : level.registryAccess().lookupOrThrow(Registries.JUKEBOX_SONG).getId(this.song.value()); // Gale - Optimize registry values - Holder to id - Use
++        int songId = song instanceof Holder.Reference<JukeboxSong> reference ? reference.idInRegistry : level.registryAccess().lookupOrThrow(Registries.JUKEBOX_SONG).getId(this.song.value()); // Gale - Intrusive values - Registry elements - Holder to id - Use
          level.levelEvent(null, LevelEvent.SOUND_PLAY_JUKEBOX_SONG, this.blockPos, songId);
          this.onSongChanged.notifyChange();
      }

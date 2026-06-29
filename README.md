@@ -3,7 +3,10 @@
   <h1>Gale 💨</h1>
   <!-- <h3>The fast Paper fork that is suitable for every server</h3> -->
   <!-- <h3>The faster Paper fork that is suitable for everyone:<br>same server, better engine.</h3> -->
-  <h3>The faster Paper fork that is suitable for every server:<br>same server, better engine.</h3>
+  <!-- <h3>The faster Paper fork that is suitable for every server:<br>same server, better engine.</h3> -->
+  <!-- <h3>The faster Paper fork that for every server:<br>same server, better engine.</h3> -->
+  <h3>High-performance pure Paper fork</h3>
+  <!-- <h3>Run the same Paper server with better performance!</h3> -->
   <!--<h3>A faster Paper server:<br>the easiest server upgrade you'll ever make</h3>-->
   <!--<h3>Do you use Paper? You can do even better!</h3>-->
   <!--<h3>Paper but faster 💨</h3>-->

@@ -4,8 +4,8 @@
          int newId = this.byId.size();
          this.byId.add(holder);
          this.toId.put(value, newId);
-+        if (value instanceof org.galemc.gale.registry.idawarevalue.IdAwareRegistryValue idAwareValue) idAwareValue.setIdInRegistry(newId); // Gale - Optimize registry values - Value to id - Store
-+        holder.idInRegistry = newId; // Gale - Optimize registry values - Holder to id - Store
++        if (value instanceof org.galemc.gale.registry.idawarevalue.IdAwareRegistryValue idAwareValue) idAwareValue.setIdInRegistry(newId); // Gale - Intrusive values - Registry elements - Value to id - Store
++        holder.idInRegistry = newId; // Gale - Intrusive values - Registry elements - Holder to id - Store
          this.registrationInfos.put(key, registrationInfo);
          this.registryLifecycle = this.registryLifecycle.add(registrationInfo.lifecycle());
          this.temporaryUnfrozenMap.put(key.identifier(), value); // Paper - support pre-filling in registry mod API
@@ -13,7 +13,7 @@
  
      @Override
      public int getId(final @Nullable T thing) {
-+        if (thing instanceof org.galemc.gale.registry.idawarevalue.IdAwareRegistryValue idAwareValue) return idAwareValue.getIdInRegistry(); // Gale - Optimize registry values - Value to id - Quick return
++        if (thing instanceof org.galemc.gale.registry.idawarevalue.IdAwareRegistryValue idAwareValue) return idAwareValue.getIdInRegistry(); // Gale - Intrusive values - Registry elements - Value to id - Quick return
          return this.toId.getInt(thing);
      }
  
@@ -21,14 +21,14 @@
      private void refreshTagsInHolders() {
          Map<Holder.Reference<T>, List<TagKey<T>>> tagsForElement = new IdentityHashMap<>();
          this.byKey.values().forEach(h -> tagsForElement.put((Holder.Reference<T>)h, new ArrayList<>()));
-+        int[] nextIndexInRegistry = {0}; // Gale - Optimize tag checks
++        int[] nextIndexInRegistry = {0}; // Gale - Pre-compute - Registry tags
          this.allTags.forEach((id, values) -> {
-+            // Gale start - Optimize tag checks
++            // Gale start - Pre-compute - Registry tags
 +            int indexInRegistry = nextIndexInRegistry[0]++;
 +            id.indexInRegistryWordIndex = indexInRegistry >> 6;
 +            id.indexInRegistryWordMask = 1L << indexInRegistry;
 +            nextIndexInRegistry[0]++;
-+            // Gale end - Optimize tag checks
++            // Gale end - Pre-compute - Registry tags
              for (Holder<T> value : values) {
                  Holder.Reference<T> reference = this.validateAndUnwrapTagElement((TagKey<T>)id, value);
                  tagsForElement.get(reference).add((TagKey<T>)id);

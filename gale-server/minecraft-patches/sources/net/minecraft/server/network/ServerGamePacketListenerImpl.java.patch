@@ -4,12 +4,12 @@
      private static final int MAX_SIGN_LINE_LENGTH = Integer.getInteger("Paper.maxSignLength", 80); // Paper - Limit client sign length
      private final io.papermc.paper.event.packet.ClientTickEndEvent tickEndEvent; // Paper - add client tick end event
      public final io.papermc.paper.connection.PaperPlayerGameConnection playerGameConnection; // Paper
-+    // Gale start - Store seenBy in a fast-access format
++    // Gale start - Collections - ChunkMap.TrackedEntity.seenBy
 +    public static boolean[] USED_PACKED_SEEN_BY_BIT_INDICES = new boolean[512];
 +    public final int packedSeenByBitIndex;
 +    public final int packedSeenByWordIndex;
 +    public final long packedSeenByWordMask;
-+    // Gale end - Store seenBy in a fast-access format
++    // Gale end - Collections - ChunkMap.TrackedEntity.seenBy
  
      public ServerGamePacketListenerImpl(final MinecraftServer server, final Connection connection, final ServerPlayer player, final CommonListenerCookie cookie) {
          super(server, connection, cookie);
@@ -17,7 +17,7 @@
          this.chatMessageChain = new FutureChain(server.chatExecutor); // CraftBukkit - async chat
          this.tickEndEvent = new io.papermc.paper.event.packet.ClientTickEndEvent(player.getBukkitEntity()); // Paper - add client tick end event
          this.playerGameConnection = new io.papermc.paper.connection.PaperPlayerGameConnection(this); // Paper
-+        // Gale start - Store seenBy in a fast-access format
++        // Gale start - Collections - ChunkMap.TrackedEntity.seenBy
 +        int i = 0;
 +        while (true) {
 +            if (i >= USED_PACKED_SEEN_BY_BIT_INDICES.length) {
@@ -33,7 +33,7 @@
 +        this.packedSeenByBitIndex = i;
 +        this.packedSeenByWordIndex = i >> 6;
 +        this.packedSeenByWordMask = 1L << i;
-+        // Gale end - Store seenBy in a fast-access format
++        // Gale end - Collections - ChunkMap.TrackedEntity.seenBy
      }
  
      // Paper start - configuration phase API

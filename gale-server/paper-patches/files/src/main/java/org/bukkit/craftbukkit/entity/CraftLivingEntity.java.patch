@@ -5,11 +5,11 @@
      public void setRemoveWhenFarAway(boolean remove) {
          if (this.getHandle() instanceof Mob mob) {
 -            mob.persistenceRequired = !remove;
-+            // Gale start - Event-driven - Mob#isPersistent
++            // Gale start - Event-driven - Mob.isPersistent
 +            boolean persistenceRequired = !remove;
 +            mob.persistenceRequired = persistenceRequired;
 +            mob.gale$eventDriven_isPersistent_update();
-+            // Gale end - Event-driven - Mob#isPersistent
++            // Gale end - Event-driven - Mob.isPersistent
          }
      }
  

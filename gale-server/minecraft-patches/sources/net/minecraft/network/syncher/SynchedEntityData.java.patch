@@ -5,7 +5,7 @@
  
          this.isDirty = false;
 -        List<SynchedEntityData.DataValue<?>> result = new ArrayList<>();
-+        // Gale start - Minimize size of packed dirty synched entity data item list
++        // Gale start - Collections - SynchedEntityData.packDirty()
 +        int count = 0;
 +        for (SynchedEntityData.DataItem<?> dataItem : this.itemsById) {
 +            if (dataItem.isDirty()) {
@@ -13,7 +13,7 @@
 +            }
 +        }
 +        ArrayList<SynchedEntityData.DataValue<?>> result = new ArrayList<>(count);
-+        // Gale end - Minimize end of packed dirty synched entity data item list
++        // Gale end - Collections - SynchedEntityData.packDirty()
  
          for (SynchedEntityData.DataItem<?> dataItem : this.itemsById) {
              if (dataItem.isDirty()) {

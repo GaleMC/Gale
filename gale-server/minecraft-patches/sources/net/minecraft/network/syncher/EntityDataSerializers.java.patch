@@ -5,7 +5,7 @@
  
  public class EntityDataSerializers {
 -    private static final CrudeIncrementalIntIdentityHashBiMap<EntityDataSerializer<?>> SERIALIZERS = CrudeIncrementalIntIdentityHashBiMap.create(16);
-+    private static final it.unimi.dsi.fastutil.objects.ObjectArrayList<EntityDataSerializer<?>> SERIALIZERS = new it.unimi.dsi.fastutil.objects.ObjectArrayList<>(); // Gale - Optimize entity data serializer list
++    private static final it.unimi.dsi.fastutil.objects.ObjectArrayList<EntityDataSerializer<?>> SERIALIZERS = new it.unimi.dsi.fastutil.objects.ObjectArrayList<>(); // Gale - Intrusive values - EntityDataSerializers.SERIALIZERS
      public static final EntityDataSerializer<Byte> BYTE = EntityDataSerializer.forValueType(ByteBufCodecs.BYTE);
      public static final EntityDataSerializer<Integer> INT = EntityDataSerializer.forValueType(ByteBufCodecs.VAR_INT);
      public static final EntityDataSerializer<Long> LONG = EntityDataSerializer.forValueType(ByteBufCodecs.VAR_LONG);
@@ -14,7 +14,7 @@
      };
      // Paper end - do not obfuscate items sent as entity data
 -    public static final EntityDataSerializer<ItemStack> ITEM_STACK = new EntityDataSerializer<ItemStack>() {
-+    public static final EntityDataSerializer<ItemStack> ITEM_STACK = new EntityDataSerializer.AbstractEntityDataSerializer<ItemStack>() { // Gale - Optimize entity data serializer list
++    public static final EntityDataSerializer<ItemStack> ITEM_STACK = new EntityDataSerializer.AbstractEntityDataSerializer<ItemStack>() { // Gale - Intrusive values - EntityDataSerializers.SERIALIZERS
          @Override
          public StreamCodec<? super RegistryFriendlyByteBuf, ItemStack> codec() {
              return OVERSIZED_ITEM_CODEC; // Paper - do not obfuscate items sent as entity data
@@ -22,18 +22,18 @@
      public static final EntityDataSerializer<HumanoidArm> HUMANOID_ARM = EntityDataSerializer.forValueType(HumanoidArm.STREAM_CODEC);
  
      public static void registerSerializer(final EntityDataSerializer<?> serializer) {
-+        serializer.setIndexInList(SERIALIZERS.size()); // Gale - Optimize entity data serializer list
++        serializer.setIndexInList(SERIALIZERS.size()); // Gale - Intrusive values - EntityDataSerializers.SERIALIZERS
          SERIALIZERS.add(serializer);
      }
  
      public static @Nullable EntityDataSerializer<?> getSerializer(final int id) {
 -        return SERIALIZERS.byId(id);
-+        return SERIALIZERS.get(id); // Gale - Optimize entity data serializer list
++        return SERIALIZERS.get(id); // Gale - Intrusive values - EntityDataSerializers.SERIALIZERS
      }
  
      public static int getSerializedId(final EntityDataSerializer<?> serializer) {
 -        return SERIALIZERS.getId(serializer);
-+        return serializer.getIndexInList(); // Gale - Optimize entity data serializer list
++        return serializer.getIndexInList(); // Gale - Intrusive values - EntityDataSerializers.SERIALIZERS
      }
  
      private EntityDataSerializers() {
@@ -41,6 +41,6 @@
          registerSerializer(QUATERNION);
          registerSerializer(RESOLVABLE_PROFILE);
          registerSerializer(HUMANOID_ARM);
-+        SERIALIZERS.trim(); // Gale - Optimize entity data serializer list
++        SERIALIZERS.trim(); // Gale - Intrusive values - EntityDataSerializers.SERIALIZERS
      }
  }

@@ -5,7 +5,7 @@
                  Node nextNode = i + 1 < this.path.getNodeCount() ? this.path.getNode(i + 1) : null;
                  BlockState state = this.level.getBlockState(new BlockPos(node.x, node.y, node.z));
 -                if (state.is(BlockTags.CAULDRONS)) {
-+                if (state.isAny(org.dreeam.leaf.util.BlockMasks.CAULDRONS_TAG)) { // Gale - Pre-compute block state predicates - Apply
++                if (state.isAny(org.dreeam.leaf.util.BlockMasks.CAULDRONS_TAG)) { // Gale - Pre-compute - Common BlockState predicates - Apply
                      this.path.replaceNode(i, node.cloneAndMove(node.x, node.y + 1, node.z));
                      if (nextNode != null && node.y >= nextNode.y) {
                          this.path.replaceNode(i + 1, node.cloneAndMove(nextNode.x, node.y + 1, nextNode.z));

@@ -4,7 +4,7 @@
  
  public class CubePointRange extends AbstractDoubleList {
      private final int parts;
-+    private final double scale; // Gale - Replace division by multiplication - Pre-compute scale
++    private final double scale; // Gale - Math - CubePointRange.getDouble() (replace division by multiplication)
  
      public CubePointRange(final int parts) {
          if (parts <= 0) {
@@ -12,13 +12,13 @@
          }
  
          this.parts = parts;
-+        this.scale = 1.0D / parts; // Gale - Replace division by multiplication - Pre-compute scale
++        this.scale = 1.0D / parts; // Gale - Math - CubePointRange.getDouble() (replace division by multiplication)
      }
  
      @Override
      public double getDouble(final int index) {
 -        return (double)index / this.parts;
-+        return index * this.scale; // Gale - Replace division by multiplication - Pre-compute scale
++        return index * this.scale; // Gale - Math - CubePointRange.getDouble() (replace division by multiplication)
      }
  
      @Override

@@ -5,5 +5,5 @@
          return this;
      }
 +
-+    public int indexInRegistry; // Gale - Optimize entity data serializer list
++    public int indexInRegistry; // Gale - Intrusive values - EntityDataSerializers.SERIALIZERS
  }

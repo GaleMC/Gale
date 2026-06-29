@@ -5,7 +5,7 @@
  
      private static double getFiddle(final long rval) {
 -        return (double)(((rval >> 24) & (1024 - 1)) - (1024/2)) * (0.9 / 1024.0); // Paper - avoid floorMod, fp division, and fp subtraction
-+        // Gale start - Pre-compute biome fiddle table
++        // Gale start - Pre-compute - BiomeManager.getFiddle()
 +        return PRECOMPUTED_FIDDLE_TABLE[(int) (rval >>> 24) & 1023];
 +    }
 +
@@ -17,7 +17,7 @@
 +    }
 +
 +    private static double precomputeFiddle(final int i) {
-+        // Gale end - Pre-compute biome fiddle table
++        // Gale end - Pre-compute - BiomeManager.getFiddle()
 +        return (double)(i - (1024/2)) * (0.9 / 1024.0); // Paper - avoid floorMod, fp division, and fp subtraction
      }
  

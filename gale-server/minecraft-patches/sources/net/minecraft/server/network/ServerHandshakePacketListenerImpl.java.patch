@@ -5,7 +5,7 @@
      // Spigot end
      // Paper start - Connection throttle
 -    private static final java.util.Map<java.net.InetAddress, Long> throttleTracker = new java.util.HashMap<>();
-+    private static final it.unimi.dsi.fastutil.objects.Object2LongMap<java.net.InetAddress> throttleTracker = new it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap<>(); // Gale - Use fastutil collections - Throttle tracker
++    private static final it.unimi.dsi.fastutil.objects.Object2LongMap<java.net.InetAddress> throttleTracker = new it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap<>(); // Gale - Collections - ServerHandshakePacketListenerImpl.throttleTracker
      private static int throttleCounter = 0;
      // Paper end - Connection throttle
      private static final boolean BYPASS_HOSTCHECK = Boolean.getBoolean("Paper.bypassHostCheck"); // Paper
@@ -14,7 +14,7 @@
  
                  synchronized (ServerHandshakePacketListenerImpl.throttleTracker) {
 -                    if (ServerHandshakePacketListenerImpl.throttleTracker.containsKey(address) && currentTime - ServerHandshakePacketListenerImpl.throttleTracker.get(address) < connectionThrottle) {
-+                    if (ServerHandshakePacketListenerImpl.throttleTracker.containsKey(address) && currentTime - ServerHandshakePacketListenerImpl.throttleTracker.getLong(address) < connectionThrottle) { // Gale - Use fastutil collections - Throttle tracker
++                    if (ServerHandshakePacketListenerImpl.throttleTracker.containsKey(address) && currentTime - ServerHandshakePacketListenerImpl.throttleTracker.getLong(address) < connectionThrottle) { // Gale - Collections - ServerHandshakePacketListenerImpl.throttleTracker
                          ServerHandshakePacketListenerImpl.throttleTracker.put(address, currentTime);
                          Component chatmessage = io.papermc.paper.adventure.PaperAdventure.asVanilla(io.papermc.paper.configuration.GlobalConfiguration.get().messages.kick.connectionThrottle);
                          this.connection.send(new ClientboundLoginDisconnectPacket(chatmessage));

@@ -15,7 +15,7 @@
 -        }
 -
 -        return Math.max(a, b);
-+        // Gale start - Local code optimization - MobEffectUtil#getDigSpeedAmplification
++        // Gale start - Local code optimization - MobEffectUtil.getDigSpeedAmplification()
 +        int digAmplifier = 0;
 +        int conduitAmplifier = 0;
 +        MobEffectInstance digEffect = mob.getEffect(MobEffects.HASTE);
@@ -29,7 +29,7 @@
 +        }
 +
 +        return Math.max(digAmplifier, conduitAmplifier);
-+        // Gale end - Local code optimization - MobEffectUtil#getDigSpeedAmplification
++        // Gale end - Local code optimization - MobEffectUtil.getDigSpeedAmplification()
      }
  
      public static boolean hasWaterBreathing(final LivingEntity mob) {

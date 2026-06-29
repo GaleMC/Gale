@@ -4,7 +4,7 @@
      // Paper start - Folia shedulers
      public final io.papermc.paper.threadedregions.EntityScheduler taskScheduler = new io.papermc.paper.threadedregions.EntityScheduler(this);
      private final io.papermc.paper.threadedregions.scheduler.FoliaEntityScheduler apiScheduler = new io.papermc.paper.threadedregions.scheduler.FoliaEntityScheduler(this);
-+    private org.galemc.gale.util.collection.PackedBooleanArray packedVisibilityInversions; // Gale - Store canSee in a fast-access format
++    private org.galemc.gale.util.collection.PackedBooleanArray packedVisibilityInversions; // Gale - Intrusive values - CraftPlayer.invertedVisibilityEntities
  
      @Override
      public final io.papermc.paper.threadedregions.scheduler.EntityScheduler getScheduler() {
@@ -12,7 +12,7 @@
          this.server = server;
          this.entity = entity;
          this.entityType = CraftEntityType.minecraftToBukkit(entity.getType());
-+        // Gale start - Store canSee in a fast-access format
++        // Gale start - Intrusive values - CraftPlayer.invertedVisibilityEntities
 +        UUID uuid = entity.getUUID();
 +        if (CraftPlayer.occurrencesInInvertedVisibilityEntities.containsKey(uuid)) {
 +            List<CraftPlayer> onlinePlayers = (List<CraftPlayer>) org.bukkit.Bukkit.getServer().getOnlinePlayers();
@@ -28,7 +28,7 @@
 +        } else {
 +            this.packedVisibilityInversions = org.galemc.gale.util.collection.PackedBooleanArray.createEmpty();
 +        }
-+        // Gale end - Store canSee in a fast-access format
++        // Gale end - Intrusive values - CraftPlayer.invertedVisibilityEntities
      }
  
      public static <T extends Entity> CraftEntity getEntity(CraftServer server, T entity) {
@@ -36,7 +36,7 @@
          return this.getHandle().visibleByDefault;
      }
  
-+    // Gale start - Store canSee in a fast-access format
++    // Gale start - Intrusive values - CraftPlayer.invertedVisibilityEntities
 +    public boolean isVisibilityInvertedFor(CraftPlayer player) {
 +        return this.packedVisibilityInversions.get(player.packedVisibilityInversionsWordIndex, player.packedVisibilityInversionsWordMask);
 +    }
@@ -48,7 +48,7 @@
 +    public void unsetVisibilityInverted(CraftPlayer player) {
 +        this.packedVisibilityInversions.unsetUnsafe(player.packedVisibilityInversionsWordIndex, player.packedVisibilityInversionsWordMask);
 +    }
-+    // Gale end - Store canSee in a fast-access format
++    // Gale end - Intrusive values - CraftPlayer.invertedVisibilityEntities
 +
      @Override
      public Set<Player> getTrackedBy() {
@@ -58,7 +58,7 @@
  
          if (entityTracker != null) {
 -            for (ServerPlayerConnection connection : entityTracker.seenBy) {
-+            for (ServerPlayerConnection connection : entityTracker.seenByList) { // Gale - Store seenBy in a fast-access format
++            for (ServerPlayerConnection connection : entityTracker.seenByList) { // Gale - Collections - ChunkMap.TrackedEntity.seenBy
                  players.add(connection.getPlayer().getBukkitEntity());
              }
          }
@@ -67,10 +67,10 @@
          if (entityTracker == null) return false;
  
 -        return entityTracker.seenBy.contains(((CraftPlayer) player).getHandle().connection);
-+        // Gale start - Store seenBy in a fast-access format
++        // Gale start - Collections - ChunkMap.TrackedEntity.seenBy
 +        net.minecraft.server.network.ServerGamePacketListenerImpl connection = ((CraftPlayer) player).getHandle().connection;
 +        return entityTracker.seenByPackedArray.get(connection.packedSeenByWordIndex, connection.packedSeenByWordMask);
-+        // Gale end - Store seenBy in a fast-access format
++        // Gale end - Collections - ChunkMap.TrackedEntity.seenBy
      }
  
      @Override
@@ -79,7 +79,7 @@
          }
  
 -        for (final ServerPlayerConnection connection : entityTracker.seenBy) {
-+        for (final ServerPlayerConnection connection : entityTracker.seenByList) { // Gale - Store seenBy in a fast-access format
++        for (final ServerPlayerConnection connection : entityTracker.seenByList) { // Gale - Collections - ChunkMap.TrackedEntity.seenBy
              this.getHandle().resendPossiblyDesyncedEntityData(connection.getPlayer());
          }
      }
@@ -89,8 +89,8 @@
  
 -        Set<org.bukkit.entity.Player> set = new java.util.HashSet<>(tracker.seenBy.size());
 -        for (net.minecraft.server.network.ServerPlayerConnection connection : tracker.seenBy) {
-+        Set<org.bukkit.entity.Player> set = new java.util.HashSet<>(tracker.seenByList.size()); // Gale - Store seenBy in a fast-access format
-+        for (net.minecraft.server.network.ServerPlayerConnection connection : tracker.seenByList) { // Gale - Store seenBy in a fast-access format
++        Set<org.bukkit.entity.Player> set = new java.util.HashSet<>(tracker.seenByList.size()); // Gale - Collections - ChunkMap.TrackedEntity.seenBy
++        for (net.minecraft.server.network.ServerPlayerConnection connection : tracker.seenByList) { // Gale - Collections - ChunkMap.TrackedEntity.seenBy
              set.add(connection.getPlayer().getBukkitEntity().getPlayer());
          }
          return set;
