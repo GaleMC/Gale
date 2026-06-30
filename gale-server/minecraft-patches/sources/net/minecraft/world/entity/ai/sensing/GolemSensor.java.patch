@@ -1,0 +1,19 @@
+--- a/net/minecraft/world/entity/ai/sensing/GolemSensor.java
++++ b/net/minecraft/world/entity/ai/sensing/GolemSensor.java
+@@ -33,7 +_,15 @@ public class GolemSensor extends Sensor<LivingEntity> {
+     public static void checkForNearbyGolem(final LivingEntity body) {
+         Optional<List<LivingEntity>> livingEntitiesMemory = body.getBrain().getMemory(MemoryModuleType.NEAREST_LIVING_ENTITIES);
+         if (!livingEntitiesMemory.isEmpty()) {
+-            boolean golemPresent = livingEntitiesMemory.get().stream().anyMatch(entity -> entity.is(EntityTypes.IRON_GOLEM));
++            // Gale start - Remove stream in GolemSensor
++            boolean golemPresent = false;
++            for (LivingEntity entity : livingEntitiesMemory.get()) {
++                if (entity.is(EntityTypes.IRON_GOLEM)) {
++                    golemPresent = true;
++                    break;
++                }
++            }
++            // Gale end - Remove stream in GolemSensor
+             if (golemPresent) {
+                 golemDetected(body);
+             }
