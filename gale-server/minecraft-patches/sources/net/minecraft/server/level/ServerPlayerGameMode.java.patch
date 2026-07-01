@@ -1,0 +1,19 @@
+--- a/net/minecraft/server/level/ServerPlayerGameMode.java
++++ b/net/minecraft/server/level/ServerPlayerGameMode.java
+@@ -36,7 +_,7 @@
+     private static final Logger LOGGER = LogUtils.getLogger();
+     protected ServerLevel level;
+     protected final ServerPlayer player;
+-    private GameType gameModeForPlayer = GameType.DEFAULT_MODE;
++    private GameType gameModeForPlayer = GameType.DEFAULT_MODE; // Gale - Event-driven - Player.affectsSpawningSelector - TODO Watch for new writes
+     private @Nullable GameType previousGameModeForPlayer;
+     private boolean isDestroyingBlock;
+     private int destroyProgressStart;
+@@ -99,6 +_,7 @@
+     protected void setGameModeForPlayer(final GameType gameModeForPlayer, final @Nullable GameType previousGameModeForPlayer) {
+         this.previousGameModeForPlayer = previousGameModeForPlayer;
+         this.gameModeForPlayer = gameModeForPlayer;
++        this.player.gale$eventDriven_affectsSpawningSelector_update(); // Gale - Event-driven - Player.affectsSpawningSelector
+         Abilities abilities = this.player.getAbilities();
+         gameModeForPlayer.updatePlayerAbilities(abilities);
+     }
