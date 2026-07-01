@@ -1,0 +1,10 @@
+--- a/net/minecraft/server/level/ServerPlayer.java
++++ b/net/minecraft/server/level/ServerPlayer.java
+@@ -489,6 +_,7 @@
+         this.bukkitPickUpLoot = true;
+         this.maxHealthCache = this.getMaxHealth();
+         // CraftBukkit end
++        this.gale$eventDriven_isAlive_update(); // Gale - Event-driven - LivingEntity.isAlive
+     }
+ 
+     @Override
