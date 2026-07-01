@@ -118,3 +118,19 @@
                  }
              }
          }
+@@ -2856,6 +_,7 @@
+             // ServerLevel.this.getChunkSource().addEntity(entity); // Paper - ignore and warn about illegal addEntity calls instead of crashing server; moved down below valid=true
+             if (entity instanceof ServerPlayer player) {
+                 ServerLevel.this.players.add(player);
++                player.gale$eventDriven_trackedByLevel_set(ServerLevel.this); // Gale - Event-driven - Player.affectsSpawningSelector
+                 if (player.isReceivingWaypoints()) {
+                     ServerLevel.this.getWaypointManager().addPlayer(player);
+                 }
+@@ -2934,6 +_,7 @@
+             ServerLevel.this.getChunkSource().removeEntity(entity);
+             if (entity instanceof ServerPlayer player) {
+                 ServerLevel.this.players.remove(player);
++                player.gale$eventDriven_trackedByLevel_set(null); // Gale - Event-driven - Player.affectsSpawningSelector
+                 ServerLevel.this.getWaypointManager().removePlayer(player);
+                 ServerLevel.this.updateSleepingPlayerList();
+             }

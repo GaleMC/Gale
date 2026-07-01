@@ -1,5 +1,54 @@
 --- a/net/minecraft/world/entity/player/Player.java
 +++ b/net/minecraft/world/entity/player/Player.java
+@@ -172,9 +_,54 @@
+     private Optional<GlobalPos> lastDeathLocation = Optional.empty();
+     public @Nullable FishingHook fishing;
+     public float hurtDir;
+-    public boolean affectsSpawning = true; // Paper - Affects Spawning API
++    public boolean affectsSpawning = true; // Paper - Affects Spawning API // Gale - Event-driven - Player.affectsSpawningSelector - TODO Watch for new writes
+     public net.kyori.adventure.util.TriState flyingFallDamage = net.kyori.adventure.util.TriState.NOT_SET; // Paper - flying fall damage
+ 
++    // Gale start - Event-driven - Player.affectsSpawningSelector
++    public boolean gale$eventDriven_affectsSpawningSelector; // Gale - Event-driven - Level.affectsSpawningSelectorPlayerCount - TODO Watch for new writes
++
++    public void gale$eventDriven_affectsSpawningSelector_update() {
++        boolean newValue = net.minecraft.world.entity.EntitySelector.gale$eventDriven_affectsSpawningSelector_compute(this);
++        if (this.gale$eventDriven_affectsSpawningSelector != newValue) {
++            this.gale$eventDriven_affectsSpawningSelector = newValue;
++        }
++    }
++
++    @Override
++    public void gale$eventDriven_isAlive_updateFor_health(float health) {
++        boolean oldValue = this.gale$eventDriven_isAlive;
++        super.gale$eventDriven_isAlive_updateFor_health(health);
++        boolean newValue = this.gale$eventDriven_isAlive;
++        if (oldValue != newValue) {
++            this.gale$eventDriven_affectsSpawningSelector_update();
++        }
++    }
++
++    private @Nullable ServerLevel trackedByLevel; // Gale - Event-driven - Level.affectsSpawningSelectorPlayerCount - TODO Watch for new writes
++
++    public void gale$eventDriven_trackedByLevel_set(@Nullable ServerLevel level) {
++        ServerLevel oldLevel = this.trackedByLevel;
++        if (oldLevel != level) {
++            this.trackedByLevel = level;
++            if (this.gale$eventDriven_affectsSpawningSelector) {
++                if (oldLevel != null) {
++                    oldLevel.gale$eventDriven_affectsSpawningPlayerCount_decrement();
++                }
++                if (level != null) {
++                    level.gale$eventDriven_affectsSpawningPlayerCount_increment();
++                }
++            }
++        }
++    }
++    // Gale end - Event-driven - Player.affectsSpawningSelector
++
+     // CraftBukkit start
+     public boolean fauxSleeping;
+     public int oldLevel = -1;
 @@ -2247,4 +_,19 @@
          public static final Player.BedSleepingProblem NOT_SAFE = new Player.BedSleepingProblem(Component.translatable("block.minecraft.bed.not_safe"));
          public static final Player.BedSleepingProblem EXPLOSION = new Player.BedSleepingProblem(null); // Paper - Added to properly handle explosions in bed events

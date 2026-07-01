@@ -214,3 +214,19 @@
  
          this.getHandle().maxHealthCache = this.getMaxHealth();
      }
+@@ -2716,7 +_,14 @@
+ 
+     // Paper start
+     public void setAffectsSpawning(boolean affects) {
+-        this.getHandle().affectsSpawning = affects;
++        // Gale start - Event-driven - Player.affectsSpawningSelector
++        ServerPlayer handle = this.getHandle();
++        boolean currentAffects = handle.affectsSpawning;
++        if (currentAffects != affects) {
++            handle.affectsSpawning = affects;
++            handle.gale$eventDriven_affectsSpawningSelector_update();
++        }
++        // Gale end - Event-driven - Player.affectsSpawningSelector
+     }
+ 
+     @Override

@@ -1,5 +1,18 @@
 --- a/net/minecraft/world/entity/EntitySelector.java
 +++ b/net/minecraft/world/entity/EntitySelector.java
+@@ -30,6 +_,12 @@
+     // Paper end - Ability to control player's insomnia and phantoms
+     // Paper start - Affects Spawning API
+     public static final Predicate<Entity> PLAYER_AFFECTS_SPAWNING = (entity) -> {
++        // Gale start - Event-driven - Player.affectsSpawningSelector
++        return entity instanceof Player player && player.gale$eventDriven_affectsSpawningSelector;
++    };
++
++    public static boolean gale$eventDriven_affectsSpawningSelector_compute(Player entity) {
++        // Gale end - Event-driven - Player.affectsSpawningSelector
+         return !entity.isSpectator() && entity.isAlive() && entity instanceof Player player && player.affectsSpawning;
+     };
+     // Paper end - Affects Spawning API
 @@ -47,9 +_,8 @@
          Team.CollisionRule ownCollisionRule = ownTeam == null ? Team.CollisionRule.ALWAYS : ownTeam.getCollisionRule();
          return ownCollisionRule == Team.CollisionRule.NEVER
