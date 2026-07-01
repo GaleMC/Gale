@@ -17,9 +17,9 @@
 +            this.gale$eventDriven_affectsSpawningSelector = newValue;
 +            if (this.trackedByLevel != null) {
 +                if (newValue) {
-+                    this.trackedByLevel.gale$eventDriven_affectsSpawningPlayerCount_increment();
++                    this.trackedByLevel.gale$eventDriven_affectsSpawningSelectorPlayerCount_increment();
 +                } else {
-+                    this.trackedByLevel.gale$eventDriven_affectsSpawningPlayerCount_decrement();
++                    this.trackedByLevel.gale$eventDriven_affectsSpawningSelectorPlayerCount_decrement();
 +                }
 +            }
 +        }
@@ -43,10 +43,10 @@
 +            this.trackedByLevel = level;
 +            if (this.gale$eventDriven_affectsSpawningSelector) {
 +                if (oldLevel != null) {
-+                    oldLevel.gale$eventDriven_affectsSpawningPlayerCount_decrement();
++                    oldLevel.gale$eventDriven_affectsSpawningSelectorPlayerCount_decrement();
 +                }
 +                if (level != null) {
-+                    level.gale$eventDriven_affectsSpawningPlayerCount_increment();
++                    level.gale$eventDriven_affectsSpawningSelectorPlayerCount_increment();
 +                }
 +            }
 +        }

@@ -15,11 +15,11 @@
 +    // Gale start - Event-driven - Level.affectsSpawningSelectorPlayerCount
 +    public int gale$eventDriven_affectsSpawningSelectorPlayerCount;
 +
-+    public void gale$eventDriven_affectsSpawningPlayerCount_increment() {
++    public void gale$eventDriven_affectsSpawningSelectorPlayerCount_increment() {
 +        this.gale$eventDriven_affectsSpawningSelectorPlayerCount++;
 +    }
 +
-+    public void gale$eventDriven_affectsSpawningPlayerCount_decrement() {
++    public void gale$eventDriven_affectsSpawningSelectorPlayerCount_decrement() {
 +        this.gale$eventDriven_affectsSpawningSelectorPlayerCount--;
 +    }
 +    // Gale end - Event-driven - Level.affectsSpawningSelectorPlayerCount

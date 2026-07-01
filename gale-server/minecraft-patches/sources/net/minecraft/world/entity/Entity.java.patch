@@ -125,7 +125,7 @@
              this.vehicle.addPassenger(this);
              if (sendEventAndTriggers) {
                  this.level().gameEvent(this, GameEvent.ENTITY_MOUNT, this.vehicle.position);
-@@ -3383,6 +_,10 @@
+@@ -3383,6 +_,21 @@
          }
      }
  
@@ -170,7 +170,7 @@
          // CraftBukkit start - block invalid bounding boxes
          double minX = bb.minX,
                  minY = bb.minY,
-@@ -4718,13 +_,34 @@
+@@ -4718,13 +_,35 @@
      }
  
      public int countPlayerPassengers() {
