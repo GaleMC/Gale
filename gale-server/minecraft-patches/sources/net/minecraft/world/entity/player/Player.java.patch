@@ -41,6 +41,14 @@
 +        ServerLevel oldLevel = this.trackedByLevel;
 +        if (oldLevel != level) {
 +            this.trackedByLevel = level;
++            if (this.gale$eventDriven_affectsSpawningSelector) {
++                if (oldLevel != null) {
++                    oldLevel.gale$eventDriven_affectsSpawningPlayerCount_decrement();
++                }
++                if (level != null) {
++                    level.gale$eventDriven_affectsSpawningPlayerCount_increment();
++                }
++            }
 +        }
 +    }
 +    // Gale end - Event-driven - Player.affectsSpawningSelector
