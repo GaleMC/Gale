@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/EntitySelector.java
 +++ b/net/minecraft/world/entity/EntitySelector.java
-@@ -30,6 +_,12 @@
+@@ -30,6 +_,13 @@
      // Paper end - Ability to control player's insomnia and phantoms
      // Paper start - Affects Spawning API
      public static final Predicate<Entity> PLAYER_AFFECTS_SPAWNING = (entity) -> {
@@ -9,6 +9,7 @@
 +    };
 +
 +    public static boolean gale$eventDriven_affectsSpawningSelector_compute(Player entity) {
++        if (((net.minecraft.server.level.ServerPlayer) entity).gameMode == null) return false; // ServerPlayer.gameMode will be null during LivingEntity constructor
 +        // Gale end - Event-driven - Player.affectsSpawningSelector
          return !entity.isSpectator() && entity.isAlive() && entity instanceof Player player && player.affectsSpawning;
      };
