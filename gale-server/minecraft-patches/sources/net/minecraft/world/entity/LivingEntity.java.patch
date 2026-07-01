@@ -1,5 +1,23 @@
 --- a/net/minecraft/world/entity/LivingEntity.java
 +++ b/net/minecraft/world/entity/LivingEntity.java
+@@ -189,7 +_,7 @@
+     protected static final int LIVING_ENTITY_FLAG_OFF_HAND = 2;
+     public static final int LIVING_ENTITY_FLAG_SPIN_ATTACK = 4;
+     protected static final EntityDataAccessor<Byte> DATA_LIVING_ENTITY_FLAGS = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.BYTE);
+-    public static final EntityDataAccessor<Float> DATA_HEALTH_ID = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.FLOAT);
++    public static final EntityDataAccessor<Float> DATA_HEALTH_ID = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.FLOAT); // Gale - Event-driven - LivingEntity.isAlive - TODO Watch for new set calls
+     private static final EntityDataAccessor<List<ParticleOptions>> DATA_EFFECT_PARTICLES = SynchedEntityData.defineId(
+         LivingEntity.class, EntityDataSerializers.PARTICLES
+     );
+@@ -254,7 +_,7 @@
+     public final ElytraAnimationState elytraAnimationState = new ElytraAnimationState(this);
+     public @Nullable EntityReference<Player> lastHurtByPlayer;
+     public int lastHurtByPlayerMemoryTime;
+-    protected boolean dead;
++    protected boolean dead; // Gale - Event-driven - LivingEntity.isAlive - TODO Watch for new writes
+     protected int noActionTime;
+     public float lastHurt;
+     protected boolean jumping;
 @@ -291,7 +_,7 @@
      private final EnumMap<EquipmentSlot, Reference2ObjectMap<Enchantment, Set<EnchantmentLocationBasedEffect>>> activeLocationDependentEnchantments = new EnumMap<>(
          EquipmentSlot.class
@@ -9,6 +27,14 @@
      private Waypoint.Icon locatorBarIcon = new Waypoint.Icon();
      public @Nullable Vec3 currentImpulseImpactPos;
      // CraftBukkit start
+@@ -319,6 +_,7 @@
+         this.setYRot(this.random.nextFloat() * (float) (Math.PI * 2));
+         this.yHeadRot = this.getYRot();
+         this.brain = this.makeBrain(Brain.Packed.EMPTY);
++        this.gale$eventDriven_isAlive_update(); // Gale - Event-driven - LivingEntity.isAlive
+     }
+ 
+     @Override
 @@ -561,13 +_,14 @@
      }
  
@@ -41,6 +67,35 @@
              Runnable task;
              while ((task = this.deferredEffectUpdates.poll()) != null) {
                  task.run();
+@@ -1416,7 +_,11 @@
+             return;
+         }
+         // CraftBukkit end
+-        this.entityData.set(DATA_HEALTH_ID, Mth.clamp(health, 0.0F, this.getMaxHealth()));
++        // Gale start - Event-driven - LivingEntity.isAlive
++        float newHealth = Mth.clamp(health, 0.0F, this.getMaxHealth());
++        this.entityData.set(DATA_HEALTH_ID, newHealth);
++        this.gale$eventDriven_isAlive_updateFor_health(newHealth);
++        // Gale end - Event-driven - LivingEntity.isAlive
+     }
+ 
+     public boolean isDeadOrDying() {
+@@ -1857,6 +_,7 @@
+                 this.deathDropItems = null;
+                 if (deathEvent.isCancelled()) {
+                     this.dead = false;
++                    this.gale$eventDriven_isAlive_update(); // Gale - Event-driven - LivingEntity.isAlive
+                     this.postDeathEventTasks.clear();
+                     this.setHealth((float) deathEvent.getReviveHealth());
+                     return;
+@@ -1881,6 +_,7 @@
+ 
+     protected void handleKillingBlow() {
+         this.dead = true;
++        this.gale$eventDriven_isAlive_update(); // Gale - Event-driven - LivingEntity.isAlive
+     }
+ 
+     protected void createWitherRose(final @Nullable LivingEntity killer) {
 @@ -2160,7 +_,7 @@
          } else {
              BlockPos ladderCheckPos = this.blockPosition();
@@ -50,6 +105,39 @@
                  return false;
              } else if (state.is(BlockTags.CLIMBABLE)) {
                  this.lastClimbablePos = Optional.of(ladderCheckPos);
+@@ -2185,8 +_,30 @@
+ 
+     @Override
+     public boolean isAlive() {
+-        return !this.isRemoved() && this.getHealth() > 0.0F && !this.dead; // Paper - Check this.dead
+-    }
++        // Gale start - Event-driven - LivingEntity.isAlive
++        return this.gale$eventDriven_isAlive;
++    }
++
++    public boolean gale$eventDriven_isAlive_compute(float health) {
++        return !this.isRemoved() && health > 0.0F && !this.dead; // Paper - Check this.dead
++    }
++
++    protected boolean gale$eventDriven_isAlive; // Gale - Event-driven - Player.affectsSpawningSelector - TODO Watch for new writes
++
++    protected void gale$eventDriven_isAlive_update() {
++        this.gale$eventDriven_isAlive_updateFor_health(this.getHealth());
++    }
++
++    public void gale$eventDriven_isAlive_updateFor_health(float health) {
++        this.gale$eventDriven_isAlive = this.gale$eventDriven_isAlive_compute(health);
++    }
++
++    @Override
++    public void unsetRemoved() {
++        super.unsetRemoved();
++        this.gale$eventDriven_isAlive_update();
++    }
++    // Gale end - Event-driven - LivingEntity.isAlive
+ 
+     public boolean isLookingAtMe(
+         final LivingEntity target,
 @@ -3793,7 +_,13 @@
          if (this.level() instanceof ServerLevel serverLevel) {
              profiler.push("freezing");

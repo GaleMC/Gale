@@ -17,6 +17,15 @@
      public boolean onGround;
      public boolean horizontalCollision;
      public boolean verticalCollision;
+@@ -287,7 +_,7 @@
+     public boolean minorHorizontalCollision;
+     public boolean hurtMarked;
+     protected Vec3 stuckSpeedMultiplier = Vec3.ZERO;
+-    private Entity.@Nullable RemovalReason removalReason;
++    private Entity.@Nullable RemovalReason removalReason; // Gale - Event-driven - LivingEntity.isAlive - TODO Watch for new writes
+     public static final float DEFAULT_BB_WIDTH = 0.6F;
+     public static final float DEFAULT_BB_HEIGHT = 1.8F;
+     public float moveDist;
 @@ -306,7 +_,7 @@
      protected boolean wasEyeInWater;
      public int invulnerableTime;
@@ -26,6 +35,18 @@
      protected static final EntityDataAccessor<Byte> DATA_SHARED_FLAGS_ID = SynchedEntityData.defineId(Entity.class, EntityDataSerializers.BYTE);
      protected static final int FLAG_ONFIRE = 0;
      private static final int FLAG_SHIFT_KEY_DOWN = 1;
+@@ -474,10 +_,7 @@
+ 
+     @Override
+     public final boolean moonrise$hasAnyPlayerPassengers() {
+-        if (this.passengers.isEmpty()) {
+-            return false;
+-        }
+-        return this.getIndirectPassengersStream().anyMatch((entity) -> entity instanceof Player);
++        return this.gale$eventDriven_playerPassengerCount != 0; // Gale - Event-driven - Entity.playerPassengerCount
+     }
+     // Paper end - rewrite chunk system
+     // Paper start - optimise collisions
 @@ -675,6 +_,7 @@
      }
  
@@ -177,3 +198,11 @@
  
      public Entity getRootVehicle() {
          Entity result = this;
+@@ -5193,6 +_,7 @@
+         final boolean alreadyRemoved = this.removalReason != null; // Paper - Folia schedulers
+         if (this.removalReason == null) {
+             this.removalReason = reason;
++            if (this instanceof LivingEntity livingEntity) livingEntity.gale$eventDriven_isAlive_update(); // Gale - Event-driven - LivingEntity.isAlive
+         }
+ 
+         if (this.removalReason.shouldDestroy()) {

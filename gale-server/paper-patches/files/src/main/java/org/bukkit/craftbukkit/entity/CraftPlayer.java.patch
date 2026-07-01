@@ -200,3 +200,17 @@
  
      public boolean canSeePlayer(UUID uuid) {
          org.bukkit.entity.Entity entity = this.getServer().getPlayer(uuid);
+@@ -2583,7 +_,12 @@
+                 this.sendHealthUpdate();
+             }
+         }
+-        this.getHandle().getEntityData().set(net.minecraft.world.entity.LivingEntity.DATA_HEALTH_ID, (float) this.getScaledHealth());
++        // Gale start - Event-driven - LivingEntity.isAlive
++        float newHealth = this.getScaledHealth();
++        ServerPlayer handle = this.getHandle();
++        handle.getEntityData().set(net.minecraft.world.entity.LivingEntity.DATA_HEALTH_ID, newHealth);
++        handle.gale$eventDriven_isAlive_updateFor_health(newHealth);
++        // Gale end - Event-driven - LivingEntity.isAlive
+ 
+         this.getHandle().maxHealthCache = this.getMaxHealth();
+     }
