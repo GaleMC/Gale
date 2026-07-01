@@ -51,7 +51,7 @@
              return toEquip;
          } else {
              return ItemStack.EMPTY;
-@@ -780,21 +_,100 @@
+@@ -780,23 +_,102 @@
          return true;
      }
  
@@ -153,9 +153,12 @@
 -        } else if (!this.isPersistenceRequired() && !this.requiresCustomPersistence()) {
 +        } else if (!this.gale$eventDriven_isPersistent) { // Gale - Event-driven - Mob.isPersistent
 +            if (!org.galemc.gale.async.SimulationFlag.REAL) return; // Gale - Speculative execution based on next tick simulation - Simulate next tick
++            if (this.level().gale$eventDriven_affectsSpawningSelectorPlayerCount != 0) { // Gale - Optimize checkDespawn
              Entity player = this.level().findNearbyPlayer(this, -1.0, EntitySelector.PLAYER_AFFECTS_SPAWNING); // Paper - Affects Spawning API
-             if (player != null) {
+-            if (player != null) {
                  // Paper start - Configurable despawn distances
+                 final io.papermc.paper.configuration.WorldConfiguration.Entities.Spawning.DespawnRangePair despawnRangePair = this.level().paperConfig().entities.spawning.despawnRanges.get(this.getType().getCategory());
+                 final io.papermc.paper.configuration.type.DespawnRange.Shape shape = this.level().paperConfig().entities.spawning.despawnRangeShape;
 @@ -820,6 +_,7 @@
                  }
              }

@@ -15,6 +15,13 @@
 +        boolean newValue = net.minecraft.world.entity.EntitySelector.gale$eventDriven_affectsSpawningSelector_compute(this);
 +        if (this.gale$eventDriven_affectsSpawningSelector != newValue) {
 +            this.gale$eventDriven_affectsSpawningSelector = newValue;
++            if (this.trackedByLevel != null) {
++                if (newValue) {
++                    this.trackedByLevel.gale$eventDriven_affectsSpawningPlayerCount_increment();
++                } else {
++                    this.trackedByLevel.gale$eventDriven_affectsSpawningPlayerCount_decrement();
++                }
++            }
 +        }
 +    }
 +

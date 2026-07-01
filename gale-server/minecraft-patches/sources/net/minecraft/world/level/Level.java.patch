@@ -8,6 +8,25 @@
  
      public static @Nullable BlockPos lastPhysicsProblem; // Spigot
      public final Map<ServerExplosion.CacheKey, Float> explosionDensityCache = new java.util.HashMap<>(); // Paper - Optimize explosions
+@@ -238,6 +_,18 @@
+         return ret;
+     }
+ 
++    // Gale start - Event-driven - Level.affectsSpawningSelectorPlayerCount
++    public int gale$eventDriven_affectsSpawningSelectorPlayerCount;
++
++    public void gale$eventDriven_affectsSpawningPlayerCount_increment() {
++        this.gale$eventDriven_affectsSpawningSelectorPlayerCount++;
++    }
++
++    public void gale$eventDriven_affectsSpawningPlayerCount_decrement() {
++        this.gale$eventDriven_affectsSpawningSelectorPlayerCount--;
++    }
++    // Gale end - Event-driven - Level.affectsSpawningSelectorPlayerCount
++
+     @Override
+     public LevelChunk moonrise$getFullChunkIfLoaded(final int chunkX, final int chunkZ) {
+         return (LevelChunk)this.getChunkSource().getChunk(chunkX, chunkZ, ChunkStatus.FULL, false);
 @@ -839,6 +_,8 @@
          org.bukkit.World.Environment environment, // Paper
          java.util.function.Function<org.spigotmc.SpigotWorldConfig, // Spigot - create per world config
