@@ -1,14 +1,6 @@
 --- a/net/minecraft/world/entity/player/Player.java
 +++ b/net/minecraft/world/entity/player/Player.java
-@@ -121,7 +_,6 @@
- import net.minecraft.world.phys.AABB;
- import net.minecraft.world.phys.Vec3;
- import net.minecraft.world.scores.PlayerTeam;
--import net.minecraft.world.scores.Team;
- import org.jspecify.annotations.Nullable;
- 
- public abstract class Player extends Avatar implements ContainerUser {
-@@ -172,9 +_,54 @@
+@@ -172,9 +_,39 @@
      private Optional<GlobalPos> lastDeathLocation = Optional.empty();
      public @Nullable FishingHook fishing;
      public float hurtDir;

@@ -1,21 +1,5 @@
 --- a/net/minecraft/world/level/Level.java
 +++ b/net/minecraft/world/level/Level.java
-@@ -4,7 +_,6 @@
- import com.mojang.serialization.Codec;
- import java.io.IOException;
- import java.util.Collection;
--import java.util.Iterator;
- import java.util.List;
- import java.util.Locale;
- import java.util.Optional;
-@@ -14,7 +_,6 @@
- import java.util.stream.Collectors;
- import net.minecraft.CrashReport;
- import net.minecraft.CrashReportCategory;
--import net.minecraft.ReportedException;
- import net.minecraft.core.BlockPos;
- import net.minecraft.core.Direction;
- import net.minecraft.core.Holder;
 @@ -171,6 +_,7 @@
          return this.paperConfig;
      }
