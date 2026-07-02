@@ -1,0 +1,62 @@
+--- a/net/minecraft/world/entity/animal/feline/Ocelot.java
++++ b/net/minecraft/world/entity/animal/feline/Ocelot.java
+@@ -60,7 +_,7 @@
+     public static final double CROUCH_SPEED_MOD = 0.6;
+     public static final double WALK_SPEED_MOD = 0.8;
+     public static final double SPRINT_SPEED_MOD = 1.33;
+-    private static final EntityDataAccessor<Boolean> DATA_TRUSTING = SynchedEntityData.defineId(Ocelot.class, EntityDataSerializers.BOOLEAN);
++    private static final EntityDataAccessor<Boolean> DATA_TRUSTING = SynchedEntityData.defineId(Ocelot.class, EntityDataSerializers.BOOLEAN); // Gale - Event-driven - Ocelot.canRemoveWhenFarAway - TODO Watch for new set calls
+     private static final boolean DEFAULT_TRUSTING = false;
+     private static final EntityDimensions BABY_DIMENSIONS = EntityDimensions.scalable(0.3F, 0.35F)
+         .withEyeHeight(0.34375F)
+@@ -71,6 +_,7 @@
+     public Ocelot(final EntityType<? extends Ocelot> type, final Level level) {
+         super(type, level);
+         this.reassessTrustingGoals();
++        this.gale$eventDriven_canRemoveWhenFarAway_update(); // Gale - Event-driven - Ocelot.canRemoveWhenFarAway
+     }
+ 
+     public boolean isTrusting() {
+@@ -79,6 +_,7 @@
+ 
+     public void setTrusting(final boolean trusting) {
+         this.entityData.set(DATA_TRUSTING, trusting);
++        this.gale$eventDriven_canRemoveWhenFarAway_update(); // Gale - Event-driven - Ocelot.canRemoveWhenFarAway
+         this.reassessTrustingGoals();
+     }
+ 
+@@ -136,6 +_,34 @@
+ 
+     @Override
+     public boolean removeWhenFarAway(final double distSqr) {
++        // Gale start - Event-driven - Ocelot.canRemoveWhenFarAway
++        return this.gale$eventDriven_canRemoveWhenFarAway;
++    }
++
++    private boolean gale$eventDriven_canRemoveWhenFarAway;
++
++    public void gale$eventDriven_canRemoveWhenFarAway_update() {
++        this.gale$eventDriven_canRemoveWhenFarAway = this.gale$eventDriven_canRemoveWhenFarAway_compute();
++    }
++
++    @Override
++    public void setCustomName(final net.minecraft.network.chat.@org.jspecify.annotations.Nullable Component name) {
++        super.setCustomName(name);
++        this.gale$eventDriven_canRemoveWhenFarAway_update();
++    }
++
++    @Override
++    public void gale$eventDriven_isLeashed_update() {
++        boolean oldValue = this.gale$eventDriven_isLeashed;
++        super.gale$eventDriven_isLeashed_update();
++        boolean newValue = this.gale$eventDriven_isLeashed;
++        if (newValue != oldValue) {
++            this.gale$eventDriven_canRemoveWhenFarAway_update();
++        }
++    }
++
++    private boolean gale$eventDriven_canRemoveWhenFarAway_compute() {
++        // Gale end - Event-driven - Ocelot.canRemoveWhenFarAway
+         return !this.isTrusting() && this.tickCount > 2400 && !this.hasCustomName() && !this.isLeashed(); // Paper - honor name and leash
+     }
+ 

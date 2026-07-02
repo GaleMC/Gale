@@ -32,6 +32,15 @@
      }
  
      public static <T extends Entity> CraftEntity getEntity(CraftServer server, T entity) {
+@@ -579,6 +_,8 @@
+     public void setTicksLived(int value) {
+         Preconditions.checkArgument(value > 0, "Age value (%s) must be greater than 0", value);
+         this.getHandle().tickCount = value;
++        if (this.getHandle() instanceof net.minecraft.world.entity.animal.feline.Cat cat) cat.gale$eventDriven_canRemoveWhenFarAway_update(); // Gale - Event-driven - Cat.canRemoveWhenFarAway
++        else if (this.getHandle() instanceof net.minecraft.world.entity.animal.feline.Ocelot ocelot) ocelot.gale$eventDriven_canRemoveWhenFarAway_update(); // Gale - Event-driven - Ocelot.canRemoveWhenFarAway
+         this.getHandle().totalEntityAge = value;
+     }
+ 
 @@ -726,6 +_,20 @@
          return this.getHandle().visibleByDefault;
      }

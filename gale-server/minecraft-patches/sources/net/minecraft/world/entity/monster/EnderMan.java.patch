@@ -5,7 +5,7 @@
      private static final int DELAY_BETWEEN_CREEPY_STARE_SOUND = 400;
      private static final int MIN_DEAGGRESSION_TIME = 600;
 -    private static final EntityDataAccessor<Optional<BlockState>> DATA_CARRY_STATE = SynchedEntityData.defineId(
-+    private static final EntityDataAccessor<Optional<BlockState>> DATA_CARRY_STATE = SynchedEntityData.defineId( // Gale - Event-driven - Mob.requiresCustomPersistence - TODO Watch for new writes
++    private static final EntityDataAccessor<Optional<BlockState>> DATA_CARRY_STATE = SynchedEntityData.defineId( // Gale - Event-driven - Mob.requiresCustomPersistence - TODO Watch for new set calls
          EnderMan.class, EntityDataSerializers.OPTIONAL_BLOCK_STATE
      );
      private static final EntityDataAccessor<Boolean> DATA_CREEPY = SynchedEntityData.defineId(EnderMan.class, EntityDataSerializers.BOOLEAN);

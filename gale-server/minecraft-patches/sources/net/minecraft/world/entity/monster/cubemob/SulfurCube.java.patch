@@ -5,7 +5,7 @@
      private List<SulfurCubeArchetype.ContactDamage> contactDamages = new ArrayList<>();
      public static final EntityDataAccessor<Integer> MAX_FUSE = SynchedEntityData.defineId(SulfurCube.class, EntityDataSerializers.INT);
 -    private static final EntityDataAccessor<Boolean> FROM_BUCKET = SynchedEntityData.defineId(SulfurCube.class, EntityDataSerializers.BOOLEAN);
-+    private static final EntityDataAccessor<Boolean> FROM_BUCKET = SynchedEntityData.defineId(SulfurCube.class, EntityDataSerializers.BOOLEAN); // Gale - Event-driven - Mob.requiresCustomPersistence - TODO Watch for new writes
++    private static final EntityDataAccessor<Boolean> FROM_BUCKET = SynchedEntityData.defineId(SulfurCube.class, EntityDataSerializers.BOOLEAN); // Gale - Event-driven - Mob.requiresCustomPersistence - TODO Watch for new set calls
      private static final boolean DEFAULT_FROM_BUCKET = false;
      private static final float HORIZONTAL_HIT_ANGLE_SCALE = 1.6F;
      private static final float VERTICAL_HIT_ANGLE_SCALE = 0.5F;

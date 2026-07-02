@@ -1,21 +1,22 @@
 --- a/net/minecraft/world/entity/animal/fish/AbstractFish.java
 +++ b/net/minecraft/world/entity/animal/fish/AbstractFish.java
-@@ -33,12 +_,13 @@
+@@ -33,12 +_,14 @@
  import net.minecraft.world.phys.Vec3;
  
  public abstract class AbstractFish extends WaterAnimal implements Bucketable {
 -    private static final EntityDataAccessor<Boolean> FROM_BUCKET = SynchedEntityData.defineId(AbstractFish.class, EntityDataSerializers.BOOLEAN);
-+    private static final EntityDataAccessor<Boolean> FROM_BUCKET = SynchedEntityData.defineId(AbstractFish.class, EntityDataSerializers.BOOLEAN); // Gale - Event-driven - Mob.requiresCustomPersistence - TODO Watch for new writes
++    private static final EntityDataAccessor<Boolean> FROM_BUCKET = SynchedEntityData.defineId(AbstractFish.class, EntityDataSerializers.BOOLEAN); // Gale - Event-driven - AbstractFish.canRemoveWhenFarAway, Mob.requiresCustomPersistence - TODO Watch for new set calls
      private static final boolean DEFAULT_FROM_BUCKET = false;
  
      public AbstractFish(final EntityType<? extends AbstractFish> type, final Level level) {
          super(type, level);
          this.moveControl = new AbstractFish.FishMoveControl<>(this);
++        this.gale$eventDriven_canRemoveWhenFarAway_update(); // Gale - Event-driven - AbstractFish.canRemoveWhenFarAway
 +        this.gale$eventDriven_requiresCustomPersistence_update(); // Gale - Event-driven - Mob.requiresCustomPersistence
      }
  
      public static AttributeSupplier.Builder createAttributes() {
-@@ -46,8 +_,10 @@
+@@ -46,12 +_,32 @@
      }
  
      @Override
@@ -28,10 +29,33 @@
      }
  
      @Override
-@@ -74,6 +_,7 @@
+     public boolean removeWhenFarAway(final double distSqr) {
++        // Gale start - Event-driven - AbstractFish.canRemoveWhenFarAway
++        return this.gale$eventDriven_canRemoveWhenFarAway;
++    }
++
++    private boolean gale$eventDriven_canRemoveWhenFarAway;
++
++    public void gale$eventDriven_canRemoveWhenFarAway_update() {
++        this.gale$eventDriven_canRemoveWhenFarAway = this.gale$eventDriven_canRemoveWhenFarAway_compute();
++    }
++
++    @Override
++    public void setCustomName(final net.minecraft.network.chat.@org.jspecify.annotations.Nullable Component name) {
++        super.setCustomName(name);
++        this.gale$eventDriven_canRemoveWhenFarAway_update();
++    }
++
++    private boolean gale$eventDriven_canRemoveWhenFarAway_compute() {
++        // Gale end - Event-driven - AbstractFish.canRemoveWhenFarAway
+         return !this.fromBucket() && !this.hasCustomName();
+     }
+ 
+@@ -74,6 +_,8 @@
      @Override
      public void setFromBucket(final boolean fromBucket) {
          this.entityData.set(FROM_BUCKET, fromBucket);
++        this.gale$eventDriven_canRemoveWhenFarAway_update(); // Gale - Event-driven - AbstractFish.canRemoveWhenFarAway
 +        this.gale$eventDriven_requiresCustomPersistence_update(); // Gale - Event-driven - Mob.requiresCustomPersistence
      }
  

@@ -1,0 +1,35 @@
+--- a/net/minecraft/world/entity/monster/piglin/Piglin.java
++++ b/net/minecraft/world/entity/monster/piglin/Piglin.java
+@@ -107,6 +_,7 @@
+     public Piglin(final EntityType<? extends AbstractPiglin> type, final Level level) {
+         super(type, level);
+         this.xpReward = 5;
++        this.gale$eventDriven_canRemoveWhenFarAway_update(); // Gale - Event-driven - Piglin.canRemoveWhenFarAway
+     }
+ 
+     @Override
+@@ -207,6 +_,24 @@
+ 
+     @Override
+     public boolean removeWhenFarAway(final double distSqr) {
++        // Gale start - Event-driven - Piglin.canRemoveWhenFarAway
++        return this.gale$eventDriven_canRemoveWhenFarAway;
++    }
++
++    private boolean gale$eventDriven_canRemoveWhenFarAway;
++
++    public void gale$eventDriven_canRemoveWhenFarAway_update() {
++        this.gale$eventDriven_canRemoveWhenFarAway = this.gale$eventDriven_canRemoveWhenFarAway_compute();
++    }
++
++    @Override
++    public void setPersistenceRequired() {
++        super.setPersistenceRequired();
++        this.gale$eventDriven_canRemoveWhenFarAway_update();
++    }
++
++    private boolean gale$eventDriven_canRemoveWhenFarAway_compute() {
++        // Gale end - Event-driven - Piglin.canRemoveWhenFarAway
+         return !this.isPersistenceRequired();
+     }
+ 

@@ -5,22 +5,24 @@
      private static final EntityDataAccessor<Integer> DATA_VARIANT = SynchedEntityData.defineId(Axolotl.class, EntityDataSerializers.INT);
      private static final EntityDataAccessor<Boolean> DATA_PLAYING_DEAD = SynchedEntityData.defineId(Axolotl.class, EntityDataSerializers.BOOLEAN);
 -    private static final EntityDataAccessor<Boolean> FROM_BUCKET = SynchedEntityData.defineId(Axolotl.class, EntityDataSerializers.BOOLEAN);
-+    private static final EntityDataAccessor<Boolean> FROM_BUCKET = SynchedEntityData.defineId(Axolotl.class, EntityDataSerializers.BOOLEAN); // Gale - Event-driven - Mob.requiresCustomPersistence - TODO Watch for new writes
++    private static final EntityDataAccessor<Boolean> FROM_BUCKET = SynchedEntityData.defineId(Axolotl.class, EntityDataSerializers.BOOLEAN); // Gale - Event-driven - Axolotl.canRemoveWhenFarAway, Mob.requiresCustomPersistence - TODO Watch for new set calls
      public static final double PLAYER_REGEN_DETECTION_RANGE = 20.0;
      public static final int RARE_VARIANT_CHANCE = 1200;
      private static final int AXOLOTL_TOTAL_AIR_SUPPLY = 6000;
-@@ -120,6 +_,7 @@
+@@ -120,6 +_,8 @@
          this.setPathfindingMalus(PathType.WATER, 0.0F);
          this.moveControl = new Axolotl.AxolotlMoveControl<>(this);
          this.lookControl = new Axolotl.AxolotlLookControl(this, 20);
++        this.gale$eventDriven_canRemoveWhenFarAway_update(); // Gale - Event-driven - Axolotl.canRemoveWhenFarAway
 +        this.gale$eventDriven_requiresCustomPersistence_update(); // Gale - Event-driven - Mob.requiresCustomPersistence
      }
  
      @Override
-@@ -336,6 +_,7 @@
+@@ -336,6 +_,8 @@
      @Override
      public void setFromBucket(final boolean fromBucket) {
          this.entityData.set(FROM_BUCKET, fromBucket);
++        this.gale$eventDriven_canRemoveWhenFarAway_update(); // Gale - Event-driven - Axolotl.canRemoveWhenFarAway
 +        this.gale$eventDriven_requiresCustomPersistence_update(); // Gale - Event-driven - Mob.requiresCustomPersistence
      }
  
@@ -38,3 +40,28 @@
      }
  
      @Override
+@@ -552,6 +_,24 @@
+ 
+     @Override
+     public boolean removeWhenFarAway(final double distSqr) {
++        // Gale start - Event-driven - Axolotl.canRemoveWhenFarAway
++        return this.gale$eventDriven_canRemoveWhenFarAway;
++    }
++
++    private boolean gale$eventDriven_canRemoveWhenFarAway;
++
++    public void gale$eventDriven_canRemoveWhenFarAway_update() {
++        this.gale$eventDriven_canRemoveWhenFarAway = this.gale$eventDriven_canRemoveWhenFarAway_compute();
++    }
++
++    @Override
++    public void setCustomName(final net.minecraft.network.chat.@org.jspecify.annotations.Nullable Component name) {
++        super.setCustomName(name);
++        this.gale$eventDriven_canRemoveWhenFarAway_update();
++    }
++
++    private boolean gale$eventDriven_canRemoveWhenFarAway_compute() {
++        // Gale end - Event-driven - Axolotl.canRemoveWhenFarAway
+         return !this.fromBucket() && !this.hasCustomName();
+     }
+ 

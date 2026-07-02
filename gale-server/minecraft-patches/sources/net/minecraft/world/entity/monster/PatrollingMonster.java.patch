@@ -1,0 +1,16 @@
+--- a/net/minecraft/world/entity/monster/PatrollingMonster.java
++++ b/net/minecraft/world/entity/monster/PatrollingMonster.java
+@@ -99,6 +_,13 @@
+         return !this.patrolling || distSqr > 16384.0;
+     }
+ 
++    // Gale start - Optimize Mob.checkDespawn - Pre-check for removeWhenFarAway()
++    @Override
++    public boolean gale$canRemoveWhenFarAway() {
++        return true;
++    }
++    // Gale end - Optimize Mob.checkDespawn - Pre-check for removeWhenFarAway()
++
+     public void setPatrolTarget(final BlockPos target) {
+         this.patrolTarget = target;
+         this.patrolling = true;

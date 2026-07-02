@@ -1,0 +1,70 @@
+--- a/net/minecraft/world/entity/monster/zombie/ZombieVillager.java
++++ b/net/minecraft/world/entity/monster/zombie/ZombieVillager.java
+@@ -61,7 +_,7 @@
+ import org.jspecify.annotations.Nullable;
+ 
+ public class ZombieVillager extends Zombie implements VillagerDataHolder {
+-    public static final EntityDataAccessor<Boolean> DATA_CONVERTING_ID = SynchedEntityData.defineId(ZombieVillager.class, EntityDataSerializers.BOOLEAN);
++    public static final EntityDataAccessor<Boolean> DATA_CONVERTING_ID = SynchedEntityData.defineId(ZombieVillager.class, EntityDataSerializers.BOOLEAN); // Gale - Event-driven - ZombieVillager.canRemoveWhenFarAway - TODO Watch for new set calls
+     private static final EntityDataAccessor<VillagerData> DATA_VILLAGER_DATA = SynchedEntityData.defineId(
+         ZombieVillager.class, EntityDataSerializers.VILLAGER_DATA
+     );
+@@ -78,13 +_,14 @@
+     public @Nullable UUID conversionStarter;
+     private @Nullable GossipContainer gossips;
+     private @Nullable MerchantOffers tradeOffers;
+-    private int villagerXp = 0;
++    private int villagerXp = 0; // Gale - Event-driven - ZombieVillager.canRemoveWhenFarAway - TODO Watch for new writes
+     private static final EntityDimensions BABY_DIMENSIONS = EntityDimensions.scalable(0.49F, 0.98F)
+         .withEyeHeight(0.67F)
+         .withAttachments(EntityAttachments.builder().attach(EntityAttachment.VEHICLE, 0.0F, 0.125F, 0.0F));
+ 
+     public ZombieVillager(final EntityType<? extends ZombieVillager> type, final Level level) {
+         super(type, level);
++        this.gale$eventDriven_canRemoveWhenFarAway_update(); // Gale - Event-driven - ZombieVillager.canRemoveWhenFarAway
+     }
+ 
+     @Override
+@@ -129,6 +_,7 @@
+         }
+ 
+         this.villagerXp = input.getIntOr("Xp", 0);
++        this.gale$eventDriven_canRemoveWhenFarAway_update(); // Gale - Event-driven - ZombieVillager.canRemoveWhenFarAway
+     }
+ 
+     @Override
+@@ -188,6 +_,18 @@
+ 
+     @Override
+     public boolean removeWhenFarAway(final double distSqr) {
++        // Gale start - Event-driven - ZombieVillager.canRemoveWhenFarAway
++        return this.gale$eventDriven_canRemoveWhenFarAway;
++    }
++
++    private boolean gale$eventDriven_canRemoveWhenFarAway;
++
++    public void gale$eventDriven_canRemoveWhenFarAway_update() {
++        this.gale$eventDriven_canRemoveWhenFarAway = this.gale$eventDriven_canRemoveWhenFarAway_compute();
++    }
++
++    private boolean gale$eventDriven_canRemoveWhenFarAway_compute() {
++        // Gale end - Event-driven - ZombieVillager.canRemoveWhenFarAway
+         return !this.isConverting() && this.villagerXp == 0;
+     }
+ 
+@@ -205,6 +_,7 @@
+         this.conversionStarter = player;
+         this.villagerConversionTime = time;
+         this.getEntityData().set(DATA_CONVERTING_ID, true);
++        this.gale$eventDriven_canRemoveWhenFarAway_update(); // Gale - Event-driven - ZombieVillager.canRemoveWhenFarAway
+         // CraftBukkit start
+         this.removeEffect(MobEffects.WEAKNESS, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.CONVERSION);
+         this.addEffect(new MobEffectInstance(MobEffects.STRENGTH, time, Math.min(this.level().getDifficulty().getId() - 1, 0)), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.CONVERSION);
+@@ -382,6 +_,7 @@
+ 
+     public void setVillagerXp(final int villagerXp) {
+         this.villagerXp = villagerXp;
++        this.gale$eventDriven_canRemoveWhenFarAway_update(); // Gale - Event-driven - ZombieVillager.canRemoveWhenFarAway
+     }
+ 
+     @Override

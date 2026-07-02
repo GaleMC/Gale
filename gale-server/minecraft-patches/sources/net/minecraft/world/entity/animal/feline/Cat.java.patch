@@ -1,0 +1,37 @@
+--- a/net/minecraft/world/entity/animal/feline/Cat.java
++++ b/net/minecraft/world/entity/animal/feline/Cat.java
+@@ -100,6 +_,7 @@
+     public Cat(final EntityType<? extends Cat> type, final Level level) {
+         super(type, level);
+         this.reassessTameGoals();
++        this.gale$eventDriven_canRemoveWhenFarAway_update(); // Gale - Event-driven - Cat.canRemoveWhenFarAway
+     }
+ 
+     @Override
+@@ -467,12 +_,25 @@
+ 
+     @Override
+     public boolean removeWhenFarAway(final double distSqr) {
+-        return !this.isTame() && this.tickCount > 2400;
++        // Gale start - Event-driven - Cat.canRemoveWhenFarAway
++        return this.gale$eventDriven_canRemoveWhenFarAway;
++    }
++
++    private boolean gale$eventDriven_canRemoveWhenFarAway;
++
++    public void gale$eventDriven_canRemoveWhenFarAway_update() {
++        this.gale$eventDriven_canRemoveWhenFarAway = this.gale$eventDriven_canRemoveWhenFarAway_compute();
++    }
++
++    private boolean gale$eventDriven_canRemoveWhenFarAway_compute() {
++        return this.tickCount > 2400 && !this.isTame(); // Re-order checks
++        // Gale end - Event-driven - Cat.canRemoveWhenFarAway
+     }
+ 
+     @Override
+     public void setTame(final boolean isTame, final boolean includeSideEffects) {
+         super.setTame(isTame, includeSideEffects);
++        this.gale$eventDriven_canRemoveWhenFarAway_update(); // Gale - Event-driven - Cat.canRemoveWhenFarAway
+         this.reassessTameGoals();
+     }
+ 

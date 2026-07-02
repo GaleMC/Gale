@@ -1,0 +1,10 @@
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftVillagerZombie.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftVillagerZombie.java
+@@ -65,6 +_,7 @@
+         if (time < 0) {
+             this.getHandle().setVillagerConversionTime(-1);
+             this.getHandle().getEntityData().set(net.minecraft.world.entity.monster.zombie.ZombieVillager.DATA_CONVERTING_ID, false);
++            this.getHandle().gale$eventDriven_canRemoveWhenFarAway_update(); // Gale - Event-driven - ZombieVillager.canRemoveWhenFarAway
+             this.getHandle().conversionStarter = null;
+             this.getHandle().removeEffect(MobEffects.STRENGTH, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.CONVERSION);
+         } else {

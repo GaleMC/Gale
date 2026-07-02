@@ -1,0 +1,51 @@
+--- a/net/minecraft/world/entity/animal/chicken/Chicken.java
++++ b/net/minecraft/world/entity/animal/chicken/Chicken.java
+@@ -73,12 +_,13 @@
+     public float flapping = 1.0F;
+     private float nextFlap = 1.0F;
+     public int eggTime;
+-    public boolean isChickenJockey = false;
++    public boolean isChickenJockey = false; // Gale - Event-driven - Chicken.canRemoveWhenFarAway - TODO Watch for new writes
+ 
+     public Chicken(final EntityType<? extends Chicken> type, final Level level) {
+         super(type, level);
+         this.eggTime = this.random.nextInt(6000) + 6000;
+         this.setPathfindingMalus(PathType.WATER, 0.0F);
++        this.gale$eventDriven_canRemoveWhenFarAway_update(); // Gale - Event-driven - Chicken.canRemoveWhenFarAway
+     }
+ 
+     @Override
+@@ -213,6 +_,7 @@
+     protected void readAdditionalSaveData(final ValueInput input) {
+         super.readAdditionalSaveData(input);
+         this.isChickenJockey = input.getBooleanOr("IsChickenJockey", false);
++        this.gale$eventDriven_canRemoveWhenFarAway_update(); // Gale - Event-driven - Chicken.canRemoveWhenFarAway
+         input.getInt("EggLayTime").ifPresent(time -> this.eggTime = time);
+         VariantUtils.readVariant(input, Registries.CHICKEN_VARIANT).ifPresent(this::setVariant);
+         input.read("sound_variant", ResourceKey.codec(Registries.CHICKEN_SOUND_VARIANT))
+@@ -274,6 +_,18 @@
+ 
+     @Override
+     public boolean removeWhenFarAway(final double distSqr) {
++        // Gale start - Event-driven - Chicken.canRemoveWhenFarAway
++        return this.gale$eventDriven_canRemoveWhenFarAway;
++    }
++
++    private boolean gale$eventDriven_canRemoveWhenFarAway;
++
++    public void gale$eventDriven_canRemoveWhenFarAway_update() {
++        this.gale$eventDriven_canRemoveWhenFarAway = this.gale$eventDriven_canRemoveWhenFarAway_compute();
++    }
++
++    private boolean gale$eventDriven_canRemoveWhenFarAway_compute() {
++        // Gale end - Event-driven - Chicken.canRemoveWhenFarAway
+         return this.isChickenJockey();
+     }
+ 
+@@ -291,5 +_,6 @@
+ 
+     public void setChickenJockey(final boolean isChickenJockey) {
+         this.isChickenJockey = isChickenJockey;
++        this.gale$eventDriven_canRemoveWhenFarAway_update(); // Gale - Event-driven - Chicken.canRemoveWhenFarAway
+     }
+ }

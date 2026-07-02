@@ -1,36 +1,65 @@
 --- a/net/minecraft/world/entity/raid/Raider.java
 +++ b/net/minecraft/world/entity/raid/Raider.java
-@@ -50,7 +_,7 @@
+@@ -50,13 +_,15 @@
          && ItemStack.matches(e.getItem(), Raid.getOminousBannerInstance(e.registryAccess().lookupOrThrow(Registries.BANNER_PATTERN)));
      private static final int DEFAULT_WAVE = 0;
      private static final boolean DEFAULT_CAN_JOIN_RAID = false;
 -    protected @Nullable Raid raid;
-+    protected @Nullable Raid raid; // Gale - Event-driven - Mob.requiresCustomPersistence - TODO Watch for new writes
++    protected @Nullable Raid raid; // Gale - Event-driven - Mob.requiresCustomPersistence, Raider.canRemoveWhenFarAway - TODO Watch for new writes
      private int wave = 0;
      private boolean canJoinRaid = false;
      private int ticksOutsideRaid;
-@@ -141,6 +_,7 @@
+ 
+     protected Raider(final EntityType<? extends Raider> type, final Level level) {
+         super(type, level);
++        this.gale$eventDriven_canRemoveWhenFarAway_update(); // Gale - Event-driven - Raider.canRemoveWhenFarAway
++        this.gale$eventDriven_requiresCustomPersistence_update(); // Gale - Event-driven - Mob.requiresCustomPersistence
+     }
+ 
+     @Override
+@@ -141,6 +_,8 @@
  
      public void setCurrentRaid(final @Nullable Raid raid) {
          this.raid = raid;
++        this.gale$eventDriven_canRemoveWhenFarAway_update(); // Gale - Event-driven - Raider.canRemoveWhenFarAway
 +        this.gale$eventDriven_requiresCustomPersistence_update(); // Gale - Event-driven - Mob.requiresCustomPersistence
      }
  
      public @Nullable Raid getCurrentRaid() {
-@@ -197,6 +_,7 @@
+@@ -197,6 +_,8 @@
          if (this.level() instanceof ServerLevel level) {
              input.getInt("RaidId").ifPresent(raidId -> {
                  this.raid = level.getRaids().get(raidId);
++                this.gale$eventDriven_canRemoveWhenFarAway_update(); // Gale - Event-driven - Raider.canRemoveWhenFarAway
 +                this.gale$eventDriven_requiresCustomPersistence_update(); // Gale - Event-driven - Mob.requiresCustomPersistence
                  if (this.raid != null) {
                      this.raid.addWaveMob(level, this.wave, this, false);
                      if (this.isPatrolLeader()) {
-@@ -243,8 +_,10 @@
+@@ -242,9 +_,28 @@
+         return this.getCurrentRaid() == null && super.removeWhenFarAway(distSqr);
      }
  
-     @Override
+-    @Override
 -    public boolean requiresCustomPersistence() {
 -        return super.requiresCustomPersistence() || this.getCurrentRaid() != null;
++    // Gale start - Event-driven - Raider.canRemoveWhenFarAway
++    @Override
++    public boolean gale$canRemoveWhenFarAway() {
++        return this.gale$eventDriven_canRemoveWhenFarAway;
++    }
++
++    private boolean gale$eventDriven_canRemoveWhenFarAway;
++
++    public void gale$eventDriven_canRemoveWhenFarAway_update() {
++        this.gale$eventDriven_canRemoveWhenFarAway = this.gale$eventDriven_canRemoveWhenFarAway_compute();
++    }
++
++    private boolean gale$eventDriven_canRemoveWhenFarAway_compute() {
++        return this.getCurrentRaid() == null;
++    }
++    // Gale end - Event-driven - Raider.canRemoveWhenFarAway
++
++    @Override
 +    // Gale start - Event-driven - Mob.requiresCustomPersistence
 +    public boolean gale$eventDriven_requiresCustomPersistence_compute() {
 +        return super.gale$eventDriven_requiresCustomPersistence_compute() || this.getCurrentRaid() != null;

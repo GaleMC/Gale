@@ -26,15 +26,32 @@
      public static final float DEFAULT_BB_WIDTH = 0.6F;
      public static final float DEFAULT_BB_HEIGHT = 1.8F;
      public float moveDist;
-@@ -306,7 +_,7 @@
+@@ -299,14 +_,14 @@
+     public double zOld;
+     public boolean noPhysics;
+     protected final RandomSource random = SHARED_RANDOM; // Paper - Share random for entities to make them more random
+-    public int tickCount;
++    public int tickCount; // Gale - Event-driven - Cat.canRemoveWhenFarAway, Ocelot.canRemoveWhenFarAway - TODO Watch for new writes
+     private int remainingFireTicks;
+     private final EntityFluidInteraction fluidInteraction = new EntityFluidInteraction(Set.of(FluidTags.WATER, FluidTags.LAVA));
+     protected boolean wasTouchingWater;
      protected boolean wasEyeInWater;
      public int invulnerableTime;
      protected boolean firstTick = true;
 -    protected final SynchedEntityData entityData;
-+    protected final SynchedEntityData entityData; // Gale - Event-driven - Mob.requiresCustomPersistence - TODO Watch for new writes
++    protected final SynchedEntityData entityData; // Gale - Event-driven - AbstractFish.canRemoveWhenFarAway, Axolotl.canRemoveWhenFarAway, Cat.canRemoveWhenFarAway, LivingEntity.isAlive, Mob.requiresCustomPersistence, Ocelot.canRemoveWhenFarAway, ZombieVillager.canRemoveWhenFarAway - TODO Watch for new writes
      protected static final EntityDataAccessor<Byte> DATA_SHARED_FLAGS_ID = SynchedEntityData.defineId(Entity.class, EntityDataSerializers.BYTE);
      protected static final int FLAG_ONFIRE = 0;
      private static final int FLAG_SHIFT_KEY_DOWN = 1;
+@@ -316,7 +_,7 @@
+     protected static final int FLAG_GLOWING = 6;
+     protected static final int FLAG_FALL_FLYING = 7;
+     private static final EntityDataAccessor<Integer> DATA_AIR_SUPPLY_ID = SynchedEntityData.defineId(Entity.class, EntityDataSerializers.INT);
+-    private static final EntityDataAccessor<Optional<Component>> DATA_CUSTOM_NAME = SynchedEntityData.defineId(
++    private static final EntityDataAccessor<Optional<Component>> DATA_CUSTOM_NAME = SynchedEntityData.defineId( // Gale - Event-driven - AbstractFish.canRemoveWhenFarAway, Axolotl.canRemoveWhenFarAway, Ocelot.canRemoveWhenFarAway - TODO Watch for new set calls
+         Entity.class, EntityDataSerializers.OPTIONAL_COMPONENT
+     );
+     private static final EntityDataAccessor<Boolean> DATA_CUSTOM_NAME_VISIBLE = SynchedEntityData.defineId(Entity.class, EntityDataSerializers.BOOLEAN);
 @@ -474,10 +_,7 @@
  
      @Override

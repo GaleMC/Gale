@@ -5,7 +5,7 @@
      private DropChances dropChances = DropChances.DEFAULT;
      private boolean canPickUpLoot = false;
 -    public boolean persistenceRequired = false;
-+    public boolean persistenceRequired = false; // Gale - Event-driven - Mob.isPersistent - TODO Watch for new writes
++    public boolean persistenceRequired = false; // Gale - Event-driven - Mob.isPersistent, Piglin.canRemoveWhenFarAway - TODO Watch for new writes
      private final Map<PathType, Float> pathfindingMalus = Maps.newEnumMap(PathType.class);
      public Optional<ResourceKey<LootTable>> lootTable = Optional.empty();
      public long lootTableSeed;
@@ -27,11 +27,12 @@
      }
  
      protected void registerGoals() {
-@@ -469,6 +_,7 @@
+@@ -469,6 +_,8 @@
          boolean persistenceRequired = input.getBooleanOr("PersistenceRequired", false);
          if (isLevelAtLeast(input, 1) || persistenceRequired) {
              this.persistenceRequired = persistenceRequired;
 +            this.gale$eventDriven_isPersistent_update(); // Gale - Event-driven - Mob.isPersistent
++           if (this instanceof net.minecraft.world.entity.monster.piglin.Piglin piglin) piglin.gale$eventDriven_canRemoveWhenFarAway_update(); // Gale - Event-driven - Piglin.canRemoveWhenFarAway
          }
          // CraftBukkit end
          this.dropChances = input.read("drop_chances", DropChances.CODEC).orElse(DropChances.DEFAULT);
@@ -43,19 +44,31 @@
      }
      public static net.kyori.adventure.util.TriState readDespawnInPeacefulOverride(ValueInput input) {
          return input.read("Paper.DespawnInPeacefulOverride", io.papermc.paper.util.PaperCodecs.TRI_STATE_CODEC).orElse(net.kyori.adventure.util.TriState.NOT_SET);
-@@ -653,6 +_,7 @@
+@@ -653,6 +_,8 @@
              ItemStack toEquip = slot.limit(itemStack);
              this.setItemSlotAndDropWhenKilled(slot, toEquip);
              this.persistenceRequired = true;
 +            this.gale$eventDriven_isPersistent_update(); // Gale - Event-driven - Mob.isPersistent
++            if (this instanceof net.minecraft.world.entity.monster.piglin.Piglin piglin) piglin.gale$eventDriven_canRemoveWhenFarAway_update(); // Gale - Event-driven - Piglin.canRemoveWhenFarAway
              return toEquip;
          } else {
              return ItemStack.EMPTY;
-@@ -780,23 +_,102 @@
+@@ -780,23 +_,113 @@
          return true;
      }
  
 -    public boolean requiresCustomPersistence() {
++    // Gale start - Optimize Mob.checkDespawn - Pre-check for removeWhenFarAway()
++    /**
++     * @return Whether it's currently possible for {@link #removeWhenFarAway(double)} to return true
++     * for some distance. In other words, this method returns false if {@link #removeWhenFarAway(double)} currently
++     * returns false for any given distance, and this method returns true if {@link #removeWhenFarAway(double)}
++     * may currently return true or false.
++     */
++    public boolean gale$canRemoveWhenFarAway() {
++        return this.removeWhenFarAway(-1);
++    }
++
 +    public boolean gale$eventDriven_requiresCustomPersistence_compute() { // Gale - Event-driven - Mob.requiresCustomPersistence
          return this.isPassenger() || this.isLeashed();
      }
@@ -120,7 +133,7 @@
 +    // Gale end - Event-driven - Mob.mustDespawnBecauseOfPeacefulDifficulty
 +
 +    // Gale start - Event-driven - Mob.isLeashed
-+    private boolean gale$eventDriven_isLeashed; // Gale - Event-driven - Mob.requiresCustomPersistence - TODO Watch for new writes
++    protected boolean gale$eventDriven_isLeashed; // Gale - Event-driven - Mob.requiresCustomPersistence, Ocelot.canRemoveWhenFarAway - TODO Watch for new writes
 +    private java.lang.ref.@Nullable WeakReference<net.minecraft.world.entity.Mob> leashDataListenerReference;
 +
 +    public void gale$eventDriven_isLeashed_update() {
@@ -153,12 +166,26 @@
 -        } else if (!this.isPersistenceRequired() && !this.requiresCustomPersistence()) {
 +        } else if (!this.gale$eventDriven_isPersistent) { // Gale - Event-driven - Mob.isPersistent
 +            if (!org.galemc.gale.async.SimulationFlag.REAL) return; // Gale - Speculative execution based on next tick simulation - Simulate next tick
-+            if (this.level().gale$eventDriven_affectsSpawningSelectorPlayerCount != 0) { // Gale - Optimize checkDespawn
++            if (this.level().gale$eventDriven_affectsSpawningSelectorPlayerCount != 0) { // Gale - Optimize Mob.checkDespawn
              Entity player = this.level().findNearbyPlayer(this, -1.0, EntitySelector.PLAYER_AFFECTS_SPAWNING); // Paper - Affects Spawning API
 -            if (player != null) {
                  // Paper start - Configurable despawn distances
                  final io.papermc.paper.configuration.WorldConfiguration.Entities.Spawning.DespawnRangePair despawnRangePair = this.level().paperConfig().entities.spawning.despawnRanges.get(this.getType().getCategory());
                  final io.papermc.paper.configuration.type.DespawnRange.Shape shape = this.level().paperConfig().entities.spawning.despawnRangeShape;
+@@ -806,11 +_,11 @@
+                 final double dzSqr = Mth.square(player.getZ() - this.getZ());
+                 final double distanceSquared = dxSqr + dzSqr + dySqr;
+                 // Despawn if hard/soft limit is exceeded
+-                if (despawnRangePair.hard().shouldDespawn(shape, dxSqr, dySqr, dzSqr, dy) && this.removeWhenFarAway(distanceSquared)) {
++                if (this.gale$canRemoveWhenFarAway() && despawnRangePair.hard().shouldDespawn(shape, dxSqr, dySqr, dzSqr, dy) && this.removeWhenFarAway(distanceSquared)) { // Gale - Optimize Mob.checkDespawn
+                     this.discard(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
+                 }
+ 
+-                if (despawnRangePair.soft().shouldDespawn(shape, dxSqr, dySqr, dzSqr, dy)) {
++                if (this.gale$canRemoveWhenFarAway() && despawnRangePair.soft().shouldDespawn(shape, dxSqr, dySqr, dzSqr, dy)) { // Gale - Optimize Mob.checkDespawn
+                     if (this.noActionTime > 600 && this.random.nextInt(800) == 0 && this.removeWhenFarAway(distanceSquared)) {
+                         this.discard(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
+                     }
 @@ -820,6 +_,7 @@
                  }
              }

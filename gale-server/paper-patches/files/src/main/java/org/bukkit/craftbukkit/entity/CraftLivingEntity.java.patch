@@ -1,15 +1,19 @@
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftLivingEntity.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftLivingEntity.java
-@@ -697,7 +_,11 @@
+@@ -697,7 +_,15 @@
      @Override
      public void setRemoveWhenFarAway(boolean remove) {
          if (this.getHandle() instanceof Mob mob) {
 -            mob.persistenceRequired = !remove;
-+            // Gale start - Event-driven - Mob.isPersistent
++            // Gale start - Event-driven - Mob.isPersistent, Piglin.canRemoveWhenFarAway
 +            boolean persistenceRequired = !remove;
-+            mob.persistenceRequired = persistenceRequired;
-+            mob.gale$eventDriven_isPersistent_update();
-+            // Gale end - Event-driven - Mob.isPersistent
++            if (persistenceRequired != mob.persistenceRequired) {
++                mob.persistenceRequired = persistenceRequired;
++                mob.gale$eventDriven_isPersistent_update();
++                if (mob instanceof net.minecraft.world.entity.monster.piglin.Piglin piglin)
++                    piglin.gale$eventDriven_canRemoveWhenFarAway_update();
++            }
++            // Gale end - Event-driven - Mob.isPersistent, Piglin.canRemoveWhenFarAway
          }
      }
  
