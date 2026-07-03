@@ -1,0 +1,13 @@
+--- a/src/main/java/io/papermc/paper/configuration/type/DespawnRange.java
++++ b/src/main/java/io/papermc/paper/configuration/type/DespawnRange.java
+@@ -106,4 +_,10 @@
+             }
+         }
+     }
++
++    // Gale start - Event-driven - Mob.despawnRanges, Mob.despawnRangeShape
++    public boolean effectivelyEquals(DespawnRange other) {
++        return this.preComputedHorizontalLimitSquared == other.preComputedHorizontalLimitSquared && this.preComputedHorizontalLimitSquaredOverVerticalLimitSquared == other.preComputedHorizontalLimitSquaredOverVerticalLimitSquared && this.preComputedVanillaDefaultLimit == other.preComputedVanillaDefaultLimit;
++    }
++    // Gale end - Event-driven - Mob.despawnRanges, Mob.despawnRangeShape
+ }

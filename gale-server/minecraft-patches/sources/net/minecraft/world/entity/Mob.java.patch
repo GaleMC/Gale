@@ -19,10 +19,11 @@
  
      protected Mob(final EntityType<? extends Mob> type, final Level level) {
          super(type, level);
-@@ -169,6 +_,7 @@
+@@ -169,6 +_,8 @@
          if (level instanceof ServerLevel) {
              this.registerGoals();
          }
++        this.gale$eventDriven_despawnRanges_and_despawnRangeShape_update(); // Gale - Event-driven - Mob.despawnRanges, Mob.despawnRangeShape
 +        this.gale$eventDriven_mustDespawnBecauseOfPeacefulDifficulty_update(); // Gale - Event-driven - Mob.mustDespawnBecauseOfPeacefulDifficulty
      }
  
@@ -53,11 +54,26 @@
              return toEquip;
          } else {
              return ItemStack.EMPTY;
-@@ -780,23 +_,113 @@
+@@ -780,38 +_,147 @@
          return true;
      }
  
 -    public boolean requiresCustomPersistence() {
++    private io.papermc.paper.configuration.WorldConfiguration.Entities.Spawning.DespawnRangePair gale$eventDriven_despawnRanges;
++    private io.papermc.paper.configuration.type.DespawnRange.Shape gale$eventDriven_despawnRangeShape;
++
++    // Gale start - Event-driven - Mob.despawnRanges, Mob.despawnRangeShape
++    public void gale$eventDriven_despawnRanges_and_despawnRangeShape_update() {
++        io.papermc.paper.configuration.WorldConfiguration config = this.level().paperConfig();
++        io.papermc.paper.configuration.WorldConfiguration.Entities.Spawning.DespawnRangePair newDespawnRanges = config.entities.spawning.despawnRanges.get(this.getType().getCategory());
++        io.papermc.paper.configuration.type.DespawnRange.Shape newDespawnRangeShape = config.entities.spawning.despawnRangeShape;
++        if (!newDespawnRanges.effectivelyEquals(this.gale$eventDriven_despawnRanges) || !newDespawnRangeShape.equals(this.gale$eventDriven_despawnRangeShape)) {
++            this.gale$eventDriven_despawnRanges = newDespawnRanges;
++            this.gale$eventDriven_despawnRangeShape = newDespawnRangeShape;
++        }
++    }
++    // Gale end - Event-driven - Mob.despawnRanges, Mob.despawnRangeShape
++
 +    // Gale start - Optimize Mob.checkDespawn - Pre-check for removeWhenFarAway()
 +    /**
 +     * @return Whether it's currently possible for {@link #removeWhenFarAway(double)} to return true
@@ -72,7 +88,8 @@
 +    public boolean gale$eventDriven_requiresCustomPersistence_compute() { // Gale - Event-driven - Mob.requiresCustomPersistence
          return this.isPassenger() || this.isLeashed();
      }
- 
++    // Gale end - Optimize Mob.checkDespawn - Pre-check for removeWhenFarAway()
++
 +    // Gale start - Event-driven - Mob.requiresCustomPersistence
 +    public boolean requiresCustomPersistence() {
 +        return this.gale$eventDriven_requiresCustomPersistence;
@@ -94,7 +111,7 @@
 +        this.gale$eventDriven_requiresCustomPersistence_update();
 +    }
 +    // Gale end - Event-driven - Mob.requiresCustomPersistence
-+
+ 
      // Paper start - allow changing despawnInPeaceful
 -    public final boolean shouldDespawnInPeaceful() {
 +    public final boolean gale$eventDriven_shouldDespawnInPeaceful_compute() { // Gale - Event-driven - Mob.shouldDespawnInPeaceful
@@ -128,6 +145,7 @@
 +    @Override
 +    public void setLevel(final Level level) {
 +        super.setLevel(level);
++        this.gale$eventDriven_despawnRanges_and_despawnRangeShape_update(); // Gale - Event-driven - Mob.despawnRanges, Mob.despawnRangeShape
 +        this.gale$eventDriven_mustDespawnBecauseOfPeacefulDifficulty_update();
 +    }
 +    // Gale end - Event-driven - Mob.mustDespawnBecauseOfPeacefulDifficulty
@@ -170,9 +188,15 @@
              Entity player = this.level().findNearbyPlayer(this, -1.0, EntitySelector.PLAYER_AFFECTS_SPAWNING); // Paper - Affects Spawning API
 -            if (player != null) {
                  // Paper start - Configurable despawn distances
-                 final io.papermc.paper.configuration.WorldConfiguration.Entities.Spawning.DespawnRangePair despawnRangePair = this.level().paperConfig().entities.spawning.despawnRanges.get(this.getType().getCategory());
-                 final io.papermc.paper.configuration.type.DespawnRange.Shape shape = this.level().paperConfig().entities.spawning.despawnRangeShape;
-@@ -806,12 +_,12 @@
+-                final io.papermc.paper.configuration.WorldConfiguration.Entities.Spawning.DespawnRangePair despawnRangePair = this.level().paperConfig().entities.spawning.despawnRanges.get(this.getType().getCategory());
+-                final io.papermc.paper.configuration.type.DespawnRange.Shape shape = this.level().paperConfig().entities.spawning.despawnRangeShape;
++                // Gale start - Event-driven - Mob.despawnRanges, Mob.despawnRangeShape
++                final io.papermc.paper.configuration.WorldConfiguration.Entities.Spawning.DespawnRangePair despawnRangePair = this.gale$eventDriven_despawnRanges;
++                final io.papermc.paper.configuration.type.DespawnRange.Shape shape = this.gale$eventDriven_despawnRangeShape;
++                // Gale end - Event-driven - Mob.despawnRanges, Mob.despawnRangeShape
+                 final double dy = Math.abs(player.getY() - this.getY());
+                 final double dySqr = Mth.square(dy);
+                 final double dxSqr = Mth.square(player.getX() - this.getX());
                  final double dzSqr = Mth.square(player.getZ() - this.getZ());
                  final double distanceSquared = dxSqr + dzSqr + dySqr;
                  // Despawn if hard/soft limit is exceeded

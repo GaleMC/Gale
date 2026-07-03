@@ -1,11 +1,26 @@
 --- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
 +++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
-@@ -181,7 +_,7 @@
+@@ -181,8 +_,8 @@
              @MergeMap
              public Reference2IntMap<MobCategory> spawnLimits = Util.make(new Reference2IntOpenHashMap<>(NaturalSpawner.SPAWNING_CATEGORIES.length), map -> Arrays.stream(NaturalSpawner.SPAWNING_CATEGORIES).forEach(mobCategory -> map.put(mobCategory, -1)));
              @MergeMap
 -            public Map<MobCategory, DespawnRangePair> despawnRanges = Arrays.stream(MobCategory.values()).collect(Collectors.toMap(Function.identity(), category -> DespawnRangePair.createDefault()));
-+            public Map<MobCategory, DespawnRangePair> despawnRanges = new java.util.EnumMap<>(Arrays.stream(MobCategory.values()).collect(Collectors.toMap(Function.identity(), category -> DespawnRangePair.createDefault()))); // Gale - Collections - WorldConfiguration.Entities.Spawning.despawnRanges (use EnumMap)
-             public DespawnRange.Shape despawnRangeShape = DespawnRange.Shape.ELLIPSOID;
+-            public DespawnRange.Shape despawnRangeShape = DespawnRange.Shape.ELLIPSOID;
++            public Map<MobCategory, DespawnRangePair> despawnRanges = new java.util.EnumMap<>(Arrays.stream(MobCategory.values()).collect(Collectors.toMap(Function.identity(), category -> DespawnRangePair.createDefault()))); // Gale - Collections - WorldConfiguration.Entities.Spawning.despawnRanges (use EnumMap) // Gale - Event-driven - Mob.despawnRanges, Mob.despawnRangeShape - TODO Watch for new writes
++            public DespawnRange.Shape despawnRangeShape = DespawnRange.Shape.ELLIPSOID; // Gale - Event-driven - Mob.despawnRanges, Mob.despawnRangeShape - TODO Watch for new writes
              @MergeMap
              public Reference2IntMap<MobCategory> ticksPerSpawn = Util.make(new Reference2IntOpenHashMap<>(NaturalSpawner.SPAWNING_CATEGORIES.length), map -> Arrays.stream(NaturalSpawner.SPAWNING_CATEGORIES).forEach(mobCategory -> map.put(mobCategory, -1)));
+ 
+@@ -194,6 +_,12 @@
+                         new DespawnRange(IntOr.Default.USE_DEFAULT)
+                     );
+                 }
++
++                // Gale start - Event-driven - Mob.despawnRanges, Mob.despawnRangeShape
++                public boolean effectivelyEquals(@org.jspecify.annotations.Nullable DespawnRangePair other) {
++                    return other != null && this.soft.effectivelyEquals(other.soft) && this.hard.effectivelyEquals(other.hard);
++                }
++                // Gale end - Event-driven - Mob.despawnRanges, Mob.despawnRangeShape
+             }
+ 
+             public @ThrowExceptions Reference2ObjectMap<EntityType<?>, IntOr.Disabled> despawnTime = Util.make(new Reference2ObjectOpenHashMap<>(), map -> {
