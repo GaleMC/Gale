@@ -86,24 +86,6 @@
      }
  
      @Override
-@@ -1396,6 +_,8 @@
-         entity.setOldPosAndRot();
-         ProfilerFiller profiler = Profiler.get();
-         entity.tickCount++;
-+        if (entity instanceof net.minecraft.world.entity.animal.feline.Cat cat) cat.gale$eventDriven_canRemoveWhenFarAway_update(); // Gale - Event-driven - Cat.canRemoveWhenFarAway
-+        else if (entity instanceof net.minecraft.world.entity.animal.feline.Ocelot ocelot) ocelot.gale$eventDriven_canRemoveWhenFarAway_update(); // Gale - Event-driven - Ocelot.canRemoveWhenFarAway
-         entity.totalEntityAge++; // Paper - age-like counter for all entities
-         profiler.push(entity.typeHolder()::getRegisteredName);
-         profiler.incrementCounter("tickNonPassenger");
-@@ -1424,6 +_,8 @@
-         } else if (entity instanceof Player || this.entityTickList.contains(entity)) {
-             entity.setOldPosAndRot();
-             entity.tickCount++;
-+            if (entity instanceof net.minecraft.world.entity.animal.feline.Cat cat) cat.gale$eventDriven_canRemoveWhenFarAway_update(); // Gale - Event-driven - Cat.canRemoveWhenFarAway
-+            else if (entity instanceof net.minecraft.world.entity.animal.feline.Ocelot ocelot) ocelot.gale$eventDriven_canRemoveWhenFarAway_update(); // Gale - Event-driven - Ocelot.canRemoveWhenFarAway
-             entity.totalEntityAge++; // Paper - age-like counter for all entities
-             ProfilerFiller profiler = Profiler.get();
-             profiler.push(entity.typeHolder()::getRegisteredName);
 @@ -1716,6 +_,13 @@
  
      @Override

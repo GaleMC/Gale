@@ -25,10 +25,11 @@
          this.reassessTrustingGoals();
      }
  
-@@ -136,6 +_,34 @@
+@@ -136,7 +_,47 @@
  
      @Override
      public boolean removeWhenFarAway(final double distSqr) {
+-        return !this.isTrusting() && this.tickCount > 2400 && !this.hasCustomName() && !this.isLeashed(); // Paper - honor name and leash
 +        // Gale start - Event-driven - Ocelot.canRemoveWhenFarAway
 +        return this.gale$eventDriven_canRemoveWhenFarAway;
 +    }
@@ -55,8 +56,21 @@
 +        }
 +    }
 +
++    @Override
++    public void postTick() {
++        super.postTick();
++        if (this.gale$eventDriven_canRemoveWhenFarAway && this.tickCount > 2400) this.gale$eventDriven_canRemoveWhenFarAway_update();
++    }
++
++    @Override
++    public void inactiveTick() {
++        super.inactiveTick();
++        if (this.gale$eventDriven_canRemoveWhenFarAway && this.tickCount > 2400) this.gale$eventDriven_canRemoveWhenFarAway_update();
++    }
++
 +    private boolean gale$eventDriven_canRemoveWhenFarAway_compute() {
++        return this.tickCount > 2400 && !this.isLeashed() && !this.isTrusting() && !this.hasCustomName(); // Paper - honor name and leash // Re-order checks
 +        // Gale end - Event-driven - Ocelot.canRemoveWhenFarAway
-         return !this.isTrusting() && this.tickCount > 2400 && !this.hasCustomName() && !this.isLeashed(); // Paper - honor name and leash
      }
  
+     public static AttributeSupplier.Builder createAttributes() {
