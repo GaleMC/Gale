@@ -86,6 +86,24 @@
      }
  
      @Override
+@@ -1395,7 +_,7 @@
+             // Paper end - log detailed entity tick information
+         entity.setOldPosAndRot();
+         ProfilerFiller profiler = Profiler.get();
+-        entity.tickCount++;
++        entity.setTickCount(entity.tickCount + 1); // Gale - Event-driven - Cat.canRemoveWhenFarAway, Ocelot.canRemoveWhenFarAway
+         entity.totalEntityAge++; // Paper - age-like counter for all entities
+         profiler.push(entity.typeHolder()::getRegisteredName);
+         profiler.incrementCounter("tickNonPassenger");
+@@ -1423,7 +_,7 @@
+             entity.stopRiding();
+         } else if (entity instanceof Player || this.entityTickList.contains(entity)) {
+             entity.setOldPosAndRot();
+-            entity.tickCount++;
++            entity.setTickCount(entity.tickCount + 1); // Gale - Event-driven - Cat.canRemoveWhenFarAway, Ocelot.canRemoveWhenFarAway
+             entity.totalEntityAge++; // Paper - age-like counter for all entities
+             ProfilerFiller profiler = Profiler.get();
+             profiler.push(entity.typeHolder()::getRegisteredName);
 @@ -1716,6 +_,13 @@
  
      @Override

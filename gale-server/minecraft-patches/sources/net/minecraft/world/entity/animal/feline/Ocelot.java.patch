@@ -25,7 +25,7 @@
          this.reassessTrustingGoals();
      }
  
-@@ -136,7 +_,47 @@
+@@ -136,7 +_,44 @@
  
      @Override
      public boolean removeWhenFarAway(final double distSqr) {
@@ -57,15 +57,12 @@
 +    }
 +
 +    @Override
-+    public void postTick() {
-+        super.postTick();
-+        if (this.gale$eventDriven_canRemoveWhenFarAway && this.tickCount > 2400) this.gale$eventDriven_canRemoveWhenFarAway_update();
-+    }
-+
-+    @Override
-+    public void inactiveTick() {
-+        super.inactiveTick();
-+        if (this.gale$eventDriven_canRemoveWhenFarAway && this.tickCount > 2400) this.gale$eventDriven_canRemoveWhenFarAway_update();
++    public void setTickCount(int tickCount) {
++        int oldTickCount = this.tickCount;
++        super.setTickCount(tickCount);
++        if ((tickCount > 2400) != (oldTickCount > 2400)) {
++            this.gale$eventDriven_canRemoveWhenFarAway_update();
++        }
 +    }
 +
 +    private boolean gale$eventDriven_canRemoveWhenFarAway_compute() {

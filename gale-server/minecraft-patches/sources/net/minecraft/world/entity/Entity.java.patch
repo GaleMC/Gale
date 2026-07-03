@@ -26,12 +26,17 @@
      public static final float DEFAULT_BB_WIDTH = 0.6F;
      public static final float DEFAULT_BB_HEIGHT = 1.8F;
      public float moveDist;
-@@ -299,14 +_,14 @@
+@@ -299,14 +_,19 @@
      public double zOld;
      public boolean noPhysics;
      protected final RandomSource random = SHARED_RANDOM; // Paper - Share random for entities to make them more random
 -    public int tickCount;
-+    public int tickCount; // Gale - Event-driven - Cat.canRemoveWhenFarAway, Ocelot.canRemoveWhenFarAway - TODO Watch for new writes
++    // Gale start - Event-driven - Cat.canRemoveWhenFarAway, Ocelot.canRemoveWhenFarAway
++    public int tickCount; // TODO Watch for new writes
++    public void setTickCount(int newTickCount) {
++        this.tickCount = newTickCount;
++    }
++    // Gale end - Event-driven - Cat.canRemoveWhenFarAway, Ocelot.canRemoveWhenFarAway
      private int remainingFireTicks;
      private final EntityFluidInteraction fluidInteraction = new EntityFluidInteraction(Set.of(FluidTags.WATER, FluidTags.LAVA));
      protected boolean wasTouchingWater;
