@@ -1,6 +1,6 @@
 --- a/net/minecraft/tags/TagKey.java
 +++ b/net/minecraft/tags/TagKey.java
-@@ -11,11 +_,41 @@
+@@ -11,11 +_,44 @@
  import net.minecraft.resources.Identifier;
  import net.minecraft.resources.ResourceKey;
  
@@ -19,19 +19,22 @@
 +    public int indexInRegistryWordIndex;
 +    public long indexInRegistryWordMask;
 +
-+    private int cachedHashCode;
++    private int gale$cached_hashCode; // Gale - Cache - TagKey.hashCode()
 +
 +    @Override
 +    public boolean equals(Object obj) {
-+        return obj instanceof TagKey other && java.util.Objects.equals(other.registry, this.registry) && java.util.Objects.equals(other.location, this.location);
++        return this == obj || obj instanceof TagKey other && this.registry.equals(other.registry) && this.location.equals(other.location);
 +    }
 +
 +    @Override
 +    public int hashCode() {
-+        if (this.cachedHashCode == 0) {
-+            this.cachedHashCode = java.util.Objects.hash(this.registry, this.location);
++        int hashCode = this.gale$cached_hashCode;
++        if (hashCode == 0) {
++            hashCode = 1 + this.registry.hashCode();
++            hashCode += 31 * hashCode + this.location.hashCode();
++            this.gale$cached_hashCode = hashCode;
 +        }
-+        return this.cachedHashCode;
++        return hashCode;
 +    }
 +
 +    // Gale end - Pre-compute - Registry tags

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/enchantment/Enchantment.java
 +++ b/net/minecraft/world/item/enchantment/Enchantment.java
-@@ -57,7 +_,67 @@
+@@ -57,7 +_,73 @@
  import net.minecraft.world.phys.Vec3;
  import org.apache.commons.lang3.mutable.MutableFloat;
  
@@ -42,18 +42,24 @@
 +    public HolderSet<Enchantment> exclusiveSet() { return this.exclusiveSet; }
 +    public DataComponentMap effects() { return this.effects; }
 +
++    private int gale$cached_hashCode; // Gale - Cache - Enchantment.hashCode()
++
 +    @Override
 +    public boolean equals(Object obj) {
-+        return this == obj || obj instanceof Enchantment other && java.util.Objects.equals(this.description, other.description) && java.util.Objects.equals(this.definition, other.definition) && java.util.Objects.equals(this.exclusiveSet, other.exclusiveSet) && java.util.Objects.equals(this.effects, other.effects);
++        return this == obj || obj instanceof Enchantment other && this.description.equals(other.description) && this.definition.equals(other.definition) && this.exclusiveSet.equals(other.exclusiveSet) && this.effects.equals(other.effects);
 +    }
 +
 +    @Override
 +    public int hashCode() {
-+        int result = this.description.hashCode();
-+        result = 31 * result + this.definition.hashCode();
-+        result = 31 * result + this.exclusiveSet.hashCode();
-+        result = 31 * result + this.effects.hashCode();
-+        return result;
++        int hashCode = this.gale$cached_hashCode;
++        if (hashCode == 0) {
++            hashCode = 1 + this.description.hashCode();
++            hashCode = 31 * hashCode + this.definition.hashCode();
++            hashCode = 31 * hashCode + this.exclusiveSet.hashCode();
++            hashCode = 31 * hashCode + this.effects.hashCode();
++            this.gale$cached_hashCode = hashCode;
++        }
++        return hashCode;
 +    }
 +
 +    /**

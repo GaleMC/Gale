@@ -5,8 +5,8 @@
      private final String namespace;
      private final String path;
 +    // Gale start - Cache - Identifier.hashCode() and Identifier.toString()
-+    private @Nullable String cachedString;
-+    private int cachedHashCode;
++    private int gale$cached_hashCode;
++    private @Nullable String gale$cached_string;
 +    // Gale end - Cache - Identifier.hashCode() and Identifier.toString()
  
      private Identifier(final String namespace, final String path) {
@@ -17,26 +17,27 @@
      public String toString() {
 -        return this.namespace + ":" + this.path;
 +        // Gale start - Cache - Identifier.hashCode() and Identifier.toString()
-+        String string = this.cachedString;
++        String string = this.gale$cached_string;
 +        if (string == null) {
 +            string = this.namespace + ":" + this.path;
-+            this.cachedString = string;
++            this.gale$cached_string = string;
 +        }
 +        return string;
 +        // Gale end - Cache - Identifier.hashCode() and Identifier.toString()
      }
  
      @Override
-@@ -141,7 +_,14 @@
+@@ -141,7 +_,15 @@
  
      @Override
      public int hashCode() {
 -        return 31 * this.namespace.hashCode() + this.path.hashCode();
 +        // Gale start - Cache - Identifier.hashCode() and Identifier.toString()
-+        int hashCode = this.cachedHashCode;
++        int hashCode = this.gale$cached_hashCode;
 +        if (hashCode == 0) {
-+            hashCode = 31 * this.namespace.hashCode() + this.path.hashCode();
-+            this.cachedHashCode = hashCode;
++            hashCode = 1 + this.namespace.hashCode();
++            hashCode = 31 * hashCode + this.path.hashCode();
++            this.gale$cached_hashCode = hashCode;
 +        }
 +        return hashCode;
 +        // Gale end - Cache - Identifier.hashCode() and Identifier.toString()
