@@ -31,7 +31,7 @@
 +        int hashCode = this.gale$cached_hashCode;
 +        if (hashCode == 0) {
 +            hashCode = 1 + this.registry.hashCode();
-+            hashCode += 31 * hashCode + this.location.hashCode();
++            hashCode = 31 * hashCode + this.location.hashCode();
 +            this.gale$cached_hashCode = hashCode;
 +        }
 +        return hashCode;

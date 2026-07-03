@@ -37,10 +37,10 @@
 +        int hashCode = this.gale$cached_hashCode;
 +        if (hashCode == 0) {
 +            hashCode = 1 + width;
-+            hashCode += 31 * hashCode + height;
-+            hashCode += 31 * hashCode + this.assetId.hashCode();
-+            hashCode += 31 * hashCode + this.title.hashCode();
-+            hashCode += 31 * hashCode + this.author.hashCode();
++            hashCode = 31 * hashCode + height;
++            hashCode = 31 * hashCode + this.assetId.hashCode();
++            hashCode = 31 * hashCode + this.title.hashCode();
++            hashCode = 31 * hashCode + this.author.hashCode();
 +            this.gale$cached_hashCode = hashCode;
 +        }
 +        return hashCode;
