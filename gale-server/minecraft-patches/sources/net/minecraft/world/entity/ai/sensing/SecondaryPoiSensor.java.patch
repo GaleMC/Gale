@@ -1,16 +1,16 @@
 --- a/net/minecraft/world/entity/ai/sensing/SecondaryPoiSensor.java
 +++ b/net/minecraft/world/entity/ai/sensing/SecondaryPoiSensor.java
-@@ -22,16 +_,23 @@
+@@ -22,16 +_,22 @@
  
      @Override
      protected void doTick(final ServerLevel level, final Villager body) {
-+        // Gale start - Lithium - skip secondary POI sensor if absent
++        // Gale start - Do less work - SecondaryPoiSensor.doTick() (skip secondary POI sensor if absent)
 +        var secondaryPoi = body.getVillagerData().profession().value().secondaryPoi();
 +        if (secondaryPoi.isEmpty()) {
 +            body.getBrain().eraseMemory(MemoryModuleType.SECONDARY_JOB_SITE);
 +            return;
 +        }
-+        // Gale end - Lithium - skip secondary POI sensor if absent
++        // Gale end - Do less work - SecondaryPoiSensor.doTick() (skip secondary POI sensor if absent)
          ResourceKey<Level> dimensionType = level.dimension();
          BlockPos center = body.blockPosition();
          List<GlobalPos> jobSites = Lists.newArrayList();
@@ -21,7 +21,7 @@
                  for (int z = -4; z <= 4; z++) {
                      BlockPos testPos = center.offset(x, y, z);
 -                    if (body.getVillagerData().profession().value().secondaryPoi().contains(level.getBlockState(testPos).getBlock())) {
-+                    if (secondaryPoi.contains(level.getBlockState(testPos).getBlock())) { // Gale - Lithium - skip secondary POI sensor if absent - use cached secondaryPoi
++                    if (secondaryPoi.contains(level.getBlockState(testPos).getBlock())) { // Gale - Do less work - SecondaryPoiSensor.doTick() (skip secondary POI sensor if absent)
                          jobSites.add(GlobalPos.of(dimensionType, testPos));
                      }
                  }
