@@ -39,7 +39,7 @@ index 110405e6e70d980d3e09f04d79562b32a7413071..80ac976e1fcf8b9e584a19aad03b204b
 +        if (this.list == null) {
 +            this.list = new DoubleList[Direction.Axis.VALUES.length];
 +            for (Direction.Axis existingAxis : Direction.Axis.VALUES) {
-+                this.list[existingAxis.ordinal()] = new CubePointRange(this.shape.getSize(existingAxis));
++                this.list[existingAxis.ordinal()] = new CubePointRange(this.shape.getSize(axis));
 +            }
 +        }
 +        return this.list[axis.ordinal()];
