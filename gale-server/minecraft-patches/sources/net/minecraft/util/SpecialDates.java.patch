@@ -1,6 +1,6 @@
 --- a/net/minecraft/util/SpecialDates.java
 +++ b/net/minecraft/util/SpecialDates.java
-@@ -12,13 +_,44 @@
+@@ -12,13 +_,43 @@
      );
      public static final MonthDay CHRISTMAS = MonthDay.of(Month.DECEMBER, 24);
      public static final MonthDay NEW_YEAR = MonthDay.of(Month.JANUARY, 1);

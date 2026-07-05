@@ -60,6 +60,207 @@
      public Holder<Biome> getBiome(final BlockPos pos) {
          int absX = pos.getX() - 2;
          int absY = pos.getY() - 2;
+@@ -38,29 +_,177 @@
+         double fractX = (absX & 3) / 4.0;
+         double fractY = (absY & 3) / 4.0;
+         double fractZ = (absZ & 3) / 4.0;
+-        int minI = 0;
+-        double minFiddledDistance = Double.POSITIVE_INFINITY;
+-
+-        for (int i = 0; i < 8; i++) {
+-            boolean xEven = (i & 4) == 0;
+-            boolean yEven = (i & 2) == 0;
+-            boolean zEven = (i & 1) == 0;
+-            int cornerX = xEven ? parentX : parentX + 1;
+-            int cornerY = yEven ? parentY : parentY + 1;
+-            int cornerZ = zEven ? parentZ : parentZ + 1;
+-            double distanceX = xEven ? fractX : fractX - 1.0;
+-            double distanceY = yEven ? fractY : fractY - 1.0;
+-            double distanceZ = zEven ? fractZ : fractZ - 1.0;
+-            double next = getFiddledDistance(this.biomeZoomSeed, cornerX, cornerY, cornerZ, distanceX, distanceY, distanceZ);
+-            if (minFiddledDistance > next) {
+-                minI = i;
+-                minFiddledDistance = next;
+-            }
+-        }
+-
+-        int biomeX = (minI & 4) == 0 ? parentX : parentX + 1;
+-        int biomeY = (minI & 2) == 0 ? parentY : parentY + 1;
+-        int biomeZ = (minI & 1) == 0 ? parentZ : parentZ + 1;
++        // Gale start - Local code optimization - BiomeManager.getBiome()
++        double minFiddledDistance;
++        double next;
++
++        int parentXPlus1 = parentX + 1;
++        int parentYPlus1 = parentY + 1;
++        int parentZPlus1 = parentZ + 1;
++        double fractXMinus1 = fractX - 1.0;
++        double fractYMinus1 = fractY - 1.0;
++        double fractZMinus1 = fractZ - 1.0;
++        int biomeX = parentX;
++        int biomeY = parentY;
++        int biomeZ = parentZ;
++        long seed = this.biomeZoomSeed;
++        long rvalX = LinearCongruentialGenerator.next(seed, parentX);
++        long rvalXPlus1 = LinearCongruentialGenerator.next(seed, parentXPlus1);
++        long rvalXY = LinearCongruentialGenerator.next(rvalX, parentY);
++        long rvalXYPlus1 = LinearCongruentialGenerator.next(rvalX, parentYPlus1);
++        long rvalXPlus1Y = LinearCongruentialGenerator.next(rvalXPlus1, parentY);
++        long rvalXPlus1YPlus1 = LinearCongruentialGenerator.next(rvalXPlus1, parentYPlus1);
++        // (0,0,0)
++        {
++            long rval = rvalXY;
++            rval = LinearCongruentialGenerator.next(rval, parentZ);
++            rval = LinearCongruentialGenerator.next(rval, parentX);
++            rval = LinearCongruentialGenerator.next(rval, parentY);
++            rval = LinearCongruentialGenerator.next(rval, parentZ);
++            double fiddleX = getFiddle(rval);
++            rval = LinearCongruentialGenerator.next(rval, seed);
++            double fiddleY = getFiddle(rval);
++            rval = LinearCongruentialGenerator.next(rval, seed);
++            double fiddleZ = getFiddle(rval);
++            minFiddledDistance = Mth.square(fractZ + fiddleZ) + Mth.square(fractY + fiddleY) + Mth.square(fractX + fiddleX);
++        }
++        // (0,0,1)
++        {
++            long rval = rvalXY;
++            rval = LinearCongruentialGenerator.next(rval, parentZPlus1);
++            rval = LinearCongruentialGenerator.next(rval, parentX);
++            rval = LinearCongruentialGenerator.next(rval, parentY);
++            rval = LinearCongruentialGenerator.next(rval, parentZPlus1);
++            double fiddleX = getFiddle(rval);
++            rval = LinearCongruentialGenerator.next(rval, seed);
++            double fiddleY = getFiddle(rval);
++            rval = LinearCongruentialGenerator.next(rval, seed);
++            double fiddleZ = getFiddle(rval);
++            next = Mth.square(fractZMinus1 + fiddleZ) + Mth.square(fractY + fiddleY) + Mth.square(fractX + fiddleX);
++        }
++        if (minFiddledDistance > next) {
++            biomeZ = parentZPlus1;
++            minFiddledDistance = next;
++        }
++        // (0,1,0)
++        {
++            long rval = rvalXYPlus1;
++            rval = LinearCongruentialGenerator.next(rval, parentZ);
++            rval = LinearCongruentialGenerator.next(rval, parentX);
++            rval = LinearCongruentialGenerator.next(rval, parentYPlus1);
++            rval = LinearCongruentialGenerator.next(rval, parentZ);
++            double fiddleX = getFiddle(rval);
++            rval = LinearCongruentialGenerator.next(rval, seed);
++            double fiddleY = getFiddle(rval);
++            rval = LinearCongruentialGenerator.next(rval, seed);
++            double fiddleZ = getFiddle(rval);
++            next = Mth.square(fractZ + fiddleZ) + Mth.square(fractYMinus1 + fiddleY) + Mth.square(fractX + fiddleX);
++        }
++        if (minFiddledDistance > next) {
++            biomeY = parentYPlus1;
++            biomeZ = parentZ;
++            minFiddledDistance = next;
++        }
++        // (0,1,1)
++        {
++            long rval = rvalXYPlus1;
++            rval = LinearCongruentialGenerator.next(rval, parentZPlus1);
++            rval = LinearCongruentialGenerator.next(rval, parentX);
++            rval = LinearCongruentialGenerator.next(rval, parentYPlus1);
++            rval = LinearCongruentialGenerator.next(rval, parentZPlus1);
++            double fiddleX = getFiddle(rval);
++            rval = LinearCongruentialGenerator.next(rval, seed);
++            double fiddleY = getFiddle(rval);
++            rval = LinearCongruentialGenerator.next(rval, seed);
++            double fiddleZ = getFiddle(rval);
++            next = Mth.square(fractZMinus1 + fiddleZ) + Mth.square(fractYMinus1 + fiddleY) + Mth.square(fractX + fiddleX);
++        }
++        if (minFiddledDistance > next) {
++            biomeX = parentX;
++            biomeY = parentYPlus1;
++            biomeZ = parentZPlus1;
++            minFiddledDistance = next;
++        }
++        // (1,0,0)
++        {
++            long rval = rvalXPlus1Y;
++            rval = LinearCongruentialGenerator.next(rval, parentZ);
++            rval = LinearCongruentialGenerator.next(rval, parentXPlus1);
++            rval = LinearCongruentialGenerator.next(rval, parentY);
++            rval = LinearCongruentialGenerator.next(rval, parentZ);
++            double fiddleX = getFiddle(rval);
++            rval = LinearCongruentialGenerator.next(rval, seed);
++            double fiddleY = getFiddle(rval);
++            rval = LinearCongruentialGenerator.next(rval, seed);
++            double fiddleZ = getFiddle(rval);
++            next = Mth.square(fractZ + fiddleZ) + Mth.square(fractY + fiddleY) + Mth.square(fractXMinus1 + fiddleX);
++        }
++        if (minFiddledDistance > next) {
++            biomeX = parentXPlus1;
++            biomeY = parentY;
++            biomeZ = parentZ;
++            minFiddledDistance = next;
++        }
++        // (1,0,1)
++        {
++            long rval = rvalXPlus1Y;
++            rval = LinearCongruentialGenerator.next(rval, parentZPlus1);
++            rval = LinearCongruentialGenerator.next(rval, parentXPlus1);
++            rval = LinearCongruentialGenerator.next(rval, parentY);
++            rval = LinearCongruentialGenerator.next(rval, parentZPlus1);
++            double fiddleX = getFiddle(rval);
++            rval = LinearCongruentialGenerator.next(rval, seed);
++            double fiddleY = getFiddle(rval);
++            rval = LinearCongruentialGenerator.next(rval, seed);
++            double fiddleZ = getFiddle(rval);
++            next = Mth.square(fractZMinus1 + fiddleZ) + Mth.square(fractY + fiddleY) + Mth.square(fractXMinus1 + fiddleX);
++        }
++        if (minFiddledDistance > next) {
++            biomeX = parentXPlus1;
++            biomeY = parentY;
++            biomeZ = parentZPlus1;
++            minFiddledDistance = next;
++        }
++        // (1,1,0)
++        {
++            long rval = rvalXPlus1YPlus1;
++            rval = LinearCongruentialGenerator.next(rval, parentZ);
++            rval = LinearCongruentialGenerator.next(rval, parentXPlus1);
++            rval = LinearCongruentialGenerator.next(rval, parentYPlus1);
++            rval = LinearCongruentialGenerator.next(rval, parentZ);
++            double fiddleX = getFiddle(rval);
++            rval = LinearCongruentialGenerator.next(rval, seed);
++            double fiddleY = getFiddle(rval);
++            rval = LinearCongruentialGenerator.next(rval, seed);
++            double fiddleZ = getFiddle(rval);
++            next = Mth.square(fractZ + fiddleZ) + Mth.square(fractYMinus1 + fiddleY) + Mth.square(fractXMinus1 + fiddleX);
++        }
++        if (minFiddledDistance > next) {
++            biomeX = parentXPlus1;
++            biomeY = parentYPlus1;
++            biomeZ = parentZ;
++            minFiddledDistance = next;
++        }
++        // (1,1,1)
++        {
++            long rval = rvalXPlus1YPlus1;
++            rval = LinearCongruentialGenerator.next(rval, parentZPlus1);
++            rval = LinearCongruentialGenerator.next(rval, parentXPlus1);
++            rval = LinearCongruentialGenerator.next(rval, parentYPlus1);
++            rval = LinearCongruentialGenerator.next(rval, parentZPlus1);
++            double fiddleX = getFiddle(rval);
++            rval = LinearCongruentialGenerator.next(rval, seed);
++            double fiddleY = getFiddle(rval);
++            rval = LinearCongruentialGenerator.next(rval, seed);
++            double fiddleZ = getFiddle(rval);
++            next = Mth.square(fractZMinus1 + fiddleZ) + Mth.square(fractYMinus1 + fiddleY) + Mth.square(fractXMinus1 + fiddleX);
++        }
++        if (minFiddledDistance > next) {
++            biomeX = parentXPlus1;
++            biomeY = parentYPlus1;
++            biomeZ = parentZPlus1;
++        }
++        // Gale end - Local code optimization - BiomeManager.getBiome()
+         return this.noiseBiomeSource.getNoiseBiome(biomeX, biomeY, biomeZ);
+     }
+ 
 @@ -101,7 +_,20 @@
      }
  
