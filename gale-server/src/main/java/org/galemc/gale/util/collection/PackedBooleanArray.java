@@ -32,7 +32,9 @@ public class PackedBooleanArray {
     }
 
     public void clear() {
-        this.array = EmptyArrays.LONG;
+        long[] a = this.array;
+        if (a.length > 0) {
+            java.util.Arrays.fill(a, 0L);
     }
 
     public static PackedBooleanArray createEmpty() {
