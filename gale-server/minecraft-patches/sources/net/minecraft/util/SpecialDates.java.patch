@@ -1,6 +1,6 @@
 --- a/net/minecraft/util/SpecialDates.java
 +++ b/net/minecraft/util/SpecialDates.java
-@@ -12,13 +_,35 @@
+@@ -12,13 +_,39 @@
      );
      public static final MonthDay CHRISTMAS = MonthDay.of(Month.DECEMBER, 24);
      public static final MonthDay NEW_YEAR = MonthDay.of(Month.JANUARY, 1);
@@ -23,13 +23,17 @@
 +            java.time.LocalDate today = java.time.LocalDate.now(zone);
 +            int year = today.getYear();
 +            java.time.LocalDate nov1 = java.time.LocalDate.of(year, 11, 1);
++            java.time.LocalDate oct31 = java.time.LocalDate.of(year, 10, 31);
 +            if (!today.isBefore(nov1)) {
 +                nov1 = nov1.plusYears(1);
++                oct31 = oct31.plusYears(1);
 +            }
 +            gale$cache_isHalloween_nextEnd = nov1.atStartOfDay(zone)
 +                .toInstant()
 +                .toEpochMilli();
-+            gale$cache_isHalloween_nextStart = gale$cache_isHalloween_nextEnd - 86_400_000;
++            gale$cache_isHalloween_nextStart = oct31.atStartOfDay(zone)
++                .toInstant()
++                .toEpochMilli();
 +        }
 +
 +        return currentEpochMillis >= gale$cache_isHalloween_nextStart && currentEpochMillis < gale$cache_isHalloween_nextEnd;
