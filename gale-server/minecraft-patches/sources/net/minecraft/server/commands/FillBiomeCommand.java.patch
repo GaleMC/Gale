@@ -1,0 +1,10 @@
+--- a/net/minecraft/server/commands/FillBiomeCommand.java
++++ b/net/minecraft/server/commands/FillBiomeCommand.java
+@@ -157,6 +_,7 @@
+                 region.maxZ()
+             )
+         );
++        level.getBiomeManager().invalidateBiomeCache(); // Gale - Cache - BiomeManager.getBiome() - Invalidate cache on writes
+         return Either.left(changedCount.intValue());
+     }
+ 

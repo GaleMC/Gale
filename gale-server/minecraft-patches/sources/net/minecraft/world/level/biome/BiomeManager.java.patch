@@ -1,12 +1,14 @@
 --- a/net/minecraft/world/level/biome/BiomeManager.java
 +++ b/net/minecraft/world/level/biome/BiomeManager.java
-@@ -14,8 +_,26 @@
+@@ -14,8 +_,30 @@
      private static final int ZOOM_MASK = 3;
      private final BiomeManager.NoiseBiomeSource noiseBiomeSource;
      private final long biomeZoomSeed;
 +    // Gale start - Cache - BiomeManager.getBiome()
 +    private final long[] biomeCacheKeys;
++    private final int[] biomeCacheVersions;
 +    private final Holder<Biome>[] biomeCacheValues;
++    private int cacheVersion;
 +    // Gale end - Cache - BiomeManager.getBiome()
  
      public BiomeManager(final BiomeManager.NoiseBiomeSource noiseBiomeSource, final long seed) {
@@ -16,52 +18,48 @@
 +
 +    public BiomeManager(final BiomeManager.NoiseBiomeSource noiseBiomeSource, final long seed, boolean initializeCache) {
 +        if (initializeCache) {
-+            this.biomeCacheKeys = new long[1 << 18];
-+            java.util.Arrays.fill(this.biomeCacheKeys, Long.MIN_VALUE);
-+            this.biomeCacheValues = new Holder[1 << 18];
++            this.biomeCacheKeys = new long[1 << 15];
++            java.util.Arrays.fill(this.biomeCacheKeys, Long.MAX_VALUE); // Long.MAX_VALUE is not a possible BlockPos packed long
++            this.biomeCacheVersions = new int[1 << 15];
++            this.biomeCacheValues = new Holder[1 << 15];
 +        } else {
 +            this.biomeCacheKeys = null;
++            this.biomeCacheVersions = null;
 +            this.biomeCacheValues = null;
 +        }
 +        // Gale end - Cache - BiomeManager.getBiome()
          this.noiseBiomeSource = noiseBiomeSource;
          this.biomeZoomSeed = seed;
      }
-@@ -35,6 +_,34 @@
-         int parentX = absX >> 2;
-         int parentY = absY >> 2;
-         int parentZ = absZ >> 2;
-+        // Gale start - Cache - BiomeManager.getBiome()
-+        return this.getBiome(absX, absY, absZ, parentX, parentY, parentZ);
-+    }
-+
+@@ -28,6 +_,28 @@
+         return new BiomeManager(biomeSource, this.biomeZoomSeed);
+     }
+ 
++    // Gale start - Cache - BiomeManager.getBiome()
 +    public Holder<Biome> getBiomeCached(final BlockPos pos) {
-+        int absX = pos.getX() - 2;
-+        int absY = pos.getY() - 2;
-+        int absZ = pos.getZ() - 2;
-+        int parentX = absX >> 2;
-+        int parentY = absY >> 2;
-+        int parentZ = absZ >> 2;
-+
 +        // Look up in cache
-+        long cacheKey = BlockPos.asLong(parentX, parentY, parentZ);
-+        int cacheIndex = ((int) it.unimi.dsi.fastutil.HashCommon.mix(cacheKey)) & ((1 << 18) - 1);
-+        if (this.biomeCacheKeys[cacheIndex] == cacheKey) {
++        long cacheKey = pos.asLong();
++        int cacheIndex = ((int) it.unimi.dsi.fastutil.HashCommon.mix(cacheKey)) & ((1 << 15) - 1);
++        if (this.biomeCacheKeys[cacheIndex] == cacheKey && this.biomeCacheVersions[cacheIndex] == this.cacheVersion) {
 +            return this.biomeCacheValues[cacheIndex];
 +        }
 +
 +        // Compute and store in cache
-+        Holder<Biome> computedBiome = this.getBiome(absX, absY, absZ, parentX, parentY, parentZ);
++        Holder<Biome> computedBiome = this.getBiome(pos);
 +        this.biomeCacheKeys[cacheIndex] = cacheKey;
++        this.biomeCacheVersions[cacheIndex] = this.cacheVersion;
 +        this.biomeCacheValues[cacheIndex] = computedBiome;
 +        return computedBiome;
 +    }
 +
-+    public Holder<Biome> getBiome(final int absX, final int absY, final int absZ, final int parentX, final int parentY, final int parentZ) {
-+        // Gale end - Cache - BiomeManager.getBiome()
-         double fractX = (absX & 3) / 4.0;
-         double fractY = (absY & 3) / 4.0;
-         double fractZ = (absZ & 3) / 4.0;
++    public void invalidateBiomeCache() {
++        this.cacheVersion++;
++    }
++    // Gale end - Cache - BiomeManager.getBiome()
++
+     public Holder<Biome> getBiome(final BlockPos pos) {
+         int absX = pos.getX() - 2;
+         int absY = pos.getY() - 2;
 @@ -101,7 +_,20 @@
      }
  
