@@ -38,7 +38,7 @@ public class BlockStateIdMapper implements IdMap<BlockState> {
 
     @Override
     public final @Nullable BlockState byId(final int id) {
-        return this.idToT.get(id);
+        return id >= 0 && id < this.idToT.size() ? this.idToT.get(id) : null;
     }
 
     @Override
