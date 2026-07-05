@@ -1,0 +1,68 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: omero <omero@example.com>
+Date: Sun, 5 Jul 2026 12:00:00 +0300
+Subject: [PATCH] Cache biome lookups
+
+License: MIT (https://opensource.org/licenses/MIT)
+Gale - https://galemc.org
+
+Cache the last queried biome position and result in BiomeManager.
+Biome queries often repeat for the same position (e.g., mob AI
+checking the same block multiple times per tick). This avoids
+redundant noise-based biome interpolation and chunk lookups.
+
+diff --git a/src/main/java/net/minecraft/world/level/biome/BiomeManager.java b/src/main/java/net/minecraft/world/level/biome/BiomeManager.java
+index 7cf5859de0e297141b3f7b6a18d3063c081763a5..b474b62aaa8e8b1f4a23df6e4eece8eec29c1564 100644
+--- a/src/main/java/net/minecraft/world/level/biome/BiomeManager.java
++++ b/src/main/java/net/minecraft/world/level/biome/BiomeManager.java
+@@ -15,6 +15,13 @@ public class BiomeManager {
+     private final BiomeManager.NoiseBiomeSource noiseBiomeSource;
+     private final long biomeZoomSeed;
+
++    // Gale start - cache biome lookups
++    private int lastBiomeX = Integer.MIN_VALUE;
++    private int lastBiomeY = Integer.MIN_VALUE;
++    private int lastBiomeZ = Integer.MIN_VALUE;
++    private Holder<Biome> lastBiomeResult;
++    // Gale end - cache biome lookups
++
+     public BiomeManager(final BiomeManager.NoiseBiomeSource noiseBiomeSource, final long seed) {
+         this.noiseBiomeSource = noiseBiomeSource;
+         this.biomeZoomSeed = seed;
+@@ -29,8 +36,16 @@ public class BiomeManager {
+     }
+
+     public Holder<Biome> getBiome(final BlockPos pos) {
+-        int absX = pos.getX() - 2;
+-        int absY = pos.getY() - 2;
+-        int absZ = pos.getZ() - 2;
++        // Gale start - cache biome lookups
++        final int x = pos.getX();
++        final int y = pos.getY();
++        final int z = pos.getZ();
++        if (x == this.lastBiomeX && y == this.lastBiomeY && z == this.lastBiomeZ) {
++            return this.lastBiomeResult;
++        }
++        // Gale end - cache biome lookups
++        int absX = x - 2;
++        int absY = y - 2;
++        int absZ = z - 2;
+         int parentX = absX >> 2;
+         int parentY = absY >> 2;
+         int parentZ = absZ >> 2;
+@@ -61,7 +76,14 @@ public class BiomeManager {
+         int biomeX = (minI & 4) == 0 ? parentX : parentX + 1;
+         int biomeY = (minI & 2) == 0 ? parentY : parentY + 1;
+         int biomeZ = (minI & 1) == 0 ? parentZ : parentZ + 1;
+-        return this.noiseBiomeSource.getNoiseBiome(biomeX, biomeY, biomeZ);
++        // Gale start - cache biome lookups
++        final Holder<Biome> result = this.noiseBiomeSource.getNoiseBiome(biomeX, biomeY, biomeZ);
++        this.lastBiomeX = x;
++        this.lastBiomeY = y;
++        this.lastBiomeZ = z;
++        this.lastBiomeResult = result;
++        return result;
++        // Gale end - cache biome lookups
+     }
+
+     public Holder<Biome> getNoiseBiomeAtPosition(final double x, final double y, final double z) {
