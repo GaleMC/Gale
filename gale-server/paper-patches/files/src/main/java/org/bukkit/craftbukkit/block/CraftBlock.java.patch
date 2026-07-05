@@ -1,0 +1,11 @@
+--- a/src/main/java/org/bukkit/craftbukkit/block/CraftBlock.java
++++ b/src/main/java/org/bukkit/craftbukkit/block/CraftBlock.java
+@@ -304,7 +_,7 @@
+ 
+     @Override
+     public double getTemperature() {
+-        return this.level.getBiome(this.position).value().getTemperature(this.position, this.level.getSeaLevel());
++        return this.level.getBiomeWithoutCache(this.position).value().getTemperature(this.position, this.level.getSeaLevel()); // Gale - Cache - BiomeManager.getBiome() - Don't cache Bukkit API lookups
+     }
+ 
+     @Override

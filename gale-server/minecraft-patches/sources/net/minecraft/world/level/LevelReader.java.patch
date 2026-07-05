@@ -1,0 +1,15 @@
+--- a/net/minecraft/world/level/LevelReader.java
++++ b/net/minecraft/world/level/LevelReader.java
+@@ -56,6 +_,12 @@
+         return this.getBiomeManager().getBiome(pos);
+     }
+ 
++    // Gale start - Cache - BiomeManager.getBiome() - Allow some lookups to not use cache
++    default Holder<Biome> getBiomeWithoutCache(final BlockPos pos) {
++        return this.getBiomeManager().getBiome(pos);
++    }
++    // Gale end - Cache - BiomeManager.getBiome() - Allow some lookups to not use cache
++
+     default Stream<BlockState> getBlockStatesIfLoaded(final AABB box) {
+         int x0 = Mth.floor(box.minX);
+         int x1 = Mth.floor(box.maxX);

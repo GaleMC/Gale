@@ -44,6 +44,15 @@
          this.generator = generator;
          this.world = new CraftWorld((ServerLevel) this, worldKey, biomeProvider, environment);
  
+@@ -867,7 +_,7 @@
+         this.dimension = dimension;
+         this.isClientSide = isClientSide;
+         this.thread = Thread.currentThread();
+-        this.biomeManager = new BiomeManager(this, biomeZoomSeed);
++        this.biomeManager = new BiomeManager(this, biomeZoomSeed, true); // Gale - Cache - BiomeManager.getBiome() - Use BiomeManager with cache
+         this.isDebug = isDebug;
+         this.neighborUpdater = new CollectingNeighborUpdater(this, maxChainedNeighborUpdates);
+         this.registryAccess = registryAccess;
 @@ -900,10 +_,12 @@
          for (int i = 0, len = entities.size(); i < len; ++i) {
              Entity entity = entities.get(i);
@@ -83,3 +92,17 @@
          this.tickingBlockEntities = true;
          if (!this.pendingBlockEntityTickers.isEmpty()) {
              this.blockEntityTickers.addAll(this.pendingBlockEntityTickers);
+@@ -2128,6 +_,13 @@
+     public BiomeManager getBiomeManager() {
+         return this.biomeManager;
+     }
++
++    // Gale start - Cache - BiomeManager.getBiome()
++    @Override
++    public Holder<Biome> getBiome(final BlockPos pos) {
++        return this.getBiomeManager().getBiomeCached(pos);
++    }
++    // Gale end - Cache - BiomeManager.getBiome()
+ 
+     public final boolean isDebug() {
+         return this.isDebug;

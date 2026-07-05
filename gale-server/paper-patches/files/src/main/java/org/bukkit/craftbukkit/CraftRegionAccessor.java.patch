@@ -1,0 +1,11 @@
+--- a/src/main/java/org/bukkit/craftbukkit/CraftRegionAccessor.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftRegionAccessor.java
+@@ -77,7 +_,7 @@
+ 
+     @Override
+     public Biome getComputedBiome(int x, int y, int z) {
+-        return CraftBiome.minecraftHolderToBukkit(this.getHandle().getBiome(new BlockPos(x, y, z)));
++        return CraftBiome.minecraftHolderToBukkit(this.getHandle().getBiomeWithoutCache(new BlockPos(x, y, z))); // Gale - Cache - BiomeManager.getBiome() - Don't cache Bukkit API lookups
+     }
+ 
+     @Override
