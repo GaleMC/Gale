@@ -95,9 +95,12 @@
          entity.totalEntityAge++; // Paper - age-like counter for all entities
          profiler.push(entity.typeHolder()::getRegisteredName);
          profiler.incrementCounter("tickNonPassenger");
-@@ -1423,7 +_,7 @@
+@@ -1421,9 +_,9 @@
+     private void tickPassenger(final Entity vehicle, final Entity entity, final boolean isActive) { // Paper - EAR 2
+         if (entity.isRemoved() || entity.getVehicle() != vehicle) {
              entity.stopRiding();
-         } else if (entity instanceof Player || this.entityTickList.contains(entity)) {
+-        } else if (entity instanceof Player || this.entityTickList.contains(entity)) {
++        } else if (entity instanceof Player || entity.gale$eventDriven_isInTickList) { // Gale - Event-driven - Entity.isInTickList
              entity.setOldPosAndRot();
 -            entity.tickCount++;
 +            entity.setTickCount(entity.tickCount + 1); // Gale - Event-driven - Cat.canRemoveWhenFarAway, Ocelot.canRemoveWhenFarAway

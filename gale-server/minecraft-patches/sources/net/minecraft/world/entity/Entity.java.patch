@@ -194,7 +194,7 @@
          // CraftBukkit start - block invalid bounding boxes
          double minX = bb.minX,
                  minY = bb.minY,
-@@ -4718,13 +_,35 @@
+@@ -4718,13 +_,43 @@
      }
  
      public int countPlayerPassengers() {
@@ -231,6 +231,14 @@
 +        return this.gale$eventDriven_playerPassengerCount == 0;
 +    }
 +    // Gale end - Event-driven - Entity.playerPassengerCount
++
++    // Gale start - Event-driven - Entity.isInTickList
++    public boolean gale$eventDriven_isInTickList;
++
++    public void gale$eventDriven_isInTickList_set(boolean newValue) {
++        this.gale$eventDriven_isInTickList = newValue;
++    }
++    // Gale end - Event-driven - Entity.isInTickList
  
      public Entity getRootVehicle() {
          Entity result = this;

@@ -1,0 +1,16 @@
+--- a/net/minecraft/world/level/entity/EntityTickList.java
++++ b/net/minecraft/world/level/entity/EntityTickList.java
+@@ -18,11 +_,13 @@
+     public void add(final Entity entity) {
+         this.ensureActiveIsNotIterated();
+         this.entities.add(entity); // Paper - rewrite chunk system
++        entity.gale$eventDriven_isInTickList_set(true); // Gale - Event-driven - Entity.isInTickList
+     }
+ 
+     public void remove(final Entity entity) {
+         this.ensureActiveIsNotIterated();
+         this.entities.remove(entity); // Paper - rewrite chunk system
++        entity.gale$eventDriven_isInTickList_set(false); // Gale - Event-driven - Entity.isInTickList
+     }
+ 
+     public boolean contains(final Entity entity) {

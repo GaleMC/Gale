@@ -55,7 +55,7 @@
              return toEquip;
          } else {
              return ItemStack.EMPTY;
-@@ -780,38 +_,187 @@
+@@ -780,38 +_,198 @@
          return true;
      }
  
@@ -206,12 +206,21 @@
 +    }
 +
 +    private byte gale$eventDriven_checkDespawnPlayerTrackingMode_compute() {
-+        if (this.gale$eventDriven_mustDespawnBecauseOfPeacefulDifficulty || this.gale$eventDriven_isPersistent || this.level().gale$eventDriven_affectsSpawningSelectorPlayerCount == 0) {
++        if (!this.gale$eventDriven_isInTickList || this.gale$eventDriven_mustDespawnBecauseOfPeacefulDifficulty || this.gale$eventDriven_isPersistent || this.level().gale$eventDriven_affectsSpawningSelectorPlayerCount == 0) {
 +            return 0;
 +        } else if (!this.gale$canRemoveWhenFarAway()) {
 +            return 1;
 +        } else {
 +            return 2;
++        }
++    }
++
++    @Override
++    public void gale$eventDriven_isInTickList_set(boolean newValue) {
++        boolean oldValue = this.gale$eventDriven_isInTickList;
++        if (oldValue != newValue) {
++            super.gale$eventDriven_isInTickList_set(newValue);
++            this.gale$eventDriven_checkDespawnPlayerTrackingMode_update();
 +        }
 +    }
 +    // Gale end - Optimize Mob.checkDespawn
