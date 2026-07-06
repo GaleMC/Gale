@@ -23,7 +23,7 @@
          input.getInt("EggLayTime").ifPresent(time -> this.eggTime = time);
          VariantUtils.readVariant(input, Registries.CHICKEN_VARIANT).ifPresent(this::setVariant);
          input.read("sound_variant", ResourceKey.codec(Registries.CHICKEN_SOUND_VARIANT))
-@@ -274,6 +_,18 @@
+@@ -274,6 +_,22 @@
  
      @Override
      public boolean removeWhenFarAway(final double distSqr) {
@@ -34,7 +34,11 @@
 +    private boolean gale$eventDriven_canRemoveWhenFarAway;
 +
 +    public void gale$eventDriven_canRemoveWhenFarAway_update() {
-+        this.gale$eventDriven_canRemoveWhenFarAway = this.gale$eventDriven_canRemoveWhenFarAway_compute();
++        boolean newValue = this.gale$eventDriven_canRemoveWhenFarAway_compute();
++        if (this.gale$eventDriven_canRemoveWhenFarAway != newValue) {
++            this.gale$eventDriven_canRemoveWhenFarAway = newValue;
++            this.gale$eventDriven_canRemoveWhenFarAway_postUpdate();
++        }
 +    }
 +
 +    private boolean gale$eventDriven_canRemoveWhenFarAway_compute() {

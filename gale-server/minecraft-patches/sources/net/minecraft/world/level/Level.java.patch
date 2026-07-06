@@ -8,19 +8,31 @@
  
      public static @Nullable BlockPos lastPhysicsProblem; // Spigot
      public final Map<ServerExplosion.CacheKey, Float> explosionDensityCache = new java.util.HashMap<>(); // Paper - Optimize explosions
-@@ -238,6 +_,18 @@
+@@ -238,6 +_,30 @@
          return ret;
      }
  
 +    // Gale start - Event-driven - Level.affectsSpawningSelectorPlayerCount
-+    public int gale$eventDriven_affectsSpawningSelectorPlayerCount;
++    public int gale$eventDriven_affectsSpawningSelectorPlayerCount; // Gale - Event-driven - Mob.checkDespawnPlayerTrackingMode - TODO Watch for new writes
 +
 +    public void gale$eventDriven_affectsSpawningSelectorPlayerCount_increment() {
-+        this.gale$eventDriven_affectsSpawningSelectorPlayerCount++;
++        if (this.gale$eventDriven_affectsSpawningSelectorPlayerCount++ == 0) {
++            // Gale start - Event-driven - Mob.checkDespawnPlayerTrackingMode
++            for (Entity entity : this.getEntities().getAll()) {
++                if (entity instanceof net.minecraft.world.entity.Mob mob) mob.gale$eventDriven_checkDespawnPlayerTrackingMode_update();
++            }
++            // Gale end - Event-driven - Mob.checkDespawnPlayerTrackingMode
++        }
 +    }
 +
 +    public void gale$eventDriven_affectsSpawningSelectorPlayerCount_decrement() {
-+        this.gale$eventDriven_affectsSpawningSelectorPlayerCount--;
++        if (--this.gale$eventDriven_affectsSpawningSelectorPlayerCount == 0) {
++            // Gale start - Event-driven - Mob.checkDespawnPlayerTrackingMode
++            for (Entity entity : this.getEntities().getAll()) {
++                if (entity instanceof net.minecraft.world.entity.Mob mob) mob.gale$eventDriven_checkDespawnPlayerTrackingMode_update();
++            }
++            // Gale end - Event-driven - Mob.checkDespawnPlayerTrackingMode
++        }
 +    }
 +    // Gale end - Event-driven - Level.affectsSpawningSelectorPlayerCount
 +

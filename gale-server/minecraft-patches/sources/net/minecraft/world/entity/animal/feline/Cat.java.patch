@@ -8,7 +8,7 @@
      }
  
      @Override
-@@ -467,12 +_,34 @@
+@@ -467,12 +_,38 @@
  
      @Override
      public boolean removeWhenFarAway(final double distSqr) {
@@ -20,7 +20,11 @@
 +    private boolean gale$eventDriven_canRemoveWhenFarAway;
 +
 +    public void gale$eventDriven_canRemoveWhenFarAway_update() {
-+        this.gale$eventDriven_canRemoveWhenFarAway = this.gale$eventDriven_canRemoveWhenFarAway_compute();
++        boolean newValue = this.gale$eventDriven_canRemoveWhenFarAway_compute();
++        if (this.gale$eventDriven_canRemoveWhenFarAway != newValue) {
++            this.gale$eventDriven_canRemoveWhenFarAway = newValue;
++            this.gale$eventDriven_canRemoveWhenFarAway_postUpdate();
++        }
 +    }
 +
 +    @Override

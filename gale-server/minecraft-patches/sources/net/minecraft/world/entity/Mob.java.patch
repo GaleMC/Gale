@@ -19,10 +19,11 @@
  
      protected Mob(final EntityType<? extends Mob> type, final Level level) {
          super(type, level);
-@@ -169,6 +_,8 @@
+@@ -169,6 +_,9 @@
          if (level instanceof ServerLevel) {
              this.registerGoals();
          }
++        this.gale$eventDriven_checkDespawnPlayerTrackingMode_update(); // Gale - Event-driven - Mob.checkDespawnPlayerTrackingMode
 +        this.gale$eventDriven_despawnRanges_and_despawnRangeShape_update(); // Gale - Event-driven - Mob.despawnRanges, Mob.despawnRangeShape
 +        this.gale$eventDriven_mustDespawnBecauseOfPeacefulDifficulty_update(); // Gale - Event-driven - Mob.mustDespawnBecauseOfPeacefulDifficulty
      }
@@ -54,7 +55,7 @@
              return toEquip;
          } else {
              return ItemStack.EMPTY;
-@@ -780,38 +_,147 @@
+@@ -780,38 +_,187 @@
          return true;
      }
  
@@ -81,8 +82,12 @@
 +     * returns false for any given distance, and this method returns true if {@link #removeWhenFarAway(double)}
 +     * may currently return true or false.
 +     */
-+    public boolean gale$canRemoveWhenFarAway() {
++    public boolean gale$canRemoveWhenFarAway() { // Gale - Event-driven - Mob.checkDespawnPlayerTrackingMode - TODO Watch for changes in return value
 +        return this.removeWhenFarAway(-1);
++    }
++
++    public void gale$eventDriven_canRemoveWhenFarAway_postUpdate() {
++        this.gale$eventDriven_checkDespawnPlayerTrackingMode_update(); // Gale - Event-driven - Mob.checkDespawnPlayerTrackingMode
 +    }
 +
 +    public boolean gale$eventDriven_requiresCustomPersistence_compute() { // Gale - Event-driven - Mob.requiresCustomPersistence
@@ -136,10 +141,14 @@
 +    // Gale end - Event-driven - Mob.shouldDespawnInPeaceful
 +
 +    // Gale start - Event-driven - Mob.mustDespawnBecauseOfPeacefulDifficulty
-+    protected boolean gale$eventDriven_mustDespawnBecauseOfPeacefulDifficulty;
++    protected boolean gale$eventDriven_mustDespawnBecauseOfPeacefulDifficulty; // Gale - Event-driven - Mob.checkDespawnPlayerTrackingMode - TODO Watch for new writes
 +
 +    public void gale$eventDriven_mustDespawnBecauseOfPeacefulDifficulty_update() {
-+        this.gale$eventDriven_mustDespawnBecauseOfPeacefulDifficulty = this.level().getDifficulty() == Difficulty.PEACEFUL && this.shouldDespawnInPeaceful();
++        boolean newValue = this.level().getDifficulty() == Difficulty.PEACEFUL && this.shouldDespawnInPeaceful();
++        if (this.gale$eventDriven_mustDespawnBecauseOfPeacefulDifficulty != newValue) {
++            this.gale$eventDriven_mustDespawnBecauseOfPeacefulDifficulty = newValue;
++            this.gale$eventDriven_checkDespawnPlayerTrackingMode_update(); // Gale - Event-driven - Mob.checkDespawnPlayerTrackingMode
++        }
 +    }
 +
 +    @Override
@@ -169,12 +178,43 @@
 +    // Gale end - Event-driven - Mob.isLeashed
 +
 +    // Gale start - Event-driven - Mob.isPersistent
-+    public boolean gale$eventDriven_isPersistent;
++    public boolean gale$eventDriven_isPersistent; // Gale - Event-driven - Mob.checkDespawnPlayerTrackingMode - TODO Watch for new writes
 +
 +    public void gale$eventDriven_isPersistent_update() {
-+        this.gale$eventDriven_isPersistent = this.persistenceRequired || this.gale$eventDriven_requiresCustomPersistence;
++        boolean newValue = this.persistenceRequired || this.gale$eventDriven_requiresCustomPersistence;
++        if (this.gale$eventDriven_isPersistent != newValue) {
++            this.gale$eventDriven_isPersistent = newValue;
++            this.gale$eventDriven_checkDespawnPlayerTrackingMode_update(); // Gale - Event-driven - Mob.checkDespawnPlayerTrackingMode
++        }
 +    }
 +    // Gale end - Event-driven - Mob.isPersistent
++
++    // Gale start - Optimize Mob.checkDespawn
++    /**
++     * Whether this mob needs to track players for {@link #checkDespawn}:
++     * <ul>
++     *     <li>0 = none</li>
++     *     <li>1 = only for the {@link io.papermc.paper.configuration.WorldConfiguration.Entities.Spawning.DespawnRangePair#soft()} distance</li>
++     *     <li>2 = for both {@link io.papermc.paper.configuration.WorldConfiguration.Entities.Spawning.DespawnRangePair#soft()} and
++     *     {@link io.papermc.paper.configuration.WorldConfiguration.Entities.Spawning.DespawnRangePair#hard()} distances</li>
++     * </ul>
++     */
++    public int gale$eventDriven_checkDespawnPlayerTrackingMode;
++
++    public void gale$eventDriven_checkDespawnPlayerTrackingMode_update() {
++        this.gale$eventDriven_checkDespawnPlayerTrackingMode = this.gale$eventDriven_checkDespawnPlayerTrackingMode_compute();
++    }
++
++    private byte gale$eventDriven_checkDespawnPlayerTrackingMode_compute() {
++        if (this.gale$eventDriven_mustDespawnBecauseOfPeacefulDifficulty || this.gale$eventDriven_isPersistent || this.level().gale$eventDriven_affectsSpawningSelectorPlayerCount == 0) {
++            return 0;
++        } else if (!this.gale$canRemoveWhenFarAway()) {
++            return 1;
++        } else {
++            return 2;
++        }
++    }
++    // Gale end - Optimize Mob.checkDespawn
 +
      @Override
      public void checkDespawn() {
@@ -201,14 +241,15 @@
                  final double distanceSquared = dxSqr + dzSqr + dySqr;
                  // Despawn if hard/soft limit is exceeded
 -                if (despawnRangePair.hard().shouldDespawn(shape, dxSqr, dySqr, dzSqr, dy) && this.removeWhenFarAway(distanceSquared)) {
-+                if (this.gale$canRemoveWhenFarAway() && despawnRangePair.hard().shouldDespawn(shape, dxSqr, dySqr, dzSqr, dy) && this.removeWhenFarAway(distanceSquared)) { // Gale - Optimize Mob.checkDespawn
++                boolean canRemoveWhenFarAway = this.gale$canRemoveWhenFarAway(); // Gale - Optimize Mob.checkDespawn
++                if (canRemoveWhenFarAway && despawnRangePair.hard().shouldDespawn(shape, dxSqr, dySqr, dzSqr, dy) && this.removeWhenFarAway(distanceSquared)) { // Gale - Optimize Mob.checkDespawn
                      this.discard(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
                  }
  
 -                if (despawnRangePair.soft().shouldDespawn(shape, dxSqr, dySqr, dzSqr, dy)) {
 -                    if (this.noActionTime > 600 && this.random.nextInt(800) == 0 && this.removeWhenFarAway(distanceSquared)) {
 +                if (despawnRangePair.soft().shouldDespawn(shape, dxSqr, dySqr, dzSqr, dy)) { // Gale - Optimize Mob.checkDespawn
-+                    if (this.gale$canRemoveWhenFarAway() && this.noActionTime > 600 && this.random.nextInt(800) == 0 && this.removeWhenFarAway(distanceSquared)) {
++                    if (canRemoveWhenFarAway && this.noActionTime > 600 && this.random.nextInt(800) == 0 && this.removeWhenFarAway(distanceSquared)) {
                          this.discard(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
                      }
                  } else {

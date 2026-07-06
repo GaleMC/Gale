@@ -35,7 +35,7 @@
                  if (this.raid != null) {
                      this.raid.addWaveMob(level, this.wave, this, false);
                      if (this.isPatrolLeader()) {
-@@ -242,9 +_,28 @@
+@@ -242,9 +_,32 @@
          return this.getCurrentRaid() == null && super.removeWhenFarAway(distSqr);
      }
  
@@ -51,7 +51,11 @@
 +    private boolean gale$eventDriven_canRemoveWhenFarAway;
 +
 +    public void gale$eventDriven_canRemoveWhenFarAway_update() {
-+        this.gale$eventDriven_canRemoveWhenFarAway = this.gale$eventDriven_canRemoveWhenFarAway_compute();
++        boolean newValue = this.gale$eventDriven_canRemoveWhenFarAway_compute();
++        if (this.gale$eventDriven_canRemoveWhenFarAway != newValue) {
++            this.gale$eventDriven_canRemoveWhenFarAway = newValue;
++            this.gale$eventDriven_canRemoveWhenFarAway_postUpdate();
++        }
 +    }
 +
 +    private boolean gale$eventDriven_canRemoveWhenFarAway_compute() {

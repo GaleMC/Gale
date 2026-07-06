@@ -25,7 +25,7 @@
          this.reassessTrustingGoals();
      }
  
-@@ -136,7 +_,44 @@
+@@ -136,7 +_,48 @@
  
      @Override
      public boolean removeWhenFarAway(final double distSqr) {
@@ -37,7 +37,11 @@
 +    private boolean gale$eventDriven_canRemoveWhenFarAway;
 +
 +    public void gale$eventDriven_canRemoveWhenFarAway_update() {
-+        this.gale$eventDriven_canRemoveWhenFarAway = this.gale$eventDriven_canRemoveWhenFarAway_compute();
++        boolean newValue = this.gale$eventDriven_canRemoveWhenFarAway_compute();
++        if (this.gale$eventDriven_canRemoveWhenFarAway != newValue) {
++            this.gale$eventDriven_canRemoveWhenFarAway = newValue;
++            this.gale$eventDriven_canRemoveWhenFarAway_postUpdate();
++        }
 +    }
 +
 +    @Override
