@@ -62,6 +62,21 @@ public final class BlockMasks {
     public static final int CAN_GLIDE_THROUGH_TAG = 0x800;
 
     /**
+     * {@link BlockTags#DOORS}.
+     */
+    public static final int DOORS_TAG = 0x20;
+
+    /**
+     * {@link BlockTags#ICE}.
+     */
+    public static final int ICE_TAG = 0x40;
+
+    /**
+     * {@link BlockTags#BEDS}.
+     */
+    public static final int BEDS_TAG = 0x80;
+
+    /**
      * {@link #WALLS_TAG} or {@link #FENCE_GATE_CLASS}.
      */
     public static final int WALLS_TAG_OR_FENCE_GATE_CLASS = WALLS_TAG | FENCE_GATE_CLASS;
@@ -83,6 +98,9 @@ public final class BlockMasks {
         i |= state.is(BlockTags.CLIMBABLE) ? CLIMBABLE_TAG : 0;
         i |= state.is(BlockTags.CAULDRONS) ? CAULDRONS_TAG : 0;
         i |= state.is(BlockTags.CAN_GLIDE_THROUGH) ? CAN_GLIDE_THROUGH_TAG : 0;
+        i |= state.is(BlockTags.DOORS) ? DOORS_TAG : 0;
+        i |= state.is(BlockTags.ICE) ? ICE_TAG : 0;
+        i |= state.is(BlockTags.BEDS) ? BEDS_TAG : 0;
         i |= state.getBlock() instanceof PowderSnowBlock ? POWDER_SNOW_CLASS : 0;
         i |= state.getBlock() instanceof FenceGateBlock ? FENCE_GATE_CLASS : 0;
         i |= state.getBlock() instanceof TrapDoorBlock && state.getValue(TrapDoorBlock.OPEN) ? TRAP_DOOR_CLASS_AND_OPEN_PROPERTY_IS_TRUE : 0;
