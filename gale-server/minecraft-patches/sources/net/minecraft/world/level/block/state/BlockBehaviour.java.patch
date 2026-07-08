@@ -14,3 +14,17 @@
  
          private static void initCaches(final VoxelShape shape, final boolean neighbours) {
              ((ca.spottedleaf.moonrise.patches.collisions.shape.CollisionVoxelShape)shape).moonrise$isFullBlock();
+@@ -668,6 +_,13 @@
+         public Holder<Block> typeHolder() {
+             return this.getBlock().builtInRegistryHolder();
+         }
++
++        // Gale start - Faster implementation for subclass - BlockBehaviour.BlockStateBase.is(Block)
++        @Override
++        public boolean is(final Block rawType) {
++            return this.owner == rawType;
++        }
++        // Gale end - Faster implementation for subclass - BlockBehaviour.BlockStateBase.is(Block)
+ 
+         @Deprecated
+         public boolean blocksMotion() {
