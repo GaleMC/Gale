@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/player/Player.java
 +++ b/net/minecraft/world/entity/player/Player.java
-@@ -172,9 +_,54 @@
+@@ -172,9 +_,66 @@
      private Optional<GlobalPos> lastDeathLocation = Optional.empty();
      public @Nullable FishingHook fishing;
      public float hurtDir;
@@ -9,7 +9,7 @@
      public net.kyori.adventure.util.TriState flyingFallDamage = net.kyori.adventure.util.TriState.NOT_SET; // Paper - flying fall damage
  
 +    // Gale start - Event-driven - Player.affectsSpawningSelector
-+    public boolean gale$eventDriven_affectsSpawningSelector; // Gale - Event-driven - Level.affectsSpawningSelectorPlayerCount - TODO Watch for new writes
++    public boolean gale$eventDriven_affectsSpawningSelector; // Gale - Event-driven - Level.affectsSpawningSelectorPlayers - TODO Watch for new writes
 +
 +    public void gale$eventDriven_affectsSpawningSelector_update() {
 +        boolean newValue = net.minecraft.world.entity.EntitySelector.gale$eventDriven_affectsSpawningSelector_compute(this);
@@ -17,9 +17,11 @@
 +            this.gale$eventDriven_affectsSpawningSelector = newValue;
 +            if (this.trackedByLevel != null) {
 +                if (newValue) {
-+                    this.trackedByLevel.gale$eventDriven_affectsSpawningSelectorPlayerCount_increment();
++                    this.trackedByLevel.gale$eventDriven_affectsSpawningSelectorPlayers_add((ServerPlayer) this);
++                    this.gale$eventDriven_affectsSpawningSelector_postStartAffectsSpawningInLevel(this.trackedByLevel);
 +                } else {
-+                    this.trackedByLevel.gale$eventDriven_affectsSpawningSelectorPlayerCount_decrement();
++                    this.trackedByLevel.gale$eventDriven_affectsSpawningSelectorPlayers_remove((ServerPlayer) this);
++                    this.gale$eventDriven_affectsSpawningSelector_postStopAffectsSpawningInLevel(this.trackedByLevel);
 +                }
 +            }
 +        }
@@ -35,7 +37,7 @@
 +        }
 +    }
 +
-+    private @Nullable ServerLevel trackedByLevel; // Gale - Event-driven - Level.affectsSpawningSelectorPlayerCount - TODO Watch for new writes
++    private @Nullable ServerLevel trackedByLevel; // Gale - Event-driven - Level.affectsSpawningSelectorPlayers - TODO Watch for new writes
 +
 +    public void gale$eventDriven_trackedByLevel_set(@Nullable ServerLevel level) {
 +        ServerLevel oldLevel = this.trackedByLevel;
@@ -43,13 +45,23 @@
 +            this.trackedByLevel = level;
 +            if (this.gale$eventDriven_affectsSpawningSelector) {
 +                if (oldLevel != null) {
-+                    oldLevel.gale$eventDriven_affectsSpawningSelectorPlayerCount_decrement();
++                    oldLevel.gale$eventDriven_affectsSpawningSelectorPlayers_add((ServerPlayer) this);
++                    this.gale$eventDriven_affectsSpawningSelector_postStopAffectsSpawningInLevel(oldLevel);
 +                }
 +                if (level != null) {
-+                    level.gale$eventDriven_affectsSpawningSelectorPlayerCount_increment();
++                    level.gale$eventDriven_affectsSpawningSelectorPlayers_remove((ServerPlayer) this);
++                    this.gale$eventDriven_affectsSpawningSelector_postStartAffectsSpawningInLevel(level);
 +                }
 +            }
 +        }
++    }
++
++    public void gale$eventDriven_affectsSpawningSelector_postStartAffectsSpawningInLevel(ServerLevel level) {
++        // TODO
++    }
++
++    public void gale$eventDriven_affectsSpawningSelector_postStopAffectsSpawningInLevel(ServerLevel level) {
++        // TODO
 +    }
 +    // Gale end - Event-driven - Player.affectsSpawningSelector
 +

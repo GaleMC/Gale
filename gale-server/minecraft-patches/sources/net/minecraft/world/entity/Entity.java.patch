@@ -1,16 +1,21 @@
 --- a/net/minecraft/world/entity/Entity.java
 +++ b/net/minecraft/world/entity/Entity.java
-@@ -266,8 +_,8 @@
+@@ -266,12 +_,12 @@
      public boolean blocksBuilding;
      public ImmutableList<Entity> passengers = ImmutableList.of();
      protected int boardingCooldown;
 -    private @Nullable Entity vehicle;
 -    private Level level;
 +    private @Nullable Entity vehicle; // Gale - Event-driven - Mob.requiresCustomPersistence - TODO Watch for new writes
-+    private Level level; // Gale - Event-driven - Mob.despawnRanges, Mob.despawnRangeShape - TODO Watch for new writes
++    private Level level; // Gale - Event-driven - Mob.despawnRange - TODO Watch for new writes
      public double xo;
      public double yo;
      public double zo;
+-    private Vec3 position;
++    protected Vec3 position;
+     private BlockPos blockPosition;
+     private ChunkPos chunkPosition;
+     private Vec3 deltaMovement = Vec3.ZERO;
 @@ -280,6 +_,7 @@
      public float yRotO;
      public float xRotO;

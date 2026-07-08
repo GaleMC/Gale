@@ -8,15 +8,16 @@
  
      public static @Nullable BlockPos lastPhysicsProblem; // Spigot
      public final Map<ServerExplosion.CacheKey, Float> explosionDensityCache = new java.util.HashMap<>(); // Paper - Optimize explosions
-@@ -238,6 +_,30 @@
+@@ -238,6 +_,32 @@
          return ret;
      }
  
-+    // Gale start - Event-driven - Level.affectsSpawningSelectorPlayerCount
-+    public int gale$eventDriven_affectsSpawningSelectorPlayerCount; // Gale - Event-driven - Mob.checkDespawnPlayerTrackingMode - TODO Watch for new writes
++    // Gale start - Event-driven - Level.affectsSpawningSelectorPlayers
++    public it.unimi.dsi.fastutil.objects.ReferenceLinkedOpenHashSet<net.minecraft.server.level.ServerPlayer> gale$eventDriven_affectsSpawningSelectorPlayers = new it.unimi.dsi.fastutil.objects.ReferenceLinkedOpenHashSet<>(4); // Gale - Event-driven - Mob.checkDespawnPlayerTrackingMode - TODO Watch for new writes
 +
-+    public void gale$eventDriven_affectsSpawningSelectorPlayerCount_increment() {
-+        if (this.gale$eventDriven_affectsSpawningSelectorPlayerCount++ == 0) {
++    public void gale$eventDriven_affectsSpawningSelectorPlayers_add(net.minecraft.server.level.ServerPlayer player) {
++        this.gale$eventDriven_affectsSpawningSelectorPlayers.add(player);
++        if (this.gale$eventDriven_affectsSpawningSelectorPlayers.size() == 1) {
 +            // Gale start - Event-driven - Mob.checkDespawnPlayerTrackingMode
 +            for (Entity entity : this.getEntities().getAll()) {
 +                if (entity instanceof net.minecraft.world.entity.Mob mob) mob.gale$eventDriven_checkDespawnPlayerTrackingMode_update();
@@ -25,8 +26,9 @@
 +        }
 +    }
 +
-+    public void gale$eventDriven_affectsSpawningSelectorPlayerCount_decrement() {
-+        if (--this.gale$eventDriven_affectsSpawningSelectorPlayerCount == 0) {
++    public void gale$eventDriven_affectsSpawningSelectorPlayers_remove(net.minecraft.server.level.ServerPlayer player) {
++        this.gale$eventDriven_affectsSpawningSelectorPlayers.remove(player);
++        if (this.gale$eventDriven_affectsSpawningSelectorPlayers.size() == 0) {
 +            // Gale start - Event-driven - Mob.checkDespawnPlayerTrackingMode
 +            for (Entity entity : this.getEntities().getAll()) {
 +                if (entity instanceof net.minecraft.world.entity.Mob mob) mob.gale$eventDriven_checkDespawnPlayerTrackingMode_update();
@@ -34,7 +36,7 @@
 +            // Gale end - Event-driven - Mob.checkDespawnPlayerTrackingMode
 +        }
 +    }
-+    // Gale end - Event-driven - Level.affectsSpawningSelectorPlayerCount
++    // Gale end - Event-driven - Level.affectsSpawningSelectorPlayers
 +
      @Override
      public LevelChunk moonrise$getFullChunkIfLoaded(final int chunkX, final int chunkZ) {

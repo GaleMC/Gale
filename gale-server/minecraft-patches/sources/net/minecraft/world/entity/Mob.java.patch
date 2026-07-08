@@ -24,7 +24,7 @@
              this.registerGoals();
          }
 +        this.gale$eventDriven_checkDespawnPlayerTrackingMode_update(); // Gale - Event-driven - Mob.checkDespawnPlayerTrackingMode
-+        this.gale$eventDriven_despawnRanges_and_despawnRangeShape_update(); // Gale - Event-driven - Mob.despawnRanges, Mob.despawnRangeShape
++        this.gale$eventDriven_despawnRange_update(); // Gale - Event-driven - Mob.despawnRange
 +        this.gale$eventDriven_mustDespawnBecauseOfPeacefulDifficulty_update(); // Gale - Event-driven - Mob.mustDespawnBecauseOfPeacefulDifficulty
      }
  
@@ -55,25 +55,41 @@
              return toEquip;
          } else {
              return ItemStack.EMPTY;
-@@ -780,38 +_,198 @@
+@@ -780,38 +_,396 @@
          return true;
      }
  
 -    public boolean requiresCustomPersistence() {
-+    private io.papermc.paper.configuration.WorldConfiguration.Entities.Spawning.DespawnRangePair gale$eventDriven_despawnRanges;
++    // Gale start - Event-driven - Mob.despawnRange
++    private io.papermc.paper.configuration.type.DespawnRange gale$eventDriven_softDespawnRange;
++    private io.papermc.paper.configuration.type.DespawnRange gale$eventDriven_hardDespawnRange;
 +    private io.papermc.paper.configuration.type.DespawnRange.Shape gale$eventDriven_despawnRangeShape;
 +
-+    // Gale start - Event-driven - Mob.despawnRanges, Mob.despawnRangeShape
-+    public void gale$eventDriven_despawnRanges_and_despawnRangeShape_update() {
++    public void gale$eventDriven_despawnRange_update() {
 +        io.papermc.paper.configuration.WorldConfiguration config = this.level().paperConfig();
 +        io.papermc.paper.configuration.WorldConfiguration.Entities.Spawning.DespawnRangePair newDespawnRanges = config.entities.spawning.despawnRanges.get(this.getType().getCategory());
++        boolean changed = false;
 +        io.papermc.paper.configuration.type.DespawnRange.Shape newDespawnRangeShape = config.entities.spawning.despawnRangeShape;
-+        if (!newDespawnRanges.effectivelyEquals(this.gale$eventDriven_despawnRanges) || !newDespawnRangeShape.equals(this.gale$eventDriven_despawnRangeShape)) {
-+            this.gale$eventDriven_despawnRanges = newDespawnRanges;
++        io.papermc.paper.configuration.type.DespawnRange newSoft = newDespawnRanges.soft();
++        io.papermc.paper.configuration.type.DespawnRange newHard = newDespawnRanges.hard();
++        if (!newDespawnRangeShape.equals(this.gale$eventDriven_despawnRangeShape)) {
 +            this.gale$eventDriven_despawnRangeShape = newDespawnRangeShape;
++            changed = true;
++        }
++        if (!newSoft.effectivelyEquals(this.gale$eventDriven_softDespawnRange)) {
++            this.gale$eventDriven_softDespawnRange = newSoft;
++            changed = true;
++        }
++        if (!newHard.effectivelyEquals(this.gale$eventDriven_hardDespawnRange)) {
++            this.gale$eventDriven_hardDespawnRange = newHard;
++            changed = true;
++        }
++        if (changed) {
++            this.gale$checkDespawn_untrackAll();
++            this.gale$checkDespawn_buildTrackersFromScratch();
 +        }
 +    }
-+    // Gale end - Event-driven - Mob.despawnRanges, Mob.despawnRangeShape
++    // Gale end - Event-driven - Mob.despawnRange
 +
 +    // Gale start - Optimize Mob.checkDespawn - Pre-check for removeWhenFarAway()
 +    /**
@@ -154,7 +170,7 @@
 +    @Override
 +    public void setLevel(final Level level) {
 +        super.setLevel(level);
-+        this.gale$eventDriven_despawnRanges_and_despawnRangeShape_update(); // Gale - Event-driven - Mob.despawnRanges, Mob.despawnRangeShape
++        this.gale$eventDriven_despawnRange_update(); // Gale - Event-driven - Mob.despawnRange
 +        this.gale$eventDriven_mustDespawnBecauseOfPeacefulDifficulty_update();
 +    }
 +    // Gale end - Event-driven - Mob.mustDespawnBecauseOfPeacefulDifficulty
@@ -202,11 +218,21 @@
 +    public int gale$eventDriven_checkDespawnPlayerTrackingMode;
 +
 +    public void gale$eventDriven_checkDespawnPlayerTrackingMode_update() {
-+        this.gale$eventDriven_checkDespawnPlayerTrackingMode = this.gale$eventDriven_checkDespawnPlayerTrackingMode_compute();
++        int newValue = this.gale$eventDriven_checkDespawnPlayerTrackingMode_compute();
++        int oldValue = this.gale$eventDriven_checkDespawnPlayerTrackingMode;
++        if (oldValue != newValue) {
++            this.gale$eventDriven_checkDespawnPlayerTrackingMode = newValue;
++            if (newValue == 0) {
++                // Untrack all players
++                // TODO
++                gale$checkDespawn_playerTrackers
++                this.gale$checkDespawn_trackedTravelDistance = 0;
++            }
++        }
 +    }
 +
 +    private byte gale$eventDriven_checkDespawnPlayerTrackingMode_compute() {
-+        if (!this.gale$eventDriven_isInTickList || this.gale$eventDriven_mustDespawnBecauseOfPeacefulDifficulty || this.gale$eventDriven_isPersistent || this.level().gale$eventDriven_affectsSpawningSelectorPlayerCount == 0) {
++        if (!this.gale$eventDriven_isInTickList || this.gale$eventDriven_mustDespawnBecauseOfPeacefulDifficulty || this.gale$eventDriven_isPersistent || this.level().gale$eventDriven_affectsSpawningSelectorPlayers.isEmpty()) {
 +            return 0;
 +        } else if (!this.gale$canRemoveWhenFarAway()) {
 +            return 1;
@@ -223,6 +249,180 @@
 +            this.gale$eventDriven_checkDespawnPlayerTrackingMode_update();
 +        }
 +    }
++
++    /**
++     * The trackers for players.
++     * This will be initialized just-in-time.
++     */
++    private org.galemc.gale.util.collection.@Nullable DoubleTargetHeap gale$checkDespawn_playerTrackers;
++
++    /**
++     * The distance traveled by this entity since the last reset of this value
++     * (typically when all trackers are gone).
++     *
++     * <p>
++     * This value has different meanings for different range shapes:
++     * for {@link io.papermc.paper.configuration.type.DespawnRange.Shape#ELLIPSOID}
++     * it is the Euclidean distance traveled in the space where the ellipsoid is a unit sphere,
++     * and for {@link io.papermc.paper.configuration.type.DespawnRange.Shape#CYLINDER}
++     * it is the Euclidean distance traveled in regular space.
++     * </p>
++     */
++    private double gale$checkDespawn_trackedTravelDistance;
++
++    /**
++     * A player within soft spawning range,
++     * or null if none.
++     */
++    private @Nullable ServerPlayer gale$checkDespawn_playerWithinSoftRange;
++
++    /**
++     * The number of players within hard spawning range but not within soft spawning range.
++     * Every player counted in this value has a tracker.
++     * This value is meaningless if {@link #gale$checkDespawn_playerWithinSoftRange} is not null
++     * or if {@link #gale$eventDriven_checkDespawnPlayerTrackingMode} is not 2.
++     */
++    private int gale$checkDespawn_playersWithinHardRangeCount;
++
++    private void gale$checkDespawn_ensureHasTrackerHeap() {
++        if (this.gale$checkDespawn_playerTrackers == null) {
++            this.gale$checkDespawn_playerTrackers = new org.galemc.gale.util.collection.DoubleTargetHeap(); // TODO get from pool
++        }
++    }
++
++    public void gale$checkDespawn_untrackAll()  {
++        if (this.gale$checkDespawn_playerTrackers == null) return;
++        while (!this.gale$checkDespawn_playerTrackers.isEmpty()) {
++            ServerPlayer player = (ServerPlayer) this.gale$checkDespawn_playerTrackers.popFirst();
++            player.gale$checkDespawn_deleteTrackerOtherHalf(this);
++        }
++    }
++
++    public void gale$checkDespawn_buildTrackersFromScratch() {
++        if (this.gale$eventDriven_checkDespawnPlayerTrackingMode == 0) return;
++        it.unimi.dsi.fastutil.objects.ReferenceLinkedOpenHashSet<ServerPlayer> players = this.level().gale$eventDriven_affectsSpawningSelectorPlayers;
++        if (players.isEmpty()) return;
++        this.gale$checkDespawn_ensureHasTrackerHeap();
++        for (ServerPlayer player : players) {
++            if (this.gale$checkDespawn_addTrackerAndUpdatePlayersWithinRangeForUntrackedPlayerWithHeap(player)) {
++                // We have an MVP, no more need to check further
++                break;
++            }
++        }
++    }
++
++    /**
++     * Adds a tracker for an untracked player,
++     * and potentially also updates the soft range player or hard range player count.
++     *
++     * <p>
++     * This method must only be called while
++     * the given {@code player} is not in {@link #gale$checkDespawn_playerTrackers},
++     * the given {@code player} is in the same {@link #level()},
++     * the given {@code player} has {@link Player#gale$eventDriven_affectsSpawningSelector} true,
++     * {@link #gale$checkDespawn_playerTrackers} is not null,
++     * {@link #gale$eventDriven_checkDespawnPlayerTrackingMode} is not 0,
++     * {@link #gale$checkDespawn_playerWithinSoftRange} is null.
++     * </p>
++     *
++     * @return Whether the player was set as the {@link #gale$checkDespawn_playerWithinSoftRange}.
++     */
++    public boolean gale$checkDespawn_addTrackerAndUpdatePlayersWithinRangeForUntrackedPlayerWithHeap(ServerPlayer player) {
++        double ex = this.position().x;
++        double ey = this.position().y;
++        double ez = this.position().z;
++        double px = player.position().x;
++        double py = player.position().y;
++        double pz = player.position().z;
++        double dx = px - ex;
++        double dy = py - ey;
++        double dz = pz - ez;
++        double dxSqr = dx * dx;
++        double dySqr = dy * dy;
++        double dzSqr = dz * dz;
++        if (this.gale$eventDriven_softDespawnRange.shouldDespawn(this.gale$eventDriven_despawnRangeShape, dxSqr, dySqr, dzSqr, dy)) {
++            if (this.gale$eventDriven_checkDespawnPlayerTrackingMode == 2) {
++                if (this.gale$eventDriven_hardDespawnRange.shouldDespawn(this.gale$eventDriven_despawnRangeShape, dxSqr, dySqr, dzSqr, dy)) {
++                    // Outside hard range
++                    this.gale$checkDespawn_addTrackerUntilHardRangeBoundary(player, dx, dy, dz);
++                } else {
++                    // Between soft and hard range
++                    this.gale$checkDespawn_addTrackerUntilSoftOrHardRangeBoundary(player, dx, dy, dz);
++                    this.gale$checkDespawn_playersWithinHardRangeCount++;
++                }
++            } else {
++                // Outside soft range
++                this.gale$checkDespawn_addTrackerUntilSoftRangeBoundary(player, dx, dy, dz);
++            }
++            return false;
++        } else {
++            // Inside soft range
++            this.gale$checkDespawn_addTrackerUntilSoftRangeBoundary(player, dx, dy, dz);
++            this.gale$checkDespawn_playerWithinSoftRange = player;
++            return true;
++        }
++    }
++
++    /**
++     * Adds a tracker for the given player to reach the soft range boundary.
++     *
++     * <p>
++     * This method must only be called while
++     * the given {@code player} is not in {@link #gale$checkDespawn_playerTrackers},
++     * the given {@code player} is in the same {@link #level()},
++     * the given {@code player} has {@link Player#gale$eventDriven_affectsSpawningSelector} true,
++     * {@link #gale$checkDespawn_playerTrackers} is not null,
++     * {@link #gale$eventDriven_checkDespawnPlayerTrackingMode} is not 0.
++     * </p>
++     */
++    public void gale$checkDespawn_addTrackerUntilSoftRangeBoundary(ServerPlayer player, double dx, double dy, double dz) {
++
++    }
++
++    /**
++     * Adds a tracker for this entity on the player's side.
++     *
++     * <p>
++     * This method must only be called while
++     * this entity is not in {@link ServerPlayer#gale$checkDespawn_entityTrackers}.
++     * </p>
++     */
++    private void gale$checkDespawn_addTrackerOnPlayerSide(ServerPlayer player, double value) {
++        player.gale$checkDespawn_entityTrackers[this.getType().getCategory().ordinal()].add(value, this);
++    }
++
++    /**
++     * Deletes the tracker for this entity on the player's side.
++     *
++     * <p>
++     * This method must only be called while
++     * this entity is in {@link ServerPlayer#gale$checkDespawn_entityTrackers}.
++     * </p>
++     */
++    private void gale$checkDespawn_removeTrackerOnPlayerSide(ServerPlayer player) {
++        player.gale$checkDespawn_entityTrackers[this.getType().getCategory().ordinal()].remove(this);
++    }
++
++    @Override
++    public void setPosRaw(final double x, final double y, final double z, final boolean forceBoundingBoxUpdate) {
++        if (this.gale$eventDriven_checkDespawnPlayerTrackingMode == 0) {
++            super.setPosRaw(x, y, z, forceBoundingBoxUpdate);
++            return;
++        }
++        Vec3 before = this.position();
++        super.setPosRaw(x, y, z, forceBoundingBoxUpdate);
++        Vec3 after = this.position();
++        if (before.x != after.x || before.y != after.y || before.z != after.z) {
++            double dx = after.x - before.x;
++            double dy = after.y - before.y;
++            double dz = after.z - before.z;
++            double sx = dx / this.gale$eventDriven_despawnRanges.soft().;
++            double sy = dy / ry;
++            double sz = dz / rz;
++            double uDelta = Math.sqrt(sx*sx + sy*sy + sz*sz);
++            this.gale$checkDespawn_trackedTravelDistance +=
++        }
++    }
 +    // Gale end - Optimize Mob.checkDespawn
 +
      @Override
@@ -233,16 +433,16 @@
 -        } else if (!this.isPersistenceRequired() && !this.requiresCustomPersistence()) {
 +        } else if (!this.gale$eventDriven_isPersistent) { // Gale - Event-driven - Mob.isPersistent
 +            if (!org.galemc.gale.async.SimulationFlag.REAL) return; // Gale - Speculative execution based on next tick simulation - Simulate next tick
-+            if (this.level().gale$eventDriven_affectsSpawningSelectorPlayerCount != 0) { // Gale - Optimize Mob.checkDespawn
++            if (!this.level().gale$eventDriven_affectsSpawningSelectorPlayers.isEmpty()) { // Gale - Optimize Mob.checkDespawn
              Entity player = this.level().findNearbyPlayer(this, -1.0, EntitySelector.PLAYER_AFFECTS_SPAWNING); // Paper - Affects Spawning API
 -            if (player != null) {
                  // Paper start - Configurable despawn distances
 -                final io.papermc.paper.configuration.WorldConfiguration.Entities.Spawning.DespawnRangePair despawnRangePair = this.level().paperConfig().entities.spawning.despawnRanges.get(this.getType().getCategory());
 -                final io.papermc.paper.configuration.type.DespawnRange.Shape shape = this.level().paperConfig().entities.spawning.despawnRangeShape;
-+                // Gale start - Event-driven - Mob.despawnRanges, Mob.despawnRangeShape
++                // Gale start - Event-driven - Mob.despawnRanges
 +                final io.papermc.paper.configuration.WorldConfiguration.Entities.Spawning.DespawnRangePair despawnRangePair = this.gale$eventDriven_despawnRanges;
 +                final io.papermc.paper.configuration.type.DespawnRange.Shape shape = this.gale$eventDriven_despawnRangeShape;
-+                // Gale end - Event-driven - Mob.despawnRanges, Mob.despawnRangeShape
++                // Gale end - Event-driven - Mob.despawnRange
                  final double dy = Math.abs(player.getY() - this.getY());
                  final double dySqr = Mth.square(dy);
                  final double dxSqr = Mth.square(player.getX() - this.getX());

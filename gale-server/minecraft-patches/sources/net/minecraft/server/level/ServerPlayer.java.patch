@@ -1,10 +1,22 @@
 --- a/net/minecraft/server/level/ServerPlayer.java
 +++ b/net/minecraft/server/level/ServerPlayer.java
-@@ -489,6 +_,7 @@
+@@ -489,7 +_,18 @@
          this.bukkitPickUpLoot = true;
          this.maxHealthCache = this.getMaxHealth();
          // CraftBukkit end
+-    }
 +        this.gale$eventDriven_isAlive_update(); // Gale - Event-driven - LivingEntity.isAlive
-     }
++    }
++
++    // Gale start - Optimize Mob.checkDespawn
++    public org.galemc.gale.util.collection.@Nullable DoubleTargetHeap[] gale$checkDespawn_entityTrackers = new org.galemc.gale.util.collection.DoubleTargetHeap[net.minecraft.world.entity.MobCategory.values().length];
++    {
++        for (int i = 0; i < this.gale$checkDespawn_entityTrackers.length; i++) {
++            this.gale$checkDespawn_entityTrackers[i] = new org.galemc.gale.util.collection.DoubleTargetHeap();
++        }
++    }
++    public double gale$checkDespawn_trackedTravelDistance;
++    // Gale end - Optimize Mob.checkDespawn
  
      @Override
+     public BlockPos adjustSpawnLocation(final ServerLevel level, final BlockPos spawnSuggestion) {
