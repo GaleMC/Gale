@@ -1,7 +1,6 @@
 --- a/net/minecraft/world/level/pathfinder/WalkNodeEvaluator.java
 +++ b/net/minecraft/world/level/pathfinder/WalkNodeEvaluator.java
-@@ -524,64 +_,64 @@
-         if (blockState.isAir()) {
+@@ -525,7 +_,7 @@
              return PathType.OPEN;
          }
  
@@ -10,19 +9,7 @@
              return PathType.TRAPDOOR;
          }
  
-         if (blockState.is(Blocks.POWDER_SNOW)) {
-             return PathType.POWDER_SNOW;
-         }
- 
-         if (blockState.is(Blocks.CACTUS) || blockState.is(Blocks.SWEET_BERRY_BUSH)) {
-             return PathType.DAMAGING;
-         }
- 
-         if (blockState.is(Blocks.HONEY_BLOCK)) {
-             return PathType.STICKY_HONEY;
-         }
- 
-         if (blockState.is(Blocks.COCOA)) {
+@@ -545,7 +_,7 @@
              return PathType.COCOA;
          }
  
@@ -31,24 +18,7 @@
              FluidState fluidState = blockState.getFluidState();
              if (fluidState.is(FluidTags.LAVA)) {
                  return PathType.LAVA;
-             }
- 
-             if (isBurningBlock(blockState)) {
-                 return PathType.FIRE;
-             }
- 
-             if (block instanceof DoorBlock door) {
-                 if (blockState.getValue(DoorBlock.OPEN)) {
-                     return PathType.DOOR_OPEN;
-                 } else {
-                     return door.type().canOpenByHand() ? PathType.DOOR_WOOD_CLOSED : PathType.DOOR_IRON_CLOSED;
-                 }
-             } else {
-                 if (block instanceof BaseRailBlock) {
-                     return PathType.RAIL;
-                 }
- 
-                 if (block instanceof LeavesBlock) {
+@@ -570,8 +_,8 @@
                      return PathType.LEAVES;
                  }
  
@@ -59,13 +29,3 @@
                      && (!(block instanceof FenceGateBlock) || blockState.getValue(FenceGateBlock.OPEN))) {
                      if (!blockState.isPathfindable(PathComputationType.LAND)) {
                          return PathType.BLOCKED;
-                     } else {
-                         return fluidState.is(FluidTags.WATER) ? PathType.WATER : PathType.OPEN;
-                     }
-                 } else {
-                     return PathType.FENCE;
-                 }
-             }
-         } else {
-             return PathType.DAMAGE_CAUTIOUS;
-         }
