@@ -1,6 +1,7 @@
 package org.dreeam.leaf.util;
 
 import net.minecraft.tags.BlockTags;
+import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.FenceGateBlock;
 import net.minecraft.world.level.block.PowderSnowBlock;
 import net.minecraft.world.level.block.TrapDoorBlock;
@@ -52,8 +53,7 @@ public final class BlockMasks {
     public static final int CAULDRONS_TAG = 1 << 6;
 
     /**
-     * Instance of {@link TrapDoorBlock}
-     * and {@link TrapDoorBlock#OPEN} set to {@code true}.
+     * Instance of {@link TrapDoorBlock} and {@link TrapDoorBlock#OPEN} set to {@code true}.
      */
     public static final int TRAP_DOOR_CLASS_AND_OPEN_PROPERTY_IS_TRUE = 1 << 7;
 
@@ -73,9 +73,14 @@ public final class BlockMasks {
     public static final int BEDS_TAG = 1 << 10;
 
     /**
+     * {@link BlockTags#BEDS} and {@link BedBlock#OCCUPIED} set to true.
+     */
+    public static final int BEDS_TAG_AND_OCCUPIED_PROPERTY_IS_TRUE = 1 << 11;
+
+    /**
      * {@link NodeEvaluator#isBurningBlock(BlockState)}.
      */
-    public static final int IS_BURNING_BLOCK = 1 << 11;
+    public static final int IS_BURNING_BLOCK = 1 << 12;
 
     /**
      * {@link #WALLS_TAG} or {@link #FENCE_GATE_CLASS}.
@@ -97,6 +102,11 @@ public final class BlockMasks {
      */
     public static final int DOORS_TAG_OR_FENCES_TAG = DOORS_TAG | FENCES_TAG;
 
+    /**
+     * Used in {@link BlockBehaviour.BlockStateBase#isUnoccupiedBed()}.
+     */
+    public static final int UNOCCUPIED_BED_MASK = BEDS_TAG | BEDS_TAG_AND_OCCUPIED_PROPERTY_IS_TRUE;
+
     public static int init(final BlockState state) {
         int i = 0;
         i |= state.is(BlockTags.WALLS) ? WALLS_TAG : 0;
@@ -106,6 +116,7 @@ public final class BlockMasks {
         i |= state.is(BlockTags.CAN_GLIDE_THROUGH) ? CAN_GLIDE_THROUGH_TAG : 0;
         i |= state.is(BlockTags.DOORS) ? DOORS_TAG : 0;
         i |= state.is(BlockTags.BEDS) ? BEDS_TAG : 0;
+        i |= state.is(BlockTags.BEDS) && state.getOptionalValue(BedBlock.OCCUPIED).orElse(false) ? BEDS_TAG_AND_OCCUPIED_PROPERTY_IS_TRUE : 0;
         i |= NodeEvaluator.gale$computeIsBurningBlock(state) ? IS_BURNING_BLOCK : 0;
         i |= state.getBlock() instanceof PowderSnowBlock ? POWDER_SNOW_CLASS : 0;
         i |= state.getBlock() instanceof FenceGateBlock ? FENCE_GATE_CLASS : 0;
