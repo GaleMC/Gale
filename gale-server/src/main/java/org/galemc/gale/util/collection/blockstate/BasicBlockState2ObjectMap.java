@@ -45,7 +45,7 @@ public class BasicBlockState2ObjectMap<V> implements Map<BlockState, V> {
     @Override
     public @Nullable V put(final BlockState key, final V value) {
         if (this.values == null) {
-            this.values = Arrays.copyOf(this.values, Block.BLOCK_STATE_REGISTRY.size());
+            this.values = new Object[Block.BLOCK_STATE_REGISTRY.size()];
         }
         this.values[key.indexInRegistry] = value;
         return null; // Return value is wrong, but we don't care for this implementation: callers shouldn't rely on it
