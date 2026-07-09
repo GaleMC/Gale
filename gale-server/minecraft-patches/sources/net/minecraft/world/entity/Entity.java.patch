@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/Entity.java
 +++ b/net/minecraft/world/entity/Entity.java
-@@ -266,12 +_,12 @@
+@@ -266,13 +_,13 @@
      public boolean blocksBuilding;
      public ImmutableList<Entity> passengers = ImmutableList.of();
      protected int boardingCooldown;
@@ -12,10 +12,12 @@
      public double yo;
      public double zo;
 -    private Vec3 position;
-+    protected Vec3 position;
-     private BlockPos blockPosition;
+-    private BlockPos blockPosition;
++    protected Vec3 position; // Gale - Optimize Mob.checkDespawn() - Make protected
++    protected BlockPos blockPosition; // Gale - Optimize Mob.checkDespawn() - Make protected
      private ChunkPos chunkPosition;
      private Vec3 deltaMovement = Vec3.ZERO;
+     private float yRot;
 @@ -280,6 +_,7 @@
      public float yRotO;
      public float xRotO;

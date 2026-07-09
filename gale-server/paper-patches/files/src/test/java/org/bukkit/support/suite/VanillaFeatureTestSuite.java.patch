@@ -1,0 +1,11 @@
+--- a/src/test/java/org/bukkit/support/suite/VanillaFeatureTestSuite.java
++++ b/src/test/java/org/bukkit/support/suite/VanillaFeatureTestSuite.java
+@@ -9,7 +_,7 @@
+ @Suite(failIfNoTests = false)
+ @SuiteDisplayName("Test suite for test which need vanilla registry values present")
+ @IncludeTags("VanillaFeature")
+-@SelectPackages({"org.bukkit", "io.papermc.paper", "com.destroystokyo.paper"})
++@SelectPackages({"org.bukkit", "io.papermc.paper", "com.destroystokyo.paper", "org.galemc", "org.dreeam"}) // Gale - Unit tests
+ @ConfigurationParameter(key = "TestSuite", value = "VanillaFeature")
+ public class VanillaFeatureTestSuite {
+ }

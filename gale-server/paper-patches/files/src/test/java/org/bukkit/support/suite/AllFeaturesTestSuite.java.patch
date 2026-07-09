@@ -1,0 +1,11 @@
+--- a/src/test/java/org/bukkit/support/suite/AllFeaturesTestSuite.java
++++ b/src/test/java/org/bukkit/support/suite/AllFeaturesTestSuite.java
+@@ -14,7 +_,7 @@
+ @Suite(failIfNoTests = false)
+ @SuiteDisplayName("Test suite for test which need registry values present, with all feature flags set")
+ @IncludeTags("AllFeatures")
+-@SelectPackages({"org.bukkit", "io.papermc.paper", "com.destroystokyo.paper"})
++@SelectPackages({"org.bukkit", "io.papermc.paper", "com.destroystokyo.paper", "org.galemc", "org.dreeam"}) // Gale - Unit tests
+ @SelectClasses({RegistryClassTest.class, PerRegistryTest.class, RegistryConversionTest.class}) // Make sure general registry tests are run first
+ @ExcludeClassNamePatterns("org.bukkit.craftbukkit.inventory.ItemStack.*Test")
+ @ConfigurationParameter(key = "TestSuite", value = "AllFeatures")

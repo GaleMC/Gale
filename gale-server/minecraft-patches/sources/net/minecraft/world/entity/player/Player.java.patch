@@ -15,13 +15,13 @@
 +        boolean newValue = net.minecraft.world.entity.EntitySelector.gale$eventDriven_affectsSpawningSelector_compute(this);
 +        if (this.gale$eventDriven_affectsSpawningSelector != newValue) {
 +            this.gale$eventDriven_affectsSpawningSelector = newValue;
-+            if (this.trackedByLevel != null) {
++            if (this.gale$eventDriven_trackedByLevel != null) {
 +                if (newValue) {
-+                    this.trackedByLevel.gale$eventDriven_affectsSpawningSelectorPlayers_add((ServerPlayer) this);
-+                    this.gale$eventDriven_affectsSpawningSelector_postStartAffectsSpawningInLevel(this.trackedByLevel);
++                    this.gale$eventDriven_trackedByLevel.gale$eventDriven_affectsSpawningSelectorPlayers_add((ServerPlayer) this);
++                    this.gale$eventDriven_affectsSpawningSelector_postStartAffectsSpawningInLevel(this.gale$eventDriven_trackedByLevel);
 +                } else {
-+                    this.trackedByLevel.gale$eventDriven_affectsSpawningSelectorPlayers_remove((ServerPlayer) this);
-+                    this.gale$eventDriven_affectsSpawningSelector_postStopAffectsSpawningInLevel(this.trackedByLevel);
++                    this.gale$eventDriven_trackedByLevel.gale$eventDriven_affectsSpawningSelectorPlayers_remove((ServerPlayer) this);
++                    this.gale$eventDriven_affectsSpawningSelector_postStopAffectsSpawningInLevel(this.gale$eventDriven_trackedByLevel);
 +                }
 +            }
 +        }
@@ -37,33 +37,36 @@
 +        }
 +    }
 +
-+    private @Nullable ServerLevel trackedByLevel; // Gale - Event-driven - Level.affectsSpawningSelectorPlayers - TODO Watch for new writes
++    protected @Nullable ServerLevel gale$eventDriven_trackedByLevel; // Gale - Event-driven - Level.affectsSpawningSelectorPlayers - TODO Watch for new writes
 +
 +    public void gale$eventDriven_trackedByLevel_set(@Nullable ServerLevel level) {
-+        ServerLevel oldLevel = this.trackedByLevel;
++        ServerLevel oldLevel = this.gale$eventDriven_trackedByLevel;
 +        if (oldLevel != level) {
-+            this.trackedByLevel = level;
++            this.gale$eventDriven_trackedByLevel = level;
 +            if (this.gale$eventDriven_affectsSpawningSelector) {
 +                if (oldLevel != null) {
-+                    oldLevel.gale$eventDriven_affectsSpawningSelectorPlayers_add((ServerPlayer) this);
++                    oldLevel.gale$eventDriven_affectsSpawningSelectorPlayers_remove((ServerPlayer) this);
 +                    this.gale$eventDriven_affectsSpawningSelector_postStopAffectsSpawningInLevel(oldLevel);
 +                }
 +                if (level != null) {
-+                    level.gale$eventDriven_affectsSpawningSelectorPlayers_remove((ServerPlayer) this);
++                    level.gale$eventDriven_affectsSpawningSelectorPlayers_add((ServerPlayer) this);
 +                    this.gale$eventDriven_affectsSpawningSelector_postStartAffectsSpawningInLevel(level);
 +                }
++
 +            }
 +        }
 +    }
 +
 +    public void gale$eventDriven_affectsSpawningSelector_postStartAffectsSpawningInLevel(ServerLevel level) {
-+        // TODO
++        level.gale$checkDespawn_addToGrids(this); // Gale - Optimize Mob.checkDespawn()
 +    }
 +
 +    public void gale$eventDriven_affectsSpawningSelector_postStopAffectsSpawningInLevel(ServerLevel level) {
-+        // TODO
++        level.gale$checkDespawn_removeFromGrids(this); // Gale - Optimize Mob.checkDespawn()
 +    }
 +    // Gale end - Event-driven - Player.affectsSpawningSelector
++
++    public int[] gale$checkDespawn_spatialGridSlots; // Gale - Optimize Mob.checkDespawn()
 +
      // CraftBukkit start
      public boolean fauxSleeping;

@@ -1,0 +1,11 @@
+--- a/src/test/java/org/bukkit/support/suite/NormalTestSuite.java
++++ b/src/test/java/org/bukkit/support/suite/NormalTestSuite.java
+@@ -9,7 +_,7 @@
+ @Suite(failIfNoTests = false)
+ @SuiteDisplayName("Test suite for standalone tests, which don't need any registry values present")
+ @IncludeTags("Normal")
+-@SelectPackages({"org.bukkit", "io.papermc.paper", "com.destroystokyo.paper"})
++@SelectPackages({"org.bukkit", "io.papermc.paper", "com.destroystokyo.paper", "org.galemc", "org.dreeam"}) // Gale - Unit tests
+ @ConfigurationParameter(key = "TestSuite", value = "Normal")
+ public class NormalTestSuite {
+ }

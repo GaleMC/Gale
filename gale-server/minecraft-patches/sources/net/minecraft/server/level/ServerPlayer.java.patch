@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/level/ServerPlayer.java
 +++ b/net/minecraft/server/level/ServerPlayer.java
-@@ -489,7 +_,18 @@
+@@ -489,7 +_,30 @@
          this.bukkitPickUpLoot = true;
          this.maxHealthCache = this.getMaxHealth();
          // CraftBukkit end
@@ -8,15 +8,27 @@
 +        this.gale$eventDriven_isAlive_update(); // Gale - Event-driven - LivingEntity.isAlive
 +    }
 +
-+    // Gale start - Optimize Mob.checkDespawn
-+    public org.galemc.gale.util.collection.@Nullable DoubleTargetHeap[] gale$checkDespawn_entityTrackers = new org.galemc.gale.util.collection.DoubleTargetHeap[net.minecraft.world.entity.MobCategory.values().length];
-+    {
-+        for (int i = 0; i < this.gale$checkDespawn_entityTrackers.length; i++) {
-+            this.gale$checkDespawn_entityTrackers[i] = new org.galemc.gale.util.collection.DoubleTargetHeap();
++    // Gale start - Optimize Mob.checkDespawn()
++    public int indexTODO;
++
++    @Override
++    public void setPosRaw(final double x, final double y, final double z, final boolean forceBoundingBoxUpdate) {
++        if (!this.gale$eventDriven_affectsSpawningSelector || this.gale$eventDriven_trackedByLevel == null) {
++            super.setPosRaw(x, y, z, forceBoundingBoxUpdate);
++            return;
++        }
++        Vec3 before = this.position;
++        super.setPosRaw(x, y, z, forceBoundingBoxUpdate);
++        Vec3 after = this.position;
++        double newX = after.x;
++        double newY = after.y;
++        double newZ = after.z;
++        if (before.x != after.x || before.y != after.y || before.z != after.z) {
++            BlockPos newBlockPosition = this.blockPosition;
++            this.gale$eventDriven_trackedByLevel.gale$checkDespawn_moveInGrids(this, newX, newY, newZ, newBlockPosition.getX(), newBlockPosition.getY(), newBlockPosition.getZ());
 +        }
 +    }
-+    public double gale$checkDespawn_trackedTravelDistance;
-+    // Gale end - Optimize Mob.checkDespawn
++    // Gale end - Optimize Mob.checkDespawn()
  
      @Override
      public BlockPos adjustSpawnLocation(final ServerLevel level, final BlockPos spawnSuggestion) {

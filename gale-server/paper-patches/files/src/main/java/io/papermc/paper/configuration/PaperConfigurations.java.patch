@@ -1,14 +1,10 @@
 --- a/src/main/java/io/papermc/paper/configuration/PaperConfigurations.java
 +++ b/src/main/java/io/papermc/paper/configuration/PaperConfigurations.java
-@@ -335,6 +_,11 @@
+@@ -335,6 +_,7 @@
              this.initializeWorldDefaultsConfiguration(server.registryAccess());
              for (ServerLevel level : server.getAllLevels()) {
                  this.createWorldConfig(createWorldContextMap(level), reloader(this.worldConfigClass, level.paperConfig()));
-+                // Gale start - Event-driven - Mob.despawnRange
-+                for (net.minecraft.world.entity.Entity entity : level.getEntities().getAll()) {
-+                    if (entity instanceof net.minecraft.world.entity.Mob mob) mob.gale$eventDriven_despawnRange_update();
-+                }
-+                // Gale end - Event-driven - Mob.despawnRange
++                level.gale$checkDespawn_postUpdateSpawnRanges(); // Gale - Optimize Mob.checkDespawn()
              }
          } catch (Exception ex) {
              throw new RuntimeException("Could not reload paper configuration files", ex);

@@ -1,15 +1,85 @@
 --- a/net/minecraft/world/entity/monster/PatrollingMonster.java
 +++ b/net/minecraft/world/entity/monster/PatrollingMonster.java
-@@ -99,6 +_,13 @@
+@@ -99,6 +_,83 @@
          return !this.patrolling || distSqr > 16384.0;
      }
  
-+    // Gale start - Optimize Mob.checkDespawn - Pre-check for removeWhenFarAway()
++    // Gale start - Optimize Mob.checkDespawn()
 +    @Override
-+    public boolean gale$canRemoveWhenFarAway() {
++    public boolean gale$canRemoveWhenFarAway() { // Pre-check for removeWhenFarAway()
 +        return true;
 +    }
-+    // Gale end - Optimize Mob.checkDespawn - Pre-check for removeWhenFarAway()
++
++    @Override
++    protected void checkDespawnInner() {
++        // Paper start - Configurable despawn distances
++        // Despawn if hard/soft limit is exceeded
++
++        Level level = this.level();
++        org.galemc.gale.util.collection.spatialgrid.SpatialGrid[] grids = level.gale$checkDespawn_spatialGrids;
++        int[] gridIndices = level.gale$checkDespawn_spatialGridIndices;
++        Vec3 position = this.position;
++        double x = position.x;
++        double y = position.y;
++        double z = position.z;
++        BlockPos blockPosition = this.blockPosition;
++        int blockX = blockPosition.getX();
++        int blockY = blockPosition.getY();
++        int blockZ = blockPosition.getZ();
++
++        // Check in soft range
++        int softGridIndex = gridIndices[this.gale$checkDespawn_softLevelSpatialGridIndicesIndex];
++        org.galemc.gale.util.collection.spatialgrid.SpatialGrid softGrid = grids[softGridIndex];
++        int nearest = softGrid.nearestIn(x, y, z, blockX, blockY, blockZ);
++        boolean nearestIsInSoft = nearest != -1;
++
++        if (!nearestIsInSoft) {
++
++            // Check in hard range if necessary
++            boolean nearestIsInHard = false;
++            org.galemc.gale.util.collection.spatialgrid.SpatialGrid hardGrid = null;
++            if (this.gale$eventDriven_checkDespawnPlayerTrackingMode == 2) {
++                int hardGridIndex = gridIndices[this.gale$checkDespawn_hardLevelSpatialGridIndicesIndex];
++                hardGrid = grids[hardGridIndex];
++                nearest = hardGrid.nearestIn(x, y, z, blockX, blockY, blockZ);
++                nearestIsInHard = nearest != -1;
++
++            }
++
++            // Get the nearest player manually if necessary
++            if (nearest == -1) {
++                nearest = level.findNearbyPlayer(this, -1.0, net.minecraft.world.entity.EntitySelector.PLAYER_AFFECTS_SPAWNING).gale$checkDespawn_spatialGridSlots[softGridIndex]; // Paper - Affects Spawning API
++            }
++
++            org.galemc.gale.util.collection.spatialgrid.SpatialGrid playerLookupGrid = nearestIsInHard ? hardGrid : softGrid;
++            double playerX = playerLookupGrid.getX(nearest);
++            double playerY = playerLookupGrid.getY(nearest);
++            double playerZ = playerLookupGrid.getZ(nearest);
++
++            final double dxSqr = net.minecraft.util.Mth.square(playerX - x);
++            final double dySqr = net.minecraft.util.Mth.square(playerY - y);
++            final double dzSqr = net.minecraft.util.Mth.square(playerZ - z);
++            final double distanceSquared = dxSqr + dzSqr + dySqr;
++
++            if (this.gale$eventDriven_checkDespawnPlayerTrackingMode == 2 && !nearestIsInHard) {
++                if (this.removeWhenFarAway(distanceSquared)) {
++                    this.discard(org.bukkit.event.entity.EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
++                }
++            }
++
++            if (this.noActionTime > 600 && this.random.nextInt(800) == 0 && this.removeWhenFarAway(distanceSquared)) {
++                this.discard(org.bukkit.event.entity.EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
++            }
++
++        } else {
++
++            // Paper end - Configurable despawn distances
++            this.noActionTime = 0;
++
++        }
++
++    }
++    // Gale end - Optimize Mob.checkDespawn()
 +
      public void setPatrolTarget(final BlockPos target) {
          this.patrolTarget = target;
