@@ -46,8 +46,9 @@ public class BasicBlockState2ObjectMap<V> implements Map<BlockState, V> {
         if (this.values == null) {
             this.values = new Object[Block.BLOCK_STATE_REGISTRY.size()];
         }
+        V oldValue = (V) this.values[key.indexInRegistry];
         this.values[key.indexInRegistry] = value;
-        return null; // Return value is wrong, but we don't care for this implementation: callers shouldn't rely on it
+        return oldValue;
     }
 
     @Override
