@@ -147,8 +147,8 @@
 -        Optional<Holder<PoiType>> newType = PoiTypes.forState(newState);
 -        if (!Objects.equals(oldType, newType)) {
 +        // Gale start - Do less work - PoiTypes.forState() (skip Optional creation)
-+        Holder<PoiType> oldType = PoiTypes.forState(oldState);
-+        Holder<PoiType> newType = PoiTypes.forState(newState);
++        Holder<PoiType> oldType = PoiTypes.gale$forStateNullable(oldState);
++        Holder<PoiType> newType = PoiTypes.gale$forStateNullable(newState);
 +        if (oldType != newType) {
              BlockPos immutable = pos.immutable();
 -            oldType.ifPresent(poiType -> this.getServer().execute(() -> {

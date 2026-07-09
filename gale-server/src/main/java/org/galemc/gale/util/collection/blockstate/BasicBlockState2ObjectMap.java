@@ -15,15 +15,7 @@ import java.util.Set;
  */
 public class BasicBlockState2ObjectMap<V> implements Map<BlockState, V> {
 
-    private Object[] values;
-
-    public BasicBlockState2ObjectMap() {
-        this(0);
-    }
-
-    public BasicBlockState2ObjectMap(int initialCapacity) {
-        this.values = new Object[initialCapacity];
-    }
+    private @Nullable Object @Nullable [] values;
 
     @Override
     public int size() {
@@ -36,7 +28,7 @@ public class BasicBlockState2ObjectMap<V> implements Map<BlockState, V> {
     }
 
     @Override
-    public boolean containsKey(final Object key) {
+    public boolean containsKey(final Object key) { // Relies on caller only to call this after at least one put() call
         return this.values[((BlockState) key).indexInRegistry] != null;
     }
 
@@ -46,17 +38,16 @@ public class BasicBlockState2ObjectMap<V> implements Map<BlockState, V> {
     }
 
     @Override
-    public V get(final Object key) {
+    public V get(final Object key) { // Relies on caller only to call this after at least one put() call
         return (V) this.values[((BlockState) key).indexInRegistry];
     }
 
     @Override
     public @Nullable V put(final BlockState key, final V value) {
-        int index = key.indexInRegistry;
-        if (index >= this.values.length) {
+        if (this.values == null) {
             this.values = Arrays.copyOf(this.values, Block.BLOCK_STATE_REGISTRY.size());
         }
-        this.values[index] = value;
+        this.values[key.indexInRegistry] = value;
         return null; // Return value is wrong, but we don't care for this implementation: callers shouldn't rely on it
     }
 
