@@ -17,7 +17,7 @@
          return this.toId.getInt(thing);
      }
  
-@@ -377,13 +_,27 @@
+@@ -377,7 +_,14 @@
      private void refreshTagsInHolders() {
          Map<Holder.Reference<T>, List<TagKey<T>>> tagsForElement = new IdentityHashMap<>();
          this.byKey.values().forEach(h -> tagsForElement.put((Holder.Reference<T>)h, new ArrayList<>()));
@@ -32,16 +32,3 @@
              for (Holder<T> value : values) {
                  Holder.Reference<T> reference = this.validateAndUnwrapTagElement((TagKey<T>)id, value);
                  tagsForElement.get(reference).add((TagKey<T>)id);
-             }
-         });
-         tagsForElement.forEach(Holder.Reference::bindTags);
-+        // Gale start - Pre-compute - WalkNodeEvaluator.getPathTypeFromState()
-+        if (this.key.equals(net.minecraft.core.registries.Registries.BLOCK)) {
-+            for (net.minecraft.world.level.block.state.BlockState state : net.minecraft.world.level.block.Block.BLOCK_STATE_REGISTRY) {
-+                state.gale$precompute_pathType = net.minecraft.world.level.pathfinder.WalkNodeEvaluator.gale$precompute_getPathTypeFromState(state);
-+            }
-+        }
-+        // Gale end - Pre-compute - WalkNodeEvaluator.getPathTypeFromState()
-     }
- 
-     public void bindAllTagsToEmpty() {
