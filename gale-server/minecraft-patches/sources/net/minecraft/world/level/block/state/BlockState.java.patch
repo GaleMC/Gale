@@ -1,10 +1,11 @@
 --- a/net/minecraft/world/level/block/state/BlockState.java
 +++ b/net/minecraft/world/level/block/state/BlockState.java
-@@ -27,4 +_,7 @@
+@@ -27,4 +_,8 @@
      protected BlockState asState() {
          return this;
      }
 +
 +    public int indexInRegistry; // Gale - Intrusive values - EntityDataSerializers.SERIALIZERS
 +    public net.minecraft.world.level.pathfinder.PathType gale$precompute_pathType; // Gale - Pre-compute - WalkNodeEvaluator.getPathTypeFromState()
++    public net.minecraft.core.Holder<net.minecraft.world.entity.ai.village.poi.PoiType> gale$precompute_poiType; // Gale - Pre-compute - PoiTypes.forState()
  }

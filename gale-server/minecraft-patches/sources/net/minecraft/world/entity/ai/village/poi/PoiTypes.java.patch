@@ -1,11 +1,21 @@
 --- a/net/minecraft/world/entity/ai/village/poi/PoiTypes.java
 +++ b/net/minecraft/world/entity/ai/village/poi/PoiTypes.java
-@@ -56,7 +_,7 @@
+@@ -56,7 +_,17 @@
          .stream()
          .flatMap(block -> block.getStateDefinition().getPossibleStates().stream())
          .collect(ImmutableSet.toImmutableSet());
 -    private static final Map<BlockState, Holder<PoiType>> TYPE_BY_STATE = Maps.newHashMap();
-+    private static final Map<BlockState, Holder<PoiType>> TYPE_BY_STATE = new org.galemc.gale.util.collection.blockstate.BasicBlockState2ObjectMap<>(); // Gale - Collections - BlockState-keyed
++    // Gale start - Pre-compute - PoiTypes.forState()
++    private static final Map<BlockState, Holder<PoiType>> TYPE_BY_STATE = new org.galemc.gale.util.collection.blockstate.BasicBlockState2ObjectMap<>() { // Gale - Collections - BlockState-keyed
++
++        @Override
++        public @org.jspecify.annotations.Nullable Holder<PoiType> put(final BlockState key, final Holder<PoiType> value) {
++            key.gale$precompute_poiType = value;
++            return super.put(key, value);
++        }
++
++    };
++    // Gale end - Pre-compute - PoiTypes.forState()
  
      private static Set<BlockState> getBlockStates(final Block block) {
          return ImmutableSet.copyOf(block.getStateDefinition().getPossibleStates());
@@ -19,7 +29,7 @@
 +    }
 +
 +    public static @org.jetbrains.annotations.Nullable Holder<PoiType> gale$forStateNullable(final BlockState state) {
-+        return TYPE_BY_STATE.get(state);
++        return state.gale$precompute_poiType; // Gale - Pre-compute - PoiTypes.forState()
 +        // Gale end - Do less work - PoiTypes.forState() (skip Optional creation)
      }
  
