@@ -1,0 +1,22 @@
+--- a/net/minecraft/world/entity/ai/village/poi/PoiTypes.java
++++ b/net/minecraft/world/entity/ai/village/poi/PoiTypes.java
+@@ -56,7 +_,7 @@
+         .stream()
+         .flatMap(block -> block.getStateDefinition().getPossibleStates().stream())
+         .collect(ImmutableSet.toImmutableSet());
+-    private static final Map<BlockState, Holder<PoiType>> TYPE_BY_STATE = Maps.newHashMap();
++    private static final Map<BlockState, Holder<PoiType>> TYPE_BY_STATE = new org.galemc.gale.util.collection.blockstate.BasicBlockState2ObjectMap<>(); // Gale - Collections - BlockState-keyed
+ 
+     private static Set<BlockState> getBlockStates(final Block block) {
+         return ImmutableSet.copyOf(block.getStateDefinition().getPossibleStates());
+@@ -88,8 +_,8 @@
+         );
+     }
+ 
+-    public static Optional<Holder<PoiType>> forState(final BlockState state) {
+-        return Optional.ofNullable(TYPE_BY_STATE.get(state));
++    public static @org.jetbrains.annotations.Nullable Holder<PoiType> forState(final BlockState state) { // Gale - Do less work - PoiTypes.forState() (skip Optional creation)
++        return TYPE_BY_STATE.get(state);
+     }
+ 
+     public static boolean hasPoi(final BlockState state) {
