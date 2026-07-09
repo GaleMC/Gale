@@ -1,12 +1,17 @@
 package org.dreeam.leaf.util;
 
 import net.minecraft.tags.BlockTags;
+import net.minecraft.world.entity.ai.sensing.PiglinSpecificSensor;
 import net.minecraft.world.level.block.BedBlock;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.FenceGateBlock;
+import net.minecraft.world.level.block.FurnaceBlock;
 import net.minecraft.world.level.block.PowderSnowBlock;
 import net.minecraft.world.level.block.TrapDoorBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BedPart;
 import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.pathfinder.NodeEvaluator;
 
@@ -78,9 +83,45 @@ public final class BlockMasks {
     public static final int BEDS_TAG_AND_OCCUPIED_PROPERTY_IS_TRUE = 1 << 11;
 
     /**
-     * {@link NodeEvaluator#isBurningBlock(BlockState)}.
+     * {@link NodeEvaluator#gale$precompute_isBurningBlock_compute}.
      */
     public static final int IS_BURNING_BLOCK = 1 << 12;
+
+    /**
+     * {@link BlockTags#MOB_INTERACTABLE_DOORS} and instance of {@link DoorBlock}.
+     */
+    public static final int MOB_INTERACTABLE_DOORS_TAG_AND_DOOR_CLASS = 1 << 13;
+
+    /**
+     * {@link Blocks#FURNACE} and {@link FurnaceBlock#LIT} set to true,
+     * or {@link BlockTags#BEDS} and {@link BedBlock#PART} is not set to {@link BedPart#HEAD}.
+     */
+    public static final int CAT_SIT_VALID_WARM_TARGET = 1 << 14;
+
+    /**
+     * {@link BlockTags#SNAPS_GOAT_HORN}.
+     */
+    public static final int SNAPS_GOAT_HORN_TAG = 1 << 15;
+
+    /**
+     * {@link BlockTags#SUPPORTS_FROGSPAWN}.
+     */
+    public static final int SUPPORTS_FROGSPAWN_TAG = 1 << 16;
+
+    /**
+     * {@link BlockTags#EDIBLE_FOR_SHEEP}.
+     */
+    public static final int EDIBLE_FOR_SHEEP_TAG = 1 << 17;
+
+    /**
+     * {@link BlockTags#HOGLIN_REPELLENTS}.
+     */
+    public static final int HOGLIN_REPELLENTS_TAG = 1 << 18;
+
+    /**
+     * {@link PiglinSpecificSensor#gale$precompute_isValidRepellent_compute}.
+     */
+    public static final int IS_VALID_PIGLIN_REPELLENT = 1 << 19;
 
     /**
      * {@link #WALLS_TAG} or {@link #FENCE_GATE_CLASS}.
@@ -112,16 +153,23 @@ public final class BlockMasks {
         i |= state.is(BlockTags.WALLS) ? WALLS_TAG : 0;
         i |= state.is(BlockTags.FENCES) ? FENCES_TAG : 0;
         i |= state.is(BlockTags.CLIMBABLE) ? CLIMBABLE_TAG : 0;
+        i |= state.getBlock() instanceof PowderSnowBlock ? POWDER_SNOW_CLASS : 0;
+        i |= state.getBlock() instanceof FenceGateBlock ? FENCE_GATE_CLASS : 0;
+        i |= FlowingFluid.canHoldAnyFluid(state) ? CAN_HOLD_ANY_FLUID : 0;
         i |= state.is(BlockTags.CAULDRONS) ? CAULDRONS_TAG : 0;
+        i |= state.getBlock() instanceof TrapDoorBlock && state.getValue(TrapDoorBlock.OPEN) ? TRAP_DOOR_CLASS_AND_OPEN_PROPERTY_IS_TRUE : 0;
         i |= state.is(BlockTags.CAN_GLIDE_THROUGH) ? CAN_GLIDE_THROUGH_TAG : 0;
         i |= state.is(BlockTags.DOORS) ? DOORS_TAG : 0;
         i |= state.is(BlockTags.BEDS) ? BEDS_TAG : 0;
         i |= state.is(BlockTags.BEDS) && state.getOptionalValue(BedBlock.OCCUPIED).orElse(false) ? BEDS_TAG_AND_OCCUPIED_PROPERTY_IS_TRUE : 0;
-        i |= NodeEvaluator.gale$computeIsBurningBlock(state) ? IS_BURNING_BLOCK : 0;
-        i |= state.getBlock() instanceof PowderSnowBlock ? POWDER_SNOW_CLASS : 0;
-        i |= state.getBlock() instanceof FenceGateBlock ? FENCE_GATE_CLASS : 0;
-        i |= state.getBlock() instanceof TrapDoorBlock && state.getValue(TrapDoorBlock.OPEN) ? TRAP_DOOR_CLASS_AND_OPEN_PROPERTY_IS_TRUE : 0;
-        i |= FlowingFluid.canHoldAnyFluid(state) ? CAN_HOLD_ANY_FLUID : 0;
+        i |= NodeEvaluator.gale$precompute_isBurningBlock_compute(state) ? IS_BURNING_BLOCK : 0;
+        i |= state.is(BlockTags.MOB_INTERACTABLE_DOORS) && state.getBlock() instanceof DoorBlock ? MOB_INTERACTABLE_DOORS_TAG_AND_DOOR_CLASS : 0;
+        i |= state.is(Blocks.FURNACE) && state.getValue(FurnaceBlock.LIT) || (state.is(BlockTags.BEDS) && state.getOptionalValue(BedBlock.PART).map(v -> v != BedPart.HEAD).orElse(true)) ? CAT_SIT_VALID_WARM_TARGET : 0;
+        i |= state.is(BlockTags.SNAPS_GOAT_HORN) ? SNAPS_GOAT_HORN_TAG : 0;
+        i |= state.is(BlockTags.SUPPORTS_FROGSPAWN) ? SUPPORTS_FROGSPAWN_TAG : 0;
+        i |= state.is(BlockTags.EDIBLE_FOR_SHEEP) ? EDIBLE_FOR_SHEEP_TAG : 0;
+        i |= state.is(BlockTags.HOGLIN_REPELLENTS) ? HOGLIN_REPELLENTS_TAG : 0;
+        i |= PiglinSpecificSensor.gale$precompute_isValidRepellent_compute(state) ? IS_VALID_PIGLIN_REPELLENT : 0;
         return i;
     }
 

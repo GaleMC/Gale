@@ -8,7 +8,7 @@
 +        return blockState.isAny(org.dreeam.leaf.util.BlockMasks.IS_BURNING_BLOCK);
 +    }
 +
-+    public static boolean gale$computeIsBurningBlock(final BlockState blockState) {
++    public static boolean gale$precompute_isBurningBlock_compute(final BlockState blockState) {
 +        // Gale end - Pre-compute - Common BlockState predicates - Apply
          return blockState.is(BlockTags.FIRE)
              || blockState.is(Blocks.LAVA)

@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/entity/ai/sensing/HoglinSpecificSensor.java
++++ b/net/minecraft/world/entity/ai/sensing/HoglinSpecificSensor.java
+@@ -58,6 +_,6 @@
+     }
+ 
+     private Optional<BlockPos> findNearestRepellent(final ServerLevel level, final Hoglin body) {
+-        return BlockPos.findClosestMatch(body.blockPosition(), 8, 4, pos -> level.getBlockState(pos).is(BlockTags.HOGLIN_REPELLENTS));
++        return BlockPos.findClosestMatch(body.blockPosition(), 8, 4, pos -> level.getBlockState(pos).isAny(org.dreeam.leaf.util.BlockMasks.HOGLIN_REPELLENTS_TAG)); // Gale - Pre-compute - Common BlockState predicates - Apply
+     }
+ }
