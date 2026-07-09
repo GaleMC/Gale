@@ -7,6 +7,7 @@ import net.minecraft.world.level.block.TrapDoorBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FlowingFluid;
+import net.minecraft.world.level.pathfinder.NodeEvaluator;
 
 /**
  * Masks for predicates on {@link BlockBehaviour.BlockStateBase},
@@ -18,80 +19,63 @@ public final class BlockMasks {
     /**
      * {@link BlockTags#WALLS}.
      */
-    public static final int WALLS_TAG = 0x01;
+    public static final int WALLS_TAG = 1 << 0;
 
     /**
      * {@link BlockTags#FENCES}.
      */
-    public static final int FENCES_TAG = 0x02;
+    public static final int FENCES_TAG = 1 << 1;
 
     /**
      * {@link BlockTags#CLIMBABLE}.
      */
-    public static final int CLIMBABLE_TAG = 0x04;
+    public static final int CLIMBABLE_TAG = 1 << 2;
 
     /**
      * Instance of {@link PowderSnowBlock}.
      */
-    public static final int POWDER_SNOW_CLASS = 0x08;
+    public static final int POWDER_SNOW_CLASS = 1 << 3;
 
     /**
      * Instance of {@link FenceGateBlock}.
      */
-    public static final int FENCE_GATE_CLASS = 0x10;
+    public static final int FENCE_GATE_CLASS = 1 << 4;
 
     /**
      * {@link FlowingFluid#canHoldAnyFluid}.
      */
-    public static final int CAN_HOLD_ANY_FLUID = 0x100;
+    public static final int CAN_HOLD_ANY_FLUID = 1 << 5;
 
     /**
      * {@link BlockTags#CAULDRONS}.
      */
-    public static final int CAULDRONS_TAG = 0x200;
+    public static final int CAULDRONS_TAG = 1 << 6;
 
     /**
      * Instance of {@link TrapDoorBlock}
      * and {@link TrapDoorBlock#OPEN} set to {@code true}.
      */
-    public static final int TRAP_DOOR_CLASS_AND_OPEN_PROPERTY_IS_TRUE = 0x400;
+    public static final int TRAP_DOOR_CLASS_AND_OPEN_PROPERTY_IS_TRUE = 1 << 7;
 
     /**
      * {@link BlockTags#CAN_GLIDE_THROUGH}.
      */
-    public static final int CAN_GLIDE_THROUGH_TAG = 0x800;
+    public static final int CAN_GLIDE_THROUGH_TAG = 1 << 8;
 
     /**
      * {@link BlockTags#DOORS}.
      */
-    public static final int DOORS_TAG = 0x20;
-
-    /**
-     * {@link BlockTags#ICE}.
-     */
-    public static final int ICE_TAG = 0x40;
+    public static final int DOORS_TAG = 1 << 9;
 
     /**
      * {@link BlockTags#BEDS}.
      */
-    public static final int BEDS_TAG = 0x80;
+    public static final int BEDS_TAG = 1 << 10;
 
     /**
-     * {@link BlockTags#FIRE}.
+     * {@link NodeEvaluator#isBurningBlock(BlockState)}.
      */
-    public static final int FIRE_TAG = 0x1000;
-
-    /**
-     * {@link BlockTags#TRAPDOORS}.
-     */
-    public static final int TRAPDOORS_TAG = 0x2000;
-
-    /**
-     * {@link BlockTags#SPELEOTHEMS}.
-     */
-    public static final int SPELEOTHEMS_TAG = 0x4000;
-
-
+    public static final int IS_BURNING_BLOCK = 1 << 11;
 
     /**
      * {@link #WALLS_TAG} or {@link #FENCE_GATE_CLASS}.
@@ -108,6 +92,11 @@ public final class BlockMasks {
      */
     public static final int CLIMBABLE_TAG_OR_TRAP_DOOR_CLASS_AND_OPEN_PROPERTY_IS_TRUE = CLIMBABLE_TAG | TRAP_DOOR_CLASS_AND_OPEN_PROPERTY_IS_TRUE;
 
+    /**
+     * {@link #DOORS_TAG} or {@link #FENCES_TAG}.
+     */
+    public static final int DOORS_TAG_OR_FENCES_TAG = DOORS_TAG | FENCES_TAG;
+
     public static int init(final BlockState state) {
         int i = 0;
         i |= state.is(BlockTags.WALLS) ? WALLS_TAG : 0;
@@ -116,11 +105,8 @@ public final class BlockMasks {
         i |= state.is(BlockTags.CAULDRONS) ? CAULDRONS_TAG : 0;
         i |= state.is(BlockTags.CAN_GLIDE_THROUGH) ? CAN_GLIDE_THROUGH_TAG : 0;
         i |= state.is(BlockTags.DOORS) ? DOORS_TAG : 0;
-        i |= state.is(BlockTags.ICE) ? ICE_TAG : 0;
         i |= state.is(BlockTags.BEDS) ? BEDS_TAG : 0;
-        i |= state.is(BlockTags.FIRE) ? FIRE_TAG : 0;
-        i |= state.is(BlockTags.TRAPDOORS) ? TRAPDOORS_TAG : 0;
-        i |= state.is(BlockTags.SPELEOTHEMS) ? SPELEOTHEMS_TAG : 0;
+        i |= NodeEvaluator.gale$computeIsBurningBlock(state) ? IS_BURNING_BLOCK : 0;
         i |= state.getBlock() instanceof PowderSnowBlock ? POWDER_SNOW_CLASS : 0;
         i |= state.getBlock() instanceof FenceGateBlock ? FENCE_GATE_CLASS : 0;
         i |= state.getBlock() instanceof TrapDoorBlock && state.getValue(TrapDoorBlock.OPEN) ? TRAP_DOOR_CLASS_AND_OPEN_PROPERTY_IS_TRUE : 0;

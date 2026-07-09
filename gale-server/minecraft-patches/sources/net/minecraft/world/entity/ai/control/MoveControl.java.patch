@@ -1,0 +1,12 @@
+--- a/net/minecraft/world/entity/ai/control/MoveControl.java
++++ b/net/minecraft/world/entity/ai/control/MoveControl.java
+@@ -101,8 +_,7 @@
+             if (yd > this.mob.maxUpStep() && xd * xd + zd * zd < Math.max(1.0F, this.mob.getBbWidth())
+                 || !shape.isEmpty()
+                     && this.mob.getY() < shape.max(Direction.Axis.Y) + pos.getY()
+-                    && !blockState.is(BlockTags.DOORS)
+-                    && !blockState.is(BlockTags.FENCES)) {
++                    && !blockState.isAny(org.dreeam.leaf.util.BlockMasks.DOORS_TAG_OR_FENCES_TAG)) { // Gale - Pre-compute - Common BlockState predicates - Apply
+                 this.mob.getJumpControl().jump();
+                 this.operation = MoveControl.Operation.JUMPING;
+             }

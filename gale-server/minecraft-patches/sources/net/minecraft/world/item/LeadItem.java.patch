@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/item/LeadItem.java
++++ b/net/minecraft/world/item/LeadItem.java
+@@ -24,7 +_,7 @@
+         Level level = context.getLevel();
+         BlockPos pos = context.getClickedPos();
+         BlockState state = level.getBlockState(pos);
+-        if (state.is(BlockTags.FENCES)) {
++        if (state.isAny(org.dreeam.leaf.util.BlockMasks.FENCES_TAG)) { // Gale - Pre-compute - Common BlockState predicates - Apply
+             Player player = context.getPlayer();
+             if (!level.isClientSide() && player != null) {
+                 return bindPlayerMobs(player, level, pos, context.getHand()); // CraftBukkit - Pass hand

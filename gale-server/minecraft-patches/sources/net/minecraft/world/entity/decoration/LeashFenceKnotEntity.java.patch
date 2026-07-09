@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/decoration/LeashFenceKnotEntity.java
++++ b/net/minecraft/world/entity/decoration/LeashFenceKnotEntity.java
+@@ -121,7 +_,7 @@
+ 
+     @Override
+     public boolean survives() {
+-        return this.level().getBlockState(this.pos).is(BlockTags.FENCES);
++        return this.level().getBlockState(this.pos).isAny(org.dreeam.leaf.util.BlockMasks.FENCES_TAG); // Gale - Pre-compute - Common BlockState predicates - Apply
+     }
+ 
+     public static LeashFenceKnotEntity getOrCreateKnot(final Level level, final BlockPos pos) {
