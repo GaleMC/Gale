@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/FrogspawnBlock.java
++++ b/net/minecraft/world/level/block/FrogspawnBlock.java
+@@ -108,7 +_,7 @@
+     private static boolean mayPlaceOn(final BlockGetter level, final BlockPos pos) {
+         FluidState fluidState = level.getFluidState(pos);
+         FluidState fluidAbove = level.getFluidState(pos.above());
+-        return (fluidState.is(FluidTags.SUPPORTS_FROGSPAWN) || level.getBlockState(pos).is(BlockTags.SUPPORTS_FROGSPAWN)) && fluidAbove.is(Fluids.EMPTY);
++        return (fluidState.is(FluidTags.SUPPORTS_FROGSPAWN) || level.getBlockState(pos).isAny(org.dreeam.leaf.util.BlockMasks.SUPPORTS_FROGSPAWN_TAG)) && fluidAbove.is(Fluids.EMPTY); // Gale - Pre-compute - Common BlockState predicates - Apply
+     }
+ 
+     private void hatchFrogspawn(final ServerLevel level, final BlockPos pos, final RandomSource random) {

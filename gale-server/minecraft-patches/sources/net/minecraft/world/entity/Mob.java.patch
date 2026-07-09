@@ -54,7 +54,7 @@
              return toEquip;
          } else {
              return ItemStack.EMPTY;
-@@ -780,49 +_,221 @@
+@@ -780,49 +_,226 @@
          return true;
      }
  
@@ -198,11 +198,7 @@
 +    public int gale$eventDriven_checkDespawnPlayerTrackingMode;
 +
 +    public void gale$eventDriven_checkDespawnPlayerTrackingMode_update() {
-+        int newValue = this.gale$eventDriven_checkDespawnPlayerTrackingMode_compute();
-+        this.gale$eventDriven_checkDespawnPlayerTrackingMode = newValue;
-+        if (newValue == 0) {
-+            this.gale$checkDespawn_lastPlayerWithinSoftRange = null;
-+        }
++        this.gale$eventDriven_checkDespawnPlayerTrackingMode = this.gale$eventDriven_checkDespawnPlayerTrackingMode_compute();
 +    }
 +
 +    private byte gale$eventDriven_checkDespawnPlayerTrackingMode_compute() {
@@ -214,6 +210,15 @@
 +            return 2;
 +        }
 +    }
++
++    // @Override
++    // public void gale$eventDriven_isInTickList_set(boolean newValue) {
++    //     boolean oldValue = this.gale$eventDriven_isInTickList;
++    //     if (oldValue != newValue) {
++    //         super.gale$eventDriven_isInTickList_set(newValue);
++    //         this.gale$eventDriven_checkDespawnPlayerTrackingMode_update();
++    //     }
++    // }
 +
      @Override
      public void checkDespawn() {

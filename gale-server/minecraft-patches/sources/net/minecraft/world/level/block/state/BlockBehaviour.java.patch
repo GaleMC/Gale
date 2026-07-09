@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/state/BlockBehaviour.java
 +++ b/net/minecraft/world/level/block/state/BlockBehaviour.java
-@@ -490,6 +_,13 @@
+@@ -490,6 +_,16 @@
          private boolean emptyCollisionShape;
          private boolean emptyConstantCollisionShape;
          private VoxelShape constantCollisionShape;
@@ -9,8 +9,25 @@
 +        public boolean isAny(int predicateMask) {
 +            return (this.predicateFlags & predicateMask) != 0;
 +        }
++        public boolean isUnoccupiedBed() {
++            return (this.predicateFlags & org.dreeam.leaf.util.BlockMasks.UNOCCUPIED_BED_MASK) == org.dreeam.leaf.util.BlockMasks.BEDS_TAG;
++        }
 +        public void initPredicateFlags() { this.predicateFlags = org.dreeam.leaf.util.BlockMasks.init(this.asState()); }
 +        // Gale end - Pre-compute - Common BlockState predicates
  
          private static void initCaches(final VoxelShape shape, final boolean neighbours) {
              ((ca.spottedleaf.moonrise.patches.collisions.shape.CollisionVoxelShape)shape).moonrise$isFullBlock();
+@@ -668,6 +_,13 @@
+         public Holder<Block> typeHolder() {
+             return this.getBlock().builtInRegistryHolder();
+         }
++
++        // Gale start - Faster implementation for subclass - BlockBehaviour.BlockStateBase.is(Block)
++        @Override
++        public boolean is(final Block rawType) {
++            return this.owner == rawType;
++        }
++        // Gale end - Faster implementation for subclass - BlockBehaviour.BlockStateBase.is(Block)
+ 
+         @Deprecated
+         public boolean blocksMotion() {

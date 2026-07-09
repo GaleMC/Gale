@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/ai/behavior/ValidateNearbyPoi.java
++++ b/net/minecraft/world/entity/ai/behavior/ValidateNearbyPoi.java
+@@ -44,7 +_,7 @@
+ 
+     private static boolean bedIsOccupied(final ServerLevel poiLevel, final BlockPos poiPos, final LivingEntity body) {
+         BlockState blockState = poiLevel.getBlockState(poiPos);
+-        return blockState.is(BlockTags.BEDS) && blockState.getValue(BedBlock.OCCUPIED) && !body.isSleeping();
++        return blockState.isAny(org.dreeam.leaf.util.BlockMasks.BEDS_TAG_AND_OCCUPIED_PROPERTY_IS_TRUE) && !body.isSleeping(); // Gale - Pre-compute - Common BlockState predicates - Apply
+     }
+ 
+     private static boolean bedIsOccupiedByVillager(final ServerLevel poiLevel, final BlockPos poiPos) {

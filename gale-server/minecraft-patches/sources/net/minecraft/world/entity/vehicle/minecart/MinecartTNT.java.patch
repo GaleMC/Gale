@@ -1,0 +1,19 @@
+--- a/net/minecraft/world/entity/vehicle/minecart/MinecartTNT.java
++++ b/net/minecraft/world/entity/vehicle/minecart/MinecartTNT.java
+@@ -202,14 +_,14 @@
+     public float getBlockExplosionResistance(
+         final Explosion explosion, final BlockGetter level, final BlockPos pos, final BlockState block, final FluidState fluid, final float resistance
+     ) {
+-        return !this.isPrimed() || !block.is(BlockTags.RAILS) && !level.getBlockState(pos.above()).is(BlockTags.RAILS)
++        return !this.isPrimed() || !block.isAny(org.dreeam.leaf.util.BlockMasks.RAILS_TAG) && !level.getBlockState(pos.above()).isAny(org.dreeam.leaf.util.BlockMasks.RAILS_TAG) // Gale - Pre-compute - Common BlockState predicates - Apply
+             ? super.getBlockExplosionResistance(explosion, level, pos, block, fluid, resistance)
+             : 0.0F;
+     }
+ 
+     @Override
+     public boolean shouldBlockExplode(final Explosion explosion, final BlockGetter level, final BlockPos pos, final BlockState state, final float power) {
+-        return (!this.isPrimed() || !state.is(BlockTags.RAILS) && !level.getBlockState(pos.above()).is(BlockTags.RAILS))
++        return (!this.isPrimed() || !state.isAny(org.dreeam.leaf.util.BlockMasks.RAILS_TAG) && !level.getBlockState(pos.above()).isAny(org.dreeam.leaf.util.BlockMasks.RAILS_TAG)) // Gale - Pre-compute - Common BlockState predicates - Apply
+             && super.shouldBlockExplode(explosion, level, pos, state, power);
+     }
+ 

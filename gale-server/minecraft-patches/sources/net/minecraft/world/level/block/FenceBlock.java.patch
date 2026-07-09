@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/FenceBlock.java
++++ b/net/minecraft/world/level/block/FenceBlock.java
+@@ -64,7 +_,7 @@
+     }
+ 
+     private boolean isSameFence(final BlockState state) {
+-        return state.is(BlockTags.FENCES) && state.is(BlockTags.WOODEN_FENCES) == this.defaultBlockState().is(BlockTags.WOODEN_FENCES);
++        return state.isAny(org.dreeam.leaf.util.BlockMasks.FENCES_TAG) && state.is(BlockTags.WOODEN_FENCES) == this.defaultBlockState().is(BlockTags.WOODEN_FENCES); // Gale - Pre-compute - Common BlockState predicates - Apply
+     }
+ 
+     @Override

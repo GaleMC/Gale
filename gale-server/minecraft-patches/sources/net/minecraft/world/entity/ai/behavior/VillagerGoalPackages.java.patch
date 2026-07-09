@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/ai/behavior/VillagerGoalPackages.java
++++ b/net/minecraft/world/entity/ai/behavior/VillagerGoalPackages.java
+@@ -68,7 +_,7 @@
+ 
+     private static boolean validateBedPoi(final ServerLevel level, final BlockPos blockPos) {
+         BlockState blockState = level.getBlockState(blockPos);
+-        return blockState.is(BlockTags.BEDS) && !blockState.getValue(BedBlock.OCCUPIED);
++        return blockState.isUnoccupiedBed(); // Gale - Pre-compute - Common BlockState predicates - Apply
+     }
+ 
+     public static ImmutableList<Pair<Integer, ? extends BehaviorControl<? super Villager>>> getWorkPackage(

@@ -139,6 +139,44 @@
                  }
              }
          }
+@@ -2386,26 +_,28 @@
+ 
+     @Override
+     public void updatePOIOnBlockStateChange(final BlockPos pos, final BlockState oldState, final BlockState newState) {
+-        Optional<Holder<PoiType>> oldType = PoiTypes.forState(oldState);
+-        Optional<Holder<PoiType>> newType = PoiTypes.forState(newState);
+-        if (!Objects.equals(oldType, newType)) {
++        // Gale start - Do less work - PoiTypes.forState() (skip Optional creation)
++        Holder<PoiType> oldType = PoiTypes.gale$forStateNullable(oldState);
++        Holder<PoiType> newType = PoiTypes.gale$forStateNullable(newState);
++        if (oldType != newType) {
+             BlockPos immutable = pos.immutable();
+-            oldType.ifPresent(poiType -> this.getServer().execute(() -> {
++            if (oldType != null) this.getServer().execute(() -> {
+                 this.getPoiManager().remove(immutable);
+                 this.debugSynchronizers.dropPoi(immutable);
+-            }));
+-            newType.ifPresent(poiType -> this.getServer().execute(() -> {
++            });
++            if (newType != null) this.getServer().execute(() -> {
+                 // Paper start - Remove stale POIs
+-                if (oldType.isEmpty() && this.getPoiManager().exists(immutable, _ -> true)) {
++                if (oldType == null && this.getPoiManager().exists(immutable, _ -> true)) {
+                     this.getPoiManager().remove(immutable);
+                 }
+                 // Paper end - Remove stale POIs
+-                PoiRecord record = this.getPoiManager().add(immutable, (Holder<PoiType>)poiType);
++                PoiRecord record = this.getPoiManager().add(immutable, newType);
+                 if (record != null) {
+                     this.debugSynchronizers.registerPoi(record);
+                 }
+-            }));
++            });
+         }
++        // Gale end - Do less work - PoiTypes.forState() (skip Optional creation)
+     }
+ 
+     public PoiManager getPoiManager() {
 @@ -2856,6 +_,7 @@
              // ServerLevel.this.getChunkSource().addEntity(entity); // Paper - ignore and warn about illegal addEntity calls instead of crashing server; moved down below valid=true
              if (entity instanceof ServerPlayer player) {

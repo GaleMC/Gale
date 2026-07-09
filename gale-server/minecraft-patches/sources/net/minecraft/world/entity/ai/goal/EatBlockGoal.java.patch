@@ -1,0 +1,29 @@
+--- a/net/minecraft/world/entity/ai/goal/EatBlockGoal.java
++++ b/net/minecraft/world/entity/ai/goal/EatBlockGoal.java
+@@ -15,7 +_,7 @@
+ 
+ public class EatBlockGoal extends Goal {
+     private static final int EAT_ANIMATION_TICKS = 40;
+-    private static final Predicate<BlockState> IS_EDIBLE = state -> state.is(BlockTags.EDIBLE_FOR_SHEEP);
++    private static final Predicate<BlockState> IS_EDIBLE = state -> state.isAny(org.dreeam.leaf.util.BlockMasks.EDIBLE_FOR_SHEEP_TAG); // Gale - Pre-compute - Common BlockState predicates - Apply
+     private final Mob mob;
+     private final Level level;
+     private int eatAnimationTick;
+@@ -33,7 +_,7 @@
+         }
+ 
+         BlockPos pos = this.mob.blockPosition();
+-        return IS_EDIBLE.test(this.level.getBlockState(pos)) || this.level.getBlockState(pos.below()).is(Blocks.GRASS_BLOCK);
++        return this.level.getBlockState(pos).isAny(org.dreeam.leaf.util.BlockMasks.EDIBLE_FOR_SHEEP_TAG) || this.level.getBlockState(pos.below()).is(Blocks.GRASS_BLOCK); // Gale - Pre-compute - Common BlockState predicates - Apply
+     }
+ 
+     @Override
+@@ -63,7 +_,7 @@
+         if (this.eatAnimationTick == this.adjustedTickDelay(4)) {
+             BlockPos pos = this.mob.blockPosition();
+             final BlockState blockState = this.level.getBlockState(pos); // Paper - fix wrong block state
+-            if (IS_EDIBLE.test(blockState)) { // Paper - fix wrong block state
++            if (blockState.isAny(org.dreeam.leaf.util.BlockMasks.EDIBLE_FOR_SHEEP_TAG)) { // Paper - fix wrong block state // Gale - Pre-compute - Common BlockState predicates - Apply
+                 if (org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(this.mob, pos, blockState.getFluidState().createLegacyBlock(), !getServerLevel(this.level).getGameRules().get(GameRules.MOB_GRIEFING))) { // CraftBukkit // Paper - fix wrong block state
+                     this.level.destroyBlock(pos, false);
+                 }

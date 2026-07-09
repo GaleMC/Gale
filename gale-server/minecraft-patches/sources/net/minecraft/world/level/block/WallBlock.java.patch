@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/WallBlock.java
++++ b/net/minecraft/world/level/block/WallBlock.java
+@@ -105,7 +_,7 @@
+     private boolean connectsTo(final BlockState state, final boolean faceSolid, final Direction direction) {
+         Block block = state.getBlock();
+         boolean connectedFenceGate = block instanceof FenceGateBlock && FenceGateBlock.connectsToDirection(state, direction);
+-        return state.is(BlockTags.WALLS) || !isExceptionForConnection(state) && faceSolid || block instanceof IronBarsBlock || connectedFenceGate;
++        return state.isAny(org.dreeam.leaf.util.BlockMasks.WALLS_TAG) || !isExceptionForConnection(state) && faceSolid || block instanceof IronBarsBlock || connectedFenceGate; // Gale - Pre-compute - Common BlockState predicates - Apply
+     }
+ 
+     @Override

@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/ai/goal/CatSitOnBlockGoal.java
++++ b/net/minecraft/world/entity/ai/goal/CatSitOnBlockGoal.java
+@@ -51,7 +_,6 @@
+         BlockState blockState = level.getBlockState(pos);
+         return blockState.is(Blocks.CHEST)
+             ? ChestBlockEntity.getOpenCount(level, pos) < 1
+-            : blockState.is(Blocks.FURNACE) && blockState.getValue(FurnaceBlock.LIT)
+-                || blockState.is(BlockTags.BEDS, s -> s.getOptionalValue(BedBlock.PART).map(v -> v != BedPart.HEAD).orElse(true));
++            : blockState.isAny(org.dreeam.leaf.util.BlockMasks.CAT_SIT_VALID_WARM_TARGET); // Gale - Pre-compute - Common BlockState predicates - Apply
+     }
+ }

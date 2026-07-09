@@ -1,0 +1,11 @@
+--- a/src/main/java/org/bukkit/craftbukkit/legacy/CraftLegacy.java
++++ b/src/main/java/org/bukkit/craftbukkit/legacy/CraftLegacy.java
+@@ -48,7 +_,7 @@
+     private static final Map<MaterialData, Item> materialToItem = new HashMap<>(16384);
+     private static final Map<Item, MaterialData> itemToMaterial = new HashMap<>(1024);
+     private static final Map<MaterialData, BlockState> materialToState = new HashMap<>(4096);
+-    private static final Map<BlockState, MaterialData> stateToMaterial = new HashMap<>(4096);
++    private static final Map<BlockState, MaterialData> stateToMaterial = new org.galemc.gale.util.collection.blockstate.BasicBlockState2ObjectMap<>(); // Gale - Collections - BlockState-keyed
+     private static final Map<MaterialData, Block> materialToBlock = new HashMap<>(4096);
+     private static final Map<Block, MaterialData> blockToMaterial = new HashMap<>(1024);
+ 

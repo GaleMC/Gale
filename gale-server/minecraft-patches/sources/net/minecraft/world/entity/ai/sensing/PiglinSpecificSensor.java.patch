@@ -1,0 +1,15 @@
+--- a/net/minecraft/world/entity/ai/sensing/PiglinSpecificSensor.java
++++ b/net/minecraft/world/entity/ai/sensing/PiglinSpecificSensor.java
+@@ -114,6 +_,12 @@
+ 
+     private static boolean isValidRepellent(final ServerLevel level, final BlockPos pos) {
+         BlockState blockState = level.getBlockState(pos);
++        // Gale start - Pre-compute - Common BlockState predicates - Apply
++        return blockState.isAny(org.dreeam.leaf.util.BlockMasks.IS_VALID_PIGLIN_REPELLENT);
++    }
++
++    public static boolean gale$precompute_isValidRepellent_compute(BlockState blockState) {
++        // Gale end - Pre-compute - Common BlockState predicates - Apply
+         boolean isRepellent = blockState.is(BlockTags.PIGLIN_REPELLENTS);
+         return isRepellent && blockState.is(Blocks.SOUL_CAMPFIRE) ? CampfireBlock.isLitCampfire(blockState) : isRepellent;
+     }

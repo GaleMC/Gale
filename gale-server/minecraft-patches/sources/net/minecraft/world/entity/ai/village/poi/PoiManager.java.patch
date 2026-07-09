@@ -1,0 +1,14 @@
+--- a/net/minecraft/world/entity/ai/village/poi/PoiManager.java
++++ b/net/minecraft/world/entity/ai/village/poi/PoiManager.java
+@@ -480,7 +_,10 @@
+                     BlockState state = blockSection.getBlockState(
+                         SectionPos.sectionRelative(blockPos.getX()), SectionPos.sectionRelative(blockPos.getY()), SectionPos.sectionRelative(blockPos.getZ())
+                     );
+-                    PoiTypes.forState(state).ifPresent(type -> output.accept(blockPos, (Holder<PoiType>)type));
++                    // Gale start - Do less work - PoiTypes.forState() (skip Optional creation)
++                    Holder<PoiType> poiType = PoiTypes.gale$forStateNullable(state);
++                    if (poiType != null) output.accept(blockPos, poiType);
++                    // Gale end - Do less work - PoiTypes.forState() (skip Optional creation)
+                 }
+             );
+     }
