@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/level/ServerPlayer.java
 +++ b/net/minecraft/server/level/ServerPlayer.java
-@@ -489,7 +_,30 @@
+@@ -489,7 +_,28 @@
          this.bukkitPickUpLoot = true;
          this.maxHealthCache = this.getMaxHealth();
          // CraftBukkit end
@@ -9,8 +9,6 @@
 +    }
 +
 +    // Gale start - Optimize Mob.checkDespawn()
-+    public int indexTODO;
-+
 +    @Override
 +    public void setPosRaw(final double x, final double y, final double z, final boolean forceBoundingBoxUpdate) {
 +        if (!this.gale$eventDriven_affectsSpawningSelector || this.gale$eventDriven_trackedByLevel == null) {
