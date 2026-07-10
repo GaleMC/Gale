@@ -1,6 +1,6 @@
 --- a/src/main/java/org/bukkit/craftbukkit/CraftRegionAccessor.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftRegionAccessor.java
-@@ -77,7 +_,7 @@
+@@ -79,7 +_,7 @@
  
      @Override
      public Biome getComputedBiome(int x, int y, int z) {

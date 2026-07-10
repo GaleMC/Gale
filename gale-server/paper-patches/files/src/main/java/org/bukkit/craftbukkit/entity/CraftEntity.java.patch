@@ -41,7 +41,7 @@
          this.getHandle().totalEntityAge = value;
      }
  
-@@ -726,6 +_,20 @@
+@@ -736,6 +_,20 @@
          return this.getHandle().visibleByDefault;
      }
  
@@ -62,7 +62,7 @@
      @Override
      public Set<Player> getTrackedBy() {
          Preconditions.checkState(!this.entity.generation, "Cannot get tracking players during world generation");
-@@ -735,7 +_,7 @@
+@@ -745,7 +_,7 @@
          ChunkMap.TrackedEntity entityTracker = world.getChunkSource().chunkMap.entityMap.get(this.getEntityId());
  
          if (entityTracker != null) {
@@ -71,7 +71,7 @@
                  players.add(connection.getPlayer().getBukkitEntity());
              }
          }
-@@ -752,7 +_,10 @@
+@@ -762,7 +_,10 @@
          ChunkMap.TrackedEntity entityTracker = world.getChunkSource().chunkMap.entityMap.get(this.getEntityId());
          if (entityTracker == null) return false;
  
@@ -83,7 +83,7 @@
      }
  
      @Override
-@@ -1070,7 +_,7 @@
+@@ -1080,7 +_,7 @@
              return;
          }
  
@@ -92,7 +92,7 @@
              this.getHandle().resendPossiblyDesyncedEntityData(connection.getPlayer());
          }
      }
-@@ -1215,8 +_,8 @@
+@@ -1225,8 +_,8 @@
              return java.util.Collections.emptySet();
          }
  
