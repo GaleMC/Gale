@@ -35,7 +35,7 @@ class SpatialGridTest {
     // 1. Empty grid: any queries return false / -1
     @Test
     public void testEmptyAnyEllipsoid() {
-        assertFalse(ellipsoidGrid.anyIn(0.0, 0.0, 0.0, floorInt(0.0), floorInt(0.0), floorInt(0.0)));
+        assertFalse(ellipsoidGrid.anyIn(0.0, 0.0, 0.0, floorInt(0.0), floorInt(0.0), floorInt(0.0)) != -1);
     }
 
     @Test
@@ -45,7 +45,7 @@ class SpatialGridTest {
 
     @Test
     public void testEmptyAnyCylinder() {
-        assertFalse(cylinderGrid.anyIn(0.0, 0.0, 0.0, floorInt(0.0), floorInt(0.0), floorInt(0.0)));
+        assertFalse(cylinderGrid.anyIn(0.0, 0.0, 0.0, floorInt(0.0), floorInt(0.0), floorInt(0.0)) != -1);
     }
 
     @Test
@@ -57,14 +57,14 @@ class SpatialGridTest {
     @Test
     public void testSinglePointInsideEllipsoid() {
         int s = ellipsoidGrid.add(1.0, 0.0, 1.0, floorInt(1.0), floorInt(0.0), floorInt(1.0));
-        assertTrue(ellipsoidGrid.anyIn(1.0, 0.0, 1.0, floorInt(1.0), floorInt(0.0), floorInt(1.0)));
+        assertTrue(ellipsoidGrid.anyIn(1.0, 0.0, 1.0, floorInt(1.0), floorInt(0.0), floorInt(1.0)) != -1);
         assertEquals(s, ellipsoidGrid.nearestIn(1.0, 0.0, 1.0, floorInt(1.0), floorInt(0.0), floorInt(1.0)));
     }
 
     @Test
     public void testSinglePointInsideCylinder() {
         int s = cylinderGrid.add(2.0, 0.5, -1.0, floorInt(2.0), floorInt(0.5), floorInt(-1.0));
-        assertTrue(cylinderGrid.anyIn(2.0, 0.5, -1.0, floorInt(2.0), floorInt(0.5), floorInt(-1.0)));
+        assertTrue(cylinderGrid.anyIn(2.0, 0.5, -1.0, floorInt(2.0), floorInt(0.5), floorInt(-1.0)) != -1);
         assertEquals(s, cylinderGrid.nearestIn(2.0, 0.5, -1.0, floorInt(2.0), floorInt(0.5), floorInt(-1.0)));
     }
 
@@ -72,13 +72,13 @@ class SpatialGridTest {
     @Test
     public void testSinglePointOutsideEllipsoid() {
         ellipsoidGrid.add(100.0, 100.0, 100.0, floorInt(100.0), floorInt(100.0), floorInt(100.0));
-        assertFalse(ellipsoidGrid.anyIn(0.0, 0.0, 0.0, floorInt(0.0), floorInt(0.0), floorInt(0.0)));
+        assertFalse(ellipsoidGrid.anyIn(0.0, 0.0, 0.0, floorInt(0.0), floorInt(0.0), floorInt(0.0)) != -1);
     }
 
     @Test
     public void testSinglePointOutsideCylinder() {
         cylinderGrid.add(100.0, 100.0, 100.0, floorInt(100.0), floorInt(100.0), floorInt(100.0));
-        assertFalse(cylinderGrid.anyIn(0.0, 0.0, 0.0, floorInt(0.0), floorInt(0.0), floorInt(0.0)));
+        assertFalse(cylinderGrid.anyIn(0.0, 0.0, 0.0, floorInt(0.0), floorInt(0.0), floorInt(0.0)) != -1);
     }
 
     // 4. Multiple points, nearest selection
@@ -104,7 +104,7 @@ class SpatialGridTest {
         double cx = 0.0, cy = 0.0, cz = 0.0;
         // point at distance W in X
         int s = ellipsoidGrid.add(W, 0.0, 0.0, floorInt(W), floorInt(0.0), floorInt(0.0));
-        assertTrue(ellipsoidGrid.anyIn(cx, cy, cz, floorInt(cx), floorInt(cy), floorInt(cz)));
+        assertTrue(ellipsoidGrid.anyIn(cx, cy, cz, floorInt(cx), floorInt(cy), floorInt(cz)) != -1);
         assertEquals(s, ellipsoidGrid.nearestIn(cx, cy, cz, floorInt(cx), floorInt(cy), floorInt(cz)));
     }
 
@@ -112,7 +112,7 @@ class SpatialGridTest {
     public void testPointOnCylinderBoundary() {
         double cx = 0.0, cy = 0.0, cz = 0.0;
         int s = cylinderGrid.add(W, 0.0, 0.0, floorInt(W), floorInt(0.0), floorInt(0.0));
-        assertTrue(cylinderGrid.anyIn(cx, cy, cz, floorInt(cx), floorInt(cy), floorInt(cz)));
+        assertTrue(cylinderGrid.anyIn(cx, cy, cz, floorInt(cx), floorInt(cy), floorInt(cz)) != -1);
         assertEquals(s, cylinderGrid.nearestIn(cx, cy, cz, floorInt(cx), floorInt(cy), floorInt(cz)));
     }
 
@@ -133,17 +133,17 @@ class SpatialGridTest {
     public void testMoveAcrossCells() {
         int s = ellipsoidGrid.add(0.0, 0.0, 0.0, floorInt(0.0), floorInt(0.0), floorInt(0.0));
         ellipsoidGrid.move(s, 100.0, 0.0, 0.0, floorInt(100.0), floorInt(0.0), floorInt(0.0));
-        assertTrue(ellipsoidGrid.anyIn(100.0, 0.0, 0.0, floorInt(100.0), floorInt(0.0), floorInt(0.0)));
-        assertFalse(ellipsoidGrid.anyIn(0.0, 0.0, 0.0, floorInt(0.0), floorInt(0.0), floorInt(0.0)));
+        assertTrue(ellipsoidGrid.anyIn(100.0, 0.0, 0.0, floorInt(100.0), floorInt(0.0), floorInt(0.0)) != -1);
+        assertFalse(ellipsoidGrid.anyIn(0.0, 0.0, 0.0, floorInt(0.0), floorInt(0.0), floorInt(0.0)) != -1);
     }
 
     // 8. Remove last point in a cell triggers bucket deletion
     @Test
     public void testRemoveLastInCellDeletesBucket() {
         int s = ellipsoidGrid.add(5.0, 5.0, 5.0, floorInt(5.0), floorInt(5.0), floorInt(5.0));
-        assertTrue(ellipsoidGrid.anyIn(5.0, 5.0, 5.0, floorInt(5.0), floorInt(5.0), floorInt(5.0)));
+        assertTrue(ellipsoidGrid.anyIn(5.0, 5.0, 5.0, floorInt(5.0), floorInt(5.0), floorInt(5.0)) != -1);
         ellipsoidGrid.remove(s);
-        assertFalse(ellipsoidGrid.anyIn(5.0, 5.0, 5.0, floorInt(5.0), floorInt(5.0), floorInt(5.0)));
+        assertFalse(ellipsoidGrid.anyIn(5.0, 5.0, 5.0, floorInt(5.0), floorInt(5.0), floorInt(5.0)) != -1);
     }
 
     // 9. Rehash growth path: add many points to force rehash
@@ -156,8 +156,8 @@ class SpatialGridTest {
             slots[i] = ellipsoidGrid.add(x, 0.0, 0.0, floorInt(x), floorInt(0.0), floorInt(0.0));
         }
         // verify a few random points still found
-        assertTrue(ellipsoidGrid.anyIn(10.0, 0.0, 0.0, floorInt(10.0), floorInt(0.0), floorInt(0.0)));
-        assertTrue(ellipsoidGrid.anyIn(50.0, 0.0, 0.0, floorInt(50.0), floorInt(0.0), floorInt(0.0)));
+        assertTrue(ellipsoidGrid.anyIn(10.0, 0.0, 0.0, floorInt(10.0), floorInt(0.0), floorInt(0.0)) != -1);
+        assertTrue(ellipsoidGrid.anyIn(50.0, 0.0, 0.0, floorInt(50.0), floorInt(0.0), floorInt(0.0)) != -1);
         assertEquals(slots[500], ellipsoidGrid.nearestIn(50.0, 0.0, 0.0, floorInt(50.0), floorInt(0.0), floorInt(0.0)));
     }
 
@@ -176,7 +176,7 @@ class SpatialGridTest {
         // ensure all are discoverable
         for (int i = 0; i < count; i++) {
             assertTrue(ellipsoidGrid.anyIn(xsOf(ellipsoidGrid, slots[i]), ysOf(ellipsoidGrid, slots[i]), zsOf(ellipsoidGrid, slots[i]),
-                floorInt(xsOf(ellipsoidGrid, slots[i])), floorInt(ysOf(ellipsoidGrid, slots[i])), floorInt(zsOf(ellipsoidGrid, slots[i]))));
+                floorInt(xsOf(ellipsoidGrid, slots[i])), floorInt(ysOf(ellipsoidGrid, slots[i])), floorInt(zsOf(ellipsoidGrid, slots[i]))) != -1);
         }
     }
 
@@ -185,14 +185,14 @@ class SpatialGridTest {
     public void testAabbLazyRecompute() {
         int a = ellipsoidGrid.add(0.0, 0.0, 0.0, floorInt(0.0), floorInt(0.0), floorInt(0.0));
         int b = ellipsoidGrid.add(10.0, 0.0, 0.0, floorInt(10.0), floorInt(0.0), floorInt(0.0));
-        assertTrue(ellipsoidGrid.anyIn(0.0, 0.0, 0.0, floorInt(0.0), floorInt(0.0), floorInt(0.0)));
-        assertTrue(ellipsoidGrid.anyIn(10.0 - W, 0.0, 0.0, floorInt(5.0), floorInt(0.0), floorInt(0.0)));
-        assertTrue(ellipsoidGrid.anyIn(10.0 + W, 0.0, 0.0, floorInt(5.0), floorInt(0.0), floorInt(0.0)));
-        assertTrue(ellipsoidGrid.anyIn(10.0 + W / Math.sqrt(2) - 0.001, 0.0, W / Math.sqrt(2) - 0.001, floorInt(5.0), floorInt(0.0), floorInt(0.0)));
+        assertTrue(ellipsoidGrid.anyIn(0.0, 0.0, 0.0, floorInt(0.0), floorInt(0.0), floorInt(0.0)) != -1);
+        assertTrue(ellipsoidGrid.anyIn(10.0 - W, 0.0, 0.0, floorInt(5.0), floorInt(0.0), floorInt(0.0)) != -1);
+        assertTrue(ellipsoidGrid.anyIn(10.0 + W, 0.0, 0.0, floorInt(5.0), floorInt(0.0), floorInt(0.0)) != -1);
+        assertTrue(ellipsoidGrid.anyIn(10.0 + W / Math.sqrt(2) - 0.001, 0.0, W / Math.sqrt(2) - 0.001, floorInt(5.0), floorInt(0.0), floorInt(0.0)) != -1);
         ellipsoidGrid.remove(b); // remove extremum, mark dirty
-        assertTrue(ellipsoidGrid.anyIn(0.0, 0.0, 0.0, floorInt(0.0), floorInt(0.0), floorInt(0.0)));
+        assertTrue(ellipsoidGrid.anyIn(0.0, 0.0, 0.0, floorInt(0.0), floorInt(0.0), floorInt(0.0)) != -1);
         ellipsoidGrid.remove(a);
-        assertFalse(ellipsoidGrid.anyIn(0.0, 0.0, 0.0, floorInt(0.0), floorInt(0.0), floorInt(0.0)));
+        assertFalse(ellipsoidGrid.anyIn(0.0, 0.0, 0.0, floorInt(0.0), floorInt(0.0), floorInt(0.0)) != -1);
     }
 
     // 12. Slot stability: slot id remains valid after many operations
@@ -220,7 +220,7 @@ class SpatialGridTest {
         for (int i = 0; i < n; i++) slots[i] = ellipsoidGrid.add(i, 0.0, 0.0, floorInt(i), 0, 0);
         for (int i = 0; i < n; i += 2) ellipsoidGrid.remove(slots[i]);
         for (int i = 1; i < n; i += 2) {
-            assertTrue(ellipsoidGrid.anyIn(i, 0.0, 0.0, floorInt(i), 0, 0));
+            assertTrue(ellipsoidGrid.anyIn(i, 0.0, 0.0, floorInt(i), 0, 0) != -1);
         }
     }
 
@@ -229,14 +229,14 @@ class SpatialGridTest {
     public void testCenterFirstOrderingFunctional() {
         // center cell empty, neighbor cell has point; ensure found
         ellipsoidGrid.add(5.0, 0.0, 0.0, floorInt(5.0), 0, 0);
-        assertTrue(ellipsoidGrid.anyIn(5.0, 0.0, 1.0, floorInt(5.0), 0, floorInt(1.0)));
+        assertTrue(ellipsoidGrid.anyIn(5.0, 0.0, 1.0, floorInt(5.0), 0, floorInt(1.0)) != -1);
     }
 
     // 15. Points with negative coordinates
     @Test
     public void testNegativeCoordinates() {
         int s = ellipsoidGrid.add(-10.5, -2.0, -3.3, floorInt(-10.5), floorInt(-2.0), floorInt(-3.3));
-        assertTrue(ellipsoidGrid.anyIn(-10.5, -2.0, -3.3, floorInt(-10.5), floorInt(-2.0), floorInt(-3.3)));
+        assertTrue(ellipsoidGrid.anyIn(-10.5, -2.0, -3.3, floorInt(-10.5), floorInt(-2.0), floorInt(-3.3)) != -1);
         assertEquals(s, ellipsoidGrid.nearestIn(-10.5, -2.0, -3.3, floorInt(-10.5), floorInt(-2.0), floorInt(-3.3)));
     }
 
@@ -251,7 +251,7 @@ class SpatialGridTest {
         double y = (double) cy;
         double z = (double) cz;
         int s = ellipsoidGrid.add(x, y, z, floorInt(x), floorInt(y), floorInt(z));
-        assertTrue(ellipsoidGrid.anyIn(x, y, z, floorInt(x), floorInt(y), floorInt(z)));
+        assertTrue(ellipsoidGrid.anyIn(x, y, z, floorInt(x), floorInt(y), floorInt(z)) != -1);
         assertEquals(s, ellipsoidGrid.nearestIn(x, y, z, floorInt(x), floorInt(y), floorInt(z)));
     }
 
@@ -261,9 +261,9 @@ class SpatialGridTest {
         double cx = 0.0, cz = 0.0;
         int inside = cylinderGrid.add(0.0, 0.0, 0.0, 0, 0, 0);
         int above = cylinderGrid.add(0.0, H + 1.0, 0.0, 0, floorInt(H + 1.0), 0);
-        assertTrue(cylinderGrid.anyIn(cx, 0.0, cz, floorInt(cx), floorInt(0.0), floorInt(cz)));
-        assertTrue(cylinderGrid.anyIn(cx, H + 2, cz, floorInt(cx), floorInt(H + 2.0), floorInt(cz)));
-        assertFalse(cylinderGrid.anyIn(cx, H + 1.0 + H + 1.0, cz, floorInt(cx), floorInt(H + 2.0), floorInt(cz)));
+        assertTrue(cylinderGrid.anyIn(cx, 0.0, cz, floorInt(cx), floorInt(0.0), floorInt(cz)) != -1);
+        assertTrue(cylinderGrid.anyIn(cx, H + 2, cz, floorInt(cx), floorInt(H + 2.0), floorInt(cz)) != -1);
+        assertFalse(cylinderGrid.anyIn(cx, H + 1.0 + H + 1.0, cz, floorInt(cx), floorInt(H + 2.0), floorInt(cz)) != -1);
     }
 
     // 18. Nearest tie-breaking: deterministic (first found)
@@ -281,9 +281,9 @@ class SpatialGridTest {
     public void testRemoveInvalidSlotNoOp() {
         // no exception and grid still functional
         int s = ellipsoidGrid.add(0.0, 0.0, 0.0, 0, 0, 0);
-        assertTrue(ellipsoidGrid.anyIn(0.0, 0.0, 0.0, 0, 0, 0));
+        assertTrue(ellipsoidGrid.anyIn(0.0, 0.0, 0.0, 0, 0, 0) != -1);
         ellipsoidGrid.remove(s);
-        assertFalse(ellipsoidGrid.anyIn(0.0, 0.0, 0.0, 0, 0, 0));
+        assertFalse(ellipsoidGrid.anyIn(0.0, 0.0, 0.0, 0, 0, 0) != -1);
     }
 
     // 21. Add many points in a grid pattern and query center
@@ -294,7 +294,7 @@ class SpatialGridTest {
             for (int z = -n; z <= n; z++) {
                 ellipsoidGrid.add(x * (W / 2.0), 0.0, z * (W / 2.0), floorInt(x * (W / 2.0)), 0, floorInt(z * (W / 2.0)));
             }
-        assertTrue(ellipsoidGrid.anyIn(0.0, 0.0, 0.0, 0, 0, 0));
+        assertTrue(ellipsoidGrid.anyIn(0.0, 0.0, 0.0, 0, 0, 0) != -1);
     }
 
     // 22. Repeated add/remove of same slot index (slot ids not reused)
@@ -318,7 +318,7 @@ class SpatialGridTest {
             ellipsoidGrid.move(s, nx, 1.1, 1.1, floorInt(nx), floorInt(1.1), floorInt(1.1));
         }
         assertTrue(ellipsoidGrid.anyIn(ellipsoidGrid.getX(s), ellipsoidGrid.getY(s), ellipsoidGrid.getZ(s),
-            floorInt(ellipsoidGrid.getX(s)), floorInt(ellipsoidGrid.getY(s)), floorInt(ellipsoidGrid.getZ(s))));
+            floorInt(ellipsoidGrid.getX(s)), floorInt(ellipsoidGrid.getY(s)), floorInt(ellipsoidGrid.getZ(s))) != -1);
     }
 
     // 24. Ensure AABB recompute after many removals works
@@ -330,7 +330,7 @@ class SpatialGridTest {
         ellipsoidGrid.remove(b);
         ellipsoidGrid.remove(c);
         // aabb for bucket should be recomputed lazily and still find 'a'
-        assertTrue(ellipsoidGrid.anyIn(0.0, 0.0, 0.0, 0, 0, 0));
+        assertTrue(ellipsoidGrid.anyIn(0.0, 0.0, 0.0, 0, 0, 0) != -1);
     }
 
     // 25. Add points exactly at cell boundaries to ensure packing and cell computation correct
@@ -342,9 +342,9 @@ class SpatialGridTest {
         double y = csY;
         double z = csXZ;
         int s = ellipsoidGrid.add(x, y, z, floorInt(x), floorInt(y), floorInt(z));
-        assertTrue(ellipsoidGrid.anyIn(x, y, z, floorInt(x), floorInt(y), floorInt(z)));
+        assertTrue(ellipsoidGrid.anyIn(x, y, z, floorInt(x), floorInt(y), floorInt(z)) != -1);
         ellipsoidGrid.remove(s);
-        assertFalse(ellipsoidGrid.anyIn(x, y, z, floorInt(x), floorInt(y), floorInt(z)));
+        assertFalse(ellipsoidGrid.anyIn(x, y, z, floorInt(x), floorInt(y), floorInt(z)) != -1);
     }
 
     // 26. Many random operations deterministic seed
@@ -374,7 +374,7 @@ class SpatialGridTest {
     public void testQueryWithIncorrectFloorsStillWorks() {
         int s = ellipsoidGrid.add(2.3, 0.0, 2.3, floorInt(2.3), 0, floorInt(2.3));
         // provide slightly wrong floored center (off by 1) but coordinates exact
-        assertTrue(ellipsoidGrid.anyIn(2.3, 0.0, 2.3, floorInt(2.3) + 1, 0, floorInt(2.3) + 1));
+        assertTrue(ellipsoidGrid.anyIn(2.3, 0.0, 2.3, floorInt(2.3) + 1, 0, floorInt(2.3) + 1) != -1);
     }
 
     // 28. Add points with same coordinates multiple times
@@ -382,7 +382,7 @@ class SpatialGridTest {
     public void testDuplicatePointsAllowed() {
         int a = ellipsoidGrid.add(1.0, 1.0, 1.0, 1, 1, 1);
         int b = ellipsoidGrid.add(1.0, 1.0, 1.0, 1, 1, 1);
-        assertTrue(ellipsoidGrid.anyIn(1.0, 1.0, 1.0, 1, 1, 1));
+        assertTrue(ellipsoidGrid.anyIn(1.0, 1.0, 1.0, 1, 1, 1) != -1);
         assertTrue(a != b || a == b); // just ensure both added without exception
     }
 
@@ -395,7 +395,7 @@ class SpatialGridTest {
         }
         // grid should still accept new adds
         int s2 = ellipsoidGrid.add(0.0, 0.0, 0.0, 0, 0, 0);
-        assertTrue(ellipsoidGrid.anyIn(0.0, 0.0, 0.0, 0, 0, 0));
+        assertTrue(ellipsoidGrid.anyIn(0.0, 0.0, 0.0, 0, 0, 0) != -1);
         ellipsoidGrid.remove(s2);
     }
 
@@ -403,7 +403,7 @@ class SpatialGridTest {
     @Test
     public void testCylinderVerticalBoundary() {
         int s = cylinderGrid.add(0.0, H, 0.0, 0, floorInt(H), 0);
-        assertTrue(cylinderGrid.anyIn(0.0, 0.0, 0.0, 0, 0, 0)); // center at 0,0,0 should include y=H
+        assertTrue(cylinderGrid.anyIn(0.0, 0.0, 0.0, 0, 0, 0) != -1); // center at 0,0,0 should include y=H
     }
 
     // 32. Ellipsoid anisotropic check (W planar, H vertical)
@@ -411,7 +411,7 @@ class SpatialGridTest {
     public void testEllipsoidAnisotropic() {
         int s = ellipsoidGrid.add(0.0, H + 0.1, 0.0, 0, floorInt(H + 0.1), 0);
         // outside ellipsoid centered at 0,0,0 because vertical exceeds H
-        assertFalse(ellipsoidGrid.anyIn(0.0, 0.0, 0.0, 0, 0, 0));
+        assertFalse(ellipsoidGrid.anyIn(0.0, 0.0, 0.0, 0, 0, 0) != -1);
     }
 
     // 33. Many small cells: ensure neighbor checks limited to 27 cells
@@ -426,14 +426,14 @@ class SpatialGridTest {
                     double z = dz * ellipsoidGrid.getCellSizeXZ() * 0.5;
                     ellipsoidGrid.add(x, y, z, floorInt(x), floorInt(y), floorInt(z));
                 }
-        assertTrue(ellipsoidGrid.anyIn(0.0, 0.0, 0.0, 0, 0, 0));
+        assertTrue(ellipsoidGrid.anyIn(0.0, 0.0, 0.0, 0, 0, 0) != -1);
     }
 
     // 34. Query center not aligned to cell boundaries
     @Test
     public void testQueryCenterNotAligned() {
         ellipsoidGrid.add(0.7, 0.7, 0.7, floorInt(0.7), floorInt(0.7), floorInt(0.7));
-        assertTrue(ellipsoidGrid.anyIn(0.7, 0.7, 0.7, floorInt(0.7), floorInt(0.7), floorInt(0.7)));
+        assertTrue(ellipsoidGrid.anyIn(0.7, 0.7, 0.7, floorInt(0.7), floorInt(0.7), floorInt(0.7)) != -1);
     }
 
     // 35. Ensure getCellSize accessors return powers of two
@@ -451,7 +451,7 @@ class SpatialGridTest {
     @Test
     public void testQueryWithNearbyCenter() {
         ellipsoidGrid.add(1.0, 0.0, 0.0, 1, 0, 0);
-        assertTrue(ellipsoidGrid.anyIn(1.1, 0.0, 0.0, floorInt(1.1), 0, 0));
+        assertTrue(ellipsoidGrid.anyIn(1.1, 0.0, 0.0, floorInt(1.1), 0, 0) != -1);
     }
 
     // 37. Many small inline removals and overflow removals
@@ -464,7 +464,7 @@ class SpatialGridTest {
         for (int i = 0; i < 10; i += 2) ellipsoidGrid.remove(slots[i]);
         for (int i = 1; i < 10; i += 2)
             assertTrue(ellipsoidGrid.anyIn(xsOf(ellipsoidGrid, slots[i]), ysOf(ellipsoidGrid, slots[i]), zsOf(ellipsoidGrid, slots[i]),
-                floorInt(xsOf(ellipsoidGrid, slots[i])), floorInt(ysOf(ellipsoidGrid, slots[i])), floorInt(zsOf(ellipsoidGrid, slots[i]))));
+                floorInt(xsOf(ellipsoidGrid, slots[i])), floorInt(ysOf(ellipsoidGrid, slots[i])), floorInt(zsOf(ellipsoidGrid, slots[i]))) != -1);
     }
 
     // 38. Add points with y outside cylinder but inside ellipsoid (vertical anisotropy)
@@ -475,8 +475,8 @@ class SpatialGridTest {
         ellipsoidGrid.add(0.0, H + 0.5, 0.0, 0, floorInt(H + 0.5), 0);
         cylinderGrid.add(0.0, H + 0.5, 0.0, 0, floorInt(H + 0.5), 0);
         // ellipsoid test uses H as vertical radius; since point is outside H, both should be false
-        assertFalse(ellipsoidGrid.anyIn(cx, 0.0, cz, 0, 0, 0));
-        assertFalse(cylinderGrid.anyIn(cx, 0.0, cz, 0, 0, 0));
+        assertFalse(ellipsoidGrid.anyIn(cx, 0.0, cz, 0, 0, 0) != -1);
+        assertFalse(cylinderGrid.anyIn(cx, 0.0, cz, 0, 0, 0) != -1);
     }
 
     // 39. Add and remove many to exercise overflow pool growth
@@ -497,16 +497,16 @@ class SpatialGridTest {
     @Test
     public void testQueryFarFromPoints() {
         ellipsoidGrid.add(0.0, 0.0, 0.0, 0, 0, 0);
-        assertFalse(ellipsoidGrid.anyIn(10000.0, 10000.0, 10000.0, floorInt(10000.0), floorInt(10000.0), floorInt(10000.0)));
+        assertFalse(ellipsoidGrid.anyIn(10000.0, 10000.0, 10000.0, floorInt(10000.0), floorInt(10000.0), floorInt(10000.0)) != -1);
     }
 
     // 41. Add points with fractional floors (negative fractions)
     @Test
     public void testNegativeFractionalFloors() {
         int s = ellipsoidGrid.add(-0.1, -0.1, -0.1, floorInt(-0.1), floorInt(-0.1), floorInt(-0.1));
-        assertTrue(ellipsoidGrid.anyIn(-0.1, -0.1, -0.1, floorInt(-0.1), floorInt(-0.1), floorInt(-0.1)));
+        assertTrue(ellipsoidGrid.anyIn(-0.1, -0.1, -0.1, floorInt(-0.1), floorInt(-0.1), floorInt(-0.1)) != -1);
         ellipsoidGrid.remove(s);
-        assertFalse(ellipsoidGrid.anyIn(-0.1, -0.1, -0.1, floorInt(-0.1), floorInt(-0.1), floorInt(-0.1)));
+        assertFalse(ellipsoidGrid.anyIn(-0.1, -0.1, -0.1, floorInt(-0.1), floorInt(-0.1), floorInt(-0.1)) != -1);
     }
 
     // 42. Add a point, then add many others, ensure original still found
@@ -514,7 +514,7 @@ class SpatialGridTest {
     public void testOriginalPointStillFoundAfterManyAdds() {
         int s = ellipsoidGrid.add(0.0, 0.0, 0.0, 0, 0, 0);
         for (int i = 0; i < 1000; i++) ellipsoidGrid.add(i + 1.0, 0.0, 0.0, floorInt(i + 1.0), 0, 0);
-        assertTrue(ellipsoidGrid.anyIn(0.0, 0.0, 0.0, 0, 0, 0));
+        assertTrue(ellipsoidGrid.anyIn(0.0, 0.0, 0.0, 0, 0, 0) != -1);
         assertEquals(s, ellipsoidGrid.nearestIn(0.0, 0.0, 0.0, 0, 0, 0));
     }
 
@@ -535,8 +535,8 @@ class SpatialGridTest {
         int c = ellipsoidGrid.add(2.0, 0.0, 0.0, 2, 0, 0);
         ellipsoidGrid.remove(b);
         // ensure a and c still findable
-        assertTrue(ellipsoidGrid.anyIn(0.0, 0.0, 0.0, 0, 0, 0));
-        assertTrue(ellipsoidGrid.anyIn(2.0, 0.0, 0.0, 2, 0, 0));
+        assertTrue(ellipsoidGrid.anyIn(0.0, 0.0, 0.0, 0, 0, 0) != -1);
+        assertTrue(ellipsoidGrid.anyIn(2.0, 0.0, 0.0, 2, 0, 0) != -1);
     }
 
     // 46. Add points that exercise packing bit masks near wrap-around (but within allowed range)
@@ -547,16 +547,16 @@ class SpatialGridTest {
         int cz = (1 << 26) - 2;
         double x = (double) cx, y = (double) cy, z = (double) cz;
         int s = ellipsoidGrid.add(x, y, z, floorInt(x), floorInt(y), floorInt(z));
-        assertTrue(ellipsoidGrid.anyIn(x, y, z, floorInt(x), floorInt(y), floorInt(z)));
+        assertTrue(ellipsoidGrid.anyIn(x, y, z, floorInt(x), floorInt(y), floorInt(z)) != -1);
         ellipsoidGrid.remove(s);
-        assertFalse(ellipsoidGrid.anyIn(x, y, z, floorInt(x), floorInt(y), floorInt(z)));
+        assertFalse(ellipsoidGrid.anyIn(x, y, z, floorInt(x), floorInt(y), floorInt(z)) != -1);
     }
 
     // 47. Add a point then query with center floored to neighbor cell (should still find if within radius)
     @Test
     public void testQueryWithNeighborFloor() {
         int s = ellipsoidGrid.add(0.9, 0.0, 0.9, floorInt(0.9), 0, floorInt(0.9));
-        assertTrue(ellipsoidGrid.anyIn(1.0, 0.0, 1.0, floorInt(1.0), 0, floorInt(1.0)));
+        assertTrue(ellipsoidGrid.anyIn(1.0, 0.0, 1.0, floorInt(1.0), 0, floorInt(1.0)) != -1);
     }
 
     // 48. Ensure cylinder nearest returns -1 when none

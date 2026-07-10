@@ -3,6 +3,7 @@
 package org.galemc.gale.util.collection.spatialgrid;
 
 import net.minecraft.core.BlockPos;
+import java.util.Arrays;
 
 public abstract class SpatialGrid implements AbstractSpatialGrid {
 
@@ -40,8 +41,13 @@ public abstract class SpatialGrid implements AbstractSpatialGrid {
     // per-slot SoA
     protected double[] xs, ys, zs;
     private long[] slotPackedCell;
-    private int size;
+    private int everAllocatedSlotCount;
+    private int liveCount;
     private int capacity;
+
+    private int freeHead = -1;      // head of free slot singly-linked list (-1 = none)
+    private int[] freeNext;         // per-slot next pointer for free list
+    private int[] slotNext; // per-slot next pointer (if used elsewhere)
 
     private static final long MULT = 0x9E3779B97F4A7C15L;
 
@@ -70,46 +76,52 @@ public abstract class SpatialGrid implements AbstractSpatialGrid {
         keys = new long[tableSize];
         tableMask = tableSize - 1;
         usedBuckets = 0;
-        for (int i = 0; i < tableSize; i++) keys[i] = EMPTY_KEY;
+        Arrays.fill(keys, EMPTY_KEY);
 
         inlineCount = new int[tableSize];
         inline0 = new int[tableSize];
+        Arrays.fill(inline0, -1);
         inline1 = new int[tableSize];
+        Arrays.fill(inline1, -1);
         inline2 = new int[tableSize];
+        Arrays.fill(inline2, -1);
         inline3 = new int[tableSize];
+        Arrays.fill(inline3, -1);
         overflowHead = new int[tableSize];
-        for (int i = 0; i < tableSize; i++) {
-            inlineCount[i] = 0;
-            inline0[i] = inline1[i] = inline2[i] = inline3[i] = -1;
-            overflowHead[i] = -1;
-        }
+        Arrays.fill(overflowHead, -1);
 
         bMinX = new double[tableSize];
+        Arrays.fill(bMinX, Double.POSITIVE_INFINITY);
         bMinY = new double[tableSize];
+        Arrays.fill(bMinY, Double.POSITIVE_INFINITY);
         bMinZ = new double[tableSize];
+        Arrays.fill(bMinZ, Double.POSITIVE_INFINITY);
         bMaxX = new double[tableSize];
+        Arrays.fill(bMaxX, Double.NEGATIVE_INFINITY);
         bMaxY = new double[tableSize];
+        Arrays.fill(bMaxY, Double.NEGATIVE_INFINITY);
         bMaxZ = new double[tableSize];
+        Arrays.fill(bMaxZ, Double.NEGATIVE_INFINITY);
         aabbDirty = new boolean[tableSize];
-        for (int i = 0; i < tableSize; i++) {
-            bMinX[i] = bMinY[i] = bMinZ[i] = Double.POSITIVE_INFINITY;
-            bMaxX[i] = bMaxY[i] = bMaxZ[i] = Double.NEGATIVE_INFINITY;
-            aabbDirty[i] = false;
-        }
 
         ovCapacity = Math.max(64, initialCapacity / 4);
         ovNext = new int[ovCapacity];
         ovSlot = new int[ovCapacity];
         ovSize = 0;
-        for (int i = 0; i < ovCapacity; i++) ovNext[i] = -1;
+        Arrays.fill(ovNext, -1);
 
         capacity = Math.max(64, initialCapacity);
         xs = new double[capacity];
         ys = new double[capacity];
         zs = new double[capacity];
         slotPackedCell = new long[capacity];
-        for (int i = 0; i < capacity; i++) slotPackedCell[i] = SLOT_EMPTY;
-        size = 0;
+        Arrays.fill(slotPackedCell, SLOT_EMPTY);
+        everAllocatedSlotCount = 0;
+
+        freeNext = new int[capacity];
+        Arrays.fill(freeNext, -1);
+        slotNext = new int[capacity];
+        Arrays.fill(slotNext, -1);
     }
 
     // ---------------- utilities ----------------
@@ -401,25 +413,55 @@ public abstract class SpatialGrid implements AbstractSpatialGrid {
     // ---------------- slot helpers ----------------
 
     private void ensureSlotCapacity() {
-        if (size < capacity) return;
+        if (everAllocatedSlotCount < capacity) return;
         int ncap = capacity + (capacity >> 1);
         double[] nx = new double[ncap], ny = new double[ncap], nz = new double[ncap];
         long[] nc = new long[ncap];
+        int[] fn = new int[ncap];
+        int[] sn = new int[ncap]; // slotNext copy
+
         System.arraycopy(xs, 0, nx, 0, capacity);
         System.arraycopy(ys, 0, ny, 0, capacity);
         System.arraycopy(zs, 0, nz, 0, capacity);
         System.arraycopy(slotPackedCell, 0, nc, 0, capacity);
-        for (int i = capacity; i < ncap; i++) nc[i] = SLOT_EMPTY;
-        xs = nx; ys = ny; zs = nz; slotPackedCell = nc; capacity = ncap;
+        System.arraycopy(slotNext, 0, sn, 0, capacity);
+        System.arraycopy(freeNext, 0, fn, 0, capacity);
+
+        for (int i = capacity; i < ncap; i++) {
+            nc[i] = SLOT_EMPTY;
+            fn[i] = -1;
+            sn[i] = -1;
+        }
+
+        xs = nx; ys = ny; zs = nz;
+        slotPackedCell = nc;
+        slotNext = sn;
+        freeNext = fn;
+        // if you keep slotNext alias nn, ensure consistency; here nn was unused so removed
+        capacity = ncap;
     }
 
     // ---------------- public API ----------------
 
     @Override
     public int add(double x, double y, double z, int fx, int fy, int fz) {
-        ensureSlotCapacity();
-        int slot = size++;
-        xs[slot] = x; ys[slot] = y; zs[slot] = z;
+        liveCount++;
+        int slot;
+        // when reusing a freed slot
+        if (freeHead != -1) {
+            slot = freeHead;
+            freeHead = freeNext[slot];
+            freeNext[slot] = -1;
+            slotNext[slot] = -1; // <--- ensure initialized
+        } else {
+            ensureSlotCapacity();
+            slot = everAllocatedSlotCount++;
+            slotNext[slot] = -1; // <--- ensure initialized for newly allocated slot
+        }
+        xs[slot] = x;
+        ys[slot] = y;
+        zs[slot] = z;
+        slotNext[slot] = -1;
         int cx = fx >> shiftXZ;
         int cy = fy >> shiftY;
         int cz = fz >> shiftXZ;
@@ -431,11 +473,15 @@ public abstract class SpatialGrid implements AbstractSpatialGrid {
 
     @Override
     public void remove(int slot) {
+        liveCount--;
         long packed = slotPackedCell[slot];
         if (packed == SLOT_EMPTY) return;
         int idx = findIndex(packed);
         if (idx == -1) {
+            // mark removed and push to free list anyway
             slotPackedCell[slot] = SLOT_EMPTY;
+            freeNext[slot] = freeHead;
+            freeHead = slot;
             return;
         }
         boolean removed = removeInlineSlotAtBucket(idx, slot);
@@ -447,7 +493,10 @@ public abstract class SpatialGrid implements AbstractSpatialGrid {
                 removed = true;
             }
         }
+        // mark slot as removed and add to free list
         slotPackedCell[slot] = SLOT_EMPTY;
+        freeNext[slot] = freeHead;
+        freeHead = slot;
         if (!removed) return;
         double sx = xs[slot], sy = ys[slot], sz = zs[slot];
         if (sx == bMinX[idx] || sx == bMaxX[idx] || sy == bMinY[idx] || sy == bMaxY[idx] || sz == bMinZ[idx] || sz == bMaxZ[idx]) {
@@ -465,12 +514,38 @@ public abstract class SpatialGrid implements AbstractSpatialGrid {
         int ncz = fz >> shiftXZ;
         long newPacked = packCoords(ncx, ncy, ncz);
         long oldPacked = slotPackedCell[slot];
+        int oldIdx = findIndex(oldPacked);
         if (oldPacked == newPacked) {
+            double oldx = xs[slot], oldy = ys[slot], oldz = zs[slot];
             xs[slot] = newX; ys[slot] = newY; zs[slot] = newZ;
+            if (oldIdx != -1) {
+                if (!aabbDirty[oldIdx]) {
+                    if (oldx == bMinX[oldIdx] || oldx == bMaxX[oldIdx] ||
+                        oldy == bMinY[oldIdx] || oldy == bMaxY[oldIdx] ||
+                        oldz == bMinZ[oldIdx] || oldz == bMaxZ[oldIdx]) {
+                        aabbDirty[oldIdx] = true;
+                    } else {
+                        if (newX < bMinX[oldIdx]) {
+                            bMinX[oldIdx] = newX;
+                        } else if (newX > bMaxX[oldIdx]) {
+                            bMaxX[oldIdx] = newX;
+                        }
+                        if (newY < bMinY[oldIdx]) {
+                            bMinY[oldIdx] = newY;
+                        } else if (newY > bMaxY[oldIdx]) {
+                            bMaxY[oldIdx] = newY;
+                        }
+                        if (newZ < bMinZ[oldIdx]) {
+                            bMinZ[oldIdx] = newZ;
+                        } else if (newZ > bMaxZ[oldIdx]) {
+                            bMaxZ[oldIdx] = newZ;
+                        }
+                    }
+                }
+            }
             return;
         }
         if (oldPacked != SLOT_EMPTY) {
-            int oldIdx = findIndex(oldPacked);
             if (oldIdx != -1) {
                 boolean removed = removeInlineSlotAtBucket(oldIdx, slot);
                 if (!removed) {
@@ -483,8 +558,10 @@ public abstract class SpatialGrid implements AbstractSpatialGrid {
                 }
                 if (removed) {
                     double sx = xs[slot], sy = ys[slot], sz = zs[slot];
-                    if (sx == bMinX[oldIdx] || sx == bMaxX[oldIdx] || sy == bMinY[oldIdx] || sy == bMaxY[oldIdx] || sz == bMinZ[oldIdx] || sz == bMaxZ[oldIdx]) {
-                        aabbDirty[oldIdx] = true;
+                    if (!aabbDirty[oldIdx]) {
+                        if (sx == bMinX[oldIdx] || sx == bMaxX[oldIdx] || sy == bMinY[oldIdx] || sy == bMaxY[oldIdx] || sz == bMinZ[oldIdx] || sz == bMaxZ[oldIdx]) {
+                            aabbDirty[oldIdx] = true;
+                        }
                     }
                     if (inlineCount[oldIdx] == 0 && overflowHead[oldIdx] == -1) {
                         deleteBucketAt(oldIdx);
@@ -582,7 +659,7 @@ public abstract class SpatialGrid implements AbstractSpatialGrid {
     // ---------------- accessors ----------------
 
     @Override
-    public int size() { return size; }
+    public int size() { return liveCount; }
     @Override
     public int getCellSizeXZ() { return cellSizeXZ; }
     @Override
@@ -595,5 +672,7 @@ public abstract class SpatialGrid implements AbstractSpatialGrid {
     public double getY(int slot) { return ys[slot]; }
     @Override
     public double getZ(int slot) { return zs[slot]; }
+    @Override
+    public boolean containsKey(int slot) { return this.slotPackedCell[slot] == SLOT_EMPTY; }
 
 }

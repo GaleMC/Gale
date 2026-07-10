@@ -17,7 +17,7 @@ public class SpatialGridFuzzTest {
     private static final int H = 2;
     private static final int INITIAL_CAP = 1024;
 
-    private static final int ITERATIONS = 30000;
+    private static final int ITERATIONS = 100000;
 
     private static final double EPS = 1e-9;
 
@@ -111,8 +111,8 @@ public class SpatialGridFuzzTest {
 
         switch (qtype) {
             case 0: {
-                boolean a = grid.anyIn(cx, cy, cz, fcx, fcy, fcz);
-                boolean b = naive.anyIn(cx, cy, cz, fcx, fcy, fcz);
+                boolean a = grid.anyIn(cx, cy, cz, fcx, fcy, fcz) != -1;
+                boolean b = naive.anyIn(cx, cy, cz, fcx, fcy, fcz) != -1;
                 assertEquals(b, a);
                 break;
             }
@@ -136,8 +136,8 @@ public class SpatialGridFuzzTest {
                 break;
             }
             case 2: {
-                boolean a = grid.anyIn(cx, cy, cz, fcx, fcy, fcz);
-                boolean b = naive.anyIn(cx, cy, cz, fcx, fcy, fcz);
+                boolean a = grid.anyIn(cx, cy, cz, fcx, fcy, fcz) != -1;
+                boolean b = naive.anyIn(cx, cy, cz, fcx, fcy, fcz) != -1;
                 assertEquals(b, a);
                 break;
             }

@@ -18,6 +18,7 @@ public abstract class NaiveSpatialGrid implements AbstractSpatialGrid {
     private final int cellSizeXZ;
     private final int cellSizeY;
     protected final List<Point> points;
+    private int liveCount;
 
     protected static final class Point {
         double x, y, z;
@@ -43,6 +44,7 @@ public abstract class NaiveSpatialGrid implements AbstractSpatialGrid {
 
     @Override
     public int add(double x, double y, double z, int fx, int fy, int fz) {
+        liveCount++;
         Point p = new Point(x, y, z);
         points.add(p);
         return points.size() - 1;
@@ -50,21 +52,20 @@ public abstract class NaiveSpatialGrid implements AbstractSpatialGrid {
 
     @Override
     public void remove(int slot) {
-        if (slot < 0 || slot >= points.size()) return;
+        liveCount--;
         Point p = points.get(slot);
         if (p != null) p.alive = false;
     }
 
     @Override
     public void move(int slot, double newX, double newY, double newZ, int fx, int fy, int fz) {
-        if (slot < 0 || slot >= points.size()) return;
         Point p = points.get(slot);
         if (p == null || !p.alive) return;
         p.x = newX; p.y = newY; p.z = newZ;
     }
 
     @Override
-    public int size() { return points.size(); }
+    public int size() { return liveCount; }
 
     @Override
     public int getCellSizeXZ() { return cellSizeXZ; }
@@ -80,5 +81,8 @@ public abstract class NaiveSpatialGrid implements AbstractSpatialGrid {
 
     @Override
     public double getZ(int slot) { return (slot >= 0 && slot < points.size() && points.get(slot) != null) ? points.get(slot).z : Double.NaN; }
+
+    @Override
+    public boolean containsKey(int slot) { return slot >= 0 && slot < points.size() && points.get(slot) != null && points.get(slot).alive; }
 
 }

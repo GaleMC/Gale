@@ -1,9 +1,21 @@
 --- a/net/minecraft/world/entity/monster/PatrollingMonster.java
 +++ b/net/minecraft/world/entity/monster/PatrollingMonster.java
-@@ -99,6 +_,83 @@
-         return !this.patrolling || distSqr > 16384.0;
+@@ -94,10 +_,212 @@
+         return level.getBrightness(LightLayer.BLOCK, pos) <= 8 && checkAnyLightMonsterSpawnRules(type, level, spawnReason, pos, random);
      }
  
++    // Gale start - Optimize Mob.checkDespawn()
++    public static final double MIN_DIST_SQR_TO_REMOVE_DOUBLE = 16384.0;
++    public static final double MIN_DIST_SQR_TO_REMOVE_LONG = 16384;
++    // Gale end - Optimize Mob.checkDespawn()
++
+     @Override
+     public boolean removeWhenFarAway(final double distSqr) {
+-        return !this.patrolling || distSqr > 16384.0;
+-    }
++        return !this.patrolling || distSqr > MIN_DIST_SQR_TO_REMOVE_DOUBLE; // Gale - Optimize Mob.checkDespawn()
++    }
++
 +    // Gale start - Optimize Mob.checkDespawn()
 +    @Override
 +    public boolean gale$canRemoveWhenFarAway() { // Pre-check for removeWhenFarAway()
@@ -11,7 +23,59 @@
 +    }
 +
 +    @Override
-+    protected void checkDespawnInner() {
++    protected void gale$checkDespawn_innerWithPlayerList() { // More like the original implementation
++        Level level = this.level();
++        Vec3 position = this.position;
++        double x = position.x;
++        double y = position.y;
++        double z = position.z;
++        it.unimi.dsi.fastutil.objects.ReferenceLinkedOpenHashSet<net.minecraft.world.entity.player.Player> affectsSpawningPlayers = level.gale$eventDriven_affectsSpawningSelectorPlayers;
++        net.minecraft.world.entity.player.Player player = null;
++        double dxSqr = 0;
++        double dyUnsqr = 0;
++        double dySqr = 0;
++        double dzSqr = 0;
++        double distanceSquared = Double.MAX_VALUE;
++        for (net.minecraft.world.entity.player.Player affectsSpawningPlayer : affectsSpawningPlayers) {
++            double pdxSqr = net.minecraft.util.Mth.square(affectsSpawningPlayer.getX() - x);
++            double pdyUnsqr = affectsSpawningPlayer.getY() - y;
++            double pdySqr = net.minecraft.util.Mth.square(pdyUnsqr);
++            double pdzSqr = net.minecraft.util.Mth.square(affectsSpawningPlayer.getZ() - z);
++            double pdistanceSquared = pdxSqr + pdzSqr + pdySqr;
++            if (pdistanceSquared < distanceSquared) {
++                player = affectsSpawningPlayer;
++                dxSqr = pdxSqr;
++                dyUnsqr = pdyUnsqr;
++                dySqr = pdySqr;
++                dzSqr = pdzSqr;
++                distanceSquared = pdistanceSquared;
++            }
++        }
++        double dy = Math.abs(dyUnsqr);
++        // Paper start - Configurable despawn distances
++        io.papermc.paper.configuration.WorldConfiguration.Entities.Spawning config = level.paperConfig().entities.spawning;
++        final io.papermc.paper.configuration.WorldConfiguration.Entities.Spawning.DespawnRangePair despawnRangePair = config.despawnRanges.get(this.getType().getCategory());
++        final io.papermc.paper.configuration.type.DespawnRange.Shape shape = config.despawnRangeShape;
++        // Despawn if hard/soft limit is exceeded
++        if (this.gale$canRemoveWhenFarAway() && despawnRangePair.hard().shouldDespawn(shape, dxSqr, dySqr, dzSqr, dy) && this.removeWhenFarAway(distanceSquared)) {
++            this.discard(org.bukkit.event.entity.EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
++        }
++
++        if (this.noActionTime != 0) {
++            if (despawnRangePair.soft().shouldDespawn(shape, dxSqr, dySqr, dzSqr, dy)) {
++                if (this.gale$canRemoveWhenFarAway() && this.noActionTime > 600 && this.random.nextInt(800) == 0 && this.removeWhenFarAway(distanceSquared)) {
++                    this.discard(org.bukkit.event.entity.EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
++                }
++            } else {
++                this.gale$checkDespawn_lastSoftPlayerAffectsSpawningId = player.gale$eventDriven_affectsSpawningSelectorLevelId;
++                // Paper end - Configurable despawn distances
++                this.noActionTime = 0;
++            }
++        }
++    }
++
++    @Override
++    protected void gale$checkDespawn_innerWithSpatialGrids() {
 +        // Paper start - Configurable despawn distances
 +        // Despawn if hard/soft limit is exceeded
 +
@@ -27,39 +91,50 @@
 +        int blockY = blockPosition.getY();
 +        int blockZ = blockPosition.getZ();
 +
-+        // Check in soft range
-+        int softGridIndex = gridIndices[this.gale$checkDespawn_softLevelSpatialGridIndicesIndex];
-+        org.galemc.gale.util.collection.spatialgrid.SpatialGrid softGrid = grids[softGridIndex];
-+        int nearest = softGrid.nearestIn(x, y, z, blockX, blockY, blockZ);
-+        boolean nearestIsInSoft = nearest != -1;
-+
-+        if (!nearestIsInSoft) {
++        if (this.noActionTime == 0) {
 +
 +            // Check in hard range if necessary
-+            boolean nearestIsInHard = false;
++            int nearest;
++            boolean nearestIsInHard;
 +            org.galemc.gale.util.collection.spatialgrid.SpatialGrid hardGrid = null;
 +            if (this.gale$eventDriven_checkDespawnPlayerTrackingMode == 2) {
 +                int hardGridIndex = gridIndices[this.gale$checkDespawn_hardLevelSpatialGridIndicesIndex];
 +                hardGrid = grids[hardGridIndex];
 +                nearest = hardGrid.nearestIn(x, y, z, blockX, blockY, blockZ);
-+                nearestIsInHard = nearest != -1;
-+
++                nearestIsInHard = true;
++            } else {
++                nearest = -1;
++                nearestIsInHard = false;
++                this.gale$checkDespawn_lastSoftPlayerSlot = -1;
 +            }
 +
-+            // Get the nearest player manually if necessary
-+            if (nearest == -1) {
-+                nearest = level.findNearbyPlayer(this, -1.0, net.minecraft.world.entity.EntitySelector.PLAYER_AFFECTS_SPAWNING).gale$checkDespawn_spatialGridSlots[softGridIndex]; // Paper - Affects Spawning API
++            double distanceSquared;
++
++            if (!nearestIsInHard) {
++                if (level.gale$checkDespawn_noPlayerWithinRangeImpliesNearestPlayerIsFarAwayEnoughToRemoveForPatrollingMonsters[gridIndices[this.gale$checkDespawn_hardLevelSpatialGridIndicesIndex]]) {
++                    distanceSquared = Double.MAX_VALUE;
++                } else {
++                    // Get the nearest player manually
++                    distanceSquared = Double.MAX_VALUE;
++                    for (net.minecraft.world.entity.player.Player affectsSpawningPlayer : level.gale$eventDriven_affectsSpawningSelectorPlayers) {
++                        double pdx = affectsSpawningPlayer.getX() - x;
++                        double pdy = affectsSpawningPlayer.getY() - y;
++                        double pdz = affectsSpawningPlayer.getZ() - z;
++                        double pdistanceSquared = pdx * pdx + pdy * pdy + pdz * pdz;
++                        if (pdistanceSquared < distanceSquared) {
++                            distanceSquared = pdistanceSquared;
++                        }
++                    }
++                }
++            } else {
++                double playerX = hardGrid.getX(nearest);
++                double playerY = hardGrid.getY(nearest);
++                double playerZ = hardGrid.getZ(nearest);
++                final double dxSqr = net.minecraft.util.Mth.square(playerX - x);
++                final double dySqr = net.minecraft.util.Mth.square(playerY - y);
++                final double dzSqr = net.minecraft.util.Mth.square(playerZ - z);
++                distanceSquared = dxSqr + dzSqr + dySqr;
 +            }
-+
-+            org.galemc.gale.util.collection.spatialgrid.SpatialGrid playerLookupGrid = nearestIsInHard ? hardGrid : softGrid;
-+            double playerX = playerLookupGrid.getX(nearest);
-+            double playerY = playerLookupGrid.getY(nearest);
-+            double playerZ = playerLookupGrid.getZ(nearest);
-+
-+            final double dxSqr = net.minecraft.util.Mth.square(playerX - x);
-+            final double dySqr = net.minecraft.util.Mth.square(playerY - y);
-+            final double dzSqr = net.minecraft.util.Mth.square(playerZ - z);
-+            final double distanceSquared = dxSqr + dzSqr + dySqr;
 +
 +            if (this.gale$eventDriven_checkDespawnPlayerTrackingMode == 2 && !nearestIsInHard) {
 +                if (this.removeWhenFarAway(distanceSquared)) {
@@ -67,20 +142,76 @@
 +                }
 +            }
 +
-+            if (this.noActionTime > 600 && this.random.nextInt(800) == 0 && this.removeWhenFarAway(distanceSquared)) {
-+                this.discard(org.bukkit.event.entity.EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
-+            }
-+
 +        } else {
 +
-+            // Paper end - Configurable despawn distances
-+            this.noActionTime = 0;
++            // Check in soft range
++            int softGridIndex = gridIndices[this.gale$checkDespawn_softLevelSpatialGridIndicesIndex];
++            org.galemc.gale.util.collection.spatialgrid.SpatialGrid softGrid = grids[softGridIndex];
++            int nearest = softGrid.nearestIn(x, y, z, blockX, blockY, blockZ);
++            this.gale$checkDespawn_lastSoftPlayerSlot = nearest;
++            boolean nearestIsInSoft = nearest != -1;
++
++            if (!nearestIsInSoft) {
++
++                // Check in hard range if necessary
++                boolean nearestIsInHard = false;
++                org.galemc.gale.util.collection.spatialgrid.SpatialGrid hardGrid = null;
++                if (this.gale$eventDriven_checkDespawnPlayerTrackingMode == 2) {
++                    int hardGridIndex = gridIndices[this.gale$checkDespawn_hardLevelSpatialGridIndicesIndex];
++                    hardGrid = grids[hardGridIndex];
++                    nearest = hardGrid.nearestIn(x, y, z, blockX, blockY, blockZ);
++                    nearestIsInHard = nearest != -1;
++                }
++
++                double distanceSquared;
++
++                if (!nearestIsInHard) {
++                    if (level.gale$checkDespawn_noPlayerWithinRangeImpliesNearestPlayerIsFarAwayEnoughToRemoveForPatrollingMonsters[gridIndices[this.gale$checkDespawn_hardLevelSpatialGridIndicesIndex]]) {
++                        distanceSquared = Double.MAX_VALUE;
++                    } else {
++                        // Get the nearest player manually
++                        distanceSquared = Double.MAX_VALUE;
++                        for (net.minecraft.world.entity.player.Player affectsSpawningPlayer : level.gale$eventDriven_affectsSpawningSelectorPlayers) {
++                            double pdx = affectsSpawningPlayer.getX() - x;
++                            double pdy = affectsSpawningPlayer.getY() - y;
++                            double pdz = affectsSpawningPlayer.getZ() - z;
++                            double pdistanceSquared = pdx * pdx + pdy * pdy + pdz * pdz;
++                            if (pdistanceSquared < distanceSquared) {
++                                distanceSquared = pdistanceSquared;
++                            }
++                        }
++                    }
++                } else {
++                    double playerX = hardGrid.getX(nearest);
++                    double playerY = hardGrid.getY(nearest);
++                    double playerZ = hardGrid.getZ(nearest);
++                    final double dxSqr = net.minecraft.util.Mth.square(playerX - x);
++                    final double dySqr = net.minecraft.util.Mth.square(playerY - y);
++                    final double dzSqr = net.minecraft.util.Mth.square(playerZ - z);
++                    distanceSquared = dxSqr + dzSqr + dySqr;
++                }
++
++                if (this.gale$eventDriven_checkDespawnPlayerTrackingMode == 2 && !nearestIsInHard) {
++                    if (this.removeWhenFarAway(distanceSquared)) {
++                        this.discard(org.bukkit.event.entity.EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
++                    }
++                }
++
++                if (this.gale$canRemoveWhenFarAway() && this.noActionTime > 600 && this.random.nextInt(800) == 0 && this.removeWhenFarAway(distanceSquared)) {
++                    this.discard(org.bukkit.event.entity.EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
++                }
++
++            } else {
++
++                // Paper end - Configurable despawn distances
++                this.noActionTime = 0;
++
++            }
 +
 +        }
 +
 +    }
 +    // Gale end - Optimize Mob.checkDespawn()
-+
+ 
      public void setPatrolTarget(final BlockPos target) {
          this.patrolTarget = target;
-         this.patrolling = true;

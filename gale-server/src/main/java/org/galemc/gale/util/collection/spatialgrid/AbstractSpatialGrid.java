@@ -51,9 +51,11 @@ public interface AbstractSpatialGrid {
     void move(int slot, double newX, double newY, double newZ, int fx, int fy, int fz);
 
     /**
-     * Return true if any point lies inside the axis-aligned ellipsoid or upright cylinder centered at (cx,cy,cz).
+     * Return a slot if any point lies inside the axis-aligned ellipsoid or upright cylinder centered at (cx,cy,cz).
      * For ellipsoid: radii are fixed for the grid (planar radius W, vertical half-height H).
      * For cylinder: with planar radius W and vertical half-height H.
+     * The returned slot is not necessarily the nearest.
+     * Returns -1 if no such slot exists.
      *
      * @param cx  center X
      * @param cy  center Y
@@ -62,7 +64,7 @@ public interface AbstractSpatialGrid {
      * @param fcy floor(cy) as int (precomputed)
      * @param fcz floor(cz) as int (precomputed)
      */
-    boolean anyIn(double cx, double cy, double cz, int fcx, int fcy, int fcz);
+    int anyIn(double cx, double cy, double cz, int fcx, int fcy, int fcz);
 
     /**
      * Return the slot id of the nearest point inside the axis-aligned ellipsoid or upright cylinder centered at (cx,cy,cz),
@@ -98,4 +100,7 @@ public interface AbstractSpatialGrid {
     double getX(int slot);
     double getY(int slot);
     double getZ(int slot);
+
+    boolean containsKey(int slot);
+
 }

@@ -54,7 +54,7 @@
              return toEquip;
          } else {
              return ItemStack.EMPTY;
-@@ -780,49 +_,226 @@
+@@ -780,50 +_,380 @@
          return true;
      }
  
@@ -178,7 +178,7 @@
 +     * that should be used by this mob,
 +     * for the soft range.
 +     */
-+    protected final int gale$checkDespawn_softLevelSpatialGridIndicesIndex = this.getType().getCategory().ordinal() * 2;
++    protected final int gale$checkDespawn_softLevelSpatialGridIndicesIndex = this.getType().getCategory().ordinal() << 1;
 +
 +    /**
 +     * Analogous to {@link #gale$checkDespawn_softLevelSpatialGridIndicesIndex},
@@ -198,7 +198,14 @@
 +    public int gale$eventDriven_checkDespawnPlayerTrackingMode;
 +
 +    public void gale$eventDriven_checkDespawnPlayerTrackingMode_update() {
-+        this.gale$eventDriven_checkDespawnPlayerTrackingMode = this.gale$eventDriven_checkDespawnPlayerTrackingMode_compute();
++        int newValue = this.gale$eventDriven_checkDespawnPlayerTrackingMode_compute();
++        if (this.gale$eventDriven_checkDespawnPlayerTrackingMode != newValue) {
++            this.gale$eventDriven_checkDespawnPlayerTrackingMode = newValue;
++            if (newValue == 0) {
++                this.gale$checkDespawn_lastSoftPlayerSlot = -1;
++                this.gale$checkDespawn_lastSoftPlayerAffectsSpawningId = -1;
++            }
++        }
 +    }
 +
 +    private byte gale$eventDriven_checkDespawnPlayerTrackingMode_compute() {
@@ -238,18 +245,155 @@
 -                final double distanceSquared = dxSqr + dzSqr + dySqr;
 -                // Despawn if hard/soft limit is exceeded
 -                if (despawnRangePair.hard().shouldDespawn(shape, dxSqr, dySqr, dzSqr, dy) && this.removeWhenFarAway(distanceSquared)) {
+-                    this.discard(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
+-                }
+-
+-                if (despawnRangePair.soft().shouldDespawn(shape, dxSqr, dySqr, dzSqr, dy)) {
+-                    if (this.noActionTime > 600 && this.random.nextInt(800) == 0 && this.removeWhenFarAway(distanceSquared)) {
+-                        this.discard(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
 +        } else if (!this.gale$eventDriven_isPersistent) { // Gale - Event-driven - Mob.isPersistent
 +            if (!org.galemc.gale.async.SimulationFlag.REAL) return; // Gale - Speculative execution based on next tick simulation - Simulate next tick
 +            if (this.gale$eventDriven_checkDespawnPlayerTrackingMode != 0) {
-+                this.checkDespawnInner();
-+            }
-+        } else {
++                Level level = this.level();
++                if (level.gale$checkDespawn_usingSpatialGrid) {
++                    if (!this.gale$checkDespawn_innerWithLastSoftPlayerBySpatialGridSlot()) {
++                        this.gale$checkDespawn_innerWithSpatialGrids();
+                     }
+                 } else {
+-                    // Paper end - Configurable despawn distances
+-                    this.noActionTime = 0;
++                    if (level.gale$eventDriven_affectsSpawningSelectorPlayers.size() > 1) {
++                        if (!this.gale$checkDespawn_innerWithLastSoftPlayerByAffectsSpawningId()) {
++                            this.gale$checkDespawn_innerWithPlayerList();
++                        }
++                    } else {
++                        this.gale$checkDespawn_innerWithPlayerList();
++                    }
+                 }
+             }
+         } else {
 +            if (!org.galemc.gale.async.SimulationFlag.REAL) return; // Gale - Speculative execution based on next tick simulation - Simulate next tick
-+            this.noActionTime = 0;
+             this.noActionTime = 0;
+         }
+     }
+ 
++    protected int gale$checkDespawn_lastSoftPlayerSlot = -1;
++    protected int gale$checkDespawn_lastSoftPlayerAffectsSpawningId = -1;
++
++    private boolean gale$checkDespawn_innerWithLastSoftPlayerBySpatialGridSlot() {
++        if (this.gale$checkDespawn_lastSoftPlayerSlot == -1) return false;
++        Level level = this.level();
++        org.galemc.gale.util.collection.spatialgrid.SpatialGrid softGrid = level.gale$checkDespawn_spatialGrids[level.gale$checkDespawn_spatialGridIndices[this.gale$checkDespawn_softLevelSpatialGridIndicesIndex]];
++        if (softGrid.containsKey(this.gale$checkDespawn_lastSoftPlayerSlot)) {
++            double playerX = softGrid.getX(this.gale$checkDespawn_lastSoftPlayerSlot);
++            double playerY = softGrid.getY(this.gale$checkDespawn_lastSoftPlayerSlot);
++            double playerZ = softGrid.getZ(this.gale$checkDespawn_lastSoftPlayerSlot);
++            Vec3 position = this.position;
++            double x = position.x;
++            double y = position.y;
++            double z = position.z;
++            double dx = playerX - x;
++            double dy = Math.abs(playerY - y);
++            double dz = playerZ - z;
++            double dxSqr = dx * dx;
++            double dySqr = dy * dy;
++            double dzSqr = dz * dz;
++            io.papermc.paper.configuration.WorldConfiguration.Entities.Spawning config = level.paperConfig().entities.spawning;
++            final io.papermc.paper.configuration.WorldConfiguration.Entities.Spawning.DespawnRangePair despawnRangePair = config.despawnRanges.get(this.getType().getCategory());
++            io.papermc.paper.configuration.type.DespawnRange despawnRange = despawnRangePair.soft();
++            final io.papermc.paper.configuration.type.DespawnRange.Shape shape = config.despawnRangeShape;
++            if (!despawnRange.shouldDespawn(shape, dxSqr, dySqr, dzSqr, dy)) {
++                this.noActionTime = 0;
++                return true;
++            }
++        }
++        this.gale$checkDespawn_lastSoftPlayerSlot = -1;
++        return false;
++    }
++
++    private boolean gale$checkDespawn_innerWithLastSoftPlayerByAffectsSpawningId() {
++        if (this.gale$checkDespawn_lastSoftPlayerAffectsSpawningId == -1) return false;
++        Level level = this.level();
++        Player player = level.gale$eventDriven_affectsSpawningSelectorPlayersById[this.gale$checkDespawn_lastSoftPlayerAffectsSpawningId];
++        if (player != null) {
++            double playerX = player.getX();
++            double playerY = player.getY();
++            double playerZ = player.getZ();
++            Vec3 position = this.position;
++            double x = position.x;
++            double y = position.y;
++            double z = position.z;
++            double dx = playerX - x;
++            double dy = Math.abs(playerY - y);
++            double dz = playerZ - z;
++            double dxSqr = dx * dx;
++            double dySqr = dy * dy;
++            double dzSqr = dz * dz;
++            io.papermc.paper.configuration.WorldConfiguration.Entities.Spawning config = level.paperConfig().entities.spawning;
++            final io.papermc.paper.configuration.WorldConfiguration.Entities.Spawning.DespawnRangePair despawnRangePair = config.despawnRanges.get(this.getType().getCategory());
++            io.papermc.paper.configuration.type.DespawnRange despawnRange = despawnRangePair.soft();
++            final io.papermc.paper.configuration.type.DespawnRange.Shape shape = config.despawnRangeShape;
++            if (!despawnRange.shouldDespawn(shape, dxSqr, dySqr, dzSqr, dy)) {
++                this.noActionTime = 0;
++                return true;
++            }
++        }
++        this.gale$checkDespawn_lastSoftPlayerAffectsSpawningId = -1;
++        return false;
++    }
++
++    protected void gale$checkDespawn_innerWithPlayerList() { // More like the original implementation
++        Level level = this.level();
++        Vec3 position = this.position;
++        double x = position.x;
++        double y = position.y;
++        double z = position.z;
++        it.unimi.dsi.fastutil.objects.ReferenceLinkedOpenHashSet<Player> affectsSpawningPlayers = level.gale$eventDriven_affectsSpawningSelectorPlayers;
++        net.minecraft.world.entity.player.Player player = null;
++        double dxSqr = 0;
++        double dyUnsqr = 0;
++        double dySqr = 0;
++        double dzSqr = 0;
++        double distanceSquared = Double.MAX_VALUE;
++        for (Player affectsSpawningPlayer : affectsSpawningPlayers) {
++            double pdxSqr = Mth.square(affectsSpawningPlayer.getX() - x);
++            double pdyUnsqr = affectsSpawningPlayer.getY() - y;
++            double pdySqr = Mth.square(pdyUnsqr);
++            double pdzSqr = Mth.square(affectsSpawningPlayer.getZ() - z);
++            double pdistanceSquared = pdxSqr + pdzSqr + pdySqr;
++            if (pdistanceSquared < distanceSquared) {
++                player = affectsSpawningPlayer;
++                dxSqr = pdxSqr;
++                dyUnsqr = pdyUnsqr;
++                dySqr = pdySqr;
++                dzSqr = pdzSqr;
++                distanceSquared = pdistanceSquared;
++            }
++        }
++        double dy = Math.abs(dyUnsqr);
++        // Paper start - Configurable despawn distances
++        io.papermc.paper.configuration.WorldConfiguration.Entities.Spawning config = level.paperConfig().entities.spawning;
++        final io.papermc.paper.configuration.WorldConfiguration.Entities.Spawning.DespawnRangePair despawnRangePair = config.despawnRanges.get(this.getType().getCategory());
++        final io.papermc.paper.configuration.type.DespawnRange.Shape shape = config.despawnRangeShape;
++        // Despawn if hard/soft limit is exceeded
++        if (this.gale$canRemoveWhenFarAway() && despawnRangePair.hard().shouldDespawn(shape, dxSqr, dySqr, dzSqr, dy)) {
++            this.discard(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
++        }
++
++        if (this.noActionTime != 0) {
++            if (despawnRangePair.soft().shouldDespawn(shape, dxSqr, dySqr, dzSqr, dy)) {
++                if (this.gale$canRemoveWhenFarAway() && this.noActionTime > 600 && this.random.nextInt(800) == 0) {
++                    this.discard(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
++                }
++            } else {
++                this.gale$checkDespawn_lastSoftPlayerAffectsSpawningId = player.gale$eventDriven_affectsSpawningSelectorLevelId;
++                // Paper end - Configurable despawn distances
++                this.noActionTime = 0;
++            }
 +        }
 +    }
 +
-+    protected void checkDespawnInner() {
++    protected void gale$checkDespawn_innerWithSpatialGrids() {
 +        // Paper start - Configurable despawn distances
 +        // Despawn if hard/soft limit is exceeded
 +
@@ -265,48 +409,56 @@
 +        int blockY = blockPosition.getY();
 +        int blockZ = blockPosition.getZ();
 +
-+        // Check in soft range
-+        int softGridIndex = gridIndices[this.gale$checkDespawn_softLevelSpatialGridIndicesIndex];
-+        org.galemc.gale.util.collection.spatialgrid.SpatialGrid softGrid = grids[softGridIndex];
-+        boolean anyInSoft = softGrid.anyIn(x, y, z, blockX, blockY, blockZ);
-+
-+        if (!anyInSoft) {
++        if (this.noActionTime == 0) {
 +
 +            // Check in hard range if necessary
 +            if (this.gale$eventDriven_checkDespawnPlayerTrackingMode == 2) {
 +                int hardGridIndex = gridIndices[this.gale$checkDespawn_hardLevelSpatialGridIndicesIndex];
 +                org.galemc.gale.util.collection.spatialgrid.SpatialGrid hardGrid = grids[hardGridIndex];
-+                if (!hardGrid.anyIn(x, y, z, blockX, blockY, blockZ)) {
-                     this.discard(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
-                 }
--
--                if (despawnRangePair.soft().shouldDespawn(shape, dxSqr, dySqr, dzSqr, dy)) {
--                    if (this.noActionTime > 600 && this.random.nextInt(800) == 0 && this.removeWhenFarAway(distanceSquared)) {
--                        this.discard(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
--                    }
--                } else {
--                    // Paper end - Configurable despawn distances
--                    this.noActionTime = 0;
--                }
--            }
++                if (hardGrid.anyIn(x, y, z, blockX, blockY, blockZ) == -1) {
++                    this.gale$checkDespawn_lastSoftPlayerSlot = -1;
++                    this.discard(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
++                }
 +            }
 +
-+            if (this.noActionTime > 600 && this.random.nextInt(800) == 0) {
-+                this.discard(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
++        } else {
++
++            // Check in soft range
++            int softGridIndex = gridIndices[this.gale$checkDespawn_softLevelSpatialGridIndicesIndex];
++            org.galemc.gale.util.collection.spatialgrid.SpatialGrid softGrid = grids[softGridIndex];
++            int softSlot = softGrid.anyIn(x, y, z, blockX, blockY, blockZ);
++            this.gale$checkDespawn_lastSoftPlayerSlot = softSlot;
++
++            if (softSlot == -1) {
++
++                // Check in hard range if necessary
++                if (this.gale$eventDriven_checkDespawnPlayerTrackingMode == 2) {
++                    int hardGridIndex = gridIndices[this.gale$checkDespawn_hardLevelSpatialGridIndicesIndex];
++                    org.galemc.gale.util.collection.spatialgrid.SpatialGrid hardGrid = grids[hardGridIndex];
++                    if (hardGrid.anyIn(x, y, z, blockX, blockY, blockZ) == -1) {
++                        this.discard(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
++                    }
++                }
++
++                if (this.gale$canRemoveWhenFarAway() && this.noActionTime > 600 && this.random.nextInt(800) == 0) {
++                    this.discard(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
++                }
++
++            } else {
++
++                // Paper end - Configurable despawn distances
++                this.noActionTime = 0;
++
 +            }
 +
-         } else {
++        }
 +
-+            // Paper end - Configurable despawn distances
-             this.noActionTime = 0;
-+
-         }
-+
-     }
++    }
 +    // Gale end - Optimize Mob.checkDespawn()
- 
++
      @Override
      protected final void serverAiStep() {
+         this.noActionTime++;
 @@ -1293,6 +_,7 @@
  
      public void setPersistenceRequired() {

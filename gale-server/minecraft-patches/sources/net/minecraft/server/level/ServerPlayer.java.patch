@@ -11,7 +11,7 @@
 +    // Gale start - Optimize Mob.checkDespawn()
 +    @Override
 +    public void setPosRaw(final double x, final double y, final double z, final boolean forceBoundingBoxUpdate) {
-+        if (!this.gale$eventDriven_affectsSpawningSelector || this.gale$eventDriven_trackedByLevel == null) {
++        if (!this.gale$eventDriven_affectsSpawningSelector || this.gale$eventDriven_trackedByLevel == null || !this.gale$eventDriven_trackedByLevel.gale$checkDespawn_usingSpatialGrid) {
 +            super.setPosRaw(x, y, z, forceBoundingBoxUpdate);
 +            return;
 +        }

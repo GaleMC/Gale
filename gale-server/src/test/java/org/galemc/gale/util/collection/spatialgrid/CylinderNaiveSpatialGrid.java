@@ -9,7 +9,7 @@ public final class CylinderNaiveSpatialGrid extends NaiveSpatialGrid {
     }
 
     @Override
-    public boolean anyIn(double cx, double cy, double cz, int fcx, int fcy, int fcz) {
+    public int anyIn(double cx, double cy, double cz, int fcx, int fcy, int fcz) {
         double minY = cy - Hd;
         double maxY = cy + Hd;
         for (int i = 0, n = points.size(); i < n; i++) {
@@ -19,9 +19,9 @@ public final class CylinderNaiveSpatialGrid extends NaiveSpatialGrid {
             if (py < minY || py > maxY) continue;
             double dx = p.x - cx;
             double dz = p.z - cz;
-            if (dx*dx + dz*dz <= W2) return true;
+            if (dx*dx + dz*dz <= W2) return i;
         }
-        return false;
+        return -1;
     }
 
     @Override

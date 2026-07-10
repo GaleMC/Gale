@@ -23,7 +23,7 @@ public final class CylinderSpatialGrid extends SpatialGrid {
     // ---------------- queries ----------------
 
     @Override
-    public boolean anyIn(double cxD, double cyD, double czD, int fcx, int fcy, int fcz) {
+    public int anyIn(double cxD, double cyD, double czD, int fcx, int fcy, int fcz) {
         int ccx = fcx >> shiftXZ;
         int ccy = fcy >> shiftY;
         int ccz = fcz >> shiftXZ;
@@ -36,21 +36,21 @@ public final class CylinderSpatialGrid extends SpatialGrid {
                     if (!aabbIntersectsCylinder(idx, cxD, cyD, czD)) continue;
                     int cnt = inlineCount[idx];
                     if (cnt > 0) {
-                        if (inline0[idx] != -1 && pointInCylinderSlot(inline0[idx], cxD, cyD, czD)) return true;
-                        if (cnt >= 2 && inline1[idx] != -1 && pointInCylinderSlot(inline1[idx], cxD, cyD, czD)) return true;
-                        if (cnt >= 3 && inline2[idx] != -1 && pointInCylinderSlot(inline2[idx], cxD, cyD, czD)) return true;
-                        if (cnt >= 4 && inline3[idx] != -1 && pointInCylinderSlot(inline3[idx], cxD, cyD, czD)) return true;
+                        if (inline0[idx] != -1 && pointInCylinderSlot(inline0[idx], cxD, cyD, czD)) return inline0[idx];
+                        if (cnt >= 2 && inline1[idx] != -1 && pointInCylinderSlot(inline1[idx], cxD, cyD, czD)) return inline1[idx];
+                        if (cnt >= 3 && inline2[idx] != -1 && pointInCylinderSlot(inline2[idx], cxD, cyD, czD)) return inline2[idx];
+                        if (cnt >= 4 && inline3[idx] != -1 && pointInCylinderSlot(inline3[idx], cxD, cyD, czD)) return inline3[idx];
                     }
                     int h = overflowHead[idx];
                     while (h != -1) {
                         int s = ovSlot[h];
-                        if (pointInCylinderSlot(s, cxD, cyD, czD)) return true;
+                        if (pointInCylinderSlot(s, cxD, cyD, czD)) return s;
                         h = ovNext[h];
                     }
                 }
             }
         }
-        return false;
+        return -1;
     }
 
     @Override

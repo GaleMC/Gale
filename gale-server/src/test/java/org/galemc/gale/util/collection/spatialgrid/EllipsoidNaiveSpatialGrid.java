@@ -9,16 +9,16 @@ public final class EllipsoidNaiveSpatialGrid extends NaiveSpatialGrid {
     }
 
     @Override
-    public boolean anyIn(double cx, double cy, double cz, int fcx, int fcy, int fcz) {
+    public int anyIn(double cx, double cy, double cz, int fcx, int fcy, int fcz) {
         for (int i = 0, n = points.size(); i < n; i++) {
             Point p = points.get(i);
             if (p == null || !p.alive) continue;
             double dx = p.x - cx;
             double dy = p.y - cy;
             double dz = p.z - cz;
-            if (dx*dx*invW2 + dy*dy*invH2 + dz*dz*invW2 <= 1.0) return true;
+            if (dx*dx*invW2 + dy*dy*invH2 + dz*dz*invW2 <= 1.0) return i;
         }
-        return false;
+        return -1;
     }
 
     @Override

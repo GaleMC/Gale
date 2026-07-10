@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/player/Player.java
 +++ b/net/minecraft/world/entity/player/Player.java
-@@ -172,9 +_,69 @@
+@@ -172,9 +_,70 @@
      private Optional<GlobalPos> lastDeathLocation = Optional.empty();
      public @Nullable FishingHook fishing;
      public float hurtDir;
@@ -10,6 +10,7 @@
  
 +    // Gale start - Event-driven - Player.affectsSpawningSelector
 +    public boolean gale$eventDriven_affectsSpawningSelector; // Gale - Event-driven - Level.affectsSpawningSelectorPlayers - TODO Watch for new writes
++    public int gale$eventDriven_affectsSpawningSelectorLevelId;
 +
 +    public void gale$eventDriven_affectsSpawningSelector_update() {
 +        boolean newValue = net.minecraft.world.entity.EntitySelector.gale$eventDriven_affectsSpawningSelector_compute(this);
@@ -17,10 +18,10 @@
 +            this.gale$eventDriven_affectsSpawningSelector = newValue;
 +            if (this.gale$eventDriven_trackedByLevel != null) {
 +                if (newValue) {
-+                    this.gale$eventDriven_trackedByLevel.gale$eventDriven_affectsSpawningSelectorPlayers_add((ServerPlayer) this);
++                    this.gale$eventDriven_trackedByLevel.gale$eventDriven_affectsSpawningSelectorPlayers_add(this);
 +                    this.gale$eventDriven_affectsSpawningSelector_postStartAffectsSpawningInLevel(this.gale$eventDriven_trackedByLevel);
 +                } else {
-+                    this.gale$eventDriven_trackedByLevel.gale$eventDriven_affectsSpawningSelectorPlayers_remove((ServerPlayer) this);
++                    this.gale$eventDriven_trackedByLevel.gale$eventDriven_affectsSpawningSelectorPlayers_remove(this);
 +                    this.gale$eventDriven_affectsSpawningSelector_postStopAffectsSpawningInLevel(this.gale$eventDriven_trackedByLevel);
 +                }
 +            }
@@ -45,11 +46,11 @@
 +            this.gale$eventDriven_trackedByLevel = level;
 +            if (this.gale$eventDriven_affectsSpawningSelector) {
 +                if (oldLevel != null) {
-+                    oldLevel.gale$eventDriven_affectsSpawningSelectorPlayers_remove((ServerPlayer) this);
++                    oldLevel.gale$eventDriven_affectsSpawningSelectorPlayers_remove(this);
 +                    this.gale$eventDriven_affectsSpawningSelector_postStopAffectsSpawningInLevel(oldLevel);
 +                }
 +                if (level != null) {
-+                    level.gale$eventDriven_affectsSpawningSelectorPlayers_add((ServerPlayer) this);
++                    level.gale$eventDriven_affectsSpawningSelectorPlayers_add(this);
 +                    this.gale$eventDriven_affectsSpawningSelector_postStartAffectsSpawningInLevel(level);
 +                }
 +
@@ -58,11 +59,11 @@
 +    }
 +
 +    public void gale$eventDriven_affectsSpawningSelector_postStartAffectsSpawningInLevel(ServerLevel level) {
-+        level.gale$checkDespawn_addToGrids(this); // Gale - Optimize Mob.checkDespawn()
++        if (level.gale$checkDespawn_usingSpatialGrid) level.gale$checkDespawn_addToGrids(this); // Gale - Optimize Mob.checkDespawn()
 +    }
 +
 +    public void gale$eventDriven_affectsSpawningSelector_postStopAffectsSpawningInLevel(ServerLevel level) {
-+        level.gale$checkDespawn_removeFromGrids(this); // Gale - Optimize Mob.checkDespawn()
++        if (level.gale$checkDespawn_usingSpatialGrid) level.gale$checkDespawn_removeFromGrids(this); // Gale - Optimize Mob.checkDespawn()
 +    }
 +    // Gale end - Event-driven - Player.affectsSpawningSelector
 +
