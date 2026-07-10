@@ -70,19 +70,11 @@
  
      @Override
      public boolean canBeLeashed() {
-@@ -320,6 +_,7 @@
+@@ -307,6 +_,7 @@
                          }
-                         // Paper end - Fire events for SulfurCube explosions
-                         this.dead = true; // Paper - moved from above
-+                        this.gale$eventDriven_isAlive_update(); // Gale - Event-driven - LivingEntity.isAlive
-                         level.explode(
-                             this,
-                             Explosion.getDefaultDamageSource(this.level(), this),
-@@ -334,6 +_,7 @@
-                         // Paper start - moved from above
-                     } else {
-                         this.dead = true;
-+                        this.gale$eventDriven_isAlive_update(); // Gale - Event-driven - LivingEntity.isAlive
-                         // Paper end - moved from above
                      }
- 
+                     this.dead = true;
++                    this.gale$eventDriven_isAlive_update(); // Gale - Event-driven - LivingEntity.isAlive
+                 };
+                 // Paper end - Fire events for SulfurCube explosions
+                 if (this.level() instanceof ServerLevel level) {

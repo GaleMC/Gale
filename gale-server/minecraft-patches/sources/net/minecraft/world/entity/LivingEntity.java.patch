@@ -96,7 +96,7 @@
      }
  
      protected void createWitherRose(final @Nullable LivingEntity killer) {
-@@ -2160,9 +_,9 @@
+@@ -2159,9 +_,9 @@
          } else {
              BlockPos ladderCheckPos = this.blockPosition();
              BlockState state = this.getInBlockState();
@@ -108,7 +108,7 @@
                  this.lastClimbablePos = Optional.of(ladderCheckPos);
                  return true;
              } else if (state.getBlock() instanceof TrapDoorBlock && this.trapdoorUsableAsLadder(ladderCheckPos, state)) {
-@@ -2185,8 +_,30 @@
+@@ -2184,8 +_,30 @@
  
      @Override
      public boolean isAlive() {
@@ -141,7 +141,7 @@
  
      public boolean isLookingAtMe(
          final LivingEntity target,
-@@ -3793,7 +_,13 @@
+@@ -3792,7 +_,13 @@
          if (this.level() instanceof ServerLevel serverLevel) {
              profiler.push("freezing");
              if ((!this.isInPowderSnow || !this.canFreeze()) && !this.freezeLocked) { // Paper - Freeze Tick Lock API

@@ -245,7 +245,7 @@
              if (net.minecraft.world.phys.shapes.Shapes.joinIsNotEmpty(shape, net.minecraft.world.phys.shapes.Shapes.create(entity.getBoundingBox()), net.minecraft.world.phys.shapes.BooleanOp.AND)) {
                  return false;
              }
-@@ -1486,6 +_,7 @@
+@@ -1485,6 +_,7 @@
      }
  
      public void tickBlockEntities() {
@@ -253,7 +253,7 @@
          this.tickingBlockEntities = true;
          if (!this.pendingBlockEntityTickers.isEmpty()) {
              this.blockEntityTickers.addAll(this.pendingBlockEntityTickers);
-@@ -2128,6 +_,13 @@
+@@ -2127,6 +_,13 @@
      public BiomeManager getBiomeManager() {
          return this.biomeManager;
      }

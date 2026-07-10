@@ -1,13 +1,5 @@
 --- a/net/minecraft/server/PlayerAdvancements.java
 +++ b/net/minecraft/server/PlayerAdvancements.java
-@@ -17,7 +_,6 @@
- import java.nio.file.Path;
- import java.util.HashMap;
- import java.util.HashSet;
--import java.util.IdentityHashMap;
- import java.util.LinkedHashMap;
- import java.util.Map;
- import java.util.Set;
 @@ -59,7 +_,9 @@
      private @Nullable AdvancementHolder lastSelectedTab;
      private boolean isFirstPacket = true;

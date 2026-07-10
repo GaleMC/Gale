@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/Mob.java
 +++ b/net/minecraft/world/entity/Mob.java
-@@ -146,15 +_,15 @@
+@@ -146,11 +_,11 @@
      private final Sensing sensing;
      private DropChances dropChances = DropChances.DEFAULT;
      private boolean canPickUpLoot = false;
@@ -14,12 +14,7 @@
      private BlockPos homePosition = BlockPos.ZERO;
      private int homeRadius = -1;
      public boolean aware = true; // CraftBukkit
--    public net.kyori.adventure.util.TriState despawnInPeacefulOverride = net.kyori.adventure.util.TriState.NOT_SET; // Paper - allow changing despawnInPeaceful
-+    public net.kyori.adventure.util.TriState despawnInPeacefulOverride = net.kyori.adventure.util.TriState.NOT_SET; // Paper - allow changing despawnInPeaceful // Gale - Event-driven - Mob.shouldDespawnInPeaceful - TODO Watch for new writes
- 
-     protected Mob(final EntityType<? extends Mob> type, final Level level) {
-         super(type, level);
-@@ -169,6 +_,8 @@
+@@ -168,6 +_,8 @@
          if (level instanceof ServerLevel) {
              this.registerGoals();
          }
@@ -28,7 +23,7 @@
      }
  
      protected void registerGoals() {
-@@ -469,6 +_,8 @@
+@@ -463,6 +_,8 @@
          boolean persistenceRequired = input.getBooleanOr("PersistenceRequired", false);
          if (isLevelAtLeast(input, 1) || persistenceRequired) {
              this.persistenceRequired = persistenceRequired;
@@ -37,15 +32,7 @@
          }
          // CraftBukkit end
          this.dropChances = input.read("drop_chances", DropChances.CODEC).orElse(DropChances.DEFAULT);
-@@ -485,6 +_,7 @@
-         this.aware = input.getBooleanOr("Bukkit.Aware", true); // CraftBukkit
-         // Paper start - allow changing despawnInPeaceful
-         this.despawnInPeacefulOverride = readDespawnInPeacefulOverride(input);
-+        this.gale$eventDriven_gale$shouldDespawnInPeaceful_update(); // Gale - Event-driven - Mob.shouldDespawnInPeaceful
-     }
-     public static net.kyori.adventure.util.TriState readDespawnInPeacefulOverride(ValueInput input) {
-         return input.read("Paper.DespawnInPeacefulOverride", io.papermc.paper.util.PaperCodecs.TRI_STATE_CODEC).orElse(net.kyori.adventure.util.TriState.NOT_SET);
-@@ -653,6 +_,8 @@
+@@ -641,6 +_,8 @@
              ItemStack toEquip = slot.limit(itemStack);
              this.setItemSlotAndDropWhenKilled(slot, toEquip);
              this.persistenceRequired = true;
@@ -54,7 +41,7 @@
              return toEquip;
          } else {
              return ItemStack.EMPTY;
-@@ -780,49 +_,381 @@
+@@ -768,43 +_,359 @@
          return true;
      }
  
@@ -100,35 +87,12 @@
 +        this.gale$eventDriven_requiresCustomPersistence_update();
 +    }
 +    // Gale end - Event-driven - Mob.requiresCustomPersistence
- 
-     // Paper start - allow changing despawnInPeaceful
--    public final boolean shouldDespawnInPeaceful() {
-+    public final boolean gale$eventDriven_shouldDespawnInPeaceful_compute() { // Gale - Event-driven - Mob.shouldDespawnInPeaceful
-         return this.despawnInPeacefulOverride.toBooleanOrElse(!this.getType().isTypeAllowedInPeaceful());
-     }
-     // Paper end - allow changing despawnInPeaceful
- 
-+    // Gale start - Event-driven - Mob.shouldDespawnInPeaceful
-+    public final boolean shouldDespawnInPeaceful() {
-+        return this.gale$eventDriven_shouldDespawnInPeaceful; // Gale - Event-driven - Mob.shouldDespawnInPeaceful
-+    }
-+
-+    private boolean gale$eventDriven_shouldDespawnInPeaceful;
-+
-+    public void gale$eventDriven_gale$shouldDespawnInPeaceful_update() {
-+        boolean newValue = this.gale$eventDriven_shouldDespawnInPeaceful_compute();
-+        if (this.gale$eventDriven_shouldDespawnInPeaceful != newValue) {
-+            this.gale$eventDriven_shouldDespawnInPeaceful = newValue;
-+            this.gale$eventDriven_mustDespawnBecauseOfPeacefulDifficulty_update();
-+        }
-+    }
-+    // Gale end - Event-driven - Mob.shouldDespawnInPeaceful
 +
 +    // Gale start - Event-driven - Mob.mustDespawnBecauseOfPeacefulDifficulty
 +    protected boolean gale$eventDriven_mustDespawnBecauseOfPeacefulDifficulty; // Gale - Event-driven - Mob.checkDespawnPlayerTrackingMode - TODO Watch for new writes
 +
 +    public void gale$eventDriven_mustDespawnBecauseOfPeacefulDifficulty_update() {
-+        boolean newValue = this.level().getDifficulty() == Difficulty.PEACEFUL && this.shouldDespawnInPeaceful();
++        boolean newValue = this.level().getDifficulty() == Difficulty.PEACEFUL && !this.getType().isAllowedInPeaceful();
 +        if (this.gale$eventDriven_mustDespawnBecauseOfPeacefulDifficulty != newValue) {
 +            this.gale$eventDriven_mustDespawnBecauseOfPeacefulDifficulty = newValue;
 +            this.gale$eventDriven_checkDespawnPlayerTrackingMode_update(); // Gale - Event-driven - Mob.checkDespawnPlayerTrackingMode
@@ -226,11 +190,11 @@
 +    //         this.gale$eventDriven_checkDespawnPlayerTrackingMode_update();
 +    //     }
 +    // }
-+
+ 
      @Override
      public void checkDespawn() {
--        if (this.level().getDifficulty() == Difficulty.PEACEFUL && this.shouldDespawnInPeaceful()) { // Paper - allow changing despawnInPeaceful
-+        if (this.gale$eventDriven_mustDespawnBecauseOfPeacefulDifficulty) { // Paper - allow changing despawnInPeaceful // Gale - Event-driven - Mob.mustDespawnBecauseOfPeacefulDifficulty
+-        if (this.level().getDifficulty() == Difficulty.PEACEFUL && !this.getType().isAllowedInPeaceful()) {
++        if (this.gale$eventDriven_mustDespawnBecauseOfPeacefulDifficulty) { // Gale - Event-driven - Mob.mustDespawnBecauseOfPeacefulDifficulty
              this.discard(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
 -        } else if (!this.isPersistenceRequired() && !this.requiresCustomPersistence()) {
 -            Entity player = this.level().findNearbyPlayer(this, -1.0, EntitySelector.PLAYER_AFFECTS_SPAWNING); // Paper - Affects Spawning API
@@ -463,7 +427,7 @@
  
      @Override
      protected final void serverAiStep() {
-@@ -1293,6 +_,7 @@
+@@ -1275,6 +_,7 @@
  
      public void setPersistenceRequired() {
          this.persistenceRequired = true;
@@ -471,7 +435,7 @@
      }
  
      @Override
-@@ -1505,7 +_,21 @@
+@@ -1487,7 +_,21 @@
  
      @Override
      public void setLeashData(final Leashable.@Nullable LeashData leashData) {
