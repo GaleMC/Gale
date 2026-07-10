@@ -6,7 +6,7 @@
  
 +    // Gale start - Optimize Mob.checkDespawn()
 +    public static final double MIN_DIST_SQR_TO_REMOVE_DOUBLE = 16384.0;
-+    public static final double MIN_DIST_SQR_TO_REMOVE_LONG = 16384;
++    public static final long MIN_DIST_SQR_TO_REMOVE_LONG = 16384;
 +    // Gale end - Optimize Mob.checkDespawn()
 +
      @Override
