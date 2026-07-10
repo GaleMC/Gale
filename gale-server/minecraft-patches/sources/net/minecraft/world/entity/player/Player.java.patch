@@ -18,11 +18,11 @@
 +            this.gale$eventDriven_affectsSpawningSelector = newValue;
 +            if (this.gale$eventDriven_trackedByLevel != null) {
 +                if (newValue) {
-+                    this.gale$eventDriven_trackedByLevel.gale$eventDriven_affectsSpawningSelectorPlayers_add(this);
 +                    this.gale$eventDriven_affectsSpawningSelector_postStartAffectsSpawningInLevel(this.gale$eventDriven_trackedByLevel);
++                    this.gale$eventDriven_trackedByLevel.gale$eventDriven_affectsSpawningSelectorPlayers_add(this);
 +                } else {
-+                    this.gale$eventDriven_trackedByLevel.gale$eventDriven_affectsSpawningSelectorPlayers_remove(this);
 +                    this.gale$eventDriven_affectsSpawningSelector_postStopAffectsSpawningInLevel(this.gale$eventDriven_trackedByLevel);
++                    this.gale$eventDriven_trackedByLevel.gale$eventDriven_affectsSpawningSelectorPlayers_remove(this);
 +                }
 +            }
 +        }
@@ -46,12 +46,12 @@
 +            this.gale$eventDriven_trackedByLevel = level;
 +            if (this.gale$eventDriven_affectsSpawningSelector) {
 +                if (oldLevel != null) {
-+                    oldLevel.gale$eventDriven_affectsSpawningSelectorPlayers_remove(this);
 +                    this.gale$eventDriven_affectsSpawningSelector_postStopAffectsSpawningInLevel(oldLevel);
++                    oldLevel.gale$eventDriven_affectsSpawningSelectorPlayers_remove(this);
 +                }
 +                if (level != null) {
-+                    level.gale$eventDriven_affectsSpawningSelectorPlayers_add(this);
 +                    this.gale$eventDriven_affectsSpawningSelector_postStartAffectsSpawningInLevel(level);
++                    level.gale$eventDriven_affectsSpawningSelectorPlayers_add(this);
 +                }
 +
 +            }
