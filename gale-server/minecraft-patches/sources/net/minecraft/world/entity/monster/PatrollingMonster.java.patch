@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/monster/PatrollingMonster.java
 +++ b/net/minecraft/world/entity/monster/PatrollingMonster.java
-@@ -94,10 +_,212 @@
+@@ -94,10 +_,191 @@
          return level.getBrightness(LightLayer.BLOCK, pos) <= 8 && checkAnyLightMonsterSpawnRules(type, level, spawnReason, pos, random);
      }
  
@@ -94,51 +94,30 @@
 +        if (this.noActionTime == 0) {
 +
 +            // Check in hard range if necessary
-+            int nearest;
-+            boolean nearestIsInHard;
-+            org.galemc.gale.util.collection.spatialgrid.SpatialGrid hardGrid = null;
 +            if (this.gale$eventDriven_checkDespawnPlayerTrackingMode == 2) {
 +                int hardGridIndex = gridIndices[this.gale$checkDespawn_hardLevelSpatialGridIndicesIndex];
-+                hardGrid = grids[hardGridIndex];
-+                nearest = hardGrid.nearestIn(x, y, z, blockX, blockY, blockZ);
-+                nearestIsInHard = true;
-+            } else {
-+                nearest = -1;
-+                nearestIsInHard = false;
-+                this.gale$checkDespawn_lastSoftPlayerSlot = -1;
-+            }
-+
-+            double distanceSquared;
-+
-+            if (!nearestIsInHard) {
-+                if (level.gale$checkDespawn_noPlayerWithinRangeImpliesNearestPlayerIsFarAwayEnoughToRemoveForPatrollingMonsters[gridIndices[this.gale$checkDespawn_hardLevelSpatialGridIndicesIndex]]) {
-+                    distanceSquared = Double.MAX_VALUE;
-+                } else {
-+                    // Get the nearest player manually
-+                    distanceSquared = Double.MAX_VALUE;
-+                    for (net.minecraft.world.entity.player.Player affectsSpawningPlayer : level.gale$eventDriven_affectsSpawningSelectorPlayers) {
-+                        double pdx = affectsSpawningPlayer.getX() - x;
-+                        double pdy = affectsSpawningPlayer.getY() - y;
-+                        double pdz = affectsSpawningPlayer.getZ() - z;
-+                        double pdistanceSquared = pdx * pdx + pdy * pdy + pdz * pdz;
-+                        if (pdistanceSquared < distanceSquared) {
-+                            distanceSquared = pdistanceSquared;
++                org.galemc.gale.util.collection.spatialgrid.SpatialGrid hardGrid = grids[hardGridIndex];
++                if (hardGrid.nearestIn(x, y, z, blockX, blockY, blockZ) == -1) {
++                    this.gale$checkDespawn_lastSoftPlayerSlot = -1;
++                    double distanceSquared;
++                    if (level.gale$checkDespawn_noPlayerWithinRangeImpliesNearestPlayerIsFarAwayEnoughToRemoveForPatrollingMonsters[gridIndices[this.gale$checkDespawn_hardLevelSpatialGridIndicesIndex]]) {
++                        distanceSquared = Double.MAX_VALUE;
++                    } else {
++                        // Get the nearest player manually
++                        distanceSquared = Double.MAX_VALUE;
++                        for (net.minecraft.world.entity.player.Player affectsSpawningPlayer : level.gale$eventDriven_affectsSpawningSelectorPlayers) {
++                            double pdx = affectsSpawningPlayer.getX() - x;
++                            double pdy = affectsSpawningPlayer.getY() - y;
++                            double pdz = affectsSpawningPlayer.getZ() - z;
++                            double pdistanceSquared = pdx * pdx + pdy * pdy + pdz * pdz;
++                            if (pdistanceSquared < distanceSquared) {
++                                distanceSquared = pdistanceSquared;
++                            }
 +                        }
 +                    }
-+                }
-+            } else {
-+                double playerX = hardGrid.getX(nearest);
-+                double playerY = hardGrid.getY(nearest);
-+                double playerZ = hardGrid.getZ(nearest);
-+                final double dxSqr = net.minecraft.util.Mth.square(playerX - x);
-+                final double dySqr = net.minecraft.util.Mth.square(playerY - y);
-+                final double dzSqr = net.minecraft.util.Mth.square(playerZ - z);
-+                distanceSquared = dxSqr + dzSqr + dySqr;
-+            }
-+
-+            if (this.gale$eventDriven_checkDespawnPlayerTrackingMode == 2 && !nearestIsInHard) {
-+                if (this.removeWhenFarAway(distanceSquared)) {
-+                    this.discard(org.bukkit.event.entity.EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
++                    if (this.removeWhenFarAway(distanceSquared)) {
++                        this.discard(org.bukkit.event.entity.EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
++                    }
 +                }
 +            }
 +

@@ -187,8 +187,8 @@
 +        }
 +    }
 +
-+    private static final int MINIMUM_PLAYERS_FOR_SPATIAL_GRID = 5;
-+    private static final int MAXIMUM_PLAYERS_FOR_NON_SPATIAL_GRID = 10;
++    private static final int MINIMUM_PLAYERS_FOR_SPATIAL_GRID = 3;
++    private static final int MAXIMUM_PLAYERS_FOR_NON_SPATIAL_GRID = 4;
 +
 +    public boolean gale$checkDespawn_usingSpatialGrid;
 +
