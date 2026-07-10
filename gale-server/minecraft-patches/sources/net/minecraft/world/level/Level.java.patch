@@ -8,7 +8,7 @@
  
      public static @Nullable BlockPos lastPhysicsProblem; // Spigot
      public final Map<ServerExplosion.CacheKey, Float> explosionDensityCache = new java.util.HashMap<>(); // Paper - Optimize explosions
-@@ -238,6 +_,55 @@
+@@ -238,6 +_,57 @@
          return ret;
      }
  
@@ -44,6 +44,7 @@
 +            }
 +            // Gale end - Event-driven - Mob.checkDespawnPlayerTrackingMode
 +        }
++        this.gale$checkDespawn_usingSpatialGrid_update();
 +    }
 +
 +    public void gale$eventDriven_affectsSpawningSelectorPlayers_remove(Player player) {
@@ -58,6 +59,7 @@
 +            }
 +            // Gale end - Event-driven - Mob.checkDespawnPlayerTrackingMode
 +        }
++        this.gale$checkDespawn_usingSpatialGrid_update();
 +    }
 +    // Gale end - Event-driven - Level.affectsSpawningSelectorPlayers
 +
