@@ -1,10 +1,53 @@
 --- a/net/minecraft/server/level/ServerChunkCache.java
 +++ b/net/minecraft/server/level/ServerChunkCache.java
-@@ -480,6 +_,7 @@
- 
-     @Override
+@@ -482,27 +_,34 @@
      public void tick(final BooleanSupplier haveTime, final boolean tickChunks) {
-+        if (!org.galemc.gale.async.SimulationFlag.REAL) return; // Gale - Speculative execution based on next tick simulation - Simulate next tick
          ProfilerFiller profiler = Profiler.get();
          profiler.push("purge");
++        if (org.galemc.gale.async.SimulationFlag.REAL) // Gale - Speculative execution based on next tick simulation - Simulate next tick
          if (this.level.tickRateManager().runsNormally() || !tickChunks || this.level.spigotConfig.unloadFrozenChunks) { // Spigot
+             this.ticketStorage.purgeStaleTickets(this.chunkMap);
+         }
+ 
++        if (org.galemc.gale.async.SimulationFlag.REAL) // Gale - Speculative execution based on next tick simulation - Simulate next tick
+         this.runDistanceManagerUpdates();
+         profiler.popPush("chunks");
+         if (tickChunks) {
++            if (org.galemc.gale.async.SimulationFlag.REAL) // Gale - Speculative execution based on next tick simulation - Simulate next tick
+             ((ca.spottedleaf.moonrise.patches.chunk_system.level.ChunkSystemServerLevel)this.level).moonrise$getPlayerChunkLoader().tick(); // Paper - rewrite chunk system
+             this.tickChunks();
++            if (org.galemc.gale.async.SimulationFlag.REAL) // Gale - Speculative execution based on next tick simulation - Simulate next tick
+             this.chunkMap.tick();
+         }
+ 
+         profiler.popPush("unload");
++        if (org.galemc.gale.async.SimulationFlag.REAL) // Gale - Speculative execution based on next tick simulation - Simulate next tick
+         this.chunkMap.tick(haveTime);
+         profiler.pop();
++        if (org.galemc.gale.async.SimulationFlag.REAL) // Gale - Speculative execution based on next tick simulation - Simulate next tick
+         this.clearCache();
+     }
+ 
+     private void tickChunks() {
+         long time = this.level.getGameTime();
+         long timeDiff = time - this.lastInhabitedUpdate;
++        if (org.galemc.gale.async.SimulationFlag.REAL) // Gale - Speculative execution based on next tick simulation - Simulate next tick
+         this.lastInhabitedUpdate = time;
+         if (!this.level.isDebug()) {
+             ProfilerFiller profiler = Profiler.get();
+@@ -513,6 +_,7 @@
+                 profiler.pop();
+             }
+ 
++            if (org.galemc.gale.async.SimulationFlag.REAL) // Gale - Speculative execution based on next tick simulation - Simulate next tick
+             this.broadcastChangedChunks(profiler);
+             profiler.pop();
+         }
+@@ -533,6 +_,7 @@
+     }
+ 
+     private void tickChunks(final ProfilerFiller profiler, final long timeDiff) {
++        if (!org.galemc.gale.async.SimulationFlag.REAL) return; // Gale - Speculative execution based on next tick simulation - Simulate next tick
+         profiler.push("naturalSpawnCount");
+         int chunkCount = this.distanceManager.getNaturalSpawnChunkCount();
+         // Paper start - Optional per player mob spawns

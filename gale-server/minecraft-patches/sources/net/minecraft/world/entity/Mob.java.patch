@@ -41,7 +41,7 @@
              return toEquip;
          } else {
              return ItemStack.EMPTY;
-@@ -768,43 +_,359 @@
+@@ -768,43 +_,357 @@
          return true;
      }
  
@@ -199,7 +199,6 @@
 -        } else if (!this.isPersistenceRequired() && !this.requiresCustomPersistence()) {
 -            Entity player = this.level().findNearbyPlayer(this, -1.0, EntitySelector.PLAYER_AFFECTS_SPAWNING); // Paper - Affects Spawning API
 +        } else if (!this.gale$eventDriven_isPersistent) { // Gale - Event-driven - Mob.isPersistent
-+            if (!org.galemc.gale.async.SimulationFlag.REAL) return; // Gale - Speculative execution based on next tick simulation - Simulate next tick
 +            if (this.gale$eventDriven_checkDespawnPlayerTrackingMode != 0) {
 +                Level level = this.level();
 +                if (level.gale$checkDespawn_usingSpatialGrid) {
@@ -217,7 +216,6 @@
 +                }
 +            }
 +        } else {
-+            if (!org.galemc.gale.async.SimulationFlag.REAL) return; // Gale - Speculative execution based on next tick simulation - Simulate next tick
 +            this.noActionTime = 0;
 +        }
 +    }
