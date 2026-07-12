@@ -51,6 +51,11 @@ paperweight {
             outputFile = file("gale-api/build.gradle.kts")
             patchFile = file("gale-api/build.gradle.kts.patch")
         }
+        patchFile {
+            path = "paper-server/build.gradle.kts"
+            outputFile = file("gale-server/build.gradle.kts")
+            patchFile = file("gale-server/build.gradle.kts.patch")
+        }
         patchDir("paperApi") {
             upstreamPath = "paper-api"
             excludes = setOf("build.gradle.kts")

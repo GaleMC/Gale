@@ -13,18 +13,10 @@ build/
 nbproject/
 nbactions.xml
 
-# we use maven!
-build.xml
-
-# maven
-target/
-dependency-reduced-pom.xml
-
 # vim
 .*.sw[a-p]
 
 # various other potential build files
-build/
 bin/
 dist/
 manifest.mf
@@ -46,21 +38,18 @@ out/
 # other stuff
 run/
 
-gale-server/.gradle/
-gale-server/build/
 gale-server/classes/
 gale-server/generated/
 gale-server/libs/
 gale-server/tmp/
 gale-server/src/minecraft/
-gale-api/.gradle/
-gale-api/build/
 gale-api/classes/
 gale-api/generated/
 gale-api/libs/
 gale-api/tmp/
 
 gale-api/build.gradle.kts
+gale-server/build.gradle.kts
 
 paper-api/
 paper-server/
