@@ -28,7 +28,7 @@
 +        return Optional.ofNullable(gale$forStateNullable(state));
 +    }
 +
-+    public static @org.jetbrains.annotations.Nullable Holder<PoiType> gale$forStateNullable(final BlockState state) {
++    public static @org.jspecify.annotations.Nullable Holder<PoiType> gale$forStateNullable(final BlockState state) {
 +        return state.gale$precompute_poiType; // Gale - Pre-compute - PoiTypes.forState()
 +        // Gale end - Do less work - PoiTypes.forState() (skip Optional creation)
      }
