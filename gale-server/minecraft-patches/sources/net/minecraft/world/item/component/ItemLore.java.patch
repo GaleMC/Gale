@@ -1,14 +1,80 @@
 --- a/net/minecraft/world/item/component/ItemLore.java
 +++ b/net/minecraft/world/item/component/ItemLore.java
-@@ -46,4 +_,11 @@
-     ) {
-         this.styledLines.forEach(consumer);
-     }
+@@ -17,7 +_,37 @@
+ import net.minecraft.world.item.Item;
+ import net.minecraft.world.item.TooltipFlag;
+ 
+-public record ItemLore(List<Component> lines, List<Component> styledLines) implements TooltipProvider {
++// Gale start - Do less work - ItemLore.styledLines (computed only when used)
++public final class ItemLore implements TooltipProvider {
++    private final List<Component> lines;
++    private @org.jspecify.annotations.Nullable List<Component> styledLines;
++    public ItemLore(List<Component> lines, List<Component> styledLines) {
++        this.lines = lines;
++        this.styledLines = styledLines;
++        if (lines.size() > 256) {
++            throw new IllegalArgumentException("Got " + lines.size() + " lines, but maximum is 256");
++        }
++    }
++    public List<Component> lines() { return this.lines; }
++    public List<Component> styledLines() {
++        if (this.styledLines == null) {
++            this.styledLines = Lists.transform(lines, component -> ComponentUtils.mergeStyles(component, LORE_STYLE));
++        }
++        return this.styledLines;
++    }
 +
-+    // Gale start - Local code optimization - ItemLore.equals()
++    private int gale$cached_hashCode; // Gale - Cache - ItemLore.hashCode()
++
++    @Override
++    public int hashCode() {
++        int hashCode = this.gale$cached_hashCode;
++        if (hashCode == 0) {
++            hashCode = 1 + this.lines.hashCode();
++            this.gale$cached_hashCode = hashCode;
++        }
++        return hashCode;
++    }
++    // Gale end - Do less work - ItemLore.styledLines (computed only when used)
+     public static final ItemLore EMPTY = new ItemLore(List.of());
+     public static final int MAX_LINES = 256;
+     private static final Style LORE_STYLE = Style.EMPTY.withColor(ChatFormatting.DARK_PURPLE).withItalic(true);
+@@ -27,14 +_,16 @@
+         .map(ItemLore::new, ItemLore::lines);
+ 
+     public ItemLore(final List<Component> lines) {
+-        this(lines, Lists.transform(lines, component -> ComponentUtils.mergeStyles(component, LORE_STYLE)));
++        this(lines, null); // Gale - Do less work - ItemLore.styledLines (computed only when used)
+     }
+ 
+-    public ItemLore {
+-        if (lines.size() > 256) {
+-            throw new IllegalArgumentException("Got " + lines.size() + " lines, but maximum is 256");
+-        }
+-    }
++    // Gale start - Do less work - ItemLore.styledLines (computed only when used)
++    // public ItemLore {
++    //     if (lines.size() > 256) {
++    //         throw new IllegalArgumentException("Got " + lines.size() + " lines, but maximum is 256");
++    //     }
++    // }
++    // Gale end - Do less work - ItemLore.styledLines (computed only when used)
+ 
+     public ItemLore withLineAdded(final Component component) {
+         return new ItemLore(Util.copyAndAdd(this.lines, component));
+@@ -44,6 +_,13 @@
+     public void addToTooltip(
+         final Item.TooltipContext context, final Consumer<Component> consumer, final TooltipFlag flag, final DataComponentGetter components
+     ) {
+-        this.styledLines.forEach(consumer);
+-    }
++        this.styledLines().forEach(consumer); // Gale - Do less work - ItemLore.styledLines (computed only when used)
++    }
++
++    // Gale start - Faster implementation for subclass - ItemLore.equals() (skip styledLines)
 +    @Override
 +    public boolean equals(Object obj) {
-+        return this == obj || obj instanceof net.minecraft.world.item.component.ItemLore other && lines.size() == other.lines.size() && lines.equals(other.lines) && styledLines.equals(other.styledLines);
++        return this == obj || obj instanceof net.minecraft.world.item.component.ItemLore other && this.lines.equals(other.lines);
 +    }
-+    // Gale end - Local code optimization - ItemLore.equals()
++    // Gale end - Faster implementation for subclass - ItemLore.equals() (skip styledLines)
  }
