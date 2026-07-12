@@ -1,0 +1,14 @@
+--- a/net/minecraft/world/item/component/ItemLore.java
++++ b/net/minecraft/world/item/component/ItemLore.java
+@@ -46,4 +_,11 @@
+     ) {
+         this.styledLines.forEach(consumer);
+     }
++
++    // Gale start - Local code optimization - ItemLore.equals()
++    @Override
++    public boolean equals(Object obj) {
++        return this == obj || obj instanceof net.minecraft.world.item.component.ItemLore other && lines.size() == other.lines.size() && lines.equals(other.lines) && styledLines.equals(other.styledLines);
++    }
++    // Gale end - Local code optimization - ItemLore.equals()
+ }
