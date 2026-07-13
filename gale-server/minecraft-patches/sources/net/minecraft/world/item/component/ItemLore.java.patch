@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/component/ItemLore.java
 +++ b/net/minecraft/world/item/component/ItemLore.java
-@@ -17,7 +_,37 @@
+@@ -17,7 +_,42 @@
  import net.minecraft.world.item.Item;
  import net.minecraft.world.item.TooltipFlag;
  
@@ -9,12 +9,14 @@
 +public final class ItemLore implements TooltipProvider {
 +    private final List<Component> lines;
 +    private @org.jspecify.annotations.Nullable List<Component> styledLines;
++    private final boolean gale$hasCustomStyledLines;
 +    public ItemLore(List<Component> lines, List<Component> styledLines) {
 +        this.lines = lines;
-+        this.styledLines = styledLines;
 +        if (lines.size() > 256) {
 +            throw new IllegalArgumentException("Got " + lines.size() + " lines, but maximum is 256");
 +        }
++        this.styledLines = styledLines;
++        this.gale$hasCustomStyledLines = true;
 +    }
 +    public List<Component> lines() { return this.lines; }
 +    public List<Component> styledLines() {
@@ -31,6 +33,9 @@
 +        int hashCode = this.gale$cached_hashCode;
 +        if (hashCode == 0) {
 +            hashCode = 1 + this.lines.hashCode();
++            if (this.gale$hasCustomStyledLines) {
++                hashCode = 31 * hashCode + this.styledLines.hashCode();
++            }
 +            this.gale$cached_hashCode = hashCode;
 +        }
 +        return hashCode;
@@ -39,19 +44,24 @@
      public static final ItemLore EMPTY = new ItemLore(List.of());
      public static final int MAX_LINES = 256;
      private static final Style LORE_STYLE = Style.EMPTY.withColor(ChatFormatting.DARK_PURPLE).withItalic(true);
-@@ -27,14 +_,16 @@
+@@ -27,14 +_,23 @@
          .map(ItemLore::new, ItemLore::lines);
  
      public ItemLore(final List<Component> lines) {
 -        this(lines, Lists.transform(lines, component -> ComponentUtils.mergeStyles(component, LORE_STYLE)));
-+        this(lines, null); // Gale - Do less work - ItemLore.styledLines (computed only when used)
-     }
- 
--    public ItemLore {
--        if (lines.size() > 256) {
--            throw new IllegalArgumentException("Got " + lines.size() + " lines, but maximum is 256");
--        }
 -    }
+-
+-    public ItemLore {
++        // Gale start - Do less work - ItemLore.styledLines (computed only when used)
++        this.lines = lines;
+         if (lines.size() > 256) {
+             throw new IllegalArgumentException("Got " + lines.size() + " lines, but maximum is 256");
+         }
++        this.styledLines = null;
++        this.gale$hasCustomStyledLines = false;
++        // Gale end - Do less work - ItemLore.styledLines (computed only when used)
+     }
++
 +    // Gale start - Do less work - ItemLore.styledLines (computed only when used)
 +    // public ItemLore {
 +    //     if (lines.size() > 256) {
@@ -74,7 +84,7 @@
 +    // Gale start - Faster implementation for subclass - ItemLore.equals() (skip styledLines)
 +    @Override
 +    public boolean equals(Object obj) {
-+        return this == obj || obj instanceof net.minecraft.world.item.component.ItemLore other && this.lines.equals(other.lines);
++        return this == obj || obj instanceof net.minecraft.world.item.component.ItemLore other && this.lines.equals(other.lines) && ((!this.gale$hasCustomStyledLines && !other.gale$hasCustomStyledLines) || this.styledLines().equals(other.styledLines()));
 +    }
 +    // Gale end - Faster implementation for subclass - ItemLore.equals() (skip styledLines)
  }
