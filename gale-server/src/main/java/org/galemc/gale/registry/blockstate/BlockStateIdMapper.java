@@ -1,6 +1,7 @@
 package org.galemc.gale.registry.blockstate;
 
 import net.minecraft.core.IdMap;
+import net.minecraft.core.IdMapper;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jspecify.annotations.Nullable;
@@ -13,6 +14,10 @@ import java.util.NoSuchElementException;
  * A specialized {@link IdMap} for {@link Block#BLOCK_STATE_REGISTRY}.
  *
  * <p>
+ * The implementation is based on {@link IdMapper}.
+ * </p>
+ *
+ * <p>
  * Uses a direct array instead of {@link java.util.ArrayList} to avoid
  * redundant bounds checks and virtual dispatch on the hot
  * {@link #byId(int)} path.
@@ -20,7 +25,7 @@ import java.util.NoSuchElementException;
  */
 public class BlockStateIdMapper implements IdMap<BlockState> {
 
-    public static final int EXPECTED_BLOCK_STATES = 32366;
+    public static final int EXPECTED_BLOCK_STATES = 32366; // As of 26.2, TODO keep up-to-date
 
     private BlockState[] idToT;
     private int size;
@@ -49,7 +54,8 @@ public class BlockStateIdMapper implements IdMap<BlockState> {
 
     @Override
     public Iterator<BlockState> iterator() {
-        return new Iterator<BlockState>() {
+        return new Iterator<>() {
+
             private int cursor;
 
             @Override
@@ -64,6 +70,7 @@ public class BlockStateIdMapper implements IdMap<BlockState> {
                 }
                 return BlockStateIdMapper.this.idToT[this.cursor++];
             }
+
         };
     }
 
@@ -73,7 +80,9 @@ public class BlockStateIdMapper implements IdMap<BlockState> {
     }
 
     public void trimToSize() {
-        // No-op: the array is already sized appropriately.
+        if (this.idToT.length != this.size) {
+            this.idToT = Arrays.copyOf(this.idToT, this.size);
+        }
     }
 
 }
