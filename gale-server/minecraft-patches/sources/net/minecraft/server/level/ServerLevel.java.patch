@@ -139,44 +139,90 @@
                  }
              }
          }
-@@ -2387,26 +_,28 @@
+@@ -2387,27 +_,62 @@
  
      @Override
      public void updatePOIOnBlockStateChange(final BlockPos pos, final BlockState oldState, final BlockState newState) {
 -        Optional<Holder<PoiType>> oldType = PoiTypes.forState(oldState);
 -        Optional<Holder<PoiType>> newType = PoiTypes.forState(newState);
 -        if (!Objects.equals(oldType, newType)) {
+-            BlockPos immutable = pos.immutable();
+-            oldType.ifPresent(poiType -> this.getServer().execute(() -> {
+-                this.getPoiManager().remove(immutable);
+-                this.debugSynchronizers.dropPoi(immutable);
+-            }));
+-            newType.ifPresent(poiType -> this.getServer().execute(() -> {
+-                // Paper start - Remove stale POIs
+-                if (oldType.isEmpty() && this.getPoiManager().exists(immutable, _ -> true)) {
+-                    this.getPoiManager().remove(immutable);
+-                }
+-                // Paper end - Remove stale POIs
+-                PoiRecord record = this.getPoiManager().add(immutable, (Holder<PoiType>)poiType);
+-                if (record != null) {
+-                    this.debugSynchronizers.registerPoi(record);
+-                }
+-            }));
+-        }
+-    }
 +        // Gale start - Do less work - PoiTypes.forState() (skip Optional creation)
 +        Holder<PoiType> oldType = PoiTypes.gale$forStateNullable(oldState);
 +        Holder<PoiType> newType = PoiTypes.gale$forStateNullable(newState);
 +        if (oldType != newType) {
-             BlockPos immutable = pos.immutable();
--            oldType.ifPresent(poiType -> this.getServer().execute(() -> {
-+            if (oldType != null) this.getServer().execute(() -> {
-                 this.getPoiManager().remove(immutable);
-                 this.debugSynchronizers.dropPoi(immutable);
--            }));
--            newType.ifPresent(poiType -> this.getServer().execute(() -> {
-+            });
-+            if (newType != null) this.getServer().execute(() -> {
-                 // Paper start - Remove stale POIs
--                if (oldType.isEmpty() && this.getPoiManager().exists(immutable, _ -> true)) {
++            BlockPos immutable = pos.immutable();
++            // Gale start - Do less work - ServerLevel.updatePOIOnBlockStateChange() (reduce lambdas)
++            this.getServer().execute(() -> {
++                if (oldType != null) {
++                // Gale end - Do less work - ServerLevel.updatePOIOnBlockStateChange() (reduce lambdas)
++                this.getPoiManager().remove(immutable);
++                this.debugSynchronizers.dropPoi(immutable);
++                // Gale start - Do less work - ServerLevel.updatePOIOnBlockStateChange() (reduce lambdas)
++                }
++                if (newType != null) {
++                // Gale end - Do less work - ServerLevel.updatePOIOnBlockStateChange() (reduce lambdas)
++                // Paper start - Remove stale POIs
 +                if (oldType == null && this.getPoiManager().exists(immutable, _ -> true)) {
-                     this.getPoiManager().remove(immutable);
-                 }
-                 // Paper end - Remove stale POIs
--                PoiRecord record = this.getPoiManager().add(immutable, (Holder<PoiType>)poiType);
++                    this.getPoiManager().remove(immutable);
++                }
++                // Paper end - Remove stale POIs
 +                PoiRecord record = this.getPoiManager().add(immutable, newType);
-                 if (record != null) {
-                     this.debugSynchronizers.registerPoi(record);
-                 }
--            }));
++                if (record != null) {
++                    this.debugSynchronizers.registerPoi(record);
++                } // Gale - Do less work - ServerLevel.updatePOIOnBlockStateChange() (reduce lambdas)
++                }
 +            });
-         }
++        }
 +        // Gale end - Do less work - PoiTypes.forState() (skip Optional creation)
-     }
++    }
++
++    // Gale start - Do less work - ServerLevel.updatePOIOnBlockStateChange() (reduce lambdas)
++    public void gale$updatePOIOnBlockStateChangeMainThread(final BlockPos pos, final BlockState oldState, final BlockState newState) {
++        // Gale start - Do less work - PoiTypes.forState() (skip Optional creation)
++        Holder<PoiType> oldType = PoiTypes.gale$forStateNullable(oldState);
++        Holder<PoiType> newType = PoiTypes.gale$forStateNullable(newState);
++        if (oldType != newType) {
++            BlockPos immutable = pos.immutable();
++            if (oldType != null) {
++                this.getPoiManager().remove(immutable);
++                this.debugSynchronizers.dropPoi(immutable);
++            }
++            if (newType != null) {
++                // Paper start - Remove stale POIs
++                if (oldType == null && this.getPoiManager().exists(immutable, _ -> true)) {
++                    this.getPoiManager().remove(immutable);
++                }
++                // Paper end - Remove stale POIs
++                PoiRecord record = this.getPoiManager().add(immutable, newType);
++                if (record != null) {
++                    this.debugSynchronizers.registerPoi(record);
++                }
++            }
++        }
++        // Gale end - Do less work - PoiTypes.forState() (skip Optional creation)
++    }
++    // Gale end - Do less work - ServerLevel.updatePOIOnBlockStateChange() (reduce lambdas)
  
      public PoiManager getPoiManager() {
+         return this.getChunkSource().getPoiManager();
 @@ -2857,6 +_,7 @@
              // ServerLevel.this.getChunkSource().addEntity(entity); // Paper - ignore and warn about illegal addEntity calls instead of crashing server; moved down below valid=true
              if (entity instanceof ServerPlayer player) {
