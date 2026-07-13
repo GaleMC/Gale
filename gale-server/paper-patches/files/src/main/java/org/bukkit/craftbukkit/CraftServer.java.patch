@@ -1,5 +1,71 @@
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+@@ -16,7 +_,6 @@
+ import io.papermc.paper.util.MCUtil;
+ import io.papermc.paper.world.PaperWorldLoader;
+ import io.papermc.paper.world.migration.WorldFolderMigration;
+-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+ import java.awt.image.BufferedImage;
+ import java.io.ByteArrayOutputStream;
+ import java.io.File;
+@@ -153,7 +_,6 @@
+ import org.bukkit.craftbukkit.ban.CraftProfileBanList;
+ import org.bukkit.craftbukkit.block.data.CraftBlockData;
+ import org.bukkit.craftbukkit.boss.CraftBossBar;
+-import org.bukkit.craftbukkit.boss.CraftKeyedBossbar;
+ import org.bukkit.craftbukkit.command.CraftCommandMap;
+ import org.bukkit.craftbukkit.command.VanillaCommandWrapper;
+ import org.bukkit.craftbukkit.entity.CraftEntityFactory;
+@@ -276,7 +_,7 @@
+     private final StructureManager structureManager;
+     final DedicatedServer console;
+     private final DedicatedPlayerList playerList;
+-    private final Map<String, World> worlds = new LinkedHashMap<>();
++    private final Map<String, World> worlds = new it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap<>(); // Gale - Collections - CraftServer.worlds (use fastutil)
+     private YamlConfiguration configuration;
+     private YamlConfiguration commandsConfiguration;
+     private final Yaml yaml = new Yaml(new SafeConstructor(new LoaderOptions()));
+@@ -284,7 +_,10 @@
+     private final EntityMetadataStore entityMetadata = new EntityMetadataStore();
+     private final PlayerMetadataStore playerMetadata = new PlayerMetadataStore();
+     private final WorldMetadataStore worldMetadata = new WorldMetadataStore();
+-    private final Object2IntOpenHashMap<SpawnCategory> spawnCategoryLimit = new Object2IntOpenHashMap<>();
++    // Gale start - Collections - CraftServer.spawnCategoryLimit (use array)
++    private static final SpawnCategory[] gale$SPAWN_CATEGORIES = SpawnCategory.values();
++    private final int[] spawnCategoryLimit = new int[gale$SPAWN_CATEGORIES.length];
++    // Gale end - Collections - CraftServer.spawnCategoryLimit (use array)
+     private File container;
+     private WarningState warningState = WarningState.DEFAULT;
+     public ApiVersion minimumAPI;
+@@ -463,6 +_,7 @@
+         this.saveCommandsConfig();
+         this.overrideAllCommandBlockCommands = this.commandsConfiguration.getStringList("command-block-overrides").contains("*");
+         this.ignoreVanillaPermissions = this.commandsConfiguration.getBoolean("ignore-vanilla-permissions");
++        java.util.Arrays.fill(this.spawnCategoryLimit, -1); // Gale - Collections - CraftServer.spawnCategoryLimit (use array)
+         this.overrideSpawnLimits();
+         console.autosavePeriod = this.configuration.getInt("ticks-per.autosave");
+         this.warningState = WarningState.value(this.configuration.getString("settings.deprecated-verbose"));
+@@ -494,9 +_,9 @@
+     }
+ 
+     private void overrideSpawnLimits() {
+-        for (SpawnCategory spawnCategory : SpawnCategory.values()) {
++        for (SpawnCategory spawnCategory : gale$SPAWN_CATEGORIES) { // Gale - Collections - CraftServer.spawnCategoryLimit (use array)
+             if (CraftSpawnCategory.isValidForLimits(spawnCategory)) {
+-                this.spawnCategoryLimit.put(spawnCategory, this.configuration.getInt(CraftSpawnCategory.getConfigNameSpawnLimit(spawnCategory)));
++                this.spawnCategoryLimit[spawnCategory.ordinal()] = this.configuration.getInt(CraftSpawnCategory.getConfigNameSpawnLimit(spawnCategory)); // Gale - Collections - CraftServer.spawnCategoryLimit (use array)
+             }
+         }
+     }
+@@ -900,7 +_,7 @@
+ 
+     @Override
+     public List<World> getWorlds() {
+-        return new ArrayList<World>(this.worlds.values());
++        return new it.unimi.dsi.fastutil.objects.ObjectArrayList<>(this.worlds.values()); // Gale - Collections - CraftServer.getWorlds() (use fastutil)
+     }
+ 
+     @Override
 @@ -985,6 +_,7 @@
  
          org.spigotmc.SpigotConfig.init((File) this.console.options.valueOf("spigot-settings")); // Spigot
@@ -8,3 +74,12 @@
          for (ServerLevel world : this.console.getAllLevels()) {
              // world.serverLevelData.setDifficulty(config.difficulty); // Paper - per level difficulty
              world.setSpawnSettings(world.isSpawningMonsters()); // Paper - per level difficulty (from MinecraftServer#setDifficulty(ServerLevel, Difficulty, boolean))
+@@ -2303,7 +_,7 @@
+     }
+ 
+     public int getSpawnLimitUnsafe(final SpawnCategory spawnCategory) {
+-        return this.spawnCategoryLimit.getOrDefault(spawnCategory, -1);
++        return this.spawnCategoryLimit[spawnCategory.ordinal()]; // Gale - Collections - CraftServer.spawnCategoryLimit (use array)
+     }
+ 
+     @Override
