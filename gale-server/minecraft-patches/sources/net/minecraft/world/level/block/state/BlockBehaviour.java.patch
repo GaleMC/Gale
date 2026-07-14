@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/state/BlockBehaviour.java
 +++ b/net/minecraft/world/level/block/state/BlockBehaviour.java
-@@ -466,6 +_,12 @@
+@@ -466,6 +_,15 @@
          private BlockBehaviour.BlockStateBase.@Nullable Cache cache;
          private FluidState fluidState = Fluids.EMPTY.defaultFluidState();
          private boolean isRandomlyTicking;
@@ -10,6 +10,9 @@
 +        // Gale start - Pre-compute - BlockBehaviour.isDestroyable()
 +        private boolean gale$precompute_isDestroyable;
 +        // Gale end - Pre-compute - BlockBehaviour.isDestroyable()
++        // Gale start - Pre-compute - BlockBehaviour.getPistonPushReaction()
++        private PushReaction gale$precompute_pistonPushReaction;
++        // Gale end - Pre-compute - BlockBehaviour.getPistonPushReaction()
          private boolean solidRender;
          private VoxelShape occlusionShape;
          private VoxelShape[] occlusionShapesByFace;
@@ -30,7 +33,7 @@
  
          private static void initCaches(final VoxelShape shape, final boolean neighbours) {
              ((ca.spottedleaf.moonrise.patches.collisions.shape.CollisionVoxelShape)shape).moonrise$isFullBlock();
-@@ -623,6 +_,12 @@
+@@ -623,6 +_,15 @@
  
              this.propagatesSkylightDown = this.owner.propagatesSkylightDown(this.asState());
              this.lightDampening = this.owner.getLightDampening(this.asState());
@@ -40,6 +43,9 @@
 +            // Gale start - Pre-compute - BlockBehaviour.isDestroyable()
 +            this.gale$precompute_isDestroyable = this.getBlock().isDestroyable();
 +            // Gale end - Pre-compute - BlockBehaviour.isDestroyable()
++            // Gale start - Pre-compute - BlockBehaviour.getPistonPushReaction()
++            this.gale$precompute_pistonPushReaction = !this.gale$precompute_isDestroyable ? PushReaction.BLOCK : this.pushReaction;
++            // Gale end - Pre-compute - BlockBehaviour.getPistonPushReaction()
              // Paper start - rewrite chunk system
              this.isConditionallyFullOpaque = this.canOcclude & this.useShapeForLightOcclusion;
              // Paper end - rewrite chunk system
@@ -72,6 +78,19 @@
  
          public boolean isValidSpawn(final BlockGetter level, final BlockPos pos, final EntityType<?> type) {
              return this.getBlock().properties.isValidSpawn.test(this.asState(), level, pos, type);
+@@ -791,8 +_,10 @@
+             return this.getBlock().getDirectSignal(this.asState(), level, pos, direction);
+         }
+ 
+-        public PushReaction getPistonPushReaction() {
+-            return !this.isDestroyable() ? PushReaction.BLOCK : this.pushReaction; // Paper - Protect Bedrock and End Portal/Frames from being destroyed
++        public final PushReaction getPistonPushReaction() {
++            // Gale start - Pre-compute - BlockBehaviour.getPistonPushReaction()
++            return this.gale$precompute_pistonPushReaction;
++            // Gale end - Pre-compute - BlockBehaviour.getPistonPushReaction()
+         }
+ 
+         public boolean isSolidRender() {
 @@ -996,8 +_,10 @@
              return this.is(tag) && predicate.test(this);
          }
