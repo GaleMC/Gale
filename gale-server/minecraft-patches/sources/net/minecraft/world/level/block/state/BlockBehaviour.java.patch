@@ -1,15 +1,11 @@
 --- a/net/minecraft/world/level/block/state/BlockBehaviour.java
 +++ b/net/minecraft/world/level/block/state/BlockBehaviour.java
-@@ -466,6 +_,15 @@
+@@ -466,6 +_,8 @@
          private BlockBehaviour.BlockStateBase.@Nullable Cache cache;
          private FluidState fluidState = Fluids.EMPTY.defaultFluidState();
          private boolean isRandomlyTicking;
-+        // Gale start - Pre-compute - BlockBehaviour.hasBlockEntity()
-+        private boolean gale$precompute_hasBlockEntity;
-+        // Gale end - Pre-compute - BlockBehaviour.hasBlockEntity()
-+        // Gale start - Pre-compute - BlockBehaviour.getSoundType()
-+        private SoundType gale$precompute_soundType;
-+        // Gale end - Pre-compute - BlockBehaviour.getSoundType()
++        private boolean gale$precompute_hasBlockEntity; // Gale - Pre-compute - BlockBehaviour.hasBlockEntity()
++        private SoundType gale$precompute_soundType; // Gale - Pre-compute - BlockBehaviour.getSoundType()
          private boolean solidRender;
          private VoxelShape occlusionShape;
          private VoxelShape[] occlusionShapesByFace;
@@ -30,15 +26,13 @@
  
          private static void initCaches(final VoxelShape shape, final boolean neighbours) {
              ((ca.spottedleaf.moonrise.patches.collisions.shape.CollisionVoxelShape)shape).moonrise$isFullBlock();
-@@ -623,6 +_,15 @@
+@@ -623,6 +_,10 @@
  
              this.propagatesSkylightDown = this.owner.propagatesSkylightDown(this.asState());
              this.lightDampening = this.owner.getLightDampening(this.asState());
-+            // Gale start - Pre-compute - BlockBehaviour.hasBlockEntity()
-+            this.gale$precompute_hasBlockEntity = this.getBlock() instanceof EntityBlock;
-+            // Gale end - Pre-compute - BlockBehaviour.hasBlockEntity()
++            this.gale$precompute_hasBlockEntity = this.getBlock() instanceof EntityBlock; // Gale - Pre-compute - BlockBehaviour.hasBlockEntity()
 +            // Gale start - Pre-compute - BlockBehaviour.getSoundType()
-+            this.gale$precompute_soundType = this.getBlock().getSoundType(this.asState());
++            this.gale$precompute_soundType = this.gale$precompute_soundType_compute();
 +            // Gale end - Pre-compute - BlockBehaviour.getSoundType()
              // Paper start - rewrite chunk system
              this.isConditionallyFullOpaque = this.canOcclude & this.useShapeForLightOcclusion;
@@ -68,21 +62,29 @@
          }
  
          public boolean shouldChangedStateKeepBlockEntity(final BlockState oldState) {
-@@ -1024,7 +_,7 @@
+@@ -1024,7 +_,9 @@
          }
  
          public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(final Level level, final BlockEntityType<T> type) {
 -            return this.getBlock() instanceof EntityBlock ? ((EntityBlock)this.getBlock()).getTicker(level, this.asState(), type) : null;
-+            return this.hasBlockEntity() ? ((EntityBlock)this.getBlock()).getTicker(level, this.asState(), type) : null;
++            // Gale start - Pre-compute - BlockBehaviour.getTicker()
++            return this.getBlock() instanceof EntityBlock entityBlock ? entityBlock.getTicker(level, this.asState(), type) : null;
++            // Gale end - Pre-compute - BlockBehaviour.getTicker()
          }
  
          public final FluidState getFluidState() { // Paper - Perf: Final for inlining
-@@ -1040,7 +_,7 @@
+@@ -1040,7 +_,13 @@
          }
  
          public SoundType getSoundType() {
 -            return this.getBlock().getSoundType(this.asState());
++            // Gale start - Pre-compute - BlockBehaviour.getSoundType()
 +            return this.gale$precompute_soundType;
          }
++
++        private SoundType gale$precompute_soundType_compute() {
++            // Gale end - Pre-compute - BlockBehaviour.getSoundType()
++            return this.getBlock().getSoundType(this.asState());
++        }
  
          public void onProjectileHit(final Level level, final BlockState state, final BlockHitResult blockHit, final Projectile entity) {
