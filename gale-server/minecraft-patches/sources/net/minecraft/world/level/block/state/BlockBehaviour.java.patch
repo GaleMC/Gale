@@ -1,12 +1,15 @@
 --- a/net/minecraft/world/level/block/state/BlockBehaviour.java
 +++ b/net/minecraft/world/level/block/state/BlockBehaviour.java
-@@ -466,6 +_,9 @@
+@@ -466,6 +_,12 @@
          private BlockBehaviour.BlockStateBase.@Nullable Cache cache;
          private FluidState fluidState = Fluids.EMPTY.defaultFluidState();
          private boolean isRandomlyTicking;
 +        // Gale start - Pre-compute - BlockBehaviour.hasBlockEntity()
 +        private boolean gale$precompute_hasBlockEntity;
 +        // Gale end - Pre-compute - BlockBehaviour.hasBlockEntity()
++        // Gale start - Pre-compute - BlockBehaviour.isDestroyable()
++        private boolean gale$precompute_isDestroyable;
++        // Gale end - Pre-compute - BlockBehaviour.isDestroyable()
          private boolean solidRender;
          private VoxelShape occlusionShape;
          private VoxelShape[] occlusionShapesByFace;
@@ -27,13 +30,16 @@
  
          private static void initCaches(final VoxelShape shape, final boolean neighbours) {
              ((ca.spottedleaf.moonrise.patches.collisions.shape.CollisionVoxelShape)shape).moonrise$isFullBlock();
-@@ -623,6 +_,9 @@
+@@ -623,6 +_,12 @@
  
              this.propagatesSkylightDown = this.owner.propagatesSkylightDown(this.asState());
              this.lightDampening = this.owner.getLightDampening(this.asState());
 +            // Gale start - Pre-compute - BlockBehaviour.hasBlockEntity()
 +            this.gale$precompute_hasBlockEntity = this.getBlock() instanceof EntityBlock;
 +            // Gale end - Pre-compute - BlockBehaviour.hasBlockEntity()
++            // Gale start - Pre-compute - BlockBehaviour.isDestroyable()
++            this.gale$precompute_isDestroyable = this.getBlock().isDestroyable();
++            // Gale end - Pre-compute - BlockBehaviour.isDestroyable()
              // Paper start - rewrite chunk system
              this.isConditionallyFullOpaque = this.canOcclude & this.useShapeForLightOcclusion;
              // Paper end - rewrite chunk system
@@ -51,11 +57,28 @@
          @Deprecated
          public boolean blocksMotion() {
              Block block = this.getBlock();
-@@ -997,7 +_,9 @@
+@@ -680,11 +_,11 @@
+             return this.legacySolid;
          }
  
-         public boolean hasBlockEntity() {
+-        // Paper start - Protect Bedrock and End Portal/Frames from being destroyed
++        // Gale start - Pre-compute - BlockBehaviour.isDestroyable()
+         public final boolean isDestroyable() {
+-            return this.getBlock().isDestroyable();
++            return this.gale$precompute_isDestroyable;
+         }
+-        // Paper end - Protect Bedrock and End Portal/Frames from being destroyed
++        // Gale end - Pre-compute - BlockBehaviour.isDestroyable()
+ 
+         public boolean isValidSpawn(final BlockGetter level, final BlockPos pos, final EntityType<?> type) {
+             return this.getBlock().properties.isValidSpawn.test(this.asState(), level, pos, type);
+@@ -996,8 +_,10 @@
+             return this.is(tag) && predicate.test(this);
+         }
+ 
+-        public boolean hasBlockEntity() {
 -            return this.getBlock() instanceof EntityBlock;
++        public final boolean hasBlockEntity() {
 +            // Gale start - Pre-compute - BlockBehaviour.hasBlockEntity()
 +            return this.gale$precompute_hasBlockEntity;
 +            // Gale end - Pre-compute - BlockBehaviour.hasBlockEntity()
