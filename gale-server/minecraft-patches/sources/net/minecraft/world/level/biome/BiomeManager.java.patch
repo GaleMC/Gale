@@ -5,9 +5,9 @@
      private final BiomeManager.NoiseBiomeSource noiseBiomeSource;
      private final long biomeZoomSeed;
 +    // Gale start - Cache - BiomeManager.getBiome()
-+    private final long @org.jetbrains.annotations.Nullable [] biomeCacheKeys;
-+    private final int @org.jetbrains.annotations.Nullable [] biomeCacheVersions;
-+    private final Holder<Biome> @org.jetbrains.annotations.Nullable [] biomeCacheValues;
++    private final long @org.jspecify.annotations.Nullable [] biomeCacheKeys;
++    private final int @org.jspecify.annotations.Nullable [] biomeCacheVersions;
++    private final Holder<Biome> @org.jspecify.annotations.Nullable [] biomeCacheValues;
 +    private int cacheVersion;
 +    // Gale end - Cache - BiomeManager.getBiome()
  

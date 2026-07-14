@@ -245,6 +245,15 @@
              if (net.minecraft.world.phys.shapes.Shapes.joinIsNotEmpty(shape, net.minecraft.world.phys.shapes.Shapes.create(entity.getBoundingBox()), net.minecraft.world.phys.shapes.BooleanOp.AND)) {
                  return false;
              }
+@@ -1188,7 +_,7 @@
+             }
+ 
+             if ((updateFlags & Block.UPDATE_SKIP_POI) == 0) // Paper - temporary flag
+-            this.updatePOIOnBlockStateChange(pos, oldState, newState);
++            ((ServerLevel) this).gale$updatePOIOnBlockStateChangeMainThread(pos, oldState, newState); // Gale - Do less work - ServerLevel.updatePOIOnBlockStateChange() (reduce lambdas)
+         }
+     }
+     // CraftBukkit end
 @@ -1485,6 +_,7 @@
      }
  

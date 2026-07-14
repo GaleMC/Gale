@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/state/BlockBehaviour.java
 +++ b/net/minecraft/world/level/block/state/BlockBehaviour.java
-@@ -466,6 +_,12 @@
+@@ -466,6 +_,15 @@
          private BlockBehaviour.BlockStateBase.@Nullable Cache cache;
          private FluidState fluidState = Fluids.EMPTY.defaultFluidState();
          private boolean isRandomlyTicking;
@@ -30,7 +30,7 @@
  
          private static void initCaches(final VoxelShape shape, final boolean neighbours) {
              ((ca.spottedleaf.moonrise.patches.collisions.shape.CollisionVoxelShape)shape).moonrise$isFullBlock();
-@@ -623,6 +_,12 @@
+@@ -623,6 +_,15 @@
  
              this.propagatesSkylightDown = this.owner.propagatesSkylightDown(this.asState());
              this.lightDampening = this.owner.getLightDampening(this.asState());

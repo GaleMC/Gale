@@ -1,0 +1,25 @@
+--- a/net/minecraft/world/level/levelgen/PhantomSpawner.java
++++ b/net/minecraft/world/level/levelgen/PhantomSpawner.java
+@@ -49,11 +_,19 @@
+                                         int value = Mth.clamp(stats.getValue(Stats.CUSTOM.get(Stats.TIME_SINCE_REST)), 1, Integer.MAX_VALUE);
+                                         int dayLength = 24000;
+                                         if (random.nextInt(value) >= level.paperConfig().entities.behavior.playerInsomniaStartTicks) { // Paper - Ability to control player's insomnia and phantoms
+-                                            BlockPos spawnPos = playerPos.above(20 + random.nextInt(15))
++                                            // Gale start - Don't load chunks synchronously - Phantom spawn
++                                            BlockPos spawnPos = null;
++                                            BlockState blockState = null;
++                                            for (int i = 0; i < 3; i++) { // Try 3 times
++                                                spawnPos = playerPos.above(20 + random.nextInt(15))
+                                                 .east(-10 + random.nextInt(21))
+                                                 .south(-10 + random.nextInt(21));
+-                                            BlockState blockState = level.getBlockState(spawnPos);
+-                                            FluidState fluidState = level.getFluidState(spawnPos);
++                                                blockState = level.getBlockStateIfLoaded(spawnPos);
++                                                if (blockState != null) break;
++                                            }
++                                            if (blockState == null) continue;
++                                            FluidState fluidState = blockState.getFluidState();
++                                            // Gale end - Don't load chunks synchronously - Phantom spawn
+                                             if (NaturalSpawner.isValidEmptySpawnBlock(level, spawnPos, blockState, fluidState, EntityTypes.PHANTOM)) {
+                                                 SpawnGroupData groupData = null;
+                                                 int groupSize = 1 + random.nextInt(difficulty.getDifficulty().getId() + 1);

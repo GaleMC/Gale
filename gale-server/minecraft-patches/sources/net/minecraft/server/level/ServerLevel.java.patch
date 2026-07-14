@@ -9,7 +9,7 @@
          this.weatherData = savedDataStorage.computeIfAbsent(WeatherData.TYPE);
          this.weatherData.setLevel(this);
          this.typeKey = typeKey;
-@@ -797,9 +_,12 @@
+@@ -798,9 +_,12 @@
      public void tick(final BooleanSupplier haveTime) {
          ProfilerFiller profiler = Profiler.get();
          this.handlingTick = true;
@@ -22,7 +22,7 @@
          if (runs) {
              profiler.push("world border");
              this.getWorldBorder().tick();
-@@ -838,6 +_,7 @@
+@@ -839,6 +_,7 @@
          if (runs) {
              this.tickTime();
          }
@@ -30,7 +30,7 @@
  
          profiler.push("tickPending");
          if (!this.isDebug() && runs) {
-@@ -856,14 +_,17 @@
+@@ -857,14 +_,17 @@
  
          profiler.popPush("chunkSource");
          this.getChunkSource().tick(haveTime, true);
@@ -48,7 +48,7 @@
          if (isActive) {
              this.resetEmptyTime();
          }
-@@ -872,7 +_,8 @@
+@@ -873,7 +_,8 @@
              this.emptyTime++;
          }
  
@@ -58,7 +58,7 @@
              profiler.push("entities");
              if (this.dragonFight != null && runs) {
                  profiler.push("dragonFight");
-@@ -889,6 +_,7 @@
+@@ -890,6 +_,7 @@
                                  profiler.push("checkDespawn");
                                  entity.checkDespawn();
                                  profiler.pop();
@@ -66,7 +66,7 @@
                                  if (true) { // Paper - rewrite chunk system
                                      Entity vehicle = entity.getVehicle();
                                      if (vehicle != null) {
-@@ -912,9 +_,10 @@
+@@ -913,9 +_,10 @@
              this.tickBlockEntities();
              profiler.pop();
              } // Paper - option to disable ticking
@@ -78,7 +78,7 @@
          profiler.push("entityManagement");
          // Paper - rewrite chunk system
          profiler.pop();
-@@ -928,6 +_,7 @@
+@@ -929,6 +_,7 @@
  
          this.debugSynchronizers.tick(this.server.debugSubscribers());
          profiler.pop();
@@ -86,7 +86,7 @@
      }
  
      @Override
-@@ -1395,7 +_,7 @@
+@@ -1396,7 +_,7 @@
              // Paper end - log detailed entity tick information
          entity.setOldPosAndRot();
          ProfilerFiller profiler = Profiler.get();
@@ -95,7 +95,7 @@
          entity.totalEntityAge++; // Paper - age-like counter for all entities
          profiler.push(entity.typeHolder()::getRegisteredName);
          profiler.incrementCounter("tickNonPassenger");
-@@ -1421,9 +_,9 @@
+@@ -1422,9 +_,9 @@
      private void tickPassenger(final Entity vehicle, final Entity entity, final boolean isActive) { // Paper - EAR 2
          if (entity.isRemoved() || entity.getVehicle() != vehicle) {
              entity.stopRiding();
@@ -107,7 +107,7 @@
              entity.totalEntityAge++; // Paper - age-like counter for all entities
              ProfilerFiller profiler = Profiler.get();
              profiler.push(entity.typeHolder()::getRegisteredName);
-@@ -1716,6 +_,13 @@
+@@ -1717,6 +_,13 @@
  
      @Override
      public void destroyBlockProgress(final int id, final BlockPos blockPos, final int progress) {
@@ -121,7 +121,7 @@
          // CraftBukkit start
          Player breakerPlayer = null;
          Entity entity = this.getEntity(id);
-@@ -1732,7 +_,7 @@
+@@ -1733,7 +_,7 @@
                  .callEvent();
          }
          // Paper end - Add BlockBreakProgressUpdateEvent
@@ -130,7 +130,7 @@
              if (player.level() == this && player.getId() != id) {
                  double xd = blockPos.getX() - player.getX();
                  double yd = blockPos.getY() - player.getY();
-@@ -1743,7 +_,7 @@
+@@ -1744,7 +_,7 @@
                          continue;
                      }
                      // CraftBukkit end
@@ -139,45 +139,91 @@
                  }
              }
          }
-@@ -2386,26 +_,28 @@
+@@ -2387,27 +_,62 @@
  
      @Override
      public void updatePOIOnBlockStateChange(final BlockPos pos, final BlockState oldState, final BlockState newState) {
 -        Optional<Holder<PoiType>> oldType = PoiTypes.forState(oldState);
 -        Optional<Holder<PoiType>> newType = PoiTypes.forState(newState);
 -        if (!Objects.equals(oldType, newType)) {
+-            BlockPos immutable = pos.immutable();
+-            oldType.ifPresent(poiType -> this.getServer().execute(() -> {
+-                this.getPoiManager().remove(immutable);
+-                this.debugSynchronizers.dropPoi(immutable);
+-            }));
+-            newType.ifPresent(poiType -> this.getServer().execute(() -> {
+-                // Paper start - Remove stale POIs
+-                if (oldType.isEmpty() && this.getPoiManager().exists(immutable, _ -> true)) {
+-                    this.getPoiManager().remove(immutable);
+-                }
+-                // Paper end - Remove stale POIs
+-                PoiRecord record = this.getPoiManager().add(immutable, (Holder<PoiType>)poiType);
+-                if (record != null) {
+-                    this.debugSynchronizers.registerPoi(record);
+-                }
+-            }));
+-        }
+-    }
 +        // Gale start - Do less work - PoiTypes.forState() (skip Optional creation)
 +        Holder<PoiType> oldType = PoiTypes.gale$forStateNullable(oldState);
 +        Holder<PoiType> newType = PoiTypes.gale$forStateNullable(newState);
 +        if (oldType != newType) {
-             BlockPos immutable = pos.immutable();
--            oldType.ifPresent(poiType -> this.getServer().execute(() -> {
-+            if (oldType != null) this.getServer().execute(() -> {
-                 this.getPoiManager().remove(immutable);
-                 this.debugSynchronizers.dropPoi(immutable);
--            }));
--            newType.ifPresent(poiType -> this.getServer().execute(() -> {
-+            });
-+            if (newType != null) this.getServer().execute(() -> {
-                 // Paper start - Remove stale POIs
--                if (oldType.isEmpty() && this.getPoiManager().exists(immutable, _ -> true)) {
++            BlockPos immutable = pos.immutable();
++            // Gale start - Do less work - ServerLevel.updatePOIOnBlockStateChange() (reduce lambdas)
++            this.getServer().execute(() -> {
++                if (oldType != null) {
++                // Gale end - Do less work - ServerLevel.updatePOIOnBlockStateChange() (reduce lambdas)
++                this.getPoiManager().remove(immutable);
++                this.debugSynchronizers.dropPoi(immutable);
++                // Gale start - Do less work - ServerLevel.updatePOIOnBlockStateChange() (reduce lambdas)
++                }
++                if (newType != null) {
++                // Gale end - Do less work - ServerLevel.updatePOIOnBlockStateChange() (reduce lambdas)
++                // Paper start - Remove stale POIs
 +                if (oldType == null && this.getPoiManager().exists(immutable, _ -> true)) {
-                     this.getPoiManager().remove(immutable);
-                 }
-                 // Paper end - Remove stale POIs
--                PoiRecord record = this.getPoiManager().add(immutable, (Holder<PoiType>)poiType);
++                    this.getPoiManager().remove(immutable);
++                }
++                // Paper end - Remove stale POIs
 +                PoiRecord record = this.getPoiManager().add(immutable, newType);
-                 if (record != null) {
-                     this.debugSynchronizers.registerPoi(record);
-                 }
--            }));
++                if (record != null) {
++                    this.debugSynchronizers.registerPoi(record);
++                } // Gale - Do less work - ServerLevel.updatePOIOnBlockStateChange() (reduce lambdas)
++                }
 +            });
-         }
++        }
 +        // Gale end - Do less work - PoiTypes.forState() (skip Optional creation)
-     }
++    }
++
++    // Gale start - Do less work - ServerLevel.updatePOIOnBlockStateChange() (reduce lambdas)
++    public void gale$updatePOIOnBlockStateChangeMainThread(final BlockPos pos, final BlockState oldState, final BlockState newState) {
++        // Gale start - Do less work - PoiTypes.forState() (skip Optional creation)
++        Holder<PoiType> oldType = PoiTypes.gale$forStateNullable(oldState);
++        Holder<PoiType> newType = PoiTypes.gale$forStateNullable(newState);
++        if (oldType != newType) {
++            BlockPos immutable = pos.immutable();
++            if (oldType != null) {
++                this.getPoiManager().remove(immutable);
++                this.debugSynchronizers.dropPoi(immutable);
++            }
++            if (newType != null) {
++                // Paper start - Remove stale POIs
++                if (oldType == null && this.getPoiManager().exists(immutable, _ -> true)) {
++                    this.getPoiManager().remove(immutable);
++                }
++                // Paper end - Remove stale POIs
++                PoiRecord record = this.getPoiManager().add(immutable, newType);
++                if (record != null) {
++                    this.debugSynchronizers.registerPoi(record);
++                }
++            }
++        }
++        // Gale end - Do less work - PoiTypes.forState() (skip Optional creation)
++    }
++    // Gale end - Do less work - ServerLevel.updatePOIOnBlockStateChange() (reduce lambdas)
  
      public PoiManager getPoiManager() {
-@@ -2856,6 +_,7 @@
+         return this.getChunkSource().getPoiManager();
+@@ -2857,6 +_,7 @@
              // ServerLevel.this.getChunkSource().addEntity(entity); // Paper - ignore and warn about illegal addEntity calls instead of crashing server; moved down below valid=true
              if (entity instanceof ServerPlayer player) {
                  ServerLevel.this.players.add(player);
@@ -185,7 +231,7 @@
                  if (player.isReceivingWaypoints()) {
                      ServerLevel.this.getWaypointManager().addPlayer(player);
                  }
-@@ -2934,6 +_,7 @@
+@@ -2935,6 +_,7 @@
              ServerLevel.this.getChunkSource().removeEntity(entity);
              if (entity instanceof ServerPlayer player) {
                  ServerLevel.this.players.remove(player);
