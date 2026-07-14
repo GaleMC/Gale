@@ -55,7 +55,7 @@
          @Deprecated
          public boolean blocksMotion() {
              Block block = this.getBlock();
-@@ -680,11 +_,15 @@
+@@ -680,11 +_,19 @@
              return this.legacySolid;
          }
  
@@ -67,14 +67,18 @@
 +        }
 +
 +        private void gale$eventDriven_isDestroyable_update() {
-+            this.gale$eventDriven_isDestroyable = this.getBlock().isDestroyable();
++            boolean newValue = this.getBlock().isDestroyable();
++            if (this.gale$eventDriven_isDestroyable != newValue) {
++                this.gale$eventDriven_isDestroyable = newValue;
++                this.gale$eventDriven_pistonPushReaction_update();
++            }
          }
 -        // Paper end - Protect Bedrock and End Portal/Frames from being destroyed
 +        // Gale end - Event-driven - BlockBehaviour.isDestroyable()
  
          public boolean isValidSpawn(final BlockGetter level, final BlockPos pos, final EntityType<?> type) {
              return this.getBlock().properties.isValidSpawn.test(this.asState(), level, pos, type);
-@@ -791,10 +_,16 @@
+@@ -791,9 +_,15 @@
              return this.getBlock().getDirectSignal(this.asState(), level, pos, direction);
          }
  
@@ -83,16 +87,15 @@
 +        // Gale start - Event-driven - BlockBehaviour.getPistonPushReaction()
 +        public final PushReaction getPistonPushReaction() {
 +            return this.gale$eventDriven_pistonPushReaction;
-         }
- 
++        }
++
 +        private void gale$eventDriven_pistonPushReaction_update() {
 +            this.gale$eventDriven_pistonPushReaction = !this.gale$eventDriven_isDestroyable ? PushReaction.BLOCK : this.pushReaction;
-+        }
+         }
 +        // Gale end - Event-driven - BlockBehaviour.getPistonPushReaction()
-+
+ 
          public boolean isSolidRender() {
              return this.solidRender;
-         }
 @@ -996,8 +_,10 @@
              return this.is(tag) && predicate.test(this);
          }
