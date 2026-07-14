@@ -193,6 +193,7 @@
      }
  
      public final void setBoundingBox(final AABB bb) {
++        // Gale start - Do less work - Skip unnecessary Entity.move() code if bounding box and position are unchanged
 +        if (!this.boundingBoxChanged) {
 +            AABB current = this.bb;
 +            if (current != bb && (
@@ -205,6 +206,7 @@
 +                this.boundingBoxChanged = true;
 +            }
 +        }
++        // Gale end - Do less work - Skip unnecessary Entity.move() code if bounding box and position are unchangedgit status
          // CraftBukkit start - block invalid bounding boxes
          double minX = bb.minX,
                  minY = bb.minY,
