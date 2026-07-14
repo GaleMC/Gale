@@ -22,11 +22,11 @@
          BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(x, y, z);
  
 -        while (pos.getY() > this.level().getMinY() && !this.level().getBlockState(pos).blocksMotion()) {
-+        // Gale start - Skip enderman teleport if requires main thread chunk load
++        // Gale start - Don't load chunks synchronously - Enderman teleport
 +        net.minecraft.world.level.chunk.LevelChunk chunk = this.level().getChunkIfLoaded(pos);
 +        if (chunk == null) return false;
 +        while (pos.getY() > this.level().getMinY() && !chunk.getBlockState(pos).blocksMotion()) {
-+            // Gale end - Skip enderman teleport if requires main thread chunk load
++            // Gale end - Don't load chunks synchronously - Enderman teleport
              pos.move(Direction.DOWN);
          }
  

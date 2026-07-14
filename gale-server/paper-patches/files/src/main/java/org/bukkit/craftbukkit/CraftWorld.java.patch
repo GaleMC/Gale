@@ -1,5 +1,28 @@
 --- a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
+@@ -174,7 +_,10 @@
+     private final @Nullable BiomeProvider biomeProvider;
+     private final List<BlockPopulator> populators = new ArrayList<>();
+     private final BlockMetadataStore blockMetadata = new BlockMetadataStore(this);
+-    private final Object2IntOpenHashMap<SpawnCategory> spawnCategoryLimit = new Object2IntOpenHashMap<>();
++    // Gale start - Collections - CraftWorld.spawnCategoryLimit (use array)
++    private static final SpawnCategory[] gale$SPAWN_CATEGORIES = SpawnCategory.values();
++    private final int[] spawnCategoryLimit = new int[gale$SPAWN_CATEGORIES.length];
++    // Gale end - Collections - CraftWorld.spawnCategoryLimit (use array)
+     private final ServerLevel world;
+     private final NamespacedKey key;
+     private final Environment environment;
+@@ -301,8 +_,9 @@
+         this.biomeProvider = biomeProvider;
+ 
+         this.environment = environment;
++        java.util.Arrays.fill(this.spawnCategoryLimit, -1); // Gale - Collections - CraftWorld.spawnCategoryLimit (use array)
+         // Paper start - per world spawn limits
+-        for (SpawnCategory spawnCategory : SpawnCategory.values()) {
++        for (SpawnCategory spawnCategory : gale$SPAWN_CATEGORIES) { // Gale - Collections - CraftWorld.spawnCategoryLimit (use array)
+             if (CraftSpawnCategory.isValidForLimits(spawnCategory)) {
+                 setSpawnLimit(spawnCategory, this.world.paperConfig().entities.spawning.spawnLimits.getInt(CraftSpawnCategory.toNMS(spawnCategory)));
+             }
 @@ -918,6 +_,7 @@
  
              chunk.setNoiseBiome(QuartPos.fromBlock(x), QuartPos.fromBlock(y), QuartPos.fromBlock(z), biome);
@@ -8,3 +31,21 @@
          }
      }
  
+@@ -1528,7 +_,7 @@
+     }
+ 
+     public final int getSpawnLimitUnsafe(final SpawnCategory spawnCategory) {
+-        int limit = this.spawnCategoryLimit.getOrDefault(spawnCategory, -1);
++        int limit = this.spawnCategoryLimit[spawnCategory.ordinal()]; // Gale - Collections - CraftWorld.spawnCategoryLimit (use array)
+         if (limit < 0) {
+             limit = this.server.getSpawnLimitUnsafe(spawnCategory);
+         }
+@@ -1540,7 +_,7 @@
+         Preconditions.checkArgument(spawnCategory != null, "SpawnCategory cannot be null");
+         Preconditions.checkArgument(CraftSpawnCategory.isValidForLimits(spawnCategory), "SpawnCategory.%s are not supported", spawnCategory);
+ 
+-        this.spawnCategoryLimit.put(spawnCategory, limit);
++        this.spawnCategoryLimit[spawnCategory.ordinal()] = limit; // Gale - Collections - CraftWorld.spawnCategoryLimit (use array)
+     }
+ 
+     @Override

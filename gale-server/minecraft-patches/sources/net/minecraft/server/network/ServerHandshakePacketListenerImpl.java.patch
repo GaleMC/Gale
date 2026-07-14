@@ -5,7 +5,7 @@
      // Spigot end
      // Paper start - Connection throttle
 -    private static final java.util.Map<java.net.InetAddress, Long> throttleTracker = new java.util.HashMap<>();
-+    private static final it.unimi.dsi.fastutil.objects.Object2LongMap<java.net.InetAddress> throttleTracker = new it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap<>(); // Gale - Collections - ServerHandshakePacketListenerImpl.throttleTracker
++    private static final it.unimi.dsi.fastutil.objects.Object2LongMap<java.net.InetAddress> throttleTracker = new it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap<>(); // Gale - Collections - ServerHandshakePacketListenerImpl.throttleTracker (use fastutil)
      private static int throttleCounter = 0;
      // Paper end - Connection throttle
      private static final boolean BYPASS_HOSTCHECK = Boolean.getBoolean("Paper.bypassHostCheck"); // Paper
