@@ -8,7 +8,7 @@
  import net.minecraft.core.BlockPos;
  import net.minecraft.core.Direction;
  import net.minecraft.world.level.Level;
-@@ -25,12 +_,16 @@
+@@ -25,12 +_,9 @@
                  level.setBlock(pos, state.setValue(RedStoneWireBlock.POWER, targetStrength), Block.UPDATE_CLIENTS);
              }
  
@@ -19,14 +19,7 @@
 -                toUpdate.add(pos.relative(direction));
 -            }
 +            // Gale start - optimize redstone wire update - replace HashSet with fixed array
-+            BlockPos[] toUpdate = new BlockPos[7];
-+            toUpdate[0] = pos;
-+            toUpdate[1] = pos.relative(Direction.NORTH);
-+            toUpdate[2] = pos.relative(Direction.EAST);
-+            toUpdate[3] = pos.relative(Direction.SOUTH);
-+            toUpdate[4] = pos.relative(Direction.WEST);
-+            toUpdate[5] = pos.relative(Direction.UP);
-+            toUpdate[6] = pos.relative(Direction.DOWN);
++            BlockPos[] toUpdate = {pos, pos.relative(Direction.DOWN), pos.relative(Direction.UP), pos.relative(Direction.NORTH), pos.relative(Direction.SOUTH), pos.relative(Direction.WEST), pos.relative(Direction.EAST)};
 +            // Gale end - optimize redstone wire update - replace HashSet with fixed array
  
              for (BlockPos blockPos : toUpdate) {
