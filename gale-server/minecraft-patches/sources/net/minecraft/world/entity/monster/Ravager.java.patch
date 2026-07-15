@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/monster/Ravager.java
++++ b/net/minecraft/world/entity/monster/Ravager.java
+@@ -225,7 +_,7 @@
+         if (this.isAlive() && this.level() instanceof ServerLevel level) {
+             Predicate<Entity> targetSelector = level.getGameRules().get(GameRules.MOB_GRIEFING) ? ROAR_TARGET_WITH_GRIEFING : ROAR_TARGET_WITHOUT_GRIEFING;
+ 
+-            for (LivingEntity entity : this.level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(4.0), targetSelector)) {
++            for (LivingEntity entity : level.getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(4.0), targetSelector)) {
+                 if (!(entity instanceof AbstractIllager)) {
+                     entity.hurtServer(level, this.damageSources().mobAttack(this), 6.0F);
+                 }
