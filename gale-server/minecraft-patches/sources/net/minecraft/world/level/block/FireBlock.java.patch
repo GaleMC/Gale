@@ -12,7 +12,10 @@
                      result = result.setValue(property, this.canBurn(level.getBlockState(pos.relative(direction))));
                  }
              }
+ 
 @@ -257,7 +_,8 @@
+     }
+ 
      private boolean isValidFireLocation(final BlockGetter level, final BlockPos pos) {
 -        for (Direction direction : Direction.values()) {
 +        // Gale - Pre-compute - Direction.values()
@@ -20,10 +23,9 @@
              if (this.canBurn(level.getBlockState(pos.relative(direction)))) {
                  return true;
              }
-         }
 @@ -273,7 +_,8 @@
-        int odds = 0;
-
+         int odds = 0;
+ 
 -        for (Direction direction : Direction.values()) {
 +        // Gale - Pre-compute - Direction.values()
 +        for (Direction direction : Direction.gale$precompute_VALUES) {
