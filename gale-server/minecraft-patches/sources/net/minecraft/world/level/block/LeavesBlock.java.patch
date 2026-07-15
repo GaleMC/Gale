@@ -5,7 +5,7 @@
          BlockPos.MutableBlockPos neighborPos = new BlockPos.MutableBlockPos();
  
 -        for (Direction direction : Direction.values()) {
-+        for (Direction direction : Direction.gale$precompute_VALUES) { // Gale - use cached direction array
++        for (Direction direction : Direction.gale$precompute_VALUES) { // Gale - Pre-compute - Direction.values()
              neighborPos.setWithOffset(pos, direction);
              newDistance = Math.min(newDistance, getDistanceAt(level.getBlockState(neighborPos)) + 1);
              if (newDistance == 1) {
