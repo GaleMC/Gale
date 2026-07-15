@@ -359,6 +359,11 @@ Every feature is identified in source code by corresponding `// Gale` marker com
         <sub><sup>Leaf patch: <code>Reduce-enderman-teleport-chunk-lookups.patch</code></sup></sub>
       </li>
       <li>
+        <i>Nether fortress mob spawn</i><br>
+        <sub><sup>By: <a href="https://github.com/hayanesuru">hayanesuru</a> (as part of <a href="https://github.com/Winds-Studio/Leaf">Leaf</a>)</sup></sub><br>
+        <sub><sup>Leaf patch: part of <code>optimize-mob-spawning.patch</code></sup></sub>
+      </li>
+      <li>
         <i>Phantom spawn</i><br>
         <sub><sup>By: <a href="https://github.com/PureGero">PureGero</a> (as part of <a href="https://github.com/MultiPaper/MultiPaper">MultiPaper</a>)</sup></sub><br>
         <sub><sup>Leaf patch: <code>Don-t-load-chunks-to-spawn-phantoms.patch</code></sup></sub>
