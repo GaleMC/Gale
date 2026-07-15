@@ -236,8 +236,8 @@
              }
  
 +            // Gale start - Do less work - Level.checkEntityCollision()
-+            if (checkCanSee && source instanceof net.minecraft.server.level.ServerPlayer && entity instanceof net.minecraft.server.level.ServerPlayer
-+                && !((net.minecraft.server.level.ServerPlayer) source).getBukkitEntity().canSee(((net.minecraft.server.level.ServerPlayer) entity).getBukkitEntity())) {
++            if (checkCanSee && source instanceof net.minecraft.server.level.ServerPlayer sourceServerPlayer && entity instanceof net.minecraft.server.level.ServerPlayer entityServerPlayer
++                && !sourceServerPlayer.getBukkitEntity().canSee(entityServerPlayer.getBukkitEntity())) {
 +                continue;
 +            }
 +            // Gale end - Do less work - Level.checkEntityCollision()
