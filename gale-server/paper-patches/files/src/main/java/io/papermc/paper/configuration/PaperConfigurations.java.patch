@@ -1,6 +1,10 @@
 --- a/src/main/java/io/papermc/paper/configuration/PaperConfigurations.java
 +++ b/src/main/java/io/papermc/paper/configuration/PaperConfigurations.java
-@@ -335,6 +_,7 @@
+@@ -332,9 +_,11 @@
+     public void reloadConfigs(MinecraftServer server) {
+         try {
+             this.initializeGlobalConfiguration(server.registryAccess(), reloader(this.globalConfigClass, GlobalConfiguration.get()));
++            net.minecraft.world.level.block.state.BlockBehaviour.gale$eventDriven_reload(); // Gale - Event-driven - Reload block event-driven values after Paper configuration reload
              this.initializeWorldDefaultsConfiguration(server.registryAccess());
              for (ServerLevel level : server.getAllLevels()) {
                  this.createWorldConfig(createWorldContextMap(level), reloader(this.worldConfigClass, level.paperConfig()));

@@ -71,9 +71,9 @@ Gale is a drop-in alternative for Paper, that provides higher performance withou
 <!--Full parity - --><!--No changes to behavior--><!--plugin/game behavior-->
 <!--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(suitable for every server)-->
 
-Gale contains [dozens](https://github.com/GaleMC/Gale/wiki/Features) of performance improvements.
+Gale contains [dozens](Features.md) of performance improvements.
 
-## Installation (server owners)
+## Server owners (installation)
 
 <!--As easy as it gets!-->
 <!--We made it easy!-->
@@ -81,7 +81,7 @@ Gale contains [dozens](https://github.com/GaleMC/Gale/wiki/Features) of performa
 1. Point to the `.jar` in your start script\
    (replace `paper-<version>.jar` with `gale-<version>.jar`)
 
-## Building from source (developers)
+## Developers (building from source)
 
 * `./gradlew applyAllPatches`
 * `./gradlew :gale-server:createPaperclipJar`
@@ -120,6 +120,7 @@ Built on [Paper](https://papermc.io/),
         <li><a href="https://github.com/PaulBGD">PaulBGD</a></li>
         <li><a href="https://github.com/PureGero">PureGero</a></li>
         <li><a href="https://github.com/RuleGaed">RuleGaed</a></li>
+        <li><a href="https://github.com/Smorki">Smorki</a></li>
         <li><a href="https://github.com/Taiyou06">Taiyou</a></li>
         <li><a href="https://github.com/toprakdevx">Toprak</a></li>
         <li><a href="https://github.com/vytskalt">vytskalt</a></li>

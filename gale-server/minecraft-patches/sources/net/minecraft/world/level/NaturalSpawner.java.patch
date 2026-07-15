@@ -9,3 +9,16 @@
                  MobCategory category = entity.getType().getCategory();
                  if (category != MobCategory.MISC) {
                      // Paper start - Only count natural spawns
+@@ -477,7 +_,11 @@
+     public static boolean isInNetherFortressBounds(
+         final BlockPos pos, final ServerLevel level, final MobCategory category, final StructureManager structureManager
+     ) {
+-        if (category == MobCategory.MONSTER && level.getBlockState(pos.below()).is(Blocks.NETHER_BRICKS)) {
++        // Gale start - Don't load chunks synchronously - Nether fortress mob spawn
++        if (category == MobCategory.MONSTER) {
++            BlockState blockState = level.getBlockStateIfLoaded(pos.below());
++            if (blockState == null || !blockState.is(Blocks.NETHER_BRICKS)) return false;
++            // Gale end - Don't load chunks synchronously - Nether fortress mob spawn
+             Structure fortress = structureManager.registryAccess().lookupOrThrow(Registries.STRUCTURE).getValue(BuiltinStructures.FORTRESS);
+             return fortress != null && structureManager.getStructureAt(pos, fortress).isValid();
+         } else {

@@ -92,7 +92,7 @@
              // Paper end
 -
 +            // Gale start - Do less work - Skip unnecessary Entity.move() code if bounding box and position are unchanged
-+            if (!this.boundingBoxChanged && delta.equals(Vec3.ZERO)) {
++            if (!this.boundingBoxChanged && delta.x == 0.0D && delta.y == 0.0D && delta.z == 0.0D) {
 +                this.horizontalCollision = false;
 +                this.verticalCollision = false;
 +                this.verticalCollisionBelow = false;
@@ -189,19 +189,28 @@
              Entity.RemovalReason removalReason = this.getRemovalReason();
              if (removalReason == null || removalReason.shouldDestroy()) {
                  this.level().gameEvent(this, GameEvent.ENTITY_DISMOUNT, oldVehicle.position);
-@@ -4580,6 +_,11 @@
+@@ -4580,6 +_,20 @@
      }
  
      public final void setBoundingBox(final AABB bb) {
 +        // Gale start - Do less work - Skip unnecessary Entity.move() code if bounding box and position are unchanged
-+        if (!this.bb.equals(bb)) {
-+            this.boundingBoxChanged = true;
++        if (!this.boundingBoxChanged) {
++            AABB current = this.bb;
++            if (current != bb && (
++                    current.minX != bb.minX ||
++                    current.minY != bb.minY ||
++                    current.minZ != bb.minZ ||
++                    current.maxX != bb.maxX ||
++                    current.maxY != bb.maxY ||
++                    current.maxZ != bb.maxZ)) {
++                this.boundingBoxChanged = true;
++            }
 +        }
 +        // Gale end - Do less work - Skip unnecessary Entity.move() code if bounding box and position are unchanged
          // CraftBukkit start - block invalid bounding boxes
          double minX = bb.minX,
                  minY = bb.minY,
-@@ -4718,13 +_,43 @@
+@@ -4718,13 +_,44 @@
      }
  
      public int countPlayerPassengers() {
@@ -228,9 +237,10 @@
 +    }
 +
 +    private void gale$eventDriven_playerPassengerCount_add(int delta) {
-+        this.gale$eventDriven_playerPassengerCount += delta;
-+        if (this.vehicle != null) {
-+            this.vehicle.gale$eventDriven_playerPassengerCount_add(delta);
++        Entity current = this;
++        while (current != null) {
++            current.gale$eventDriven_playerPassengerCount += delta;
++            current = current.vehicle;
 +        }
 +    }
 +
