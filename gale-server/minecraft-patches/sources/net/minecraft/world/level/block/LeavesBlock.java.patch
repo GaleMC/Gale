@@ -1,0 +1,19 @@
+--- a/net/minecraft/world/level/block/LeavesBlock.java
++++ b/net/minecraft/world/level/block/LeavesBlock.java
+@@ -34,6 +_,7 @@
+     protected final float leafParticleChance;
+     private static final int TICK_DELAY = 1;
+     private static volatile boolean cutoutLeaves = true;
++    private static final Direction[] DIRECTIONS = Direction.values(); // Gale - cache direction array
+ 
+     @Override
+     public abstract MapCodec<? extends LeavesBlock> codec();
+@@ -112,7 +_,7 @@
+         int newDistance = 7;
+         BlockPos.MutableBlockPos neighborPos = new BlockPos.MutableBlockPos();
+ 
+-        for (Direction direction : Direction.values()) {
++        for (Direction direction : DIRECTIONS) { // Gale - use cached direction array
+             neighborPos.setWithOffset(pos, direction);
+             newDistance = Math.min(newDistance, getDistanceAt(level.getBlockState(neighborPos)) + 1);
+             if (newDistance == 1) {
