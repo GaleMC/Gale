@@ -164,23 +164,15 @@
 +        Entity oldVehicle = this.vehicle;
 +        if (oldVehicle == vehicle) return;
 +        int playerPassengerCount = this.gale$eventDriven_playerPassengerCount;
++        if (playerPassengerCount != 0) {
++            if (oldVehicle != null) {
++                oldVehicle.gale$eventDriven_playerPassengerCount_add(-playerPassengerCount);
++            }
++            if (vehicle != null) {
++                vehicle.gale$eventDriven_playerPassengerCount_add(playerPassengerCount);
++            }
++        }
 +        this.vehicle = vehicle;
-+        if (playerPassengerCount == 0) return;
-+        if (oldVehicle != null && vehicle != null && oldVehicle.vehicle == vehicle.vehicle) {
-+            oldVehicle.gale$eventDriven_playerPassengerCount -= playerPassengerCount;
-+            vehicle.gale$eventDriven_playerPassengerCount += playerPassengerCount;
-+            return;
-+        }
-+        Entity current = oldVehicle;
-+        while (current != null) {
-+            current.gale$eventDriven_playerPassengerCount -= playerPassengerCount;
-+            current = current.vehicle;
-+        }
-+        current = vehicle;
-+        while (current != null) {
-+            current.gale$eventDriven_playerPassengerCount += playerPassengerCount;
-+            current = current.vehicle;
-+        }
 +    }
 +
      protected boolean canRide(final Entity vehicle) {
@@ -245,9 +237,10 @@
 +    }
 +
 +    private void gale$eventDriven_playerPassengerCount_add(int delta) {
-+        this.gale$eventDriven_playerPassengerCount += delta;
-+        if (this.vehicle != null) {
-+            this.vehicle.gale$eventDriven_playerPassengerCount_add(delta);
++        Entity current = this;
++        while (current != null) {
++            current.gale$eventDriven_playerPassengerCount += delta;
++            current = current.vehicle;
 +        }
 +    }
 +
