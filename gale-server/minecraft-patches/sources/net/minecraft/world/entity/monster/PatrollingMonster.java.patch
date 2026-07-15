@@ -100,7 +100,7 @@
 +                if (hardGrid.nearestIn(x, y, z, blockX, blockY, blockZ) == -1) {
 +                    this.gale$checkDespawn_lastSoftPlayerSlot = -1;
 +                    double distanceSquared;
-+                    if (level.gale$checkDespawn_noPlayerWithinRangeImpliesNearestPlayerIsFarAwayEnoughToRemoveForPatrollingMonsters[gridIndices[this.gale$checkDespawn_hardLevelSpatialGridIndicesIndex]]) {
++                    if (level.gale$checkDespawn_noPlayerWithinRangeImpliesNearestPlayerIsFarAwayEnoughToRemoveForPatrollingMonsters[hardGridIndex]) {
 +                        distanceSquared = Double.MAX_VALUE;
 +                    } else {
 +                        // Get the nearest player manually
@@ -145,7 +145,7 @@
 +                double distanceSquared;
 +
 +                if (!nearestIsInHard) {
-+                    if (level.gale$checkDespawn_noPlayerWithinRangeImpliesNearestPlayerIsFarAwayEnoughToRemoveForPatrollingMonsters[gridIndices[this.gale$checkDespawn_hardLevelSpatialGridIndicesIndex]]) {
++                    if (level.gale$checkDespawn_noPlayerWithinRangeImpliesNearestPlayerIsFarAwayEnoughToRemoveForPatrollingMonsters[hardGridIndex]) {
 +                        distanceSquared = Double.MAX_VALUE;
 +                    } else {
 +                        // Get the nearest player manually
