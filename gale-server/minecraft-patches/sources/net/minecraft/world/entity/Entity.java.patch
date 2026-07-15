@@ -92,7 +92,7 @@
              // Paper end
 -
 +            // Gale start - Do less work - Skip unnecessary Entity.move() code if bounding box and position are unchanged
-+            if (!this.boundingBoxChanged && delta.equals(Vec3.ZERO)) {
++            if (!this.boundingBoxChanged && delta.x == 0.0D && delta.y == 0.0D && delta.z == 0.0D) {
 +                this.horizontalCollision = false;
 +                this.verticalCollision = false;
 +                this.verticalCollisionBelow = false;
