@@ -24,10 +24,7 @@
 -                                    .forEach(start -> start.placeInChunk(level, structureManager, this, random, getWritableArea(chunk), centerPos));
 +                                // Gale start - Reuse structure decoration data
 +                                structureStarts.clear();
-+                                LongSet references = chunk.getReferencesForStructure(structure);
-+                                if (!references.isEmpty()) {
-+                                    structureManager.fillStartsForStructure(structure, references, structureStarts::add);
-+                                }
++                                structureManager.fillStartsForStructure(structure, chunk.getReferencesForStructure(structure), structureStarts::add);
 +                                for (StructureStart start : structureStarts) {
 +                                    start.placeInChunk(level, structureManager, this, random, getWritableArea(chunk), centerPos);
 +                                }
