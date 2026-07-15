@@ -109,13 +109,15 @@
 +    public int[] gale$checkDespawn_spatialGridIndices;
 +
 +    public void gale$checkDespawn_postUpdateSpawnRanges() {
-+
-+        // Create new grids
-+        it.unimi.dsi.fastutil.ints.IntList Ws = new it.unimi.dsi.fastutil.ints.IntArrayList();
-+        it.unimi.dsi.fastutil.ints.IntList Hs = new it.unimi.dsi.fastutil.ints.IntArrayList();
 +        io.papermc.paper.configuration.WorldConfiguration.Entities.Spawning config = this.paperConfig.entities.spawning;
 +        net.minecraft.world.entity.MobCategory[] categories = net.minecraft.world.entity.MobCategory.values();
 +        this.gale$checkDespawn_spatialGridIndices = new int[categories.length * 2];
++
++        it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap dimensionsToIndex = new it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap(categories.length * 2);
++        dimensionsToIndex.defaultReturnValue(-1);
++        it.unimi.dsi.fastutil.ints.IntArrayList Ws = new it.unimi.dsi.fastutil.ints.IntArrayList(categories.length * 2);
++        it.unimi.dsi.fastutil.ints.IntArrayList Hs = new it.unimi.dsi.fastutil.ints.IntArrayList(categories.length * 2);
++
 +        for (int categoryI = 0; categoryI < categories.length; ++categoryI) {
 +            net.minecraft.world.entity.MobCategory category = categories[categoryI];
 +            io.papermc.paper.configuration.WorldConfiguration.Entities.Spawning.DespawnRangePair pair = config.despawnRanges.get(category);
@@ -123,39 +125,36 @@
 +                io.papermc.paper.configuration.type.DespawnRange range = hard == 1 ? pair.hard() : pair.soft();
 +                int W = range.precomputedHorizontalLimit;
 +                int H = range.precomputedVerticalLimit;
-+                int indexToUse = 0;
-+                while (indexToUse < Ws.size()) {
-+                    if (Ws.getInt(indexToUse) == W && Hs.getInt(indexToUse) == H) {
-+                        break;
-+                    }
-+                    indexToUse++;
-+                }
-+                if (indexToUse == Ws.size()) {
++                long key = ((long) W << 32) | (H & 0xFFFFFFFFL);
++                int indexToUse = dimensionsToIndex.get(key);
++                if (indexToUse == -1) {
++                    indexToUse = Ws.size();
 +                    Ws.add(W);
 +                    Hs.add(H);
++                    dimensionsToIndex.put(key, indexToUse);
 +                }
 +                this.gale$checkDespawn_spatialGridIndices[categoryI * 2 + hard] = indexToUse;
 +            }
 +        }
++
 +        io.papermc.paper.configuration.type.DespawnRange.Shape shape = config.despawnRangeShape;
-+        this.gale$checkDespawn_spatialGrids = new org.galemc.gale.util.collection.spatialgrid.SpatialGrid[Ws.size()];
-+        this.gale$checkDespawn_noPlayerWithinRangeImpliesNearestPlayerIsFarAwayEnoughToRemoveForPatrollingMonsters = new boolean[Ws.size()];
-+        for (int i = 0; i < Ws.size(); i++) {
-+            int W = Ws.get(i);
-+            int H = Hs.get(i);
++        int uniqueCount = Ws.size();
++        this.gale$checkDespawn_spatialGrids = new org.galemc.gale.util.collection.spatialgrid.SpatialGrid[uniqueCount];
++        this.gale$checkDespawn_noPlayerWithinRangeImpliesNearestPlayerIsFarAwayEnoughToRemoveForPatrollingMonsters = new boolean[uniqueCount];
++        for (int i = 0; i < uniqueCount; i++) {
++            int W = Ws.getInt(i);
++            int H = Hs.getInt(i);
 +            this.gale$checkDespawn_spatialGrids[i] = shape == io.papermc.paper.configuration.type.DespawnRange.Shape.ELLIPSOID ? new org.galemc.gale.util.collection.spatialgrid.EllipsoidSpatialGrid(W, H, 8) : new org.galemc.gale.util.collection.spatialgrid.CylinderSpatialGrid(W, H, 8);
 +            int smallestCenterToBoundaryDistance = Math.min(W, H);
 +            long smallestCenterToBoundarySqrDistance = ((long) smallestCenterToBoundaryDistance) * smallestCenterToBoundaryDistance;
 +            this.gale$checkDespawn_noPlayerWithinRangeImpliesNearestPlayerIsFarAwayEnoughToRemoveForPatrollingMonsters[i] = smallestCenterToBoundarySqrDistance > net.minecraft.world.entity.monster.PatrollingMonster.MIN_DIST_SQR_TO_REMOVE_LONG;
 +        }
 +
-+        // Populate them
 +        if (this.gale$checkDespawn_usingSpatialGrid) {
 +            for (Player player : this.gale$eventDriven_affectsSpawningSelectorPlayers) {
 +                this.gale$checkDespawn_addToGrids(player);
 +            }
 +        }
-+
 +    }
 +
 +    public void gale$checkDespawn_addToGrids(Player player) {
