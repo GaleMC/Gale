@@ -1,35 +1,27 @@
 --- a/net/minecraft/world/level/block/FireBlock.java
 +++ b/net/minecraft/world/level/block/FireBlock.java
-@@ -118,10 +_,11 @@
+@@ -121,6 +_,6 @@
          if (!this.canBurn(belowState) && !belowState.isFaceSturdy(level, below, Direction.UP)) {
              BlockState result = this.defaultBlockState();
  
 -            for (Direction direction : Direction.values()) {
-+            // Gale - Pre-compute - Direction.values()
-+            for (Direction direction : Direction.gale$precompute_VALUES) {
++            for (Direction direction : Direction.gale$precompute_VALUES) { // Gale - Pre-compute - Direction.values()
                  BooleanProperty property = PROPERTY_BY_DIRECTION.get(direction);
                  if (property != null) {
-                     result = result.setValue(property, this.canBurn(level.getBlockState(pos.relative(direction))));
-                 }
-             }
- 
-@@ -257,7 +_,8 @@
+@@ -257,6 +_,6 @@
      }
  
      private boolean isValidFireLocation(final BlockGetter level, final BlockPos pos) {
 -        for (Direction direction : Direction.values()) {
-+        // Gale - Pre-compute - Direction.values()
-+        for (Direction direction : Direction.gale$precompute_VALUES) {
++        for (Direction direction : Direction.gale$precompute_VALUES) { // Gale - Pre-compute - Direction.values()
              if (this.canBurn(level.getBlockState(pos.relative(direction)))) {
                  return true;
              }
-@@ -273,7 +_,8 @@
+@@ -273,6 +_,6 @@
  
-        int odds = 0;
+         int odds = 0;
  
 -        for (Direction direction : Direction.values()) {
-+        // Gale - Pre-compute - Direction.values()
-+        for (Direction direction : Direction.gale$precompute_VALUES) {
++        for (Direction direction : Direction.gale$precompute_VALUES) { // Gale - Pre-compute - Direction.values()
              BlockState blockState = level.getBlockState(pos.relative(direction));
              odds = Math.max(this.getIgniteOdds(blockState), odds);
-         }
