@@ -24,7 +24,8 @@
                  return true;
              }
 @@ -273,7 +_,8 @@
-         int odds = 0;
+ 
+        int odds = 0;
  
 -        for (Direction direction : Direction.values()) {
 +        // Gale - Pre-compute - Direction.values()
