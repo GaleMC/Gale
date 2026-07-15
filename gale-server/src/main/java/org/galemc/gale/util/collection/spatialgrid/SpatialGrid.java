@@ -520,27 +520,24 @@ public abstract class SpatialGrid implements AbstractSpatialGrid {
             xs[slot] = newX; ys[slot] = newY; zs[slot] = newZ;
             if (oldIdx != -1) {
                 if (!aabbDirty[oldIdx]) {
-                    double cMinX = bMinX[oldIdx], cMaxX = bMaxX[oldIdx];
-                    double cMinY = bMinY[oldIdx], cMaxY = bMaxY[oldIdx];
-                    double cMinZ = bMinZ[oldIdx], cMaxZ = bMaxZ[oldIdx];
-                    if (oldx == cMinX || oldx == cMaxX ||
-                        oldy == cMinY || oldy == cMaxY ||
-                        oldz == cMinZ || oldz == cMaxZ) {
+                    if (oldx == bMinX[oldIdx] || oldx == bMaxX[oldIdx] ||
+                        oldy == bMinY[oldIdx] || oldy == bMaxY[oldIdx] ||
+                        oldz == bMinZ[oldIdx] || oldz == bMaxZ[oldIdx]) {
                         aabbDirty[oldIdx] = true;
                     } else {
-                        if (newX < cMinX) {
+                        if (newX < bMinX[oldIdx]) {
                             bMinX[oldIdx] = newX;
-                        } else if (newX > cMaxX) {
+                        } else if (newX > bMaxX[oldIdx]) {
                             bMaxX[oldIdx] = newX;
                         }
-                        if (newY < cMinY) {
+                        if (newY < bMinY[oldIdx]) {
                             bMinY[oldIdx] = newY;
-                        } else if (newY > cMaxY) {
+                        } else if (newY > bMaxY[oldIdx]) {
                             bMaxY[oldIdx] = newY;
                         }
-                        if (newZ < cMinZ) {
+                        if (newZ < bMinZ[oldIdx]) {
                             bMinZ[oldIdx] = newZ;
-                        } else if (newZ > cMaxZ) {
+                        } else if (newZ > bMaxZ[oldIdx]) {
                             bMaxZ[oldIdx] = newZ;
                         }
                     }
@@ -562,10 +559,7 @@ public abstract class SpatialGrid implements AbstractSpatialGrid {
                 if (removed) {
                     double sx = xs[slot], sy = ys[slot], sz = zs[slot];
                     if (!aabbDirty[oldIdx]) {
-                        double cMinX = bMinX[oldIdx], cMaxX = bMaxX[oldIdx];
-                        double cMinY = bMinY[oldIdx], cMaxY = bMaxY[oldIdx];
-                        double cMinZ = bMinZ[oldIdx], cMaxZ = bMaxZ[oldIdx];
-                        if (sx == cMinX || sx == cMaxX || sy == cMinY || sy == cMaxY || sz == cMinZ || sz == cMaxZ) {
+                        if (sx == bMinX[oldIdx] || sx == bMaxX[oldIdx] || sy == bMinY[oldIdx] || sy == bMaxY[oldIdx] || sz == bMinZ[oldIdx] || sz == bMaxZ[oldIdx]) {
                             aabbDirty[oldIdx] = true;
                         }
                     }
