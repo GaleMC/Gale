@@ -6,13 +6,13 @@
                  int generationSteps = Math.max(GenerationStep.Decoration.values().length, featureStepCount);
 +                // Gale start - Reuse structure decoration data
 +                boolean generateStructures = structureManager.shouldGenerateStructures();
-+                @Nullable List<StructureStart> structureStarts = generateStructures ? new ArrayList<>() : null;
++                it.unimi.dsi.fastutil.objects.@Nullable ObjectArrayList<StructureStart> structureStarts = generateStructures ? new it.unimi.dsi.fastutil.objects.ObjectArrayList<>() : null;
 +                // Gale end - Reuse structure decoration data
  
                  for (int stepIndex = 0; stepIndex < generationSteps; stepIndex++) {
                      int index = 0;
 -                    if (structureManager.shouldGenerateStructures()) {
-+                    if (generateStructures) {
++                    if (generateStructures) { // Gale - Reuse structure decoration data
                          for (Structure structure : structuresByStep.getOrDefault(stepIndex, Collections.emptyList())) {
                              random.setFeatureSeed(decorationSeed, index, stepIndex);
                              Supplier<String> currentlyGenerating = () -> structuresRegistry.getResourceKey(structure)
@@ -25,8 +25,9 @@
 +                                // Gale start - Reuse structure decoration data
 +                                structureStarts.clear();
 +                                structureManager.fillStartsForStructure(structure, chunk.getReferencesForStructure(structure), structureStarts::add);
-+                                for (StructureStart start : structureStarts) {
-+                                    start.placeInChunk(level, structureManager, this, random, getWritableArea(chunk), centerPos);
++                                Object[] structureStartsArray = structureStarts.elements();
++                                for (int structureStartIndex = 0, structureStartsSize = structureStarts.size(); structureStartIndex < structureStartsSize; structureStartIndex++) {
++                                    ((StructureStart) structureStartsArray[structureStartIndex]).placeInChunk(level, structureManager, this, random, getWritableArea(chunk), centerPos);
 +                                }
 +                                // Gale end - Reuse structure decoration data
                              } catch (Exception e) {
