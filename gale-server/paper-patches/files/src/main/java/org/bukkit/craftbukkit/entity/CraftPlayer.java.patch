@@ -6,36 +6,25 @@
      private final ConversationTracker conversationTracker = new ConversationTracker();
 -    private final Map<UUID, Set<WeakReference<Plugin>>> invertedVisibilityEntities = new HashMap<>();
 +    // Gale start - Intrusive values - CraftPlayer.invertedVisibilityEntities
-+    public static boolean[] USED_PACKED_VISIBILITY_INVERSIONS_BIT_INDICES = new boolean[512];
++    public static final org.galemc.gale.util.collection.packed.UsedPackedIndices gale$USED_PACKED_INDICES = new org.galemc.gale.util.collection.packed.UsedPackedIndices();
 +    public static final it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap<UUID> occurrencesInInvertedVisibilityEntities = new it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap<>();
 +    public final Map<UUID, List<WeakReference<Plugin>>> invertedVisibilityEntities = new it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap<>();
-+    public final int packedVisibilityInversionsBitIndex;
-+    public final int packedVisibilityInversionsWordIndex;
-+    public final long packedVisibilityInversionsWordMask;
++    public final int gale$packedIndex;
++    public final int gale$packedWordIndex;
++    public final long gale$packedWordmask;
 +    // Gale end - Intrusive values - CraftPlayer.invertedVisibilityEntities
      private final Set<UUID> unlistedEntities = new HashSet<>(); // Paper - Add Listing API for Player
      private static final WeakHashMap<Plugin, WeakReference<Plugin>> pluginWeakReferences = new WeakHashMap<>();
      private int hash = 0;
-@@ -251,6 +_,23 @@
+@@ -251,6 +_,12 @@
          super(server, entity);
  
          this.firstPlayed = System.currentTimeMillis();
 +        // Gale start - Intrusive values - CraftPlayer.invertedVisibilityEntities
-+        int i = 0;
-+        while (true) {
-+            if (i >= USED_PACKED_VISIBILITY_INVERSIONS_BIT_INDICES.length) {
-+                USED_PACKED_VISIBILITY_INVERSIONS_BIT_INDICES = java.util.Arrays.copyOf(USED_PACKED_VISIBILITY_INVERSIONS_BIT_INDICES, USED_PACKED_VISIBILITY_INVERSIONS_BIT_INDICES.length + 512);
-+                break;
-+            }
-+            if (!USED_PACKED_VISIBILITY_INVERSIONS_BIT_INDICES[i]) {
-+                break;
-+            }
-+            i++;
-+        }
-+        USED_PACKED_VISIBILITY_INVERSIONS_BIT_INDICES[i] = true;
-+        this.packedVisibilityInversionsBitIndex = i;
-+        this.packedVisibilityInversionsWordIndex = i >> 6;
-+        this.packedVisibilityInversionsWordMask = 1L << i;
++        int gale$packedIndex = gale$USED_PACKED_INDICES.claimUnused();
++        this.gale$packedIndex = gale$packedIndex;
++        this.gale$packedWordIndex = org.galemc.gale.util.collection.packed.PackedBooleanArray.getWordIndex(gale$packedIndex);
++        this.gale$packedWordmask = org.galemc.gale.util.collection.packed.PackedBooleanArray.getWordMask(gale$packedIndex);
 +        // Gale end - Intrusive values - CraftPlayer.invertedVisibilityEntities
      }
  
@@ -130,7 +119,7 @@
 +        if (entry != null) {
 +            ServerPlayer handle = this.getHandle();
 +            ServerGamePacketListenerImpl connection = handle.connection;
-+            if (!entry.seenByPackedArray.get(connection.packedSeenByWordIndex, connection.packedSeenByWordMask)) {
++            if (!entry.seenByPackedArray.get(connection.gale$packedWordIndex, connection.gale$packedWordMask)) {
 +            // Gale end - Collections - ChunkMap.TrackedEntity.seenBy
              entry.updatePlayer(this.getHandle());
 +            } // Gale - Collections - ChunkMap.TrackedEntity.seenBy
@@ -177,7 +166,7 @@
 +            if (occurrencesInInvertedVisibilityEntities.addTo(uuid, -1) == 1) { occurrencesInInvertedVisibilityEntities.removeInt(uuid); }
 +        }
 +        this.invertedVisibilityEntities.clear();
-+        USED_PACKED_VISIBILITY_INVERSIONS_BIT_INDICES[this.packedVisibilityInversionsBitIndex] = false;
++        gale$USED_PACKED_INDICES.freeUsed(this.gale$packedIndex);
 +    }
 +    // Gale end - Intrusive values - CraftPlayer.invertedVisibilityEntities
  

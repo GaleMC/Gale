@@ -16,7 +16,7 @@
              }
          }
 +        craftPlayer.resetCanSee(); // Gale - Intrusive values - CraftPlayer.invertedVisibilityEntities
-+        net.minecraft.server.network.ServerGamePacketListenerImpl.USED_PACKED_SEEN_BY_BIT_INDICES[player.connection.packedSeenByBitIndex] = false; // Gale - Collections - ChunkMap.TrackedEntity.seenBy
++        net.minecraft.server.network.ServerGamePacketListenerImpl.gale$USED_PACKED_INDICES.freeUsed(player.connection.gale$packedIndex); // Gale - Collections - ChunkMap.TrackedEntity.seenBy
          // This removes the scoreboard (and player reference) for the specific player in the manager
          this.cserver.getScoreboardManager().removePlayer(player.getBukkitEntity());
          // CraftBukkit end

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/monster/PatrollingMonster.java
 +++ b/net/minecraft/world/entity/monster/PatrollingMonster.java
-@@ -94,10 +_,191 @@
+@@ -94,10 +_,190 @@
          return level.getBrightness(LightLayer.BLOCK, pos) <= 8 && checkAnyLightMonsterSpawnRules(type, level, spawnReason, pos, random);
      }
  

@@ -1,11 +1,11 @@
-package org.galemc.gale.util.collection;
+package org.galemc.gale.util.collection.packed;
 
 import java.util.Arrays;
 import org.galemc.gale.util.array.EmptyArrays;
 
 public class PackedBooleanArray {
 
-    private static final int MIN_GROWTH_CAPACITY = 4; // Gale - reduce PackedBooleanArray reallocations
+    private static final int MIN_GROWTH_CAPACITY = 4;
 
     public long[] array;
 
@@ -58,10 +58,22 @@ public class PackedBooleanArray {
         return new PackedBooleanArray(EmptyArrays.LONG);
     }
 
+    public static PackedBooleanArray createEmpty(int minCapacity) {
+        return new PackedBooleanArray(new long[(minCapacity + 63) >> 6]);
+    }
+
     public static PackedBooleanArray createWithInitial(int wordIndex, long wordMask) {
         long[] array = new long[wordIndex + 1];
         array[wordIndex] = wordMask;
         return new PackedBooleanArray(array);
+    }
+
+    public static int getWordIndex(int index) {
+        return index >> 6;
+    }
+
+    public static long getWordMask(int index) {
+        return 1L << index;
     }
 
 }

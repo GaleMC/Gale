@@ -41,7 +41,7 @@
              return toEquip;
          } else {
              return ItemStack.EMPTY;
-@@ -768,43 +_,359 @@
+@@ -768,43 +_,358 @@
          return true;
      }
  

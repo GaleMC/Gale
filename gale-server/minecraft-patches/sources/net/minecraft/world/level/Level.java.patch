@@ -93,7 +93,7 @@
          this.isDebug = isDebug;
          this.neighborUpdater = new CollectingNeighborUpdater(this, maxChainedNeighborUpdates);
          this.registryAccess = registryAccess;
-@@ -877,6 +_,120 @@
+@@ -877,6 +_,125 @@
          this.chunkPacketBlockController = this.paperConfig().anticheat.antiXray.enabled ? new io.papermc.paper.antixray.ChunkPacketBlockControllerAntiXray(this, executor) : io.papermc.paper.antixray.ChunkPacketBlockController.NO_OPERATION_INSTANCE; // Paper - Anti-Xray
      }
  

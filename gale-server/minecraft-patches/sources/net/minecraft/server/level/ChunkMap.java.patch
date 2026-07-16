@@ -20,7 +20,7 @@
      public void forEachEntityTrackedBy(final ServerPlayer player, final Consumer<Entity> consumer) {
          for (ChunkMap.TrackedEntity entity : this.entityMap.values()) {
 -            if (entity.seenBy.contains(player.connection)) {
-+            if (entity.seenByPackedArray.get(player.connection.packedSeenByWordIndex, player.connection.packedSeenByWordMask)) { // Gale - Collections - ChunkMap.TrackedEntity.seenBy
++            if (entity.seenByPackedArray.get(player.connection.gale$packedWordIndex, player.connection.gale$packedWordMask)) { // Gale - Collections - ChunkMap.TrackedEntity.seenBy
                  consumer.accept(entity.entity);
              }
          }
@@ -31,7 +31,7 @@
 -        public final Set<ServerPlayerConnection> seenBy = new it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet<>(); // Paper - Perf: optimise map impl
 +        // Gale start - Collections - ChunkMap.TrackedEntity.seenBy
 +        public final List<net.minecraft.server.network.ServerGamePacketListenerImpl> seenByList = new it.unimi.dsi.fastutil.objects.ObjectArrayList<>(2);
-+        public final org.galemc.gale.util.collection.PackedBooleanArray seenByPackedArray = org.galemc.gale.util.collection.PackedBooleanArray.createEmpty();
++        public final org.galemc.gale.util.collection.packed.PackedBooleanArray seenByPackedArray = org.galemc.gale.util.collection.packed.PackedBooleanArray.createEmpty();
 +        // Gale end - Collections - ChunkMap.TrackedEntity.seenBy
  
          // Paper start - optimise entity tracker
@@ -57,7 +57,7 @@
 +                            }
 +                            writeI++;
 +                        } else {
-+                            this.seenByPackedArray.unsetUnsafe(conn.packedSeenByWordIndex, conn.packedSeenByWordMask);
++                            this.seenByPackedArray.unsetUnsafe(conn.gale$packedWordIndex, conn.gale$packedWordMask);
 +                            this.afterRemovePlayer(player, readI == size - 1 && writeI == 0);
 +                        }
 +                    }
@@ -102,7 +102,7 @@
 +                        }
 +                        writeI++;
 +                    } else {
-+                        this.seenByPackedArray.unsetUnsafe(conn.packedSeenByWordIndex, conn.packedSeenByWordMask);
++                        this.seenByPackedArray.unsetUnsafe(conn.gale$packedWordIndex, conn.gale$packedWordMask);
 +                        this.afterRemovePlayer(player, readI == size - 1 && writeI == 0);
 +                    }
 +                }
@@ -190,8 +190,8 @@
 -        }
 +            // Gale start - Collections - ChunkMap.TrackedEntity.seenBy
 +            net.minecraft.server.network.ServerGamePacketListenerImpl connection = player.connection;
-+            if (this.seenByPackedArray.get(connection.packedSeenByWordIndex, connection.packedSeenByWordMask)) {
-+                this.seenByPackedArray.unsetUnsafe(connection.packedSeenByWordIndex, connection.packedSeenByWordMask);
++            if (this.seenByPackedArray.get(connection.gale$packedWordIndex, connection.gale$packedWordMask)) {
++                this.seenByPackedArray.unsetUnsafe(connection.gale$packedWordIndex, connection.gale$packedWordMask);
 +                this.seenByList.remove(connection);
 +                this.afterRemovePlayer(player, this.seenByList.isEmpty());
 +                // Gale end - Collections - ChunkMap.TrackedEntity.seenBy
@@ -221,8 +221,8 @@
                  if (visibleToPlayer) {
 -                    if (this.seenBy.add(player.connection)) {
 +                    // Gale start - Collections - ChunkMap.TrackedEntity.seenBy
-+                    if (!this.seenByPackedArray.get(player.connection.packedSeenByWordIndex, player.connection.packedSeenByWordMask)) {
-+                        this.seenByPackedArray.set(player.connection.packedSeenByWordIndex, player.connection.packedSeenByWordMask);
++                    if (!this.seenByPackedArray.get(player.connection.gale$packedWordIndex, player.connection.gale$packedWordMask)) {
++                        this.seenByPackedArray.set(player.connection.gale$packedWordIndex, player.connection.gale$packedWordMask);
 +                        this.seenByList.add(player.connection);
 +                        // Gale end - Collections - ChunkMap.TrackedEntity.seenBy
                          // Paper start - entity tracking events

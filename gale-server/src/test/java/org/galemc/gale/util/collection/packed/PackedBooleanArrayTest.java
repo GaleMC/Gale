@@ -1,4 +1,4 @@
-package org.galemc.gale.util.collection;
+package org.galemc.gale.util.collection.packed;
 
 import org.junit.jupiter.api.Test;
 

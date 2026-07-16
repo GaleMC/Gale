@@ -4,7 +4,7 @@
      // Paper start - Folia shedulers
      public final io.papermc.paper.threadedregions.EntityScheduler taskScheduler = new io.papermc.paper.threadedregions.EntityScheduler(this);
      private final io.papermc.paper.threadedregions.scheduler.FoliaEntityScheduler apiScheduler = new io.papermc.paper.threadedregions.scheduler.FoliaEntityScheduler(this);
-+    private org.galemc.gale.util.collection.PackedBooleanArray packedVisibilityInversions; // Gale - Intrusive values - CraftPlayer.invertedVisibilityEntities
++    private org.galemc.gale.util.collection.packed.PackedBooleanArray packedVisibilityInversions; // Gale - Intrusive values - CraftPlayer.invertedVisibilityEntities
  
      @Override
      public final io.papermc.paper.threadedregions.scheduler.EntityScheduler getScheduler() {
@@ -19,14 +19,14 @@
 +            for (CraftPlayer player : onlinePlayers) {
 +                if (player.invertedVisibilityEntities.containsKey(uuid)) {
 +                    if (this.packedVisibilityInversions == null) {
-+                        this.packedVisibilityInversions = org.galemc.gale.util.collection.PackedBooleanArray.createWithInitial(player.packedVisibilityInversionsWordIndex, player.packedVisibilityInversionsWordMask);
++                        this.packedVisibilityInversions = org.galemc.gale.util.collection.packed.PackedBooleanArray.createWithInitial(player.gale$packedWordIndex, player.gale$packedWordmask);
 +                    } else {
-+                        this.packedVisibilityInversions.set(player.packedVisibilityInversionsWordIndex, player.packedVisibilityInversionsWordMask);
++                        this.packedVisibilityInversions.set(player.gale$packedWordIndex, player.gale$packedWordmask);
 +                    }
 +                }
 +            }
 +        } else {
-+            this.packedVisibilityInversions = org.galemc.gale.util.collection.PackedBooleanArray.createEmpty();
++            this.packedVisibilityInversions = org.galemc.gale.util.collection.packed.PackedBooleanArray.createEmpty();
 +        }
 +        // Gale end - Intrusive values - CraftPlayer.invertedVisibilityEntities
      }
@@ -47,15 +47,15 @@
  
 +    // Gale start - Intrusive values - CraftPlayer.invertedVisibilityEntities
 +    public boolean isVisibilityInvertedFor(CraftPlayer player) {
-+        return this.packedVisibilityInversions.get(player.packedVisibilityInversionsWordIndex, player.packedVisibilityInversionsWordMask);
++        return this.packedVisibilityInversions.get(player.gale$packedWordIndex, player.gale$packedWordmask);
 +    }
 +
 +    public void setVisibilityInverted(CraftPlayer player) {
-+        this.packedVisibilityInversions.set(player.packedVisibilityInversionsWordIndex, player.packedVisibilityInversionsWordMask);
++        this.packedVisibilityInversions.set(player.gale$packedWordIndex, player.gale$packedWordmask);
 +    }
 +
 +    public void unsetVisibilityInverted(CraftPlayer player) {
-+        this.packedVisibilityInversions.unsetUnsafe(player.packedVisibilityInversionsWordIndex, player.packedVisibilityInversionsWordMask);
++        this.packedVisibilityInversions.unsetUnsafe(player.gale$packedWordIndex, player.gale$packedWordmask);
 +    }
 +    // Gale end - Intrusive values - CraftPlayer.invertedVisibilityEntities
 +
@@ -78,7 +78,7 @@
 -        return entityTracker.seenBy.contains(((CraftPlayer) player).getHandle().connection);
 +        // Gale start - Collections - ChunkMap.TrackedEntity.seenBy
 +        net.minecraft.server.network.ServerGamePacketListenerImpl connection = ((CraftPlayer) player).getHandle().connection;
-+        return entityTracker.seenByPackedArray.get(connection.packedSeenByWordIndex, connection.packedSeenByWordMask);
++        return entityTracker.seenByPackedArray.get(connection.gale$packedWordIndex, connection.gale$packedWordMask);
 +        // Gale end - Collections - ChunkMap.TrackedEntity.seenBy
      }
  
