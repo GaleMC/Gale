@@ -53,9 +53,8 @@
 +        }
 +        double dy = Math.abs(dyUnsqr);
 +        // Paper start - Configurable despawn distances
-+        io.papermc.paper.configuration.WorldConfiguration.Entities.Spawning config = level.paperConfig().entities.spawning;
-+        final io.papermc.paper.configuration.WorldConfiguration.Entities.Spawning.DespawnRangePair despawnRangePair = config.despawnRanges.get(this.getType().getCategory());
-+        final io.papermc.paper.configuration.type.DespawnRange.Shape shape = config.despawnRangeShape;
++        final io.papermc.paper.configuration.WorldConfiguration.Entities.Spawning.DespawnRangePair despawnRangePair = level.gale$checkDespawn_despawnRangePairs[this.gale$checkDespawn_mobCategoryOrdinal]; // Gale - Pre-compute - Mob.checkDespawn() despawn ranges
++        final io.papermc.paper.configuration.type.DespawnRange.Shape shape = level.gale$checkDespawn_despawnRangeShape; // Gale - Pre-compute - Mob.checkDespawn() despawn range shape
 +        // Despawn if hard/soft limit is exceeded
 +        if (this.gale$canRemoveWhenFarAway() && despawnRangePair.hard().shouldDespawn(shape, dxSqr, dySqr, dzSqr, dy) && this.removeWhenFarAway(distanceSquared)) {
 +            this.discard(org.bukkit.event.entity.EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
