@@ -228,6 +228,7 @@
 +                        this.seenByList.add(player.connection);
 +                        // Gale end - Collections - ChunkMap.TrackedEntity.seenBy
                          // Paper start - entity tracking events
+-                        if (io.papermc.paper.event.player.PlayerTrackEntityEvent.getHandlerList().getRegisteredListeners().length == 0 || new io.papermc.paper.event.player.PlayerTrackEntityEvent(player.getBukkitEntity(), this.entity.getBukkitEntity()).callEvent()) {
 +                        if (io.papermc.paper.event.player.PlayerTrackEntityEvent.getHandlerList().getRegisteredListeners().length == 0 || new io.papermc.paper.event.player.PlayerTrackEntityEvent(bukkitPlayer, bukkitEntity).callEvent()) {
                          this.serverEntity.addPairing(player);
 -                        if (this.seenBy.size() == 1) {
