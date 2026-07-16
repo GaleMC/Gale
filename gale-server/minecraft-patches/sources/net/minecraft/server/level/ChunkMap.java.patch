@@ -46,12 +46,30 @@
 -                        this.removePlayer(player);
 +                // Gale start - Collections - ChunkMap.TrackedEntity.seenBy
 +                if (!this.seenByList.isEmpty()) {
++                    long[] trackedPlayersInChunkBits = null; // gale - avoid repeated linear players.contains(player) scans once seenBy grows
++                    if (this.seenByList.size() > 2) {
++                        for (final ServerPlayer player : players) {
++                            final net.minecraft.server.network.ServerGamePacketListenerImpl connection = player.connection;
++                            final int wordIndex = connection.packedSeenByWordIndex;
++                            if (trackedPlayersInChunkBits == null) {
++                                trackedPlayersInChunkBits = new long[Math.max(4, wordIndex + 1)];
++                            } else if (wordIndex >= trackedPlayersInChunkBits.length) {
++                                trackedPlayersInChunkBits = java.util.Arrays.copyOf(trackedPlayersInChunkBits, Math.max(trackedPlayersInChunkBits.length + (trackedPlayersInChunkBits.length >> 1), wordIndex + 1));
++                            }
++                            trackedPlayersInChunkBits[wordIndex] |= connection.packedSeenByWordMask;
++                        }
++                    }
 +                    int writeI = 0;
 +                    int size = this.seenByList.size();
 +                    for (int readI = 0; readI < size; readI++) {
 +                        net.minecraft.server.network.ServerGamePacketListenerImpl conn = this.seenByList.get(readI);
 +                        final ServerPlayer player = conn.getPlayer();
-+                        if (players.contains(player)) {
++                        if (
++                            trackedPlayersInChunkBits == null
++                                ? players.contains(player)
++                                : conn.packedSeenByWordIndex < trackedPlayersInChunkBits.length
++                                    && (trackedPlayersInChunkBits[conn.packedSeenByWordIndex] & conn.packedSeenByWordMask) != 0L
++                        ) {
 +                            if (readI != writeI) {
 +                                this.seenByList.set(writeI, conn);
 +                            }
