@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/ai/sensing/SecondaryPoiSensor.java
 +++ b/net/minecraft/world/entity/ai/sensing/SecondaryPoiSensor.java
-@@ -22,16 +_,22 @@
+@@ -22,16 +_,26 @@
  
      @Override
      protected void doTick(final ServerLevel level, final Villager body) {
@@ -15,13 +15,20 @@
          BlockPos center = body.blockPosition();
          List<GlobalPos> jobSites = Lists.newArrayList();
 -        int horizontalSearch = 4;
++        final int centerX = center.getX();
++        final int centerY = center.getY();
++        final int centerZ = center.getZ();
++        final BlockPos.MutableBlockPos mutableTestPos = new BlockPos.MutableBlockPos(); // gale - reuse one mutable BlockPos in the secondary POI scan
  
          for (int x = -4; x <= 4; x++) {
              for (int y = -2; y <= 2; y++) {
-                 for (int z = -4; z <= 4; z++) {
-                     BlockPos testPos = center.offset(x, y, z);
+-                for (int z = -4; z <= 4; z++) {
+-                    BlockPos testPos = center.offset(x, y, z);
 -                    if (body.getVillagerData().profession().value().secondaryPoi().contains(level.getBlockState(testPos).getBlock())) {
-+                    if (secondaryPoi.contains(level.getBlockState(testPos).getBlock())) { // Gale - Do less work - SecondaryPoiSensor.doTick() (skip secondary POI sensor if absent)
-                         jobSites.add(GlobalPos.of(dimensionType, testPos));
+-                        jobSites.add(GlobalPos.of(dimensionType, testPos));
++                for (int z = -4; z <= 4; z++) {
++                    mutableTestPos.set(centerX + x, centerY + y, centerZ + z);
++                    if (secondaryPoi.contains(level.getBlockState(mutableTestPos).getBlock())) { // Gale - Do less work - SecondaryPoiSensor.doTick() (skip secondary POI sensor if absent)
++                        jobSites.add(GlobalPos.of(dimensionType, mutableTestPos.immutable()));
                      }
                  }
