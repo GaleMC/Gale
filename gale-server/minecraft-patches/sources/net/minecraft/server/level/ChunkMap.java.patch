@@ -214,7 +214,7 @@
                  // Paper end - Configurable entity tracking range by Y
                  // CraftBukkit start - respect vanish API
 -                if (visibleToPlayer && !player.getBukkitEntity().canSee(this.entity.getBukkitEntity())) { // Paper - only consider hits
-+                final org.bukkit.entity.Player bukkitPlayer = player.getBukkitEntity(); // gale - cache repeated Bukkit wrapper lookups in ChunkMap.updatePlayer
++                final org.bukkit.craftbukkit.entity.CraftPlayer bukkitPlayer = player.getBukkitEntity(); // gale - cache repeated Bukkit wrapper lookups in ChunkMap.updatePlayer
 +                final org.bukkit.entity.Entity bukkitEntity = this.entity.getBukkitEntity(); // gale - cache repeated Bukkit wrapper lookups in ChunkMap.updatePlayer
 +                if (visibleToPlayer && !bukkitPlayer.canSeeSkipSelfCheck(bukkitEntity)) { // Paper - only consider hits // Gale - Do less work - Skip self check in CraftPlayer.canSee() if called from ChunkMap.updatePlayer()
                      visibleToPlayer = false;
