@@ -1,8 +1,11 @@
 package org.galemc.gale.util.collection;
 
+import java.util.Arrays;
 import org.galemc.gale.util.array.EmptyArrays;
 
 public class PackedBooleanArray {
+
+    private static final int MIN_GROWTH_CAPACITY = 4; // Gale - reduce PackedBooleanArray reallocations
 
     public long[] array;
 
@@ -16,7 +19,7 @@ public class PackedBooleanArray {
 
     public void set(int wordIndex, long wordMask) {
         if (wordIndex >= this.array.length) {
-            this.array = java.util.Arrays.copyOf(this.array, wordIndex + 1);
+            this.grow(wordIndex + 1);
         }
         this.array[wordIndex] |= wordMask;
     }
@@ -34,8 +37,21 @@ public class PackedBooleanArray {
     public void clear() {
         long[] a = this.array;
         if (a.length > 0) {
-            java.util.Arrays.fill(a, 0L);
+            Arrays.fill(a, 0L);
         }
+    }
+
+    private void grow(int minLength) {
+        int newLength = Math.max(MIN_GROWTH_CAPACITY, this.array.length);
+        while (newLength < minLength) {
+            int nextLength = newLength + (newLength >> 1);
+            if (nextLength <= newLength) {
+                newLength = minLength;
+                break;
+            }
+            newLength = nextLength;
+        }
+        this.array = Arrays.copyOf(this.array, newLength);
     }
 
     public static PackedBooleanArray createEmpty() {
