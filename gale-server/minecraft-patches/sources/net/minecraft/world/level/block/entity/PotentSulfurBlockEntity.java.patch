@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/entity/PotentSulfurBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/PotentSulfurBlockEntity.java
+@@ -173,7 +_,7 @@
+     }
+ 
+     public static RandomSource geyserPositional(final ServerLevel level, final BlockPos pos) {
+-        return new XoroshiroRandomSource(level.getSeed() ^ -904011478L).forkPositional().at(pos);
++        return level.gale$precompute_potentSulfurBlockEntityGeyserPositionalRandomFactory.at(pos); // Gale - Pre-compute - PotentSulfurBlockEntity.geyserPositional() PositionalRandomFactory
+     }
+ 
+     private static void spawnGeyserParticle(final Level level, final BlockPos sulfurPos, final BlockPos sourcePos) {

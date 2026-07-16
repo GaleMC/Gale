@@ -1,0 +1,25 @@
+--- a/net/minecraft/world/RandomSequence.java
++++ b/net/minecraft/world/RandomSequence.java
+@@ -27,12 +_,19 @@
+     }
+ 
+     private static XoroshiroRandomSource createSequence(final long seed, final Optional<Identifier> key) {
+-        RandomSupport.Seed128bit seed128bit = RandomSupport.upgradeSeedTo128bitUnmixed(seed);
++        // Gale start - Reduce allocations - RandomSupport.Seed128bit
++        long seedLo = RandomSupport.gale$upgradeSeedTo128bitLowUnmixed(seed);
++        long seedHi = RandomSupport.gale$upgradeSeedTo128bitHighUnmixed(seedLo);
+         if (key.isPresent()) {
+-            seed128bit = seed128bit.xor(seedForKey(key.get()));
++            byte[] keyHashCode = RandomSupport.gale$seedFromHashOfHash(key.get().toString());
++            long keyHashLo = RandomSupport.gale$seedFromHashOfLow(keyHashCode);
++            long keyHashHi = RandomSupport.gale$seedFromHashOfHigh(keyHashCode);
++            seedLo ^= keyHashLo;
++            seedHi ^= keyHashHi;
+         }
+ 
+-        return new XoroshiroRandomSource(seed128bit.mixed());
++        return new XoroshiroRandomSource(RandomSupport.mixStafford13(seedLo), RandomSupport.mixStafford13(seedHi));
++        // Gale end - Reduce allocations - RandomSupport.Seed128bit
+     }
+ 
+     public static RandomSupport.Seed128bit seedForKey(final Identifier key) {

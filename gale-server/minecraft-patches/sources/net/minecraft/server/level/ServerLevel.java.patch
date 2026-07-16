@@ -1,5 +1,13 @@
 --- a/net/minecraft/server/level/ServerLevel.java
 +++ b/net/minecraft/server/level/ServerLevel.java
+@@ -218,6 +_,7 @@
+     private @Nullable EnderDragonFight dragonFight;
+     private final Int2ObjectMap<EnderDragonPart> dragonParts = new Int2ObjectOpenHashMap<>();
+     private final StructureManager structureManager;
++    public final net.minecraft.world.level.levelgen.PositionalRandomFactory gale$precompute_potentSulfurBlockEntityGeyserPositionalRandomFactory; // Gale - Pre-compute - PotentSulfurBlockEntity.geyserPositional() PositionalRandomFactory
+     private final StructureCheck structureCheck;
+     private final boolean tickTime;
+     private final LevelDebugSynchronizers debugSynchronizers = new LevelDebugSynchronizers(this);
 @@ -634,7 +_,7 @@
          savedDataStorage.set(io.papermc.paper.world.saveddata.PaperWorldPDC.TYPE, loadedWorldData.pdc() == null ? io.papermc.paper.world.saveddata.PaperWorldPDC.TYPE.constructor().get() : loadedWorldData.pdc());
          final GameRules gameRules = new GameRules(server.getWorldData().enabledFeatures(), savedDataStorage.computeIfAbsent(net.minecraft.world.level.gamerules.GameRuleMap.TYPE));
@@ -9,6 +17,14 @@
          this.weatherData = savedDataStorage.computeIfAbsent(WeatherData.TYPE);
          this.weatherData.setLevel(this);
          this.typeKey = typeKey;
+@@ -703,6 +_,7 @@
+ 
+         WorldOptions options = worldGenSettings.options();
+         long seed = options.seed();
++        this.gale$precompute_potentSulfurBlockEntityGeyserPositionalRandomFactory = new net.minecraft.world.level.levelgen.XoroshiroRandomSource(seed ^ -904011478L).forkPositional(); // Gale - Pre-compute - PotentSulfurBlockEntity.geyserPositional() PositionalRandomFactory
+         this.structureCheck = new StructureCheck(
+             getTypeKey(), // Paper - pass level stem
+             this.chunkSource.chunkScanner(),
 @@ -798,9 +_,12 @@
      public void tick(final BooleanSupplier haveTime) {
          ProfilerFiller profiler = Profiler.get();

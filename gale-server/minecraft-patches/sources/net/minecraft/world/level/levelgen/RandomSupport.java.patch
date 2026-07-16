@@ -1,0 +1,65 @@
+--- a/net/minecraft/world/level/levelgen/RandomSupport.java
++++ b/net/minecraft/world/level/levelgen/RandomSupport.java
+@@ -21,21 +_,55 @@
+     }
+ 
+     public static RandomSupport.Seed128bit upgradeSeedTo128bitUnmixed(final long legacySeed) {
+-        long lowBits = legacySeed ^ 7640891576956012809L;
+-        long highBits = lowBits + -7046029254386353131L;
++        // Gale start - Reduce allocations - RandomSupport.Seed128bit
++        long lowBits = gale$upgradeSeedTo128bitLowUnmixed(legacySeed);
++        long highBits = gale$upgradeSeedTo128bitHighUnmixed(lowBits);
++        // Gale end - Reduce allocations - RandomSupport.Seed128bit
+         return new RandomSupport.Seed128bit(lowBits, highBits);
+     }
+ 
+     public static RandomSupport.Seed128bit upgradeSeedTo128bit(final long legacySeed) {
+-        return upgradeSeedTo128bitUnmixed(legacySeed).mixed();
+-    }
++        // Gale start - Reduce allocations - RandomSupport.Seed128bit
++        long lowBitsUnmixed = gale$upgradeSeedTo128bitLowUnmixed(legacySeed);
++        long highBitsUnmixed = gale$upgradeSeedTo128bitHighUnmixed(lowBitsUnmixed);
++        long lowBits = RandomSupport.mixStafford13(lowBitsUnmixed);
++        long highBits = RandomSupport.mixStafford13(highBitsUnmixed);
++        return new RandomSupport.Seed128bit(lowBits, highBits);
++        // Gale end - Reduce allocations - RandomSupport.Seed128bit
++    }
++
++    // Gale start - Reduce allocations - RandomSupport.Seed128bit
++    public static long gale$upgradeSeedTo128bitLowUnmixed(final long legacySeed) {
++        return legacySeed ^ 7640891576956012809L;
++    }
++
++    public static long gale$upgradeSeedTo128bitHighUnmixed(final long lowBits) {
++        return lowBits + -7046029254386353131L;
++    }
++    // Gale end - Reduce allocations - RandomSupport.Seed128bit
+ 
+     public static RandomSupport.Seed128bit seedFromHashOf(final String input) {
+-        byte[] hashCode = MD5_128.hashString(input, StandardCharsets.UTF_8).asBytes();
+-        long hashLo = Longs.fromBytes(hashCode[0], hashCode[1], hashCode[2], hashCode[3], hashCode[4], hashCode[5], hashCode[6], hashCode[7]);
+-        long hashHi = Longs.fromBytes(hashCode[8], hashCode[9], hashCode[10], hashCode[11], hashCode[12], hashCode[13], hashCode[14], hashCode[15]);
++        // Gale start - Reduce allocations - RandomSupport.Seed128bit
++        byte[] hashCode = gale$seedFromHashOfHash(input);
++        long hashLo = gale$seedFromHashOfLow(hashCode);
++        long hashHi = gale$seedFromHashOfHigh(hashCode);
++        // Gale end - Reduce allocations - RandomSupport.Seed128bit
+         return new RandomSupport.Seed128bit(hashLo, hashHi);
+     }
++
++    // Gale start - Reduce allocations - RandomSupport.Seed128bit
++    public static byte[] gale$seedFromHashOfHash(String input) {
++        return MD5_128.hashString(input, StandardCharsets.UTF_8).asBytes();
++    }
++
++    public static long gale$seedFromHashOfLow(byte[] hashCode) {
++        return Longs.fromBytes(hashCode[0], hashCode[1], hashCode[2], hashCode[3], hashCode[4], hashCode[5], hashCode[6], hashCode[7]);
++    }
++
++    public static long gale$seedFromHashOfHigh(byte[] hashCode) {
++        return Longs.fromBytes(hashCode[8], hashCode[9], hashCode[10], hashCode[11], hashCode[12], hashCode[13], hashCode[14], hashCode[15]);
++    }
++    // Gale end - Reduce allocations - RandomSupport.Seed128bit
+ 
+     public static long generateUniqueSeed() {
+         return SEED_UNIQUIFIER.updateAndGet(current -> current * 1181783497276652981L) ^ System.nanoTime();

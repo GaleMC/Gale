@@ -1,0 +1,47 @@
+--- a/net/minecraft/world/level/levelgen/XoroshiroRandomSource.java
++++ b/net/minecraft/world/level/levelgen/XoroshiroRandomSource.java
+@@ -14,7 +_,13 @@
+     private final MarsagliaPolarGaussian gaussianSource = new MarsagliaPolarGaussian(this);
+ 
+     public XoroshiroRandomSource(final long seed) {
+-        this.randomNumberGenerator = new Xoroshiro128PlusPlus(RandomSupport.upgradeSeedTo128bit(seed));
++        // Gale start - Reduce allocations - RandomSupport.Seed128bit
++        long seedLoUnmixed = RandomSupport.gale$upgradeSeedTo128bitLowUnmixed(seed);
++        long seedHiUnmixed = RandomSupport.gale$upgradeSeedTo128bitHighUnmixed(seedLoUnmixed);
++        long seedLo = RandomSupport.mixStafford13(seedLoUnmixed);
++        long seedHi = RandomSupport.mixStafford13(seedHiUnmixed);
++        this.randomNumberGenerator = new Xoroshiro128PlusPlus(seedLo, seedHi);
++        // Gale end - Reduce allocations - RandomSupport.Seed128bit
+     }
+ 
+     public XoroshiroRandomSource(final RandomSupport.Seed128bit seed) {
+@@ -41,7 +_,13 @@
+ 
+     @Override
+     public void setSeed(final long seed) {
+-        this.randomNumberGenerator = new Xoroshiro128PlusPlus(RandomSupport.upgradeSeedTo128bit(seed));
++        // Gale start - Reduce allocations - RandomSupport.Seed128bit, Xoroshiro128PlusPlus
++        long seedLoUnmixed = RandomSupport.gale$upgradeSeedTo128bitLowUnmixed(seed);
++        long seedHiUnmixed = RandomSupport.gale$upgradeSeedTo128bitHighUnmixed(seedLoUnmixed);
++        long seedLo = RandomSupport.mixStafford13(seedLoUnmixed);
++        long seedHi = RandomSupport.mixStafford13(seedHiUnmixed);
++        this.randomNumberGenerator.gale$set(seedLo, seedHi); // Can just set since no-one else has this instance
++        // Gale end - Reduce allocations - RandomSupport.Seed128bit, Xoroshiro128PlusPlus
+         this.gaussianSource.reset();
+     }
+ 
+@@ -127,8 +_,12 @@
+ 
+         @Override
+         public RandomSource fromHashOf(final String name) {
+-            RandomSupport.Seed128bit seed = RandomSupport.seedFromHashOf(name);
+-            return new XoroshiroRandomSource(seed.xor(this.seedLo, this.seedHi));
++            // Gale start - Reduce allocations - RandomSupport.Seed128bit
++            byte[] hashCode = RandomSupport.gale$seedFromHashOfHash(name);
++            long hashLo = RandomSupport.gale$seedFromHashOfLow(hashCode);
++            long hashHi = RandomSupport.gale$seedFromHashOfHigh(hashCode);
++            return new XoroshiroRandomSource(hashLo ^ this.seedLo, hashHi ^ this.seedHi);
++            // Gale end - Reduce allocations - RandomSupport.Seed128bit
+         }
+ 
+         @Override

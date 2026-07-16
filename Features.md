@@ -244,6 +244,10 @@ Every feature is identified in source code by corresponding `// Gale` marker com
         <sub><sup>Leaf patch: <code>Only-update-frozen-ticks-if-changed.patch</code></sup></sub>
       </li>
       <li>
+        <i>ChunkGenerator.addVanillaDecorations() (initialize random with empty seed)</i><br>
+        <sub><sup>By: <a href="https://github.com/MartijnMuijsers">Martijn Muijsers</a></sup></sub>
+      </li>
+      <li>
         <i>ItemLore.styledLines (computed only when used)</i><br>
         <sub><sup>By: <a href="https://github.com/MartijnMuijsers">Martijn Muijsers</a></sup></sub>
       </li>
@@ -575,7 +579,7 @@ Every feature is identified in source code by corresponding `// Gale` marker com
     <ul>
       <li>
         <i>CubePointRange.getDouble() (replace division by multiplication)</i><br>
-        <sub><sup>By: <a href="https://github.com/2No2Name">2No2Name</a>(as part of <a href="https://github.com/CaffeineMC/lithium">Lithium</a>)</sup></sub><br>
+        <sub><sup>By: <a href="https://github.com/2No2Name">2No2Name</a> (as part of <a href="https://github.com/CaffeineMC/lithium">Lithium</a>)</sup></sub><br>
         <sub><sup>Leaf patch: <code>Replace-division-by-multiplication-in-CubePointRange.patch</code></sup></sub>
       </li>
     </ul>
@@ -619,6 +623,10 @@ Every feature is identified in source code by corresponding `// Gale` marker com
         <sub><sup>By: <a href="https://github.com/MartijnMuijsers">Martijn Muijsers</a></sup></sub>
       </li>
       <li>
+        <i>PotentSulfurBlockEntity.geyserPositional() PositionalRandomFactory</i><br>
+        <sub><sup>By: <a href="https://github.com/MartijnMuijsers">Martijn Muijsers</a></sup></sub>
+      </li>
+      <li>
         <i>WalkNodeEvaluator.getPathTypeFromState()</i><br>
         <sub><sup>By: <a href="https://github.com/MartijnMuijsers">Martijn Muijsers</a></sup></sub>
       </li>
@@ -633,6 +641,14 @@ Every feature is identified in source code by corresponding `// Gale` marker com
         Re-use <code>RandomSource</code> instances where it doesn't affect game mechanics.<br>
         <sub><sup>By: <a href="https://github.com/foss-mc">foss-mc</a> (as part of <a href="https://github.com/PatinaMC/Patina">Patina</a>)</sup></sub><br>
         <sub><sup>Leaf patch: <code>Reduce-RandomSource-instances.patch</code></sup></sub>
+      </li>
+      <li>
+        <i>RandomSupport.Seed128bit</i><br>
+        <sub><sup>By: <a href="https://github.com/MartijnMuijsers">Martijn Muijsers</a></sup></sub>
+      </li>
+      <li>
+        <i>Xoroshiro128PlusPlus</i><br>
+        <sub><sup>By: <a href="https://github.com/MartijnMuijsers">Martijn Muijsers</a></sup></sub>
       </li>
     </ul>
   </li>

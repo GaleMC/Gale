@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/level/chunk/ChunkGenerator.java
 +++ b/net/minecraft/world/level/chunk/ChunkGenerator.java
+@@ -347,7 +_,7 @@
+             Map<Integer, List<Structure>> structuresByStep = structuresRegistry.stream()
+                 .collect(Collectors.groupingBy(structure -> structure.step().ordinal()));
+             List<FeatureSorter.StepFeatureData> featureList = this.featuresPerStep.get();
+-            WorldgenRandom random = new WorldgenRandom(new XoroshiroRandomSource(RandomSupport.generateUniqueSeed()));
++            WorldgenRandom random = new WorldgenRandom(new XoroshiroRandomSource(0L, 0L)); // Gale - Do less work - ChunkGenerator.addVanillaDecorations() (initialize random with empty seed) - Seed is overridden in next line
+             long decorationSeed = random.setDecorationSeed(level.getSeed(), origin.getX(), origin.getZ());
+             Set<Holder<Biome>> possibleBiomes = new ObjectArraySet<>();
+             ChunkPos.rangeClosed(sectionPos.chunk(), 1).forEach(chunkPos -> {
 @@ -363,10 +_,14 @@
              try {
                  Registry<PlacedFeature> featureRegistry = level.registryAccess().lookupOrThrow(Registries.PLACED_FEATURE);
@@ -16,7 +25,7 @@
                          for (Structure structure : structuresByStep.getOrDefault(stepIndex, Collections.emptyList())) {
                              random.setFeatureSeed(decorationSeed, index, stepIndex);
                              Supplier<String> currentlyGenerating = () -> structuresRegistry.getResourceKey(structure)
-@@ -375,8 +_,16 @@
+@@ -375,8 +_,14 @@
  
                              try {
                                  level.setCurrentlyGenerating(currentlyGenerating);

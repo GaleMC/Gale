@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/monster/Ravager.java
 +++ b/net/minecraft/world/entity/monster/Ravager.java
-@@ -225,7 +_,7 @@
+@@ -232,7 +_,7 @@
          if (this.isAlive() && this.level() instanceof ServerLevel level) {
              Predicate<Entity> targetSelector = level.getGameRules().get(GameRules.MOB_GRIEFING) ? ROAR_TARGET_WITH_GRIEFING : ROAR_TARGET_WITHOUT_GRIEFING;
  

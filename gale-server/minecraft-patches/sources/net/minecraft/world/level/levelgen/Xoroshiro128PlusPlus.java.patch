@@ -1,0 +1,14 @@
+--- a/net/minecraft/world/level/levelgen/Xoroshiro128PlusPlus.java
++++ b/net/minecraft/world/level/levelgen/Xoroshiro128PlusPlus.java
+@@ -32,4 +_,11 @@
+         this.seedHi = Long.rotateLeft(s1, 28);
+         return result;
+     }
++
++    // Gale start - Reduce allocations - Xoroshiro128PlusPlus
++    public void gale$set(long seedLo, long seedHi) {
++        this.seedLo = seedLo;
++        this.seedHi = seedHi;
++    }
++    // Gale end - Reduce allocations - Xoroshiro128PlusPlus
+ }

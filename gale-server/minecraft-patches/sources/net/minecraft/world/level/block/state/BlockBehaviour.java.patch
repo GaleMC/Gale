@@ -29,7 +29,7 @@
  
          private static void initCaches(final VoxelShape shape, final boolean neighbours) {
              ((ca.spottedleaf.moonrise.patches.collisions.shape.CollisionVoxelShape)shape).moonrise$isFullBlock();
-@@ -623,6 +_,14 @@
+@@ -623,6 +_,11 @@
  
              this.propagatesSkylightDown = this.owner.propagatesSkylightDown(this.asState());
              this.lightDampening = this.owner.getLightDampening(this.asState());
@@ -55,7 +55,7 @@
          @Deprecated
          public boolean blocksMotion() {
              Block block = this.getBlock();
-@@ -680,11 +_,19 @@
+@@ -680,11 +_,21 @@
              return this.legacySolid;
          }
  
