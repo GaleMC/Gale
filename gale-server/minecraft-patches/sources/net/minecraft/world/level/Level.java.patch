@@ -99,6 +99,8 @@
  
 +    // Gale start - Optimize Mob.checkDespawn()
 +    public org.galemc.gale.util.collection.spatialgrid.SpatialGrid[] gale$checkDespawn_spatialGrids;
++    public io.papermc.paper.configuration.WorldConfiguration.Entities.Spawning.DespawnRangePair[] gale$checkDespawn_despawnRangePairs; // Gale - Pre-compute - Mob.checkDespawn() despawn ranges
++    public io.papermc.paper.configuration.type.DespawnRange.Shape gale$checkDespawn_despawnRangeShape; // Gale - Pre-compute - Mob.checkDespawn() despawn range shape
 +    public boolean[] gale$checkDespawn_noPlayerWithinRangeImpliesNearestPlayerIsFarAwayEnoughToRemoveForPatrollingMonsters;
 +
 +    /**
@@ -116,9 +118,11 @@
 +        io.papermc.paper.configuration.WorldConfiguration.Entities.Spawning config = this.paperConfig.entities.spawning;
 +        net.minecraft.world.entity.MobCategory[] categories = net.minecraft.world.entity.MobCategory.values();
 +        this.gale$checkDespawn_spatialGridIndices = new int[categories.length * 2];
++        this.gale$checkDespawn_despawnRangePairs = new io.papermc.paper.configuration.WorldConfiguration.Entities.Spawning.DespawnRangePair[categories.length]; // Gale - Pre-compute - Mob.checkDespawn() despawn ranges
 +        for (int categoryI = 0; categoryI < categories.length; ++categoryI) {
 +            net.minecraft.world.entity.MobCategory category = categories[categoryI];
 +            io.papermc.paper.configuration.WorldConfiguration.Entities.Spawning.DespawnRangePair pair = config.despawnRanges.get(category);
++            this.gale$checkDespawn_despawnRangePairs[categoryI] = pair; // Gale - Pre-compute - Mob.checkDespawn() despawn ranges
 +            for (int hard = 0; hard < 2; hard++) {
 +                io.papermc.paper.configuration.type.DespawnRange range = hard == 1 ? pair.hard() : pair.soft();
 +                int W = range.precomputedHorizontalLimit;
@@ -138,6 +142,7 @@
 +            }
 +        }
 +        io.papermc.paper.configuration.type.DespawnRange.Shape shape = config.despawnRangeShape;
++        this.gale$checkDespawn_despawnRangeShape = shape; // Gale - Pre-compute - Mob.checkDespawn() despawn range shape
 +        this.gale$checkDespawn_spatialGrids = new org.galemc.gale.util.collection.spatialgrid.SpatialGrid[Ws.size()];
 +        this.gale$checkDespawn_noPlayerWithinRangeImpliesNearestPlayerIsFarAwayEnoughToRemoveForPatrollingMonsters = new boolean[Ws.size()];
 +        for (int i = 0; i < Ws.size(); i++) {
