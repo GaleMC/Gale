@@ -77,6 +77,38 @@
 +        return this.gale$eventDriven_playerPassengerCount != 0; // Gale - Event-driven - Entity.playerPassengerCount
      }
      // Paper end - rewrite chunk system
+@@ -511,6 +_,7 @@
+    public void baseTick() {
+        ProfilerFiller profiler = Profiler.get();
+        profiler.push("entityBaseTick");
++        Level level = this.level(); // Gale - cache level variable in baseTick
+        this.computeSpeed();
+        this.inBlockState = null;
+        if (this.isPassenger() && this.getVehicle().isRemoved()) {
+@@ -531,7 +_,7 @@
+        this.wasEyeInWater = this.isEyeInFluid(FluidTags.WATER);
+        this.updateFluidInteraction();
+        this.updateSwimming();
+-        if (this.level() instanceof ServerLevel serverLevel) {
++        if (level instanceof ServerLevel serverLevel) {
+            if (this.remainingFireTicks > 0) {
+                if (this.fireImmune()) {
+                    this.clearFire();
+@@ -552,12 +_,12 @@
+        }
+
+        this.checkBelowWorld();
+-        if (!this.level().isClientSide()) {
++        if (!level.isClientSide()) {
+            this.setSharedFlagOnFire(this.remainingFireTicks > 0);
+        }
+
+        this.firstTick = false;
+-        if (this.level() instanceof ServerLevel serverLevel && this instanceof Leashable) {
++        if (level instanceof ServerLevel serverLevel && this instanceof Leashable) {
+            Leashable.tickLeash(serverLevel, (Entity & Leashable)this);
+        }
+ 
      // Paper start - optimise collisions
 @@ -675,6 +_,7 @@
      }
