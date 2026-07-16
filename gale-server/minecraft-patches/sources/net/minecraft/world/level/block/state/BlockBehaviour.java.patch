@@ -118,17 +118,17 @@
          boolean test(BlockState state, BlockGetter level, BlockPos pos, A a);
      }
 +
-+    // Gale start - Event-driven - Reload block event-driven values after Paper configuration reload
-+    public static void gale$eventDriven_reload() {
++    // Gale start - Event-driven - BlockBehaviour.getPistonPushReaction(), BlockBehaviour.isDestroyable()
++    public static void gale$eventDriven_updateConfigBased() {
 +        for (Block block : BuiltInRegistries.BLOCK) {
 +            for (BlockState state : block.getStateDefinition().getPossibleStates()) {
-+                BlockStateBase blockStateBase = (BlockStateBase) state;
++                BlockStateBase blockStateBase = state;
 +                blockStateBase.gale$eventDriven_isDestroyable_update();
 +                blockStateBase.gale$eventDriven_pistonPushReaction_update();
 +            }
 +        }
 +    }
-+    // Gale end - Event-driven - Reload block event-driven values after Paper configuration reload
++    // Gale end - Event-driven - BlockBehaviour.getPistonPushReaction(), BlockBehaviour.isDestroyable()
  
      @FunctionalInterface
      public interface StatePredicate {

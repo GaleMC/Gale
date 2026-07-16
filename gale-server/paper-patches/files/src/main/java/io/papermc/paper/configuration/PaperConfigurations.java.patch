@@ -4,7 +4,7 @@
      public void reloadConfigs(MinecraftServer server) {
          try {
              this.initializeGlobalConfiguration(server.registryAccess(), reloader(this.globalConfigClass, GlobalConfiguration.get()));
-+            net.minecraft.world.level.block.state.BlockBehaviour.gale$eventDriven_reload(); // Gale - Event-driven - Reload block event-driven values after Paper configuration reload
++            net.minecraft.world.level.block.state.BlockBehaviour.gale$eventDriven_updateConfigBased(); // Gale - Event-driven - BlockBehaviour.getPistonPushReaction(), BlockBehaviour.isDestroyable() - Reload block event-driven values after Paper configuration reload
              this.initializeWorldDefaultsConfiguration(server.registryAccess());
              for (ServerLevel level : server.getAllLevels()) {
                  this.createWorldConfig(createWorldContextMap(level), reloader(this.worldConfigClass, level.paperConfig()));

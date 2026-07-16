@@ -9,19 +9,18 @@
              long decorationSeed = random.setDecorationSeed(level.getSeed(), origin.getX(), origin.getZ());
              Set<Holder<Biome>> possibleBiomes = new ObjectArraySet<>();
              ChunkPos.rangeClosed(sectionPos.chunk(), 1).forEach(chunkPos -> {
-@@ -363,10 +_,14 @@
+@@ -363,10 +_,13 @@
              try {
                  Registry<PlacedFeature> featureRegistry = level.registryAccess().lookupOrThrow(Registries.PLACED_FEATURE);
                  int generationSteps = Math.max(GenerationStep.Decoration.values().length, featureStepCount);
-+                // Gale start - Reuse structure decoration data
-+                boolean generateStructures = structureManager.shouldGenerateStructures();
-+                it.unimi.dsi.fastutil.objects.@Nullable ObjectArrayList<StructureStart> structureStarts = generateStructures ? new it.unimi.dsi.fastutil.objects.ObjectArrayList<>() : null;
-+                // Gale end - Reuse structure decoration data
++                if (generationSteps > 0) { // Gale - Local code optimization - ChunkGenerator.addVanillaDecorations()
++                boolean generateStructures = structureManager.shouldGenerateStructures(); // Gale - Local code optimization - ChunkGenerator.addVanillaDecorations() - Pre-compute shouldGenerateStructures()
++                it.unimi.dsi.fastutil.objects.@Nullable ObjectArrayList<StructureStart> structureStarts = generateStructures ? new it.unimi.dsi.fastutil.objects.ObjectArrayList<>() : null; // Gale - Local code optimization - ChunkGenerator.addVanillaDecorations() - Reuse the structureStarts list instance
  
                  for (int stepIndex = 0; stepIndex < generationSteps; stepIndex++) {
                      int index = 0;
 -                    if (structureManager.shouldGenerateStructures()) {
-+                    if (generateStructures) { // Gale - Reuse structure decoration data
++                    if (generateStructures) { // Gale - Local code optimization - ChunkGenerator.addVanillaDecorations() - Pre-compute shouldGenerateStructures()
                          for (Structure structure : structuresByStep.getOrDefault(stepIndex, Collections.emptyList())) {
                              random.setFeatureSeed(decorationSeed, index, stepIndex);
                              Supplier<String> currentlyGenerating = () -> structuresRegistry.getResourceKey(structure)
@@ -31,14 +30,22 @@
                                  level.setCurrentlyGenerating(currentlyGenerating);
 -                                structureManager.startsForStructure(sectionPos, structure)
 -                                    .forEach(start -> start.placeInChunk(level, structureManager, this, random, getWritableArea(chunk), centerPos));
-+                                // Gale start - Reuse structure decoration data
++                                // Gale start - Local code optimization - ChunkGenerator.addVanillaDecorations() - Reuse the structureStarts list instance
 +                                structureStarts.clear();
 +                                structureManager.fillStartsForStructure(structure, chunk.getReferencesForStructure(structure), structureStarts::add);
 +                                Object[] structureStartsArray = structureStarts.elements();
 +                                for (int structureStartIndex = 0, structureStartsSize = structureStarts.size(); structureStartIndex < structureStartsSize; structureStartIndex++) {
 +                                    ((StructureStart) structureStartsArray[structureStartIndex]).placeInChunk(level, structureManager, this, random, getWritableArea(chunk), centerPos);
 +                                }
-+                                // Gale end - Reuse structure decoration data
++                                // Gale end - Local code optimization - ChunkGenerator.addVanillaDecorations() - Reuse the structureStarts list instance
                              } catch (Exception e) {
                                  CrashReport report = CrashReport.forThrowable(e, "Feature placement");
                                  report.addCategory("Feature").setDetail("Description", currentlyGenerating::get);
+@@ -432,6 +_,7 @@
+                         }
+                     }
+                 }
++                } // Gale - Local code optimization - ChunkGenerator.addVanillaDecorations() (pre-compute shouldGenerateStructures(), reuse the structureStarts list instance)
+ 
+                 level.setCurrentlyGenerating(null);
+                 if (SharedConstants.DEBUG_FEATURE_COUNT) {
