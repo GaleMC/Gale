@@ -1,9 +1,0 @@
---- a/net/minecraft/world/level/pathfinder/AmphibiousNodeEvaluator.java
-+++ b/net/minecraft/world/level/pathfinder/AmphibiousNodeEvaluator.java
-@@ -98,5 +_,5 @@
-             BlockPos.MutableBlockPos reusablePos = new BlockPos.MutableBlockPos();
- 
--            for (Direction direction : Direction.values()) {
-+            for (Direction direction : Direction.gale$precompute_VALUES) { // Gale - Pre-compute - Direction.values()
-                 reusablePos.set(x, y, z).move(direction);
-                 PathType pathType = context.getPathTypeFromState(reusablePos.getX(), reusablePos.getY(), reusablePos.getZ());

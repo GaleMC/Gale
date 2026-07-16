@@ -1,9 +1,0 @@
---- a/net/minecraft/world/level/pathfinder/SwimNodeEvaluator.java
-+++ b/net/minecraft/world/level/pathfinder/SwimNodeEvaluator.java
-@@ -52,5 +_,5 @@
-         Map<Direction, Node> nodes = Maps.newEnumMap(Direction.class);
- 
--        for (Direction direction : Direction.values()) {
-+        for (Direction direction : Direction.gale$precompute_VALUES) { // Gale - Pre-compute - Direction.values()
-             Node node = this.findAcceptedNode(pos.x + direction.getStepX(), pos.y + direction.getStepY(), pos.z + direction.getStepZ());
-             nodes.put(direction, node);
