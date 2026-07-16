@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/LeavesBlock.java
 +++ b/net/minecraft/world/level/block/LeavesBlock.java
-@@ -112,7 +_,7 @@
+@@ -120,7 +_,7 @@
          int newDistance = 7;
          BlockPos.MutableBlockPos neighborPos = new BlockPos.MutableBlockPos();
  
