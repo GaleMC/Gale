@@ -16,6 +16,8 @@
 +    public it.unimi.dsi.fastutil.objects.ReferenceLinkedOpenHashSet<Player> gale$eventDriven_affectsSpawningSelectorPlayers = new it.unimi.dsi.fastutil.objects.ReferenceLinkedOpenHashSet<>(4); // Gale - Event-driven - Mob.checkDespawnPlayerTrackingMode - TODO Watch for new writes
 +    private it.unimi.dsi.fastutil.ints.IntList gale$eventDriven_affectsSpawningSelectorPlayerFreeIds = new it.unimi.dsi.fastutil.ints.IntArrayList();
 +    public Player[] gale$eventDriven_affectsSpawningSelectorPlayersById = new Player[4];
++    public Player[] gale$eventDriven_affectsSpawningSelectorPlayersDense = new Player[4]; // gale - keep despawn scans on a dense player array
++    public int gale$eventDriven_affectsSpawningSelectorPlayerCount; // gale - avoid set iteration in hot despawn paths
 +    {
 +        for (int i = 0; i < this.gale$eventDriven_affectsSpawningSelectorPlayersById.length; i++) {
 +            this.gale$eventDriven_affectsSpawningSelectorPlayerFreeIds.add(i);
@@ -37,7 +39,14 @@
 +        }
 +        this.gale$eventDriven_affectsSpawningSelectorPlayersById[id] = player;
 +        player.gale$eventDriven_affectsSpawningSelectorLevelId = id;
-+        if (this.gale$eventDriven_affectsSpawningSelectorPlayers.size() == 1) {
++        int denseIndex = this.gale$eventDriven_affectsSpawningSelectorPlayerCount;
++        if (denseIndex == this.gale$eventDriven_affectsSpawningSelectorPlayersDense.length) {
++            this.gale$eventDriven_affectsSpawningSelectorPlayersDense = java.util.Arrays.copyOf(this.gale$eventDriven_affectsSpawningSelectorPlayersDense, denseIndex * 2);
++        }
++        this.gale$eventDriven_affectsSpawningSelectorPlayersDense[denseIndex] = player;
++        player.gale$eventDriven_affectsSpawningSelectorDenseIndex = denseIndex;
++        this.gale$eventDriven_affectsSpawningSelectorPlayerCount = denseIndex + 1;
++        if (this.gale$eventDriven_affectsSpawningSelectorPlayerCount == 1) {
 +            // Gale start - Event-driven - Mob.checkDespawnPlayerTrackingMode
 +            for (Entity entity : this.getEntities().getAll()) {
 +                if (entity instanceof net.minecraft.world.entity.Mob mob) mob.gale$eventDriven_checkDespawnPlayerTrackingMode_update();
@@ -52,7 +61,16 @@
 +        int id = player.gale$eventDriven_affectsSpawningSelectorLevelId;
 +        this.gale$eventDriven_affectsSpawningSelectorPlayersById[id] = null;
 +        this.gale$eventDriven_affectsSpawningSelectorPlayerFreeIds.add(id);
-+        if (this.gale$eventDriven_affectsSpawningSelectorPlayers.size() == 0) {
++        int denseIndex = player.gale$eventDriven_affectsSpawningSelectorDenseIndex;
++        int lastDenseIndex = --this.gale$eventDriven_affectsSpawningSelectorPlayerCount;
++        Player movedPlayer = this.gale$eventDriven_affectsSpawningSelectorPlayersDense[lastDenseIndex];
++        this.gale$eventDriven_affectsSpawningSelectorPlayersDense[lastDenseIndex] = null;
++        if (denseIndex != lastDenseIndex) {
++            this.gale$eventDriven_affectsSpawningSelectorPlayersDense[denseIndex] = movedPlayer;
++            movedPlayer.gale$eventDriven_affectsSpawningSelectorDenseIndex = denseIndex;
++        }
++        player.gale$eventDriven_affectsSpawningSelectorDenseIndex = -1;
++        if (this.gale$eventDriven_affectsSpawningSelectorPlayerCount == 0) {
 +            // Gale start - Event-driven - Mob.checkDespawnPlayerTrackingMode
 +            for (Entity entity : this.getEntities().getAll()) {
 +                if (entity instanceof net.minecraft.world.entity.Mob mob) mob.gale$eventDriven_checkDespawnPlayerTrackingMode_update();
@@ -156,7 +174,8 @@
 +
 +        // Populate them
 +        if (this.gale$checkDespawn_usingSpatialGrid) {
-+            for (Player player : this.gale$eventDriven_affectsSpawningSelectorPlayers) {
++            for (int i = 0, count = this.gale$eventDriven_affectsSpawningSelectorPlayerCount; i < count; i++) {
++                Player player = this.gale$eventDriven_affectsSpawningSelectorPlayersDense[i];
 +                this.gale$checkDespawn_addToGrids(player);
 +            }
 +        }
@@ -199,16 +218,18 @@
 +
 +    public void gale$checkDespawn_usingSpatialGrid_update() {
 +        if (this.gale$checkDespawn_usingSpatialGrid) {
-+            if (this.gale$eventDriven_affectsSpawningSelectorPlayers.size() < MINIMUM_PLAYERS_FOR_SPATIAL_GRID) {
++            if (this.gale$eventDriven_affectsSpawningSelectorPlayerCount < MINIMUM_PLAYERS_FOR_SPATIAL_GRID) {
 +                this.gale$checkDespawn_usingSpatialGrid = false;
-+                for (Player player : this.gale$eventDriven_affectsSpawningSelectorPlayers) {
++                for (int i = 0, count = this.gale$eventDriven_affectsSpawningSelectorPlayerCount; i < count; i++) {
++                    Player player = this.gale$eventDriven_affectsSpawningSelectorPlayersDense[i];
 +                    this.gale$checkDespawn_removeFromGrids(player);
 +                }
 +            }
 +        } else {
-+            if (this.gale$eventDriven_affectsSpawningSelectorPlayers.size() > MAXIMUM_PLAYERS_FOR_NON_SPATIAL_GRID) {
++            if (this.gale$eventDriven_affectsSpawningSelectorPlayerCount > MAXIMUM_PLAYERS_FOR_NON_SPATIAL_GRID) {
 +                this.gale$checkDespawn_usingSpatialGrid = true;
-+                for (Player player : this.gale$eventDriven_affectsSpawningSelectorPlayers) {
++                for (int i = 0, count = this.gale$eventDriven_affectsSpawningSelectorPlayerCount; i < count; i++) {
++                    Player player = this.gale$eventDriven_affectsSpawningSelectorPlayersDense[i];
 +                    this.gale$checkDespawn_addToGrids(player);
 +                }
 +            }

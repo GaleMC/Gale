@@ -29,14 +29,16 @@
 +        double x = position.x;
 +        double y = position.y;
 +        double z = position.z;
-+        it.unimi.dsi.fastutil.objects.ReferenceLinkedOpenHashSet<net.minecraft.world.entity.player.Player> affectsSpawningPlayers = level.gale$eventDriven_affectsSpawningSelectorPlayers;
++        net.minecraft.world.entity.player.Player[] affectsSpawningPlayers = level.gale$eventDriven_affectsSpawningSelectorPlayersDense;
++        int affectsSpawningPlayerCount = level.gale$eventDriven_affectsSpawningSelectorPlayerCount;
 +        net.minecraft.world.entity.player.Player player = null;
 +        double dxSqr = 0;
 +        double dyUnsqr = 0;
 +        double dySqr = 0;
 +        double dzSqr = 0;
 +        double distanceSquared = Double.MAX_VALUE;
-+        for (net.minecraft.world.entity.player.Player affectsSpawningPlayer : affectsSpawningPlayers) {
++        for (int i = 0; i < affectsSpawningPlayerCount; i++) {
++            net.minecraft.world.entity.player.Player affectsSpawningPlayer = affectsSpawningPlayers[i];
 +            double pdxSqr = net.minecraft.util.Mth.square(affectsSpawningPlayer.getX() - x);
 +            double pdyUnsqr = affectsSpawningPlayer.getY() - y;
 +            double pdySqr = net.minecraft.util.Mth.square(pdyUnsqr);
@@ -104,7 +106,9 @@
 +                    } else {
 +                        // Get the nearest player manually
 +                        distanceSquared = Double.MAX_VALUE;
-+                        for (net.minecraft.world.entity.player.Player affectsSpawningPlayer : level.gale$eventDriven_affectsSpawningSelectorPlayers) {
++                        net.minecraft.world.entity.player.Player[] affectsSpawningPlayers = level.gale$eventDriven_affectsSpawningSelectorPlayersDense;
++                        for (int i = 0, count = level.gale$eventDriven_affectsSpawningSelectorPlayerCount; i < count; i++) {
++                            net.minecraft.world.entity.player.Player affectsSpawningPlayer = affectsSpawningPlayers[i];
 +                            double pdx = affectsSpawningPlayer.getX() - x;
 +                            double pdy = affectsSpawningPlayer.getY() - y;
 +                            double pdz = affectsSpawningPlayer.getZ() - z;
@@ -149,7 +153,9 @@
 +                    } else {
 +                        // Get the nearest player manually
 +                        distanceSquared = Double.MAX_VALUE;
-+                        for (net.minecraft.world.entity.player.Player affectsSpawningPlayer : level.gale$eventDriven_affectsSpawningSelectorPlayers) {
++                        net.minecraft.world.entity.player.Player[] affectsSpawningPlayers = level.gale$eventDriven_affectsSpawningSelectorPlayersDense;
++                        for (int i = 0, count = level.gale$eventDriven_affectsSpawningSelectorPlayerCount; i < count; i++) {
++                            net.minecraft.world.entity.player.Player affectsSpawningPlayer = affectsSpawningPlayers[i];
 +                            double pdx = affectsSpawningPlayer.getX() - x;
 +                            double pdy = affectsSpawningPlayer.getY() - y;
 +                            double pdz = affectsSpawningPlayer.getZ() - z;

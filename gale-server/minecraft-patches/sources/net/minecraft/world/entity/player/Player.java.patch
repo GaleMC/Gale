@@ -11,6 +11,7 @@
 +    // Gale start - Event-driven - Player.affectsSpawningSelector
 +    public boolean gale$eventDriven_affectsSpawningSelector; // Gale - Event-driven - Level.affectsSpawningSelectorPlayers - TODO Watch for new writes
 +    public int gale$eventDriven_affectsSpawningSelectorLevelId;
++    public int gale$eventDriven_affectsSpawningSelectorDenseIndex = -1; // gale - keep the affects-spawning player list dense for despawn scans
 +
 +    public void gale$eventDriven_affectsSpawningSelector_update() {
 +        boolean newValue = net.minecraft.world.entity.EntitySelector.gale$eventDriven_affectsSpawningSelector_compute(this);

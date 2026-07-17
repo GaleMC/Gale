@@ -175,7 +175,7 @@
 +    }
 +
 +    private byte gale$eventDriven_checkDespawnPlayerTrackingMode_compute() {
-+        if (/*!this.gale$eventDriven_isInTickList || */this.gale$eventDriven_mustDespawnBecauseOfPeacefulDifficulty || this.gale$eventDriven_isPersistent || this.level().gale$eventDriven_affectsSpawningSelectorPlayers.isEmpty()) {
++        if (/*!this.gale$eventDriven_isInTickList || */this.gale$eventDriven_mustDespawnBecauseOfPeacefulDifficulty || this.gale$eventDriven_isPersistent || this.level().gale$eventDriven_affectsSpawningSelectorPlayerCount == 0) {
 +            return 0;
 +        } else if (!this.gale$canRemoveWhenFarAway()) {
 +            return 1;
@@ -209,7 +209,7 @@
 +                        this.gale$checkDespawn_innerWithSpatialGrids();
 +                    }
 +                } else {
-+                    if (level.gale$eventDriven_affectsSpawningSelectorPlayers.size() > 1) {
++                    if (level.gale$eventDriven_affectsSpawningSelectorPlayerCount > 1) {
 +                        if (!this.gale$checkDespawn_innerWithLastSoftPlayerByAffectsSpawningId()) {
 +                            this.gale$checkDespawn_innerWithPlayerList();
 +                        }
@@ -316,14 +316,16 @@
 +        double x = position.x;
 +        double y = position.y;
 +        double z = position.z;
-+        it.unimi.dsi.fastutil.objects.ReferenceLinkedOpenHashSet<Player> affectsSpawningPlayers = level.gale$eventDriven_affectsSpawningSelectorPlayers;
++        Player[] affectsSpawningPlayers = level.gale$eventDriven_affectsSpawningSelectorPlayersDense;
++        int affectsSpawningPlayerCount = level.gale$eventDriven_affectsSpawningSelectorPlayerCount;
 +        net.minecraft.world.entity.player.Player player = null;
 +        double dxSqr = 0;
 +        double dyUnsqr = 0;
 +        double dySqr = 0;
 +        double dzSqr = 0;
 +        double distanceSquared = Double.MAX_VALUE;
-+        for (Player affectsSpawningPlayer : affectsSpawningPlayers) {
++        for (int i = 0; i < affectsSpawningPlayerCount; i++) {
++            Player affectsSpawningPlayer = affectsSpawningPlayers[i];
 +            double pdxSqr = Mth.square(affectsSpawningPlayer.getX() - x);
 +            double pdyUnsqr = affectsSpawningPlayer.getY() - y;
 +            double pdySqr = Mth.square(pdyUnsqr);
