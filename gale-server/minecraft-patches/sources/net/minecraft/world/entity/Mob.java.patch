@@ -41,7 +41,7 @@
              return toEquip;
          } else {
              return ItemStack.EMPTY;
-@@ -768,43 +_,360 @@
+@@ -768,43 +_,358 @@
          return true;
      }
  
@@ -169,7 +169,7 @@
 +            this.gale$eventDriven_checkDespawnPlayerTrackingMode = newValue;
 +            if (newValue == 0) {
 +                this.gale$checkDespawn_lastSoftPlayerSlot = -1;
-+                this.gale$checkDespawn_lastSoftPlayerAffectsSpawningPlayer = null;
++                this.gale$checkDespawn_lastSoftPlayerAffectsSpawningId = -1;
 +            }
 +        }
 +    }
@@ -210,7 +210,7 @@
 +                    }
 +                } else {
 +                    if (level.gale$eventDriven_affectsSpawningSelectorPlayerCount > 1) {
-+                        if (!this.gale$checkDespawn_innerWithLastSoftPlayerByAffectsSpawningPlayer()) {
++                        if (!this.gale$checkDespawn_innerWithLastSoftPlayerByAffectsSpawningId()) {
 +                            this.gale$checkDespawn_innerWithPlayerList();
 +                        }
 +                    } else {
@@ -225,7 +225,7 @@
 +    }
 +
 +    protected int gale$checkDespawn_lastSoftPlayerSlot = -1;
-+    protected Player gale$checkDespawn_lastSoftPlayerAffectsSpawningPlayer;
++    protected int gale$checkDespawn_lastSoftPlayerAffectsSpawningId = -1;
 +
 +    private boolean gale$checkDespawn_innerWithLastSoftPlayerBySpatialGridSlot() {
 +        if (this.gale$checkDespawn_lastSoftPlayerSlot == -1) return false;
@@ -257,12 +257,12 @@
 +        return false;
 +    }
 +
-+    private boolean gale$checkDespawn_innerWithLastSoftPlayerByAffectsSpawningPlayer() {
++    private boolean gale$checkDespawn_innerWithLastSoftPlayerByAffectsSpawningId() {
++        if (this.gale$checkDespawn_lastSoftPlayerAffectsSpawningId == -1) return false;
 +        Level level = this.level();
-+        Player player = this.gale$checkDespawn_lastSoftPlayerAffectsSpawningPlayer;
++        if (level.gale$eventDriven_affectsSpawningSelectorPlayersById.length > this.gale$checkDespawn_lastSoftPlayerAffectsSpawningId) {
++            Player player = level.gale$eventDriven_affectsSpawningSelectorPlayersById[this.gale$checkDespawn_lastSoftPlayerAffectsSpawningId];
              if (player != null) {
-+                int denseIndex = player.gale$eventDriven_affectsSpawningSelectorDenseIndex;
-+                if (denseIndex != -1 && denseIndex < level.gale$eventDriven_affectsSpawningSelectorPlayerCount && level.gale$eventDriven_affectsSpawningSelectorPlayersDense[denseIndex] == player) {
 -                // Paper start - Configurable despawn distances
 -                final io.papermc.paper.configuration.WorldConfiguration.Entities.Spawning.DespawnRangePair despawnRangePair = this.level().paperConfig().entities.spawning.despawnRanges.get(this.getType().getCategory());
 -                final io.papermc.paper.configuration.type.DespawnRange.Shape shape = this.level().paperConfig().entities.spawning.despawnRangeShape;
@@ -306,7 +306,7 @@
 +                }
 +            }
 +        }
-+        this.gale$checkDespawn_lastSoftPlayerAffectsSpawningPlayer = null;
++        this.gale$checkDespawn_lastSoftPlayerAffectsSpawningId = -1;
 +        return false;
 +    }
 +
@@ -355,7 +355,7 @@
 +                    this.discard(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
 +                }
 +            } else {
-+                this.gale$checkDespawn_lastSoftPlayerAffectsSpawningPlayer = player;
++                this.gale$checkDespawn_lastSoftPlayerAffectsSpawningId = player.gale$eventDriven_affectsSpawningSelectorLevelId;
 +                // Paper end - Configurable despawn distances
 +                this.noActionTime = 0;
 +            }
