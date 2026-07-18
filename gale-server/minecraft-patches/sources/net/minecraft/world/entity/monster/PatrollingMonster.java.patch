@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/monster/PatrollingMonster.java
 +++ b/net/minecraft/world/entity/monster/PatrollingMonster.java
-@@ -94,10 +_,190 @@
+@@ -94,10 +_,196 @@
          return level.getBrightness(LightLayer.BLOCK, pos) <= 8 && checkAnyLightMonsterSpawnRules(type, level, spawnReason, pos, random);
      }
  
@@ -68,7 +68,7 @@
 +                    this.discard(org.bukkit.event.entity.EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
 +                }
 +            } else {
-+                this.gale$checkDespawn_lastSoftPlayerAffectsSpawningId = player.gale$eventDriven_affectsSpawningSelectorLevelId;
++                this.gale$checkDespawn_lastSoftPlayerAffectsSpawningPlayer = player;
 +                // Paper end - Configurable despawn distances
 +                this.noActionTime = 0;
 +            }

@@ -8,37 +8,17 @@
  
      public static @Nullable BlockPos lastPhysicsProblem; // Spigot
      public final Map<ServerExplosion.CacheKey, Float> explosionDensityCache = new java.util.HashMap<>(); // Paper - Optimize explosions
-@@ -238,6 +_,57 @@
+@@ -238,6 +_,75 @@
          return ret;
      }
  
 +    // Gale start - Event-driven - Level.affectsSpawningSelectorPlayers
 +    public it.unimi.dsi.fastutil.objects.ReferenceLinkedOpenHashSet<Player> gale$eventDriven_affectsSpawningSelectorPlayers = new it.unimi.dsi.fastutil.objects.ReferenceLinkedOpenHashSet<>(4); // Gale - Event-driven - Mob.checkDespawnPlayerTrackingMode - TODO Watch for new writes
-+    private it.unimi.dsi.fastutil.ints.IntList gale$eventDriven_affectsSpawningSelectorPlayerFreeIds = new it.unimi.dsi.fastutil.ints.IntArrayList();
-+    public Player[] gale$eventDriven_affectsSpawningSelectorPlayersById = new Player[4];
-+    public Player[] gale$eventDriven_affectsSpawningSelectorPlayersDense = new Player[4]; // gale - keep despawn scans on a dense player array
-+    public int gale$eventDriven_affectsSpawningSelectorPlayerCount; // gale - avoid set iteration in hot despawn paths
-+    {
-+        for (int i = 0; i < this.gale$eventDriven_affectsSpawningSelectorPlayersById.length; i++) {
-+            this.gale$eventDriven_affectsSpawningSelectorPlayerFreeIds.add(i);
-+        }
-+    }
++    public Player[] gale$eventDriven_affectsSpawningSelectorPlayersDense = new Player[4]; // Keep despawn scans on a dense player array
++    public int gale$eventDriven_affectsSpawningSelectorPlayerCount; // Avoid set iteration in hot despawn paths
 +
 +    public void gale$eventDriven_affectsSpawningSelectorPlayers_add(Player player) {
 +        this.gale$eventDriven_affectsSpawningSelectorPlayers.add(player);
-+        int id;
-+        if (this.gale$eventDriven_affectsSpawningSelectorPlayerFreeIds.isEmpty()) {
-+            id = this.gale$eventDriven_affectsSpawningSelectorPlayersById.length;
-+            int newLength = id * 2;
-+            this.gale$eventDriven_affectsSpawningSelectorPlayersById = java.util.Arrays.copyOf(this.gale$eventDriven_affectsSpawningSelectorPlayersById, newLength);
-+            for (int i = id + 1; i < newLength; i++) {
-+                this.gale$eventDriven_affectsSpawningSelectorPlayerFreeIds.add(i);
-+            }
-+        } else {
-+            id = this.gale$eventDriven_affectsSpawningSelectorPlayerFreeIds.removeInt(this.gale$eventDriven_affectsSpawningSelectorPlayerFreeIds.size() - 1);
-+        }
-+        this.gale$eventDriven_affectsSpawningSelectorPlayersById[id] = player;
-+        player.gale$eventDriven_affectsSpawningSelectorLevelId = id;
 +        int denseIndex = this.gale$eventDriven_affectsSpawningSelectorPlayerCount;
 +        if (denseIndex == this.gale$eventDriven_affectsSpawningSelectorPlayersDense.length) {
 +            this.gale$eventDriven_affectsSpawningSelectorPlayersDense = java.util.Arrays.copyOf(this.gale$eventDriven_affectsSpawningSelectorPlayersDense, denseIndex * 2);
@@ -58,9 +38,6 @@
 +
 +    public void gale$eventDriven_affectsSpawningSelectorPlayers_remove(Player player) {
 +        this.gale$eventDriven_affectsSpawningSelectorPlayers.remove(player);
-+        int id = player.gale$eventDriven_affectsSpawningSelectorLevelId;
-+        this.gale$eventDriven_affectsSpawningSelectorPlayersById[id] = null;
-+        this.gale$eventDriven_affectsSpawningSelectorPlayerFreeIds.add(id);
 +        int denseIndex = player.gale$eventDriven_affectsSpawningSelectorDenseIndex;
 +        int lastDenseIndex = --this.gale$eventDriven_affectsSpawningSelectorPlayerCount;
 +        Player movedPlayer = this.gale$eventDriven_affectsSpawningSelectorPlayersDense[lastDenseIndex];
@@ -111,7 +88,7 @@
          this.isDebug = isDebug;
          this.neighborUpdater = new CollectingNeighborUpdater(this, maxChainedNeighborUpdates);
          this.registryAccess = registryAccess;
-@@ -877,6 +_,125 @@
+@@ -877,6 +_,128 @@
          this.chunkPacketBlockController = this.paperConfig().anticheat.antiXray.enabled ? new io.papermc.paper.antixray.ChunkPacketBlockControllerAntiXray(this, executor) : io.papermc.paper.antixray.ChunkPacketBlockController.NO_OPERATION_INSTANCE; // Paper - Anti-Xray
      }
  
