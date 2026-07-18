@@ -8,3 +8,27 @@
          final int miscActivationRange = world.spigotConfig.miscActivationRange;
          final int raiderActivationRange = world.spigotConfig.raiderActivationRange;
          final int animalActivationRange = world.spigotConfig.animalActivationRange;
+@@ -149,14 +150,15 @@
+             }
+ 
+             final int worldHeight = world.getHeight();
+-            ActivationRange.maxBB = player.getBoundingBox().inflate(maxRange, worldHeight, maxRange);
+-            ActivationType.MISC.boundingBox = player.getBoundingBox().inflate(miscActivationRange, worldHeight, miscActivationRange);
+-            ActivationType.RAIDER.boundingBox = player.getBoundingBox().inflate(raiderActivationRange, worldHeight, raiderActivationRange);
+-            ActivationType.ANIMAL.boundingBox = player.getBoundingBox().inflate(animalActivationRange, worldHeight, animalActivationRange);
+-            ActivationType.MONSTER.boundingBox = player.getBoundingBox().inflate(monsterActivationRange, worldHeight, monsterActivationRange);
+-            ActivationType.WATER.boundingBox = player.getBoundingBox().inflate(waterActivationRange, worldHeight, waterActivationRange);
+-            ActivationType.FLYING_MONSTER.boundingBox = player.getBoundingBox().inflate(flyingActivationRange, worldHeight, flyingActivationRange);
+-            ActivationType.VILLAGER.boundingBox = player.getBoundingBox().inflate(villagerActivationRange, worldHeight, villagerActivationRange);
++            final AABB playerBB = player.getBoundingBox(); // Gale start - hoist player bounding box lookup
++            ActivationRange.maxBB = playerBB.inflate(maxRange, worldHeight, maxRange);
++            ActivationType.MISC.boundingBox = playerBB.inflate(miscActivationRange, worldHeight, miscActivationRange);
++            ActivationType.RAIDER.boundingBox = playerBB.inflate(raiderActivationRange, worldHeight, raiderActivationRange);
++            ActivationType.ANIMAL.boundingBox = playerBB.inflate(animalActivationRange, worldHeight, animalActivationRange);
++            ActivationType.MONSTER.boundingBox = playerBB.inflate(monsterActivationRange, worldHeight, monsterActivationRange);
++            ActivationType.WATER.boundingBox = playerBB.inflate(waterActivationRange, worldHeight, waterActivationRange);
++            ActivationType.FLYING_MONSTER.boundingBox = playerBB.inflate(flyingActivationRange, worldHeight, flyingActivationRange);
++            ActivationType.VILLAGER.boundingBox = playerBB.inflate(villagerActivationRange, worldHeight, villagerActivationRange); // Gale end - hoist player bounding box lookup
+ 
+             final List<Entity> entities = world.getEntities((Entity) null, ActivationRange.maxBB, e -> true);
+             final boolean tickMarkers = world.paperConfig().entities.markers.tick;
