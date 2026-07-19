@@ -55,3 +55,5 @@ paper-api/
 paper-server/
 
 !gradle/wrapper/gradle-wrapper.jar
+
+!.idea/icon.svg
