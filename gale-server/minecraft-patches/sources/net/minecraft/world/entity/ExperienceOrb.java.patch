@@ -30,7 +30,7 @@
              this.followNearbyPlayer();
 -            if (this.followingPlayer == null && !this.level().isClientSide() && colliding) {
 -                boolean nextColliding = !this.level().noCollision(this.getBoundingBox().move(this.getDeltaMovement()));
-+            if (this.followingPlayer == null && !level.isClientSide() && colliding) {
++            if (this.followingPlayer == null && colliding) {
 +                boolean nextColliding = !level.noCollision(this.getBoundingBox().move(this.getDeltaMovement()));
                  if (nextColliding) {
                      this.moveTowardsClosestSpace(this.getX(), (this.getBoundingBox().minY + this.getBoundingBox().maxY) / 2.0, this.getZ());
@@ -44,12 +44,8 @@
              }
  
              this.setDeltaMovement(this.getDeltaMovement().scale(friction));
-@@ -190,9 +_,10 @@
- 
-             this.age++;
-             if (this.age >= 6000) {
--                this.discard(org.bukkit.event.entity.EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
-+                this.discard(org.bukkit.event.entity.EntityRemoveEvent.Cause.DESPAWN);
+@@ -193,6 +_,7 @@
+                 this.discard(org.bukkit.event.entity.EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
              }
          }
 +        // Gale end - hoist level lookup
