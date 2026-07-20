@@ -1,0 +1,29 @@
+--- a/net/minecraft/world/entity/animal/Animal.java
++++ b/net/minecraft/world/entity/animal/Animal.java
+@@ -295,16 +_,19 @@
+         int[][] offsets = DismountHelper.offsetsForDirection(forward);
+         BlockPos vehicleBlockPos = this.blockPosition();
+         BlockPos.MutableBlockPos targetBlockPos = new BlockPos.MutableBlockPos();
++        // Gale start - hoist level lookup out of dismount pose loop
++        final Level level = this.level();
++        // Gale end - hoist level lookup out of dismount pose loop
+ 
+         for (Pose dismountPose : passenger.getDismountPoses()) {
+             AABB poseCollisionBox = passenger.getLocalBoundsForPose(dismountPose);
+ 
+             for (int[] offsetXZ : offsets) {
+                 targetBlockPos.set(vehicleBlockPos.getX() + offsetXZ[0], vehicleBlockPos.getY(), vehicleBlockPos.getZ() + offsetXZ[1]);
+-                double blockFloorHeight = this.level().getBlockFloorHeight(targetBlockPos);
++                double blockFloorHeight = level.getBlockFloorHeight(targetBlockPos);
+                 if (DismountHelper.isBlockFloorValid(blockFloorHeight)) {
+                     Vec3 location = Vec3.upFromBottomCenterOf(targetBlockPos, blockFloorHeight);
+-                    if (DismountHelper.canDismountTo(this.level(), passenger, poseCollisionBox.move(location))) {
++                    if (DismountHelper.canDismountTo(level, passenger, poseCollisionBox.move(location))) {
+                         passenger.setPose(dismountPose);
+                         return location;
+                     }
+@@ -314,4 +_,3 @@
+ 
+         return super.getDismountLocationForPassenger(passenger);
+     }
+-}
