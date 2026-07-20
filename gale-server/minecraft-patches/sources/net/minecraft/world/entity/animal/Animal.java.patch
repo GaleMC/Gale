@@ -22,8 +22,8 @@
                          passenger.setPose(dismountPose);
                          return location;
                      }
-@@ -314,4 +_,3 @@
+@@ -314,4 +_,4 @@
  
          return super.getDismountLocationForPassenger(passenger);
      }
--}
+ }
