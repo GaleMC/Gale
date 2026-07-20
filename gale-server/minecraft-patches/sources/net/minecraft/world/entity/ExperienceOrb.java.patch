@@ -1,0 +1,58 @@
+--- a/net/minecraft/world/entity/ExperienceOrb.java
++++ b/net/minecraft/world/entity/ExperienceOrb.java
+@@ -145,18 +_,20 @@
+     @Override
+     public void tick() {
+         this.interpolation.interpolate();
+-        if (this.firstTick && this.level().isClientSide()) {
++        // Gale start - hoist level lookup
++        final Level level = this.level();
++        if (this.firstTick && level.isClientSide()) {
+             this.firstTick = false;
+         } else {
+             super.tick();
+-            boolean colliding = !this.level().noCollision(this.getBoundingBox());
++            boolean colliding = !level.noCollision(this.getBoundingBox());
+             if (this.isEyeInFluid(FluidTags.WATER)) {
+                 this.setUnderwaterMovement();
+             } else if (!colliding) {
+                 this.applyGravity();
+             }
+ 
+-            if (this.level().getFluidState(this.blockPosition()).is(FluidTags.LAVA)) {
++            if (level.getFluidState(this.blockPosition()).is(FluidTags.LAVA)) {
+                 this.setDeltaMovement(
+                     (this.random.nextFloat() - this.random.nextFloat()) * 0.2F, 0.2F, (this.random.nextFloat() - this.random.nextFloat()) * 0.2F
+                 );
+@@ -167,8 +_,8 @@
+             }
+ 
+             this.followNearbyPlayer();
+-            if (this.followingPlayer == null && !this.level().isClientSide() && colliding) {
+-                boolean nextColliding = !this.level().noCollision(this.getBoundingBox().move(this.getDeltaMovement()));
++            if (this.followingPlayer == null && !level.isClientSide() && colliding) {
++                boolean nextColliding = !level.noCollision(this.getBoundingBox().move(this.getDeltaMovement()));
+                 if (nextColliding) {
+                     this.moveTowardsClosestSpace(this.getX(), (this.getBoundingBox().minY + this.getBoundingBox().maxY) / 2.0, this.getZ());
+                     this.needsSync = true;
+@@ -180,7 +_,7 @@
+             this.applyEffectsFromBlocks();
+             float friction = this.getAirDrag();
+             if (this.onGround()) {
+-                friction *= this.level().getBlockState(this.getBlockPosBelowThatAffectsMyMovement()).getBlock().getFriction();
++                friction *= level.getBlockState(this.getBlockPosBelowThatAffectsMyMovement()).getBlock().getFriction();
+             }
+ 
+             this.setDeltaMovement(this.getDeltaMovement().scale(friction));
+@@ -190,9 +_,10 @@
+ 
+             this.age++;
+             if (this.age >= 6000) {
+-                this.discard(org.bukkit.event.entity.EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
++                this.discard(org.bukkit.event.entity.EntityRemoveEvent.Cause.DESPAWN);
+             }
+         }
++        // Gale end - hoist level lookup
+     }
+ 
+     @Override
