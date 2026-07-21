@@ -23,4 +23,4 @@
  
          return Math.max(0, wireSignal - 1);
      }
--}
+}
