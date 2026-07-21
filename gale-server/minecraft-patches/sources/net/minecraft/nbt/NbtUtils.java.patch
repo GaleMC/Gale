@@ -1,0 +1,22 @@
+--- a/net/minecraft/nbt/NbtUtils.java
++++ b/net/minecraft/nbt/NbtUtils.java
+@@ -134,14 +_,17 @@
+         BlockState result = block.defaultBlockState();
+         Optional<CompoundTag> properties = tag.getCompound("Properties");
+         if (properties.isPresent()) {
++            // Gale start - avoid repeated Optional.get() calls in loop
++            CompoundTag propertiesTag = properties.get();
+             StateDefinition<Block, BlockState> definition = block.getStateDefinition();
+ 
+-            for (String key : properties.get().keySet()) {
++            for (String key : propertiesTag.keySet()) {
+                 Property<?> property = definition.getProperty(key);
+                 if (property != null) {
+-                    result = setValueHelper(result, property, key, properties.get(), tag);
++                    result = setValueHelper(result, property, key, propertiesTag, tag);
+                 }
+             }
++            // Gale end - avoid repeated Optional.get() calls in loop
+         }
+ 
+         return result;
