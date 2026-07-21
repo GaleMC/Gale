@@ -1,0 +1,23 @@
+--- a/net/minecraft/world/entity/projectile/throwableitemprojectile/Snowball.java
++++ b/net/minecraft/world/entity/projectile/throwableitemprojectile/Snowball.java
+@@ -44,13 +_,18 @@
+     public void handleEntityEvent(final byte id) {
+         if (id == EntityEvent.DEATH) {
+             ParticleOptions particle = this.getParticle();
++            // Gale start - hoist level lookup and position out of particle loop
++            final Level level = this.level();
++            final double x = this.getX();
++            final double y = this.getY();
++            final double z = this.getZ();
+ 
+             for (int i = 0; i < 8; i++) {
+-                this.level().addParticle(particle, this.getX(), this.getY(), this.getZ(), 0.0, 0.0, 0.0);
++                level.addParticle(particle, x, y, z, 0.0, 0.0, 0.0);
+             }
++            // Gale end - hoist level lookup and position out of particle loop
+         }
+     }
+-
+     @Override
+     protected void onHitEntity(final EntityHitResult hitResult) {
+         super.onHitEntity(hitResult);
