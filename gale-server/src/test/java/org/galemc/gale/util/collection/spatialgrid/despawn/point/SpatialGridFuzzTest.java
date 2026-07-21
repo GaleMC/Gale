@@ -1,6 +1,6 @@
 // Generated with AI
 
-package org.galemc.gale.util.collection.spatialgrid;
+package org.galemc.gale.util.collection.spatialgrid.despawn.point;
 
 import org.bukkit.support.environment.Normal;
 import org.junit.jupiter.api.Test;

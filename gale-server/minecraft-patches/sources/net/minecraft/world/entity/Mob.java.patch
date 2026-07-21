@@ -230,7 +230,7 @@
 +    private boolean gale$checkDespawn_innerWithLastSoftPlayerBySpatialGridSlot() {
 +        if (this.gale$checkDespawn_lastSoftPlayerSlot == -1) return false;
 +        Level level = this.level();
-+        org.galemc.gale.util.collection.spatialgrid.SpatialGrid softGrid = level.gale$checkDespawn_spatialGrids[level.gale$checkDespawn_spatialGridIndices[this.gale$checkDespawn_softLevelSpatialGridIndicesIndex]];
++        org.galemc.gale.util.collection.spatialgrid.despawn.point.SpatialGrid softGrid = level.gale$checkDespawn_spatialGrids[level.gale$checkDespawn_spatialGridIndices[this.gale$checkDespawn_softLevelSpatialGridIndicesIndex]];
 +        if (softGrid.containsKey(this.gale$checkDespawn_lastSoftPlayerSlot)) {
 +            double playerX = softGrid.getX(this.gale$checkDespawn_lastSoftPlayerSlot);
 +            double playerY = softGrid.getY(this.gale$checkDespawn_lastSoftPlayerSlot);
@@ -367,7 +367,7 @@
 +        // Despawn if hard/soft limit is exceeded
 +
 +        Level level = this.level();
-+        org.galemc.gale.util.collection.spatialgrid.SpatialGrid[] grids = level.gale$checkDespawn_spatialGrids;
++        org.galemc.gale.util.collection.spatialgrid.despawn.point.SpatialGrid[] grids = level.gale$checkDespawn_spatialGrids;
 +        int[] gridIndices = level.gale$checkDespawn_spatialGridIndices;
 +        Vec3 position = this.position;
 +        double x = position.x;
@@ -383,7 +383,7 @@
 +            // Check in hard range if necessary
 +            if (this.gale$eventDriven_checkDespawnPlayerTrackingMode == 2) {
 +                int hardGridIndex = gridIndices[this.gale$checkDespawn_hardLevelSpatialGridIndicesIndex];
-+                org.galemc.gale.util.collection.spatialgrid.SpatialGrid hardGrid = grids[hardGridIndex];
++                org.galemc.gale.util.collection.spatialgrid.despawn.point.SpatialGrid hardGrid = grids[hardGridIndex];
 +                if (hardGrid.anyIn(x, y, z, blockX, blockY, blockZ) == -1) {
 +                    this.gale$checkDespawn_lastSoftPlayerSlot = -1;
 +                    this.discard(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
@@ -395,7 +395,7 @@
 +
 +            // Check in soft range
 +            int softGridIndex = gridIndices[this.gale$checkDespawn_softLevelSpatialGridIndicesIndex];
-+            org.galemc.gale.util.collection.spatialgrid.SpatialGrid softGrid = grids[softGridIndex];
++            org.galemc.gale.util.collection.spatialgrid.despawn.point.SpatialGrid softGrid = grids[softGridIndex];
 +            int softSlot = softGrid.anyIn(x, y, z, blockX, blockY, blockZ);
 +            this.gale$checkDespawn_lastSoftPlayerSlot = softSlot;
 +
@@ -404,7 +404,7 @@
 +                // Check in hard range if necessary
 +                if (this.gale$eventDriven_checkDespawnPlayerTrackingMode == 2) {
 +                    int hardGridIndex = gridIndices[this.gale$checkDespawn_hardLevelSpatialGridIndicesIndex];
-+                    org.galemc.gale.util.collection.spatialgrid.SpatialGrid hardGrid = grids[hardGridIndex];
++                    org.galemc.gale.util.collection.spatialgrid.despawn.point.SpatialGrid hardGrid = grids[hardGridIndex];
 +                    if (hardGrid.anyIn(x, y, z, blockX, blockY, blockZ) == -1) {
 +                        this.discard(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
 +                    }

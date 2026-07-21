@@ -81,7 +81,7 @@
 +        // Despawn if hard/soft limit is exceeded
 +
 +        Level level = this.level();
-+        org.galemc.gale.util.collection.spatialgrid.SpatialGrid[] grids = level.gale$checkDespawn_spatialGrids;
++        SpatialGrid[] grids = level.gale$checkDespawn_spatialGrids;
 +        int[] gridIndices = level.gale$checkDespawn_spatialGridIndices;
 +        Vec3 position = this.position;
 +        double x = position.x;
@@ -97,7 +97,7 @@
 +            // Check in hard range if necessary
 +            if (this.gale$eventDriven_checkDespawnPlayerTrackingMode == 2) {
 +                int hardGridIndex = gridIndices[this.gale$checkDespawn_hardLevelSpatialGridIndicesIndex];
-+                org.galemc.gale.util.collection.spatialgrid.SpatialGrid hardGrid = grids[hardGridIndex];
++                SpatialGrid hardGrid = grids[hardGridIndex];
 +                if (hardGrid.nearestIn(x, y, z, blockX, blockY, blockZ) == -1) {
 +                    this.gale$checkDespawn_lastSoftPlayerSlot = -1;
 +                    double distanceSquared;
@@ -128,7 +128,7 @@
 +
 +            // Check in soft range
 +            int softGridIndex = gridIndices[this.gale$checkDespawn_softLevelSpatialGridIndicesIndex];
-+            org.galemc.gale.util.collection.spatialgrid.SpatialGrid softGrid = grids[softGridIndex];
++            SpatialGrid softGrid = grids[softGridIndex];
 +            int nearest = softGrid.nearestIn(x, y, z, blockX, blockY, blockZ);
 +            this.gale$checkDespawn_lastSoftPlayerSlot = nearest;
 +            boolean nearestIsInSoft = nearest != -1;
@@ -137,7 +137,7 @@
 +
 +                // Check in hard range if necessary
 +                boolean nearestIsInHard = false;
-+                org.galemc.gale.util.collection.spatialgrid.SpatialGrid hardGrid = null;
++                SpatialGrid hardGrid = null;
 +                if (this.gale$eventDriven_checkDespawnPlayerTrackingMode == 2) {
 +                    int hardGridIndex = gridIndices[this.gale$checkDespawn_hardLevelSpatialGridIndicesIndex];
 +                    hardGrid = grids[hardGridIndex];

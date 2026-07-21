@@ -116,7 +116,7 @@
      }
  
 +    // Gale start - Optimize Mob.checkDespawn()
-+    public org.galemc.gale.util.collection.spatialgrid.SpatialGrid[] gale$checkDespawn_spatialGrids;
++    public org.galemc.gale.util.collection.spatialgrid.despawn.point.SpatialGrid[] gale$checkDespawn_spatialGrids;
 +    public io.papermc.paper.configuration.WorldConfiguration.Entities.Spawning.DespawnRangePair[] gale$checkDespawn_despawnRangePairs; // Gale - Pre-compute - Mob.checkDespawn() despawn ranges
 +    public io.papermc.paper.configuration.type.DespawnRange.Shape gale$checkDespawn_despawnRangeShape; // Gale - Pre-compute - Mob.checkDespawn() despawn range shape
 +    public boolean[] gale$checkDespawn_noPlayerWithinRangeImpliesNearestPlayerIsFarAwayEnoughToRemoveForPatrollingMonsters;
@@ -161,12 +161,12 @@
 +        }
 +        io.papermc.paper.configuration.type.DespawnRange.Shape shape = config.despawnRangeShape;
 +        this.gale$checkDespawn_despawnRangeShape = shape; // Gale - Pre-compute - Mob.checkDespawn() despawn range shape
-+        this.gale$checkDespawn_spatialGrids = new org.galemc.gale.util.collection.spatialgrid.SpatialGrid[Ws.size()];
++        this.gale$checkDespawn_spatialGrids = new org.galemc.gale.util.collection.spatialgrid.despawn.point.SpatialGrid[Ws.size()];
 +        this.gale$checkDespawn_noPlayerWithinRangeImpliesNearestPlayerIsFarAwayEnoughToRemoveForPatrollingMonsters = new boolean[Ws.size()];
 +        for (int i = 0; i < Ws.size(); i++) {
 +            int W = Ws.get(i);
 +            int H = Hs.get(i);
-+            this.gale$checkDespawn_spatialGrids[i] = shape == io.papermc.paper.configuration.type.DespawnRange.Shape.ELLIPSOID ? new org.galemc.gale.util.collection.spatialgrid.EllipsoidSpatialGrid(W, H, 8) : new org.galemc.gale.util.collection.spatialgrid.CylinderSpatialGrid(W, H, 8);
++            this.gale$checkDespawn_spatialGrids[i] = shape == io.papermc.paper.configuration.type.DespawnRange.Shape.ELLIPSOID ? new org.galemc.gale.util.collection.spatialgrid.despawn.point.EllipsoidSpatialGrid(W, H, 8) : new org.galemc.gale.util.collection.spatialgrid.despawn.point.CylinderSpatialGrid(W, H, 8);
 +            int smallestCenterToBoundaryDistance = Math.min(W, H);
 +            long smallestCenterToBoundarySqrDistance = ((long) smallestCenterToBoundaryDistance) * smallestCenterToBoundaryDistance;
 +            this.gale$checkDespawn_noPlayerWithinRangeImpliesNearestPlayerIsFarAwayEnoughToRemoveForPatrollingMonsters[i] = smallestCenterToBoundarySqrDistance > net.minecraft.world.entity.monster.PatrollingMonster.MIN_DIST_SQR_TO_REMOVE_LONG;
@@ -183,12 +183,12 @@
 +    }
 +
 +    public void gale$checkDespawn_addToGrids(Player player) {
-+        org.galemc.gale.util.collection.spatialgrid.SpatialGrid[] grids = this.gale$checkDespawn_spatialGrids;
++        org.galemc.gale.util.collection.spatialgrid.despawn.point.SpatialGrid[] grids = this.gale$checkDespawn_spatialGrids;
 +        if (player.gale$checkDespawn_spatialGridSlots == null || player.gale$checkDespawn_spatialGridSlots.length < grids.length) {
 +            player.gale$checkDespawn_spatialGridSlots = new int[grids.length];
 +        }
 +        for (int i = 0; i < grids.length; i++) {
-+            org.galemc.gale.util.collection.spatialgrid.SpatialGrid grid = grids[i];
++            org.galemc.gale.util.collection.spatialgrid.despawn.point.SpatialGrid grid = grids[i];
 +            Vec3 position = player.position();
 +            BlockPos blockPosition = player.blockPosition();
 +            player.gale$checkDespawn_spatialGridSlots[i] = grid.add(position.x, position.y, position.z, blockPosition.getX(), blockPosition.getY(), blockPosition.getZ());
@@ -196,17 +196,17 @@
 +    }
 +
 +    public void gale$checkDespawn_removeFromGrids(Player player) {
-+        org.galemc.gale.util.collection.spatialgrid.SpatialGrid[] grids = this.gale$checkDespawn_spatialGrids;
++        org.galemc.gale.util.collection.spatialgrid.despawn.point.SpatialGrid[] grids = this.gale$checkDespawn_spatialGrids;
 +        for (int i = 0; i < grids.length; i++) {
-+            org.galemc.gale.util.collection.spatialgrid.SpatialGrid grid = grids[i];
++            org.galemc.gale.util.collection.spatialgrid.despawn.point.SpatialGrid grid = grids[i];
 +            grid.remove(player.gale$checkDespawn_spatialGridSlots[i]);
 +        }
 +    }
 +
 +    public void gale$checkDespawn_moveInGrids(Player player, double newX, double newY, double newZ, int newBlockX, int newBlockY, int newBlockZ) {
-+        org.galemc.gale.util.collection.spatialgrid.SpatialGrid[] grids = this.gale$checkDespawn_spatialGrids;
++        org.galemc.gale.util.collection.spatialgrid.despawn.point.SpatialGrid[] grids = this.gale$checkDespawn_spatialGrids;
 +        for (int i = 0; i < grids.length; i++) {
-+            org.galemc.gale.util.collection.spatialgrid.SpatialGrid grid = grids[i];
++            org.galemc.gale.util.collection.spatialgrid.despawn.point.SpatialGrid grid = grids[i];
 +            grid.move(player.gale$checkDespawn_spatialGridSlots[i], newX, newY, newZ, newBlockX, newBlockY, newBlockZ);
 +        }
 +    }

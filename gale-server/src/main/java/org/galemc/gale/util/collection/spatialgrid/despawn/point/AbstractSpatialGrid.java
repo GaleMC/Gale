@@ -1,6 +1,6 @@
 // Generated with AI
 
-package org.galemc.gale.util.collection.spatialgrid;
+package org.galemc.gale.util.collection.spatialgrid.despawn.point;
 
 /**
  * Minimal interface describing the public API of the SpatialGrid implementation.

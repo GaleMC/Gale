@@ -1,6 +1,6 @@
 // Generated with AI
 
-package org.galemc.gale.util.collection.spatialgrid;
+package org.galemc.gale.util.collection.spatialgrid.despawn.point;
 
 import net.minecraft.core.BlockPos;
 import java.util.Arrays;

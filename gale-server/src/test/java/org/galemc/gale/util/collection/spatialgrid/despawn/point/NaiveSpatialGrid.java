@@ -1,6 +1,6 @@
 // Generated with AI
 
-package org.galemc.gale.util.collection.spatialgrid;
+package org.galemc.gale.util.collection.spatialgrid.despawn.point;
 
 import java.util.ArrayList;
 import java.util.List;

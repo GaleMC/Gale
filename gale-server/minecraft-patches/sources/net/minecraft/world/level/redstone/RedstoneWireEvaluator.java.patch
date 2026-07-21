@@ -19,8 +19,3 @@
                  BlockPos aboveNeighborPos = neighborPos.above();
                  wireSignal = Math.max(wireSignal, this.getWireSignal(aboveNeighborPos, level.getBlockState(aboveNeighborPos)));
              } else if (!neighborState.isRedstoneConductor(level, neighborPos)) {
-@@ -45,4 +_,4 @@
- 
-         return Math.max(0, wireSignal - 1);
-     }
- }
