@@ -1,0 +1,11 @@
+--- a/ca/spottedleaf/moonrise/paper/PaperHooks.java
++++ b/ca/spottedleaf/moonrise/paper/PaperHooks.java
+@@ -35,7 +_,7 @@
+ 
+     @Override
+     public String getBrand() {
+-        return "Paper";
++        return "Gale"; // Gale - Branding
+     }
+ 
+     @Override
