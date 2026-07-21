@@ -1,0 +1,27 @@
+--- a/net/minecraft/world/level/pathfinder/PathTypeCache.java
++++ b/net/minecraft/world/level/pathfinder/PathTypeCache.java
+@@ -6,10 +_,12 @@
+ import org.jspecify.annotations.Nullable;
+ 
+ public class PathTypeCache {
+-    private static final int SIZE = 4096;
+-    private static final int MASK = 4095;
+-    private final long[] positions = new long[4096];
+-    private final PathType[] pathTypes = new PathType[4096];
++    // Gale start - Cache - PathTypeCache (increase size)
++    private static final int SIZE = 1 << 15;
++    private static final int MASK = SIZE - 1;
++    private final long[] positions = new long[SIZE];
++    private final PathType[] pathTypes = new PathType[SIZE];
++    // Gale end - Cache - PathTypeCache (increase size)
+ 
+     public PathType getOrCompute(final BlockGetter level, final BlockPos pos) {
+         long key = pos.asLong();
+@@ -38,6 +_,6 @@
+     }
+ 
+     private static int index(final long pos) {
+-        return (int)HashCommon.mix(pos) & 4095;
++        return (int)HashCommon.mix(pos) & MASK; // Gale - Cache - PathTypeCache (increase size)
+     }
+ }

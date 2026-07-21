@@ -187,6 +187,11 @@ Every feature is identified in source code by corresponding `// Gale` marker com
         <sub><sup>By: <a href="https://github.com/MartijnMuijsers">Martijn Muijsers</a></sup></sub>
       </li>
       <li>
+        <i>PathTypeCache (increase size)</i>
+        <br/>
+        <sub><sup>By: <a href="https://github.com/MartijnMuijsers">Martijn Muijsers</a></sup></sub>
+      </li>
+      <li>
         <i>SpecialDates.isHalloween()</i>
         <br/>
         Pre-compute the epoch milliseconds for the next Halloween, for faster comparison.
