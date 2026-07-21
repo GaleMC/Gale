@@ -1,0 +1,65 @@
+--- a/net/minecraft/world/entity/ai/behavior/TransportItemsBetweenContainers.java
++++ b/net/minecraft/world/entity/ai/behavior/TransportItemsBetweenContainers.java
+@@ -2,7 +_,6 @@
+ 
+ import com.google.common.collect.ImmutableMap;
+ import java.util.HashSet;
+-import java.util.List;
+ import java.util.Map;
+ import java.util.Optional;
+ import java.util.Set;
+@@ -13,6 +_,8 @@
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.Direction;
+ import net.minecraft.core.GlobalPos;
++import net.minecraft.core.SectionPos;
++import net.minecraft.server.level.ServerChunkCache;
+ import net.minecraft.server.level.ServerLevel;
+ import net.minecraft.world.Container;
+ import net.minecraft.world.entity.EquipmentSlot;
+@@ -21,7 +_,6 @@
+ import net.minecraft.world.entity.ai.memory.MemoryStatus;
+ import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
+ import net.minecraft.world.item.ItemStack;
+-import net.minecraft.world.level.ChunkPos;
+ import net.minecraft.world.level.ClipContext;
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.block.ChestBlock;
+@@ -278,14 +_,24 @@
+         AABB targetBlockSearchArea = this.getTargetSearchArea(body);
+         Set<GlobalPos> visitedPositions = getVisitedPositions(body);
+         Set<GlobalPos> unreachablePositions = getUnreachablePositions(body);
+-        List<ChunkPos> list = ChunkPos.rangeClosed(ChunkPos.containing(body.blockPosition()), Math.floorDiv(this.getHorizontalSearchDistance(body), 16) + 1)
+-            .toList();
++        // Gale start - Local code optimization - TransportItemsBetweenContainers.getTransportTarget()
++        BlockPos bodyPos = body.blockPosition();
++        int horizontalSearchDistance = this.getHorizontalSearchDistance(body);
++        int minChunkX = SectionPos.blockToSectionCoord(bodyPos.getX() - horizontalSearchDistance);
++        int maxChunkX = SectionPos.blockToSectionCoord(bodyPos.getX() + horizontalSearchDistance);
++        int minChunkZ = SectionPos.blockToSectionCoord(bodyPos.getZ() - horizontalSearchDistance);
++        int maxChunkZ = SectionPos.blockToSectionCoord(bodyPos.getZ() + horizontalSearchDistance);
++        ServerChunkCache chunkSource = level.getChunkSource();
+         TransportItemsBetweenContainers.TransportItemTarget target = null;
+         double closestDistance = Float.MAX_VALUE;
+ 
+-        for (ChunkPos chunkPos : list) {
+-            LevelChunk levelChunk = level.getChunkSource().getChunkNow(chunkPos.x(), chunkPos.z());
+-            if (levelChunk != null) {
++        for (int chunkZ = minChunkZ; chunkZ <= maxChunkZ; chunkZ++) {
++            for (int chunkX = minChunkX; chunkX <= maxChunkX; chunkX++) {
++                LevelChunk levelChunk = chunkSource.getChunkNow(chunkX, chunkZ);
++                if (levelChunk == null || levelChunk.getBlockEntities().isEmpty()) {
++                    continue;
++                }
++
+                 for (BlockEntity potentialTarget : levelChunk.getBlockEntities().values()) {
+                     if (potentialTarget instanceof ChestBlockEntity chestBlockEntity) {
+                         double distance = chestBlockEntity.getBlockPos().distToCenterSqr(body.position());
+@@ -302,6 +_,7 @@
+                 }
+             }
+         }
++        // Gale end - Local code optimization - TransportItemsBetweenContainers.getTransportTarget()
+ 
+         return target == null ? Optional.empty() : Optional.of(target);
+     }
