@@ -21,6 +21,6 @@
              } else if (!neighborState.isRedstoneConductor(level, neighborPos)) {
 @@ -45,4 +_,4 @@
  
-        return Math.max(0, wireSignal - 1);
-    }
+         return Math.max(0, wireSignal - 1);
+     }
  }
