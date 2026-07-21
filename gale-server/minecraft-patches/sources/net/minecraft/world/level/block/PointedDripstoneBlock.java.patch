@@ -1,0 +1,36 @@
+--- a/net/minecraft/world/level/block/PointedDripstoneBlock.java
++++ b/net/minecraft/world/level/block/PointedDripstoneBlock.java
+@@ -91,9 +_,12 @@
+     public static void maybeTransferFluid(final BlockState state, final ServerLevel level, final BlockPos pos, final float randomValue) {
+         if (!(randomValue > 0.17578125F) || !(randomValue > 0.05859375F)) {
+             if (isStalactiteStartPos(state, level, pos)) {
+-                Optional<PointedDripstoneBlock.FluidInfo> fluidInfo = getFluidAboveStalactite(level, pos, state);
+-                if (!fluidInfo.isEmpty()) {
+-                    Fluid fluid = fluidInfo.get().fluid;
++                Optional<PointedDripstoneBlock.FluidInfo> fluidInfoOptional = getFluidAboveStalactite(level, pos, state);
++                if (!fluidInfoOptional.isEmpty()) {
++                    // Gale start - cache unwrapped Optional value
++                    PointedDripstoneBlock.FluidInfo fluidInfo = fluidInfoOptional.get();
++                    Fluid fluid = fluidInfo.fluid;
++                    // Gale end - cache unwrapped Optional value
+                     float transferProbability;
+                     if (fluid == Fluids.WATER) {
+                         transferProbability = 0.17578125F;
+@@ -108,12 +_,12 @@
+                     if (!(randomValue >= transferProbability)) {
+                         BlockPos stalactiteTipPos = findTip(state, level, pos, 11, false);
+                         if (stalactiteTipPos != null) {
+-                            if (fluidInfo.get().sourceState.is(Blocks.MUD) && fluid == Fluids.WATER) {
++                            if (fluidInfo.sourceState.is(Blocks.MUD) && fluid == Fluids.WATER) {
+                                 BlockState newState = Blocks.CLAY.defaultBlockState();
+-                                if (org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockFormEvent(level, fluidInfo.get().pos, newState, Block.UPDATE_ALL)) { // Paper - Call BlockFormEvent
+-                                Block.pushEntitiesUp(fluidInfo.get().sourceState, newState, level, fluidInfo.get().pos);
+-                                level.gameEvent(GameEvent.BLOCK_CHANGE, fluidInfo.get().pos, GameEvent.Context.of(newState));
+-                                level.levelEvent(LevelEvent.DRIPSTONE_DRIP, stalactiteTipPos, 0);
++                                if (org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockFormEvent(level, fluidInfo.pos, newState, Block.UPDATE_ALL)) { // Paper - Call BlockFormEvent
++                                    Block.pushEntitiesUp(fluidInfo.sourceState, newState, level, fluidInfo.pos);
++                                    level.gameEvent(GameEvent.BLOCK_CHANGE, fluidInfo.pos, GameEvent.Context.of(newState));
++                                    level.levelEvent(LevelEvent.DRIPSTONE_DRIP, stalactiteTipPos, 0);
+                                 } // Paper - Call BlockFormEvent
+                             } else {
+                                 BlockPos cauldronPos = findFillableCauldronBelowStalactiteTip(level, stalactiteTipPos, fluid);
