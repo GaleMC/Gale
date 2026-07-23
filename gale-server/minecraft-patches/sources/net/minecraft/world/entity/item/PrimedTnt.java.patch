@@ -1,0 +1,43 @@
+--- a/net/minecraft/world/entity/item/PrimedTnt.java
++++ b/net/minecraft/world/entity/item/PrimedTnt.java
+@@ -105,12 +_,15 @@
+     @Override
+     public void tick() {
+         if (this.level().spigotConfig.maxTntTicksPerTick > 0 && ++this.level().spigotConfig.currentPrimedTnt > this.level().spigotConfig.maxTntTicksPerTick) { return; } // Spigot
++        // Gale start - hoist level lookup
++        final Level level = this.level();
++        // Gale end - hoist level lookup
+         this.handlePortal();
+         this.applyGravity();
+         this.move(MoverType.SELF, this.getDeltaMovement());
+         this.applyEffectsFromBlocks();
+         // Paper start - Configurable TNT height nerf
+-        if (this.level().paperConfig().fixes.tntEntityHeightNerf.test(v -> this.getY() > v)) {
++        if (level.paperConfig().fixes.tntEntityHeightNerf.test(v -> this.getY() > v)) {
+             this.discard(EntityRemoveEvent.Cause.OUT_OF_WORLD);
+             return;
+         }
+@@ -125,19 +_,19 @@
+         if (fuse <= 0) {
+             // CraftBukkit start - Need to reverse the order of the explosion and the entity death so we have a location for the event
+             //this.discard();
+-            if (!this.level().isClientSide()) {
++            if (!level.isClientSide()) {
+                 this.explode();
+             }
+             this.discard(EntityRemoveEvent.Cause.EXPLODE); // CraftBukkit - add Bukkit remove cause
+             // CraftBukkit end
+         } else {
+             this.updateFluidInteraction();
+-            if (this.level().isClientSide()) {
+-                this.level().addParticle(ParticleTypes.SMOKE, this.getX(), this.getY() + 0.5, this.getZ(), 0.0, 0.0, 0.0);
++            if (level.isClientSide()) {
++                level.addParticle(ParticleTypes.SMOKE, this.getX(), this.getY() + 0.5, this.getZ(), 0.0, 0.0, 0.0);
+             }
+         }
+         // Paper start - Option to prevent TNT from moving in water
+-        if (!this.isRemoved() && this.wasTouchingWater && this.level().paperConfig().fixes.preventTntFromMovingInWater) {
++        if (!this.isRemoved() && this.wasTouchingWater && level.paperConfig().fixes.preventTntFromMovingInWater) {
+             this.hurtMarked = true;
+             this.needsSync = true;
+         }

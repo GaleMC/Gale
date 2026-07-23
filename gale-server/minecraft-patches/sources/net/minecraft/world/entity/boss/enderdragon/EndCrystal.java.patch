@@ -1,0 +1,39 @@
+--- a/net/minecraft/world/entity/boss/enderdragon/EndCrystal.java
++++ b/net/minecraft/world/entity/boss/enderdragon/EndCrystal.java
+@@ -53,24 +_,27 @@
+ 
+     @Override
+     public void tick() {
++        // Gale start - hoist level lookup
++        final Level level = this.level();
++        // Gale end - hoist level lookup
+         this.time++;
+         this.applyEffectsFromBlocks();
+         this.handlePortal();
+-        if (this.level() instanceof ServerLevel) {
++        if (level instanceof ServerLevel serverLevel) {
+             BlockPos pos = this.blockPosition();
+-            if (((ServerLevel)this.level()).getDragonFight() != null && this.level().getBlockState(pos).isAir()) {
+-                if (!org.bukkit.craftbukkit.event.CraftEventFactory.callBlockIgniteEvent(this.level(), pos, this).isCancelled()) { // Paper
+-                this.level().setBlockAndUpdate(pos, BaseFireBlock.getState(this.level(), pos));
++            if (serverLevel.getDragonFight() != null && level.getBlockState(pos).isAir()) {
++                if (!org.bukkit.craftbukkit.event.CraftEventFactory.callBlockIgniteEvent(level, pos, this).isCancelled()) { // Paper
++                    level.setBlockAndUpdate(pos, BaseFireBlock.getState(level, pos));
+                 } // Paper
+             }
+         }
+ 
+         // Paper start - Fix invulnerable end crystals
+-        if (this.level().paperConfig().unsupportedSettings.fixInvulnerableEndCrystalExploit && this.generatedByDragonFight && this.isInvulnerable()) {
+-            if (!java.util.Objects.equals(((ServerLevel) this.level()).uuid, this.originWorld)
+-                || ((ServerLevel) this.level()).getDragonFight() == null
+-                || ((ServerLevel) this.level()).getDragonFight().respawnStage == null
+-                || ((ServerLevel) this.level()).getDragonFight().respawnStage.ordinal() > net.minecraft.world.level.dimension.end.DragonRespawnStage.SUMMONING_DRAGON.ordinal()) {
++        if (level.paperConfig().unsupportedSettings.fixInvulnerableEndCrystalExploit && this.generatedByDragonFight && this.isInvulnerable()) {
++            if (level instanceof ServerLevel serverLevelInvulnerable && (!java.util.Objects.equals(serverLevelInvulnerable.uuid, this.originWorld)
++                || serverLevelInvulnerable.getDragonFight() == null
++                || serverLevelInvulnerable.getDragonFight().respawnStage == null
++                || serverLevelInvulnerable.getDragonFight().respawnStage.ordinal() > net.minecraft.world.level.dimension.end.DragonRespawnStage.SUMMONING_DRAGON.ordinal())) {
+                 this.setInvulnerable(false);
+                 this.setBeamTarget(null);
+             }
