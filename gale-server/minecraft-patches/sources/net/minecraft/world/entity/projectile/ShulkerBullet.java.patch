@@ -1,0 +1,37 @@
+--- a/net/minecraft/world/entity/projectile/ShulkerBullet.java
++++ b/net/minecraft/world/entity/projectile/ShulkerBullet.java
+@@ -203,9 +_,12 @@
+     @Override
+     public void tick() {
+         super.tick();
+-        Entity finalTarget = !this.level().isClientSide() ? EntityReference.getEntity(this.finalTarget, this.level()) : null;
++        // Gale start - hoist level lookup
++        final Level level = this.level();
++        // Gale end - hoist level lookup
++        Entity finalTarget = !level.isClientSide() ? EntityReference.getEntity(this.finalTarget, level) : null;
+         HitResult hitResult = null;
+-        if (!this.level().isClientSide()) {
++        if (!level.isClientSide()) {
+             if (finalTarget == null) {
+                 this.finalTarget = null;
+             }
+@@ -237,8 +_,8 @@
+         }
+ 
+         ProjectileUtil.rotateTowardsMovement(this, 0.5F);
+-        if (this.level().isClientSide()) {
+-            this.level().addParticle(ParticleTypes.END_ROD, this.getX() - movement.x, this.getY() - movement.y + 0.15, this.getZ() - movement.z, 0.0, 0.0, 0.0);
++        if (level.isClientSide()) {
++            level.addParticle(ParticleTypes.END_ROD, this.getX() - movement.x, this.getY() - movement.y + 0.15, this.getZ() - movement.z, 0.0, 0.0, 0.0);
+         } else if (finalTarget != null) {
+             if (this.flightSteps > 0) {
+                 this.flightSteps--;
+@@ -250,7 +_,7 @@
+             if (this.currentMoveDirection != null) {
+                 BlockPos current = this.blockPosition();
+                 Direction.Axis axis = this.currentMoveDirection.getAxis();
+-                if (this.level().loadedAndEntityCanStandOn(current.relative(this.currentMoveDirection), this)) {
++                if (level.loadedAndEntityCanStandOn(current.relative(this.currentMoveDirection), this)) {
+                     this.selectNextMoveDirection(axis, finalTarget);
+                 } else {
+                     BlockPos targetPos = finalTarget.blockPosition();

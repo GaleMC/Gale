@@ -1,0 +1,47 @@
+--- a/net/minecraft/world/entity/projectile/FireworkRocketEntity.java
++++ b/net/minecraft/world/entity/projectile/FireworkRocketEntity.java
+@@ -130,11 +_,14 @@
+     @Override
+     public void tick() {
+         super.tick();
++        // Gale start - hoist level lookup
++        final Level level = this.level();
++        // Gale end - hoist level lookup
+         HitResult hitResult;
+         if (this.isAttachedToEntity()) {
+             if (this.attachedToEntity == null) {
+                 this.entityData.get(DATA_ATTACHED_TO_TARGET).ifPresent(id -> {
+-                    if (this.level().getEntity(id) instanceof LivingEntity livingEntity) {
++                    if (level.getEntity(id) instanceof LivingEntity livingEntity) {
+                         this.attachedToEntity = livingEntity;
+                     }
+                 });
+@@ -185,12 +_,12 @@
+ 
+         this.updateRotation();
+         if (this.life == 0 && !this.isSilent()) {
+-            this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.FIREWORK_ROCKET_LAUNCH, SoundSource.AMBIENT, 3.0F, 1.0F);
++            level.playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.FIREWORK_ROCKET_LAUNCH, SoundSource.AMBIENT, 3.0F, 1.0F);
+         }
+ 
+         this.life++;
+-        if (this.level().isClientSide() && this.life % 2 < 2) {
+-            this.level()
++        if (level.isClientSide() && this.life % 2 < 2) {
++            level
+                 .addParticle(
+                     ParticleTypes.FIREWORK,
+                     this.getX(),
+@@ -202,10 +_,10 @@
+                 );
+         }
+ 
+-        if (this.life > this.lifetime && this.level() instanceof ServerLevel level) {
++        if (this.life > this.lifetime && level instanceof ServerLevel serverLevel) {
+             // Paper start - Call FireworkExplodeEvent
+             if (org.bukkit.craftbukkit.event.CraftEventFactory.callFireworkExplodeEvent(this)) {
+-                this.explode(level);
++                this.explode(serverLevel);
+             }
+             // Paper end - Call FireworkExplodeEvent
+         }
