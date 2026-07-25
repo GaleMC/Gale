@@ -1,0 +1,11 @@
+--- a/net/minecraft/util/BitStorage.java
++++ b/net/minecraft/util/BitStorage.java
+@@ -21,6 +_,8 @@
+ 
+     BitStorage copy();
+ 
++    default <T> void compact(net.minecraft.world.level.chunk.Palette<T> sourcePalette, net.minecraft.world.level.chunk.Palette<T> destinationPalette, net.minecraft.world.level.chunk.PaletteResize<T> resizeHandler, short[] output) {} // Gale - Chunk serialization
++
+     // Paper start - block counting
+     // provide default impl in case mods implement this...
+     @Override

@@ -1,0 +1,80 @@
+--- a/net/minecraft/util/SimpleBitStorage.java
++++ b/net/minecraft/util/SimpleBitStorage.java
+@@ -251,6 +_,35 @@
+         }
+     }
+ 
++    public SimpleBitStorage(final int bits, final int size, final short[] values) {
++        this(bits, size);
++        int outputIndex = 0;
++
++        int inputOffset;
++        for (inputOffset = 0; inputOffset <= size - this.valuesPerLong; inputOffset += this.valuesPerLong) {
++            long packedValue = 0L;
++
++            for (int indexInLong = this.valuesPerLong - 1; indexInLong >= 0; indexInLong--) {
++                packedValue <<= bits;
++                packedValue |= values[inputOffset + indexInLong] & this.mask;
++            }
++
++            this.data[outputIndex++] = packedValue;
++        }
++
++        final int remainderCount = size - inputOffset;
++        if (remainderCount > 0) {
++            long lastPackedValue = 0L;
++
++            for (int indexInLong = remainderCount - 1; indexInLong >= 0; indexInLong--) {
++                lastPackedValue <<= bits;
++                lastPackedValue |= values[inputOffset + indexInLong] & this.mask;
++            }
++
++            this.data[outputIndex] = lastPackedValue;
++        }
++    }
++
+     public SimpleBitStorage(final int bits, final int size) {
+         this(bits, size, (long[])null);
+     }
+@@ -399,6 +_,41 @@
+     public BitStorage copy() {
+         return new SimpleBitStorage(this.bits, this.size, (long[])this.data.clone());
+     }
++
++    // Gale - Chunk serialization
++    @Override
++    public <T> void compact(final net.minecraft.world.level.chunk.Palette<T> sourcePalette, final net.minecraft.world.level.chunk.Palette<T> destinationPalette, final net.minecraft.world.level.chunk.PaletteResize<T> resizeHandler, final short[] output) {
++        if (this.size >= Short.MAX_VALUE) {
++            throw new IllegalStateException("Array too large");
++        }
++
++        if (this.size != output.length) {
++            throw new IllegalStateException("Array size mismatch");
++        }
++
++        final short[] mappings = new short[(int)(this.mask + 1)];
++        int outputIndex = 0;
++
++        for (final long word : this.data) {
++            long bits = word;
++            for (int elementIndex = 0; elementIndex < this.valuesPerLong; ++elementIndex) {
++                final int value = (int)(bits & this.mask);
++                int remappedId = mappings[value];
++
++                if (remappedId == 0) {
++                    remappedId = destinationPalette.idFor(sourcePalette.valueFor(value), resizeHandler) + 1;
++                    mappings[value] = (short)remappedId;
++                }
++
++                output[outputIndex++] = (short)(remappedId - 1);
++                if (outputIndex >= this.size) {
++                    return;
++                }
++
++                bits >>= this.bits;
++            }
++        }
++    }
+ 
+     // Paper start - block counting
+     @Override
