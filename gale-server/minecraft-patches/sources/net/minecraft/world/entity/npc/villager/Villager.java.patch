@@ -1,0 +1,42 @@
+--- a/net/minecraft/world/entity/npc/villager/Villager.java
++++ b/net/minecraft/world/entity/npc/villager/Villager.java
+@@ -697,8 +_,12 @@
+ 
+     private void eatUntilFull() {
+         if (this.hungry() && this.countFoodPointsInInventory() != 0) {
+-            for (int slot = 0; slot < this.getInventory().getContainerSize(); slot++) {
+-                ItemStack itemStack = this.getInventory().getItem(slot);
++            // Gale start - hoist inventory lookup
++            final SimpleContainer inventory = this.getInventory();
++            final int containerSize = inventory.getContainerSize();
++            // Gale end - hoist inventory lookup
++            for (int slot = 0; slot < containerSize; slot++) {
++                ItemStack itemStack = inventory.getItem(slot);
+                 if (!itemStack.isEmpty()) {
+                     Integer value = FOOD_POINTS.get(itemStack.getItem());
+                     if (value != null) {
+@@ -706,7 +_,7 @@
+ 
+                         for (int count = itemCount; count > 0; count--) {
+                             this.foodLevel = this.foodLevel + value;
+-                            this.getInventory().removeItem(slot, 1);
++                            inventory.removeItem(slot, 1);
+                             if (!this.hungry()) {
+                                 return;
+                             }
+@@ -843,8 +_,14 @@
+     }
+ 
+     private int countFoodPointsInInventory() {
++        // Gale start - avoid stream in villager food check
+         SimpleContainer inventory = this.getInventory();
+-        return FOOD_POINTS.entrySet().stream().mapToInt(entry -> inventory.countItem(entry.getKey()) * entry.getValue()).sum();
++        int total = 0;
++        for (Map.Entry<Item, Integer> entry : FOOD_POINTS.entrySet()) {
++            total += inventory.countItem(entry.getKey()) * entry.getValue();
++        }
++        return total;
++        // Gale end - avoid stream in villager food check
+     }
+ 
+     public boolean hasFarmSeeds() {
