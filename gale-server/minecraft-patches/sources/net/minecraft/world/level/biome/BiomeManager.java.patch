@@ -272,7 +272,7 @@
      private static double getFiddle(final long rval) {
 -        return (double)(((rval >> 24) & (1024 - 1)) - (1024/2)) * (0.9 / 1024.0); // Paper - avoid floorMod, fp division, and fp subtraction
 +        // Gale start - Pre-compute - BiomeManager.getFiddle()
-+        return PRECOMPUTED_FIDDLE_TABLE[(int) (rval >>> 24) & 1023];
++        return PRECOMPUTED_FIDDLE_TABLE[(int) (rval >> 24) & 1023];
 +    }
 +
 +    private static final double[] PRECOMPUTED_FIDDLE_TABLE = new double[1024];
