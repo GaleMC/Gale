@@ -1,103 +1,57 @@
-<!--<div align=center>
-    <img src="logo.png" width="150" alt="Gale logo">
-    <h1>Gale</h1>
-    <br><br>
-    <p>A higher-performance <a href="https://github.com/PaperMC/Paper">Paper</a> fork</p>
-    <a href="https://discord.gg/gwezNT8c24"><img alt="Discord" src="https://img.shields.io/discord/1045402468416233592?color=5865F2&label=discord&style=for-the-badge"></a>
-</div>-->
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="logo.png">
+    <img src="logo.png" width="130" alt="Gale">
+  </picture>
+</p>
 
-<table>
-    <tr>
-        <td>
-            <div align="center">
-              <h1>Gale</h1>
-              <p>High-performance <a href="https://github.com/PaperMC/Paper">Paper</a> fork<br>without behavioral changes</p>
-                <a href="https://discord.gg/gwezNT8c24"><img alt="Discord" src="https://img.shields.io/discord/1045402468416233592?color=5865F2&label=discord&style=for-the-badge"></a>
-                <a href="https://github.com/GaleMC/Gale/releases"><img alt="Latest build" src="https://img.shields.io/badge/Latest_build-26.2-519e24?style=for-the-badge"></a>
-            </div>
-            <img width="627">
-        </td>
-        <td>
-            <img src="logo.png" alt="Gale logo" align="right" width="210">
-        </td>
-    </tr>
-</table>
+<h1 align="center">Gale</h1>
 
-<!-- <img src="logo.png" alt="Gale logo" align="right" width="210">
-![Discord](https://img.shields.io/discord/1045402468416233592?color=5865F2&label=discord&style=for-the-badge)](https://discord.gg/gwezNT8c24) -->
+<p align="center">
+  <b>A higher-performance <a href="https://github.com/PaperMC/Paper">Paper</a> fork without behavioral changes</b>
+</p>
 
-<!-- <img src="logo.png" alt="Gale logo" align="right" width="26%">
-<div align="center">
-  <h1>Gale💨</h1>-->
-  <!-- <h3>The fast Paper fork that is suitable for every server</h3> -->
-  <!-- <h3>The faster Paper fork that is suitable for everyone:<br>same server, better engine.</h3> -->
-  <!-- <h3>The faster Paper fork that is suitable for every server:<br>same server, better engine.</h3> -->
-  <!-- <h3>The faster Paper fork that for every server:<br>same server, better engine.</h3> -->
-  <!--<h3>The high-performance Paper fork<br>for everyone</h3>-->
-  <!--<h3>High-performance Paper fork<br>without any gameplay or behavior changes</h3>-->
-  <!--<h3>High-performance Paper fork<br>without any changes to behavior</h3>-->
-  <!-- <h3>Pure high-performance Paper fork</h3> -->
-  <!-- <h3>High-performance pure Paper fork</h3> -->
-  <!-- <h3>Run the same Paper server with better performance!</h3> -->
-  <!--<h3>A faster Paper server:<br>the easiest server upgrade you'll ever make</h3>-->
-  <!--<h3>Do you use Paper? You can do even better!</h3>-->
-  <!--<h3>Paper but faster 💨</h3>-->
+<p align="center">
+  <a href="https://discord.gg/gwezNT8c24"><img src="https://img.shields.io/discord/1045402468416233592?color=5865F2&label=discord&logo=discord&style=flat-square" alt="Discord"></a>
+  <a href="https://github.com/GaleMC/Gale/releases"><img src="https://img.shields.io/github/v/release/GaleMC/Gale?style=flat-square&label=latest%20build" alt="Latest build"></a>
+  <a href="https://github.com/GaleMC/Gale/blob/main/LICENSE.md"><img src="https://img.shields.io/github/license/GaleMC/Gale?style=flat-square" alt="License"></a>
+</p>
 
-<!--[![Discord]()](https://discord.gg/gwezNT8c24)
-[![Latest version]()]()
-</div>-->
+---
 
 ## About
 
-<!--Gale provides higher performance than Paper, without other changes.-->
-Gale is a drop-in alternative for Paper, that provides higher performance without other changes.
+Gale is a drop-in alternative for Paper that provides higher performance without any behavioral changes. Just swap your server jar and you're done.
 
-&nbsp;&nbsp;&nbsp;&nbsp;✓&nbsp;&nbsp;Faster than Paper, on every server
-<br>
-&nbsp;&nbsp;&nbsp;&nbsp;✓&nbsp;&nbsp;No changes to behavior
-<br>
-&nbsp;&nbsp;&nbsp;&nbsp;✓&nbsp;&nbsp;Stable, reliable and carefully reviewed
+- **Faster** than Paper, on every server
+- **Zero** behavioral changes – all your plugins work exactly as before
+- **Stable** and carefully reviewed, no risky experiments
 
-<!--&nbsp;&nbsp;&nbsp;&nbsp;✓&nbsp;&nbsp;Faster than Paper, on every server
-<br>
-&nbsp;&nbsp;&nbsp;&nbsp;✓&nbsp;&nbsp;No changes to behavior
-<br>
-&nbsp;&nbsp;&nbsp;&nbsp;✓&nbsp;&nbsp;Stable, reliable and carefully reviewed-->
-<!-- - Changes are carefully reviewed and verified-->
-<!--, verified line-by-line and tested in production\
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(no risky or unnecessary features)-->
-<!--<br>-->
-<!--&nbsp;&nbsp;&nbsp;&nbsp;✓&nbsp;&nbsp;-->
-<!--Full parity - --><!--No changes to behavior--><!--plugin/game behavior-->
-<!--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(suitable for every server)-->
-
-Gale contains [dozens](Features.md) of performance improvements.
+Gale contains [dozens of performance improvements](Features.md), including SIMD-accelerated operations, virtual thread usage, and extensive caching.
 
 ## Server owners
 
-<!--As easy as it gets!-->
-<!--We made it easy!-->
-1. [Download the `.jar`](https://github.com/GaleMC/Gale/releases)
-1. Point to the `.jar` in your start script\
-   (replace `paper-<version>.jar` with `gale-<version>.jar`)
+1. [Download the latest `.jar`](https://github.com/GaleMC/Gale/releases)
+2. Point to it in your start script – replace `paper-<version>.jar` with `gale-<version>.jar`
+
+That's it. No configuration changes needed.
 
 ## Developers
 
 Building from source:
 
-* `./gradlew applyAllPatches`
-* `./gradlew :gale-server:createPaperclipJar`
+```
+./gradlew applyAllPatches
+./gradlew :gale-server:createPaperclipJar
+```
 
-Pull requests are welcomed! See the [guidelines](CONTRIBUTING.md).
+Pull requests are welcome! See the [contributing guidelines](CONTRIBUTING.md).
 
 ## Acknowledgements
 
-Built on [Paper](https://papermc.io/),
-[Spigot](https://www.spigotmc.org/) and
-[Bukkit](https://bukkit.org/).
+Built on [Paper](https://papermc.io/), [Spigot](https://www.spigotmc.org/) and [Bukkit](https://bukkit.org/).
 
-If you want further features or optimizations that change some behavior,
-consider [Leaf](https://www.leafmc.one/).
+If you want features or optimizations that change behavior, check out [Leaf](https://www.leafmc.one/).
 
 ### Authors and contributors
 
