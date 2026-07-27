@@ -1,13 +1,37 @@
 --- a/net/minecraft/world/level/levelgen/NoiseBasedChunkGenerator.java
 +++ b/net/minecraft/world/level/levelgen/NoiseBasedChunkGenerator.java
-@@ -58,6 +_,7 @@
+@@ -58,3 +_,5 @@
      private static final BlockState AIR = Blocks.AIR.defaultBlockState();
      private final Holder<NoiseGeneratorSettings> settings;
      private final Supplier<Aquifer.FluidPicker> globalFluidPicker;
++    private final org.galemc.gale.util.function.MemoizedBooleanSupplier hasCarvers; // Gale - Cache - NoiseBasedChunkGenerator.applyCarvers()
 +    private int cachedSeaLevel = Integer.MIN_VALUE; // Gale - Cache - NoiseBasedChunkGenerator.getSeaLevel()
- 
+
+@@ -62,5 +_,10 @@
      public NoiseBasedChunkGenerator(final BiomeSource biomeSource, final Holder<NoiseGeneratorSettings> settings) {
          super(biomeSource);
+         this.settings = settings;
+         this.globalFluidPicker = Suppliers.memoize(() -> createFluidPicker(settings.value()));
++        // Gale start - Cache - NoiseBasedChunkGenerator.applyCarvers()
++        this.hasCarvers = new org.galemc.gale.util.function.MemoizedBooleanSupplier(
++            () -> biomeSource.possibleBiomes().stream().anyMatch(biome -> this.generationSettingsGetter.apply(biome).getCarvers().iterator().hasNext())
++        );
++        // Gale end - Cache - NoiseBasedChunkGenerator.applyCarvers()
+     }
+@@ -310,6 +_,13 @@
+         final ChunkAccess chunk
+     ) {
+         if (!SharedConstants.DEBUG_DISABLE_CARVERS) {
++            // Gale start - Local code optimization - NoiseBasedChunkGenerator.applyCarvers() - Skip empty carver passes
++            if (!this.hasCarvers.getAsBoolean()) {
++                RandomSupport.generateUniqueSeed();
++                ((ProtoChunk)chunk).getOrCreateCarvingMask();
++                return;
++            }
++            // Gale end - Local code optimization - NoiseBasedChunkGenerator.applyCarvers() - Skip empty carver passes
+             BiomeManager correctBiomeManager = biomeManager.withDifferentSource(
+                 (quartX, quartY, quartZ) -> this.biomeSource.getNoiseBiome(quartX, quartY, quartZ, randomState.sampler())
+             );
 @@ -483,7 +_,12 @@
  
      @Override
