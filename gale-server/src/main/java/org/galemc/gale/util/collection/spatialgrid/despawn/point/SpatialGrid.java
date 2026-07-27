@@ -673,6 +673,6 @@ public abstract class SpatialGrid implements AbstractSpatialGrid {
     @Override
     public double getZ(int slot) { return zs[slot]; }
     @Override
-    public boolean containsKey(int slot) { return slot < this.slotPackedCell.length && this.slotPackedCell[slot] != SLOT_EMPTY; }
+    public boolean containsKey(int slot) { return slot >= 0 && slot < this.slotPackedCell.length && this.slotPackedCell[slot] != SLOT_EMPTY; }
 
 }
