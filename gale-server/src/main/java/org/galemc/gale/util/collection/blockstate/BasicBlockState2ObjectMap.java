@@ -27,7 +27,8 @@ public class BasicBlockState2ObjectMap<V> implements Map<BlockState, V> {
     }
 
     @Override
-    public boolean containsKey(final Object key) { // Relies on caller only to call this after at least one put() call
+    public boolean containsKey(final Object key) {
+        if (this.values == null) return false;
         return this.values[((BlockState) key).indexInRegistry] != null;
     }
 
@@ -37,7 +38,8 @@ public class BasicBlockState2ObjectMap<V> implements Map<BlockState, V> {
     }
 
     @Override
-    public V get(final Object key) { // Relies on caller only to call this after at least one put() call
+    public V get(final Object key) {
+        if (this.values == null) return null;
         return (V) this.values[((BlockState) key).indexInRegistry];
     }
 
