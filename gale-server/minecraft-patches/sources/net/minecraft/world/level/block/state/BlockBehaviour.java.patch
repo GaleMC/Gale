@@ -113,6 +113,25 @@
          }
  
          public boolean shouldChangedStateKeepBlockEntity(final BlockState oldState) {
+@@ -1037,7 +_,15 @@
+         public VoxelShape getCollisionShape(final BlockGetter level, final BlockPos pos) {
+             return this.cache != null ? this.cache.collisionShape : this.getCollisionShape(level, pos, CollisionContext.empty());
+         }
+ 
+         public VoxelShape getCollisionShape(final BlockGetter level, final BlockPos pos, final CollisionContext context) {
+-            return this.getBlock().getCollisionShape(this.asState(), level, pos, context);
++            if (context == CollisionContext.empty()) {
++                VoxelShape cached = org.galemc.gale.util.CollisionShapeCache.getCachedCollisionShape(this.asState());
++                if (cached != null) {
++                    return cached;
++                }
++            }
++            VoxelShape shape = this.getBlock().getCollisionShape(this.asState(), level, pos, context);
++            if (context == CollisionContext.empty()) {
++                org.galemc.gale.util.CollisionShapeCache.setCachedCollisionShape(this.asState(), shape);
++            }
++            return shape;
+         }
 @@ -1447,6 +_,18 @@
      public interface StateArgumentPredicate<A> {
          boolean test(BlockState state, BlockGetter level, BlockPos pos, A a);
