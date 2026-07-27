@@ -2,55 +2,38 @@ package org.galemc.gale.util;
 
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 public final class CollisionShapeCache {
 
-    private static VoxelShape[] cache;
-    private static boolean[] uncacheable;
-    private static volatile boolean precomputed;
-    private static final ThreadLocal<Boolean> precomputing = ThreadLocal.withInitial(() -> false);
-
-    private static void precompute() {
-        if (precomputed) {
-            return;
-        }
-        synchronized (CollisionShapeCache.class) {
-            if (precomputed) {
-                return;
-            }
-            precomputing.set(true);
-            try {
-                int size = Block.BLOCK_STATE_REGISTRY.size();
-                cache = new VoxelShape[size];
-                uncacheable = new boolean[size];
-                for (BlockState state : Block.BLOCK_STATE_REGISTRY) {
-                    int index = state.indexInRegistry;
-                    try {
-                        cache[index] = state.getCollisionShape(null, null, CollisionContext.empty());
-                    } catch (Exception ignored) {
-                        uncacheable[index] = true;
-                    }
-                }
-                precomputed = true;
-            } finally {
-                precomputing.set(false);
-            }
-        }
-    }
+    private static volatile VoxelShape[] cache;
 
     public static VoxelShape getCachedCollisionShape(BlockState state) {
-        if (precomputing.get()) {
+        VoxelShape[] arr = cache;
+        if (arr == null) {
             return null;
         }
-        if (!precomputed) {
-            precompute();
+        int index = state.indexInRegistry;
+        if (index < 0 || index >= arr.length) {
+            return null;
+        }
+        return arr[index];
+    }
+
+    public static void setCachedCollisionShape(BlockState state, VoxelShape shape) {
+        VoxelShape[] arr = cache;
+        if (arr == null) {
+            synchronized (CollisionShapeCache.class) {
+                arr = cache;
+                if (arr == null) {
+                    int size = Block.BLOCK_STATE_REGISTRY.size();
+                    cache = arr = new VoxelShape[size];
+                }
+            }
         }
         int index = state.indexInRegistry;
-        if (!uncacheable[index]) {
-            return cache[index];
+        if (index >= 0 && index < arr.length) {
+            arr[index] = shape;
         }
-        return null;
     }
 }
