@@ -37,6 +37,7 @@ public abstract class SpatialGrid implements AbstractSpatialGrid {
     protected int[] ovSlot;
     private int ovCapacity;
     private int ovSize;
+    private int ovFreeHead = -1;
 
     // per-slot SoA
     protected double[] xs, ys, zs;
@@ -147,6 +148,13 @@ public abstract class SpatialGrid implements AbstractSpatialGrid {
     // ---------------- overflow pool ----------------
 
     private int allocOverflowNode(int slot) {
+        if (ovFreeHead != -1) {
+            int idx = ovFreeHead;
+            ovFreeHead = ovNext[idx];
+            ovSlot[idx] = slot;
+            ovNext[idx] = -1;
+            return idx;
+        }
         if (ovSize >= ovCapacity) {
             int ncap = ovCapacity + (ovCapacity >> 1);
             int[] nn = new int[ncap];
@@ -169,6 +177,8 @@ public abstract class SpatialGrid implements AbstractSpatialGrid {
                 int next = ovNext[cur];
                 if (prev == -1) head = next;
                 else ovNext[prev] = next;
+                ovNext[cur] = ovFreeHead;
+                ovFreeHead = cur;
                 return head;
             }
             prev = cur;
@@ -656,6 +666,79 @@ public abstract class SpatialGrid implements AbstractSpatialGrid {
         }
     }
 
+    // ---------------- overflow pool management ----------------
+
+    private int countOverflowFreeList() {
+        int count = 0;
+        int h = ovFreeHead;
+        while (h != -1) {
+            count++;
+            h = ovNext[h];
+        }
+        return count;
+    }
+
+    public void trimOverflow() {
+        int used = ovSize - countOverflowFreeList();
+        if (used < ovSize && used > 0) {
+            int[] nn = new int[used];
+            int[] ns = new int[used];
+            int wi = 0;
+            for (int i = 0; i < ovSize; i++) {
+                int h = ovFreeHead;
+                boolean freed = false;
+                while (h != -1) {
+                    if (h == i) { freed = true; break; }
+                    h = ovNext[h];
+                }
+                if (!freed) {
+                    nn[wi] = ovNext[i];
+                    ns[wi] = ovSlot[i];
+                    wi++;
+                }
+            }
+            ovNext = nn; ovSlot = ns;
+            ovCapacity = used;
+            ovSize = used;
+            ovFreeHead = -1;
+        } else if (ovCapacity > ovSize && ovSize > 0) {
+            int ncap = ovSize;
+            ovNext = Arrays.copyOf(ovNext, ncap);
+            ovSlot = Arrays.copyOf(ovSlot, ncap);
+            ovCapacity = ncap;
+        }
+    }
+
+    // ---------------- slot array management ----------------
+
+    public void trimSlots() {
+        int needed = everAllocatedSlotCount;
+        if (needed <= 0) needed = 1;
+        if (capacity > needed) {
+            xs = Arrays.copyOf(xs, needed);
+            ys = Arrays.copyOf(ys, needed);
+            zs = Arrays.copyOf(zs, needed);
+            slotPackedCell = Arrays.copyOf(slotPackedCell, needed);
+            freeNext = Arrays.copyOf(freeNext, needed);
+            capacity = needed;
+        }
+    }
+
+    public void compact() {
+        trimOverflow();
+        trimSlots();
+    }
+
+    // ---------------- iteration ----------------
+
+    public void forEachSlot(java.util.function.IntConsumer action) {
+        for (int s = 0; s < everAllocatedSlotCount; s++) {
+            if (slotPackedCell[s] != SLOT_EMPTY) {
+                action.accept(s);
+            }
+        }
+    }
+
     // ---------------- accessors ----------------
 
     @Override
@@ -667,11 +750,11 @@ public abstract class SpatialGrid implements AbstractSpatialGrid {
     public double getW() { return W; }
     public double getH() { return H; }
     @Override
-    public double getX(int slot) { return xs[slot]; }
+    public double getX(int slot) { return slot >= 0 && slot < capacity ? xs[slot] : 0.0; }
     @Override
-    public double getY(int slot) { return ys[slot]; }
+    public double getY(int slot) { return slot >= 0 && slot < capacity ? ys[slot] : 0.0; }
     @Override
-    public double getZ(int slot) { return zs[slot]; }
+    public double getZ(int slot) { return slot >= 0 && slot < capacity ? zs[slot] : 0.0; }
     @Override
     public boolean containsKey(int slot) { return slot >= 0 && slot < this.slotPackedCell.length && this.slotPackedCell[slot] != SLOT_EMPTY; }
 
