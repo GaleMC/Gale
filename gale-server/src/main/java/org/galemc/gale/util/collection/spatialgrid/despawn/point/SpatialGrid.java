@@ -37,6 +37,7 @@ public abstract class SpatialGrid implements AbstractSpatialGrid {
     protected int[] ovSlot;
     private int ovCapacity;
     private int ovSize;
+    private int ovFreeHead = -1;
 
     // per-slot SoA
     protected double[] xs, ys, zs;
@@ -147,6 +148,13 @@ public abstract class SpatialGrid implements AbstractSpatialGrid {
     // ---------------- overflow pool ----------------
 
     private int allocOverflowNode(int slot) {
+        if (ovFreeHead != -1) {
+            int idx = ovFreeHead;
+            ovFreeHead = ovNext[idx];
+            ovSlot[idx] = slot;
+            ovNext[idx] = -1;
+            return idx;
+        }
         if (ovSize >= ovCapacity) {
             int ncap = ovCapacity + (ovCapacity >> 1);
             int[] nn = new int[ncap];
@@ -169,6 +177,8 @@ public abstract class SpatialGrid implements AbstractSpatialGrid {
                 int next = ovNext[cur];
                 if (prev == -1) head = next;
                 else ovNext[prev] = next;
+                ovNext[cur] = ovFreeHead;
+                ovFreeHead = cur;
                 return head;
             }
             prev = cur;
@@ -656,6 +666,46 @@ public abstract class SpatialGrid implements AbstractSpatialGrid {
         }
     }
 
+    // ---------------- overflow pool management ----------------
+
+    public void trimOverflow() {
+        if (ovCapacity > ovSize) {
+            ovNext = Arrays.copyOf(ovNext, ovSize);
+            ovSlot = Arrays.copyOf(ovSlot, ovSize);
+            ovCapacity = ovSize;
+        }
+    }
+
+    // ---------------- slot array management ----------------
+
+    public void trimSlots() {
+        int needed = everAllocatedSlotCount;
+        if (needed <= 0) needed = 1;
+        if (capacity > needed) {
+            xs = Arrays.copyOf(xs, needed);
+            ys = Arrays.copyOf(ys, needed);
+            zs = Arrays.copyOf(zs, needed);
+            slotPackedCell = Arrays.copyOf(slotPackedCell, needed);
+            freeNext = Arrays.copyOf(freeNext, needed);
+            capacity = needed;
+        }
+    }
+
+    public void compact() {
+        trimOverflow();
+        trimSlots();
+    }
+
+    // ---------------- iteration ----------------
+
+    public void forEachSlot(java.util.function.IntConsumer action) {
+        for (int s = 0; s < everAllocatedSlotCount; s++) {
+            if (slotPackedCell[s] != SLOT_EMPTY) {
+                action.accept(s);
+            }
+        }
+    }
+
     // ---------------- accessors ----------------
 
     @Override
@@ -667,11 +717,11 @@ public abstract class SpatialGrid implements AbstractSpatialGrid {
     public double getW() { return W; }
     public double getH() { return H; }
     @Override
-    public double getX(int slot) { return xs[slot]; }
+    public double getX(int slot) { return slot >= 0 && slot < capacity ? xs[slot] : Double.NaN; }
     @Override
-    public double getY(int slot) { return ys[slot]; }
+    public double getY(int slot) { return slot >= 0 && slot < capacity ? ys[slot] : Double.NaN; }
     @Override
-    public double getZ(int slot) { return zs[slot]; }
+    public double getZ(int slot) { return slot >= 0 && slot < capacity ? zs[slot] : Double.NaN; }
     @Override
     public boolean containsKey(int slot) { return slot >= 0 && slot < this.slotPackedCell.length && this.slotPackedCell[slot] != SLOT_EMPTY; }
 
