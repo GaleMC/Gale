@@ -29,6 +29,7 @@ public class BasicBlockState2ObjectMap<V> implements Map<BlockState, V> {
     @Override
     public boolean containsKey(final Object key) {
         if (this.values == null) return false;
+        if (!(key instanceof BlockState)) return false;
         return this.values[((BlockState) key).indexInRegistry] != null;
     }
 
@@ -40,6 +41,7 @@ public class BasicBlockState2ObjectMap<V> implements Map<BlockState, V> {
     @Override
     public V get(final Object key) {
         if (this.values == null) return null;
+        if (!(key instanceof BlockState)) return null;
         return (V) this.values[((BlockState) key).indexInRegistry];
     }
 
