@@ -668,44 +668,11 @@ public abstract class SpatialGrid implements AbstractSpatialGrid {
 
     // ---------------- overflow pool management ----------------
 
-    private int countOverflowFreeList() {
-        int count = 0;
-        int h = ovFreeHead;
-        while (h != -1) {
-            count++;
-            h = ovNext[h];
-        }
-        return count;
-    }
-
     public void trimOverflow() {
-        int used = ovSize - countOverflowFreeList();
-        if (used < ovSize && used > 0) {
-            int[] nn = new int[used];
-            int[] ns = new int[used];
-            int wi = 0;
-            for (int i = 0; i < ovSize; i++) {
-                int h = ovFreeHead;
-                boolean freed = false;
-                while (h != -1) {
-                    if (h == i) { freed = true; break; }
-                    h = ovNext[h];
-                }
-                if (!freed) {
-                    nn[wi] = ovNext[i];
-                    ns[wi] = ovSlot[i];
-                    wi++;
-                }
-            }
-            ovNext = nn; ovSlot = ns;
-            ovCapacity = used;
-            ovSize = used;
-            ovFreeHead = -1;
-        } else if (ovCapacity > ovSize && ovSize > 0) {
-            int ncap = ovSize;
-            ovNext = Arrays.copyOf(ovNext, ncap);
-            ovSlot = Arrays.copyOf(ovSlot, ncap);
-            ovCapacity = ncap;
+        if (ovCapacity > ovSize) {
+            ovNext = Arrays.copyOf(ovNext, ovSize);
+            ovSlot = Arrays.copyOf(ovSlot, ovSize);
+            ovCapacity = ovSize;
         }
     }
 
@@ -750,11 +717,11 @@ public abstract class SpatialGrid implements AbstractSpatialGrid {
     public double getW() { return W; }
     public double getH() { return H; }
     @Override
-    public double getX(int slot) { return slot >= 0 && slot < capacity ? xs[slot] : 0.0; }
+    public double getX(int slot) { return slot >= 0 && slot < capacity ? xs[slot] : Double.NaN; }
     @Override
-    public double getY(int slot) { return slot >= 0 && slot < capacity ? ys[slot] : 0.0; }
+    public double getY(int slot) { return slot >= 0 && slot < capacity ? ys[slot] : Double.NaN; }
     @Override
-    public double getZ(int slot) { return slot >= 0 && slot < capacity ? zs[slot] : 0.0; }
+    public double getZ(int slot) { return slot >= 0 && slot < capacity ? zs[slot] : Double.NaN; }
     @Override
     public boolean containsKey(int slot) { return slot >= 0 && slot < this.slotPackedCell.length && this.slotPackedCell[slot] != SLOT_EMPTY; }
 
