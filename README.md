@@ -66,7 +66,7 @@ If you want features or optimizations that change behavior, check out [Leaf](htt
   <a href="https://github.com/noramibu"><img src="https://github.com/noramibu.png?size=80" width="45" height="45" style="border-radius: 50%; object-fit: cover;" alt="noramibu" title="noramibu"/></a>
   <a href="https://github.com/nostalfinals"><img src="https://github.com/nostalfinals.png?size=80" width="45" height="45" style="border-radius: 50%; object-fit: cover;" alt="Nostal Yuu" title="Nostal Yuu"/></a>
   <a href="https://github.com/OverwriteMC"><img src="https://github.com/OverwriteMC.png?size=80" width="45" height="45" style="border-radius: 50%; object-fit: cover;" alt="OverwriteMC" title="OverwriteMC"/></a>
-  <a href="https://github.com/RuleGaed"><img src="https://github.com/RuleGaed.png?size=80" width="45" height="45" style="border-radius: 50%; object-fit: cover;" alt="RuleGaed" title="RuleGaed"/></a>
+  <a href="https://github.com/RuleGaed"><img src="https://github.com/Nrleryxx.png?size=80" width="45" height="45" style="border-radius: 50%; object-fit: cover;" alt="RuleGaed" title="RuleGaed"/></a>
   <a href="https://github.com/Smorki"><img src="https://github.com/Smorki.png?size=80" width="45" height="45" style="border-radius: 50%; object-fit: cover;" alt="Smorki" title="Smorki"/></a>
   <a href="https://github.com/Taiyou06"><img src="https://github.com/Taiyou06.png?size=80" width="45" height="45" style="border-radius: 50%; object-fit: cover;" alt="Taiyou" title="Taiyou"/></a>
   <a href="https://github.com/toprakdevx"><img src="https://github.com/toprakdevx.png?size=80" width="45" height="45" style="border-radius: 50%; object-fit: cover;" alt="Toprak" title="Toprak"/></a>
