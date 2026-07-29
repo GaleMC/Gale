@@ -35,10 +35,10 @@ public final class EllipsoidSpatialGrid extends SpatialGrid {
                     if (!aabbIntersectsEllipsoid(idx, cxD, cyD, czD)) continue;
                     int cnt = inlineCount[idx];
                     if (cnt > 0) {
-                        if (inline0[idx] != -1 && pointInEllipsoidSlot(inline0[idx], cxD, cyD, czD)) return inline0[idx];
-                        if (cnt >= 2 && inline1[idx] != -1 && pointInEllipsoidSlot(inline1[idx], cxD, cyD, czD)) return inline1[idx];
-                        if (cnt >= 3 && inline2[idx] != -1 && pointInEllipsoidSlot(inline2[idx], cxD, cyD, czD)) return inline2[idx];
-                        if (cnt >= 4 && inline3[idx] != -1 && pointInEllipsoidSlot(inline3[idx], cxD, cyD, czD)) return inline3[idx];
+                        if (pointInEllipsoidSlot(inline0[idx], cxD, cyD, czD)) return inline0[idx];
+                        if (cnt >= 2 && pointInEllipsoidSlot(inline1[idx], cxD, cyD, czD)) return inline1[idx];
+                        if (cnt >= 3 && pointInEllipsoidSlot(inline2[idx], cxD, cyD, czD)) return inline2[idx];
+                        if (cnt >= 4 && pointInEllipsoidSlot(inline3[idx], cxD, cyD, czD)) return inline3[idx];
                     }
                     int h = overflowHead[idx];
                     while (h != -1) {
@@ -68,29 +68,27 @@ public final class EllipsoidSpatialGrid extends SpatialGrid {
                     if (!aabbIntersectsEllipsoid(idx, cxD, cyD, czD)) continue;
                     int cnt = inlineCount[idx];
                     if (cnt > 0) {
-                        if (inline0[idx] != -1) {
-                            int s = inline0[idx];
+                        int s = inline0[idx];
+                        if (pointInEllipsoidSlot(s, cxD, cyD, czD)) {
+                            double dd = dist2SlotToCenter(s, cxD, cyD, czD);
+                            if (dd < best) { best = dd; bestSlot = s; }
+                        }
+                        if (cnt >= 2) {
+                            s = inline1[idx];
                             if (pointInEllipsoidSlot(s, cxD, cyD, czD)) {
                                 double dd = dist2SlotToCenter(s, cxD, cyD, czD);
                                 if (dd < best) { best = dd; bestSlot = s; }
                             }
                         }
-                        if (cnt >= 2 && inline1[idx] != -1) {
-                            int s = inline1[idx];
+                        if (cnt >= 3) {
+                            s = inline2[idx];
                             if (pointInEllipsoidSlot(s, cxD, cyD, czD)) {
                                 double dd = dist2SlotToCenter(s, cxD, cyD, czD);
                                 if (dd < best) { best = dd; bestSlot = s; }
                             }
                         }
-                        if (cnt >= 3 && inline2[idx] != -1) {
-                            int s = inline2[idx];
-                            if (pointInEllipsoidSlot(s, cxD, cyD, czD)) {
-                                double dd = dist2SlotToCenter(s, cxD, cyD, czD);
-                                if (dd < best) { best = dd; bestSlot = s; }
-                            }
-                        }
-                        if (cnt >= 4 && inline3[idx] != -1) {
-                            int s = inline3[idx];
+                        if (cnt >= 4) {
+                            s = inline3[idx];
                             if (pointInEllipsoidSlot(s, cxD, cyD, czD)) {
                                 double dd = dist2SlotToCenter(s, cxD, cyD, czD);
                                 if (dd < best) { best = dd; bestSlot = s; }
@@ -115,7 +113,6 @@ public final class EllipsoidSpatialGrid extends SpatialGrid {
     // ---------------- AABB helpers ----------------
 
     private boolean aabbIntersectsEllipsoid(int idx, double cxD, double cyD, double czD) {
-        if (inlineCount[idx] == 0 && overflowHead[idx] == -1) return false;
         double minx = bMinX[idx], maxx = bMaxX[idx];
         double miny = bMinY[idx], maxy = bMaxY[idx];
         double minz = bMinZ[idx], maxz = bMaxZ[idx];
