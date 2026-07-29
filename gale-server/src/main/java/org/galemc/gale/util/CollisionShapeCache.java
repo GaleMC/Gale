@@ -6,28 +6,22 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 public final class CollisionShapeCache {
 
-    private static volatile VoxelShape[] cache;
+    private static VoxelShape[] cache = new VoxelShape[0];
 
     public static VoxelShape getCachedCollisionShape(BlockState state) {
-        VoxelShape[] arr = cache;
-        if (arr == null) {
-            return null;
-        }
         int index = state.indexInRegistry;
-        if (index < 0 || index >= arr.length) {
-            return null;
-        }
-        return arr[index];
+        return index >= 0 && index < cache.length ? cache[index] : null;
     }
 
     public static void setCachedCollisionShape(BlockState state, VoxelShape shape) {
         VoxelShape[] arr = cache;
-        if (arr == null) {
+        if (arr.length == 0) {
             synchronized (CollisionShapeCache.class) {
                 arr = cache;
-                if (arr == null) {
+                if (arr.length == 0) {
                     int size = Block.BLOCK_STATE_REGISTRY.size();
-                    cache = arr = new VoxelShape[size];
+                    arr = new VoxelShape[size];
+                    cache = arr;
                 }
             }
         }
