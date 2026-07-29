@@ -8,9 +8,12 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 public final class EntityCollectionUtil {
 
-    private static final ThreadLocal<List<Entity>> ENTITY_LIST = ThreadLocal.withInitial(ArrayList::new);
-    private static final ThreadLocal<List<VoxelShape>> VOXEL_SHAPE_LIST = ThreadLocal.withInitial(ArrayList::new);
-    private static final ThreadLocal<List<AABB>> AABB_LIST = ThreadLocal.withInitial(ArrayList::new);
+    private static final int EXPECTED_ENTITIES = 64;
+    private static final int EXPECTED_COLLISIONS = 32;
+
+    private static final ThreadLocal<List<Entity>> ENTITY_LIST = ThreadLocal.withInitial(() -> new ArrayList<>(EXPECTED_ENTITIES));
+    private static final ThreadLocal<List<VoxelShape>> VOXEL_SHAPE_LIST = ThreadLocal.withInitial(() -> new ArrayList<>(EXPECTED_COLLISIONS));
+    private static final ThreadLocal<List<AABB>> AABB_LIST = ThreadLocal.withInitial(() -> new ArrayList<>(EXPECTED_COLLISIONS));
 
     private EntityCollectionUtil() {}
 
