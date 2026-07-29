@@ -11,27 +11,24 @@ public final class EntityCollectionUtil {
     private static final int EXPECTED_ENTITIES = 64;
     private static final int EXPECTED_COLLISIONS = 32;
 
-    private static final ThreadLocal<List<Entity>> ENTITY_LIST = ThreadLocal.withInitial(() -> new ArrayList<>(EXPECTED_ENTITIES));
-    private static final ThreadLocal<List<VoxelShape>> VOXEL_SHAPE_LIST = ThreadLocal.withInitial(() -> new ArrayList<>(EXPECTED_COLLISIONS));
-    private static final ThreadLocal<List<AABB>> AABB_LIST = ThreadLocal.withInitial(() -> new ArrayList<>(EXPECTED_COLLISIONS));
+    private static final List<Entity> ENTITY_LIST = new ArrayList<>(EXPECTED_ENTITIES);
+    private static final List<VoxelShape> VOXEL_SHAPE_LIST = new ArrayList<>(EXPECTED_COLLISIONS);
+    private static final List<AABB> AABB_LIST = new ArrayList<>(EXPECTED_COLLISIONS);
 
     private EntityCollectionUtil() {}
 
     public static List<Entity> getEntityList() {
-        List<Entity> list = ENTITY_LIST.get();
-        list.clear();
-        return list;
+        ENTITY_LIST.clear();
+        return ENTITY_LIST;
     }
 
     public static List<VoxelShape> getVoxelShapeList() {
-        List<VoxelShape> list = VOXEL_SHAPE_LIST.get();
-        list.clear();
-        return list;
+        VOXEL_SHAPE_LIST.clear();
+        return VOXEL_SHAPE_LIST;
     }
 
     public static List<AABB> getAABBList() {
-        List<AABB> list = AABB_LIST.get();
-        list.clear();
-        return list;
+        AABB_LIST.clear();
+        return AABB_LIST;
     }
 }
