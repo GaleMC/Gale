@@ -5,6 +5,16 @@ We welcome contributions! This document outlines the process for contributing to
 Don't be afraid to submit a pull request that you may feel is just for yourself.\
 If submitted pull requests do not meet our standards, we can work together to improve them.
 
+<table><tr><td>
+⚠️ <b>AI submissions</b>
+<br/>
+Do not submit AI code that you can not understand or support yourself.
+<br/>
+Wasting our time with low-effort AI submissions is not appreciated,
+<br/>
+so please make sure you understand and check what you submit.
+</td></tr></table>
+
 ## Getting Started
 
 1. Fork the repository
