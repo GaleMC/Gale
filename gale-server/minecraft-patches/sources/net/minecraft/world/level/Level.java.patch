@@ -288,20 +288,7 @@
          this.tickingBlockEntities = true;
          if (!this.pendingBlockEntityTickers.isEmpty()) {
              this.blockEntityTickers.addAll(this.pendingBlockEntityTickers);
-@@ -1515,4 +_,14 @@
-     }
-     
-+    // Gale start - use thread-local reusable list
-+    @Override
-+    public List<Entity> getEntities(@Nullable Entity except, AABB area) {
-+        List<Entity> list = org.galemc.gale.util.entity.EntityCollectionUtil.getEntityList();
-+        ((ServerLevel)this).getEntityLookup().getEntities(except, area, list, EntitySelector.NO_SPECTATORS);
-+        return list;
-+    }
-+    // Gale end - use thread-local reusable list
-     @Override
-     public List<Entity> getEntities(@Nullable Entity except, AABB box, Predicate<? super Entity> predicate) {
-@@ -2127,6 +_,13 @@
+@@ -2127,6 +_,22 @@
      public BiomeManager getBiomeManager() {
          return this.biomeManager;
      }
@@ -313,5 +300,14 @@
 +    }
 +    // Gale end - Cache - BiomeManager.getBiome()
  
++    // Gale start - use reusable entity list
++    @Override
++    public List<Entity> getEntities(@Nullable Entity except, AABB area) {
++        List<Entity> list = org.galemc.gale.util.entity.EntityCollectionUtil.getEntityList();
++        ((ServerLevel)this).getEntityLookup().getEntities(except, area, list, EntitySelector.NO_SPECTATORS);
++        return list;
++    }
++    // Gale end - use reusable entity list
      public final boolean isDebug() {
          return this.isDebug;
+
