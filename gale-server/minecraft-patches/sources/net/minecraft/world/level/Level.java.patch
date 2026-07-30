@@ -304,7 +304,7 @@
 +    @Override
 +    public List<Entity> getEntities(@Nullable Entity except, AABB area) {
 +        List<Entity> list = org.galemc.gale.util.entity.EntityCollectionUtil.getEntityList();
-+        ((ServerLevel)this).getEntityLookup().getEntities(except, area, list, EntitySelector.NO_SPECTATORS);
++        this.getEntities().getEntities(net.minecraft.world.level.entity.EntityTypeTest.forClass(Entity.class), area, EntitySelector.NO_SPECTATORS, list, Integer.MAX_VALUE);
 +        return list;
 +    }
 +    // Gale end - use reusable entity list
