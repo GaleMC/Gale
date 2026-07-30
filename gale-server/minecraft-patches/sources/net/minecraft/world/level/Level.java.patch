@@ -310,4 +310,3 @@
 +    // Gale end - use reusable entity list
      public final boolean isDebug() {
          return this.isDebug;
-
