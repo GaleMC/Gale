@@ -304,7 +304,12 @@
 +    @Override
 +    public List<Entity> getEntities(@Nullable Entity except, AABB area) {
 +        List<Entity> list = org.galemc.gale.util.entity.EntityCollectionUtil.getEntityList();
-+        this.getEntities().get(net.minecraft.world.level.entity.EntityTypeTest.forClass(Entity.class), area, EntitySelector.NO_SPECTATORS, list, Integer.MAX_VALUE);
++        this.getEntities().get(net.minecraft.world.level.entity.EntityTypeTest.forClass(Entity.class), area, (net.minecraft.util.AbortableIterationConsumer<Entity>) entity -> {
++            if (entity != except && !entity.isSpectator()) {
++                list.add(entity);
++            }
++            return net.minecraft.util.AbortableIterationConsumer.Continuation.CONTINUE;
++        });
 +        return list;
 +    }
 +    // Gale end - use reusable entity list
