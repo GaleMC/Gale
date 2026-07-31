@@ -1,0 +1,150 @@
+--- a/net/minecraft/world/level/BaseSpawner.java
++++ b/net/minecraft/world/level/BaseSpawner.java
+@@ -106,69 +_,81 @@
+                 boolean delay = false;
+                 RandomSource random = level.getRandom();
+                 SpawnData nextSpawnData = this.getOrCreateNextSpawnData(level, random, pos);
+-
++                // Gale start - Do less work - Parse spawn data once per spawner tick instead of once per spawned entity
++                Optional<EntityType<?>> entityType;
++                Optional<Vec3> fixedSpawnPos;
++                try (ProblemReporter.ScopedCollector reporter = new ProblemReporter.ScopedCollector(this::toString, LOGGER)) {
++                    ValueInput input = TagValueInput.create(reporter, level.registryAccess(), nextSpawnData.getEntityToSpawn());
++                    entityType = EntityType.by(input);
++                    if (entityType.isEmpty()) {
++                        this.delay(level, pos);
++                        return;
++                    }
++
++                    fixedSpawnPos = input.read("Pos", Vec3.CODEC);
++                }
++
++                AABB nearbyEntitiesBox = new AABB(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1).inflate(this.spawnRange);
++                // Gale end - Do less work - Parse spawn data once per spawner tick instead of once per spawned entity
+                 for (int c = 0; c < this.spawnCount; c++) {
+-                    try (ProblemReporter.ScopedCollector reporter = new ProblemReporter.ScopedCollector(this::toString, LOGGER)) {
+-                        ValueInput input = TagValueInput.create(reporter, level.registryAccess(), nextSpawnData.getEntityToSpawn());
+-                        Optional<EntityType<?>> entityType = EntityType.by(input);
+-                        if (entityType.isEmpty()) {
+-                            this.delay(level, pos);
+-                            return;
+-                        }
+-
+-                        Vec3 spawnPos = input.read("Pos", Vec3.CODEC)
+-                            .orElseGet(
+-                                () -> new Vec3(
+-                                    pos.getX() + (random.nextDouble() - random.nextDouble()) * this.spawnRange + 0.5,
+-                                    pos.getY() + random.nextInt(3) - 1,
+-                                    pos.getZ() + (random.nextDouble() - random.nextDouble()) * this.spawnRange + 0.5
+-                                )
+-                            );
+-                        if (level.noCollision(entityType.get().getSpawnAABB(spawnPos.x, spawnPos.y, spawnPos.z))) {
+-                            BlockPos spawnBlockPos = BlockPos.containing(spawnPos);
+-                            if (nextSpawnData.getCustomSpawnRules().isPresent()) {
+-                                if (!entityType.get().getCategory().isFriendly() && level.getDifficulty() == Difficulty.PEACEFUL) {
+-                                    continue;
+-                                }
+-
+-                                SpawnData.CustomSpawnRules customSpawnRules = nextSpawnData.getCustomSpawnRules().get();
+-                                if (!customSpawnRules.isValidPosition(spawnBlockPos, level)) {
+-                                    continue;
+-                                }
+-                            } else if (!SpawnPlacements.checkSpawnRules(entityType.get(), level, EntitySpawnReason.SPAWNER, spawnBlockPos, level.getRandom())) {
+-                                continue;
+-                            }
+-
+-                            // Paper start - PreCreatureSpawnEvent
+-                            com.destroystokyo.paper.event.entity.PreSpawnerSpawnEvent event = new com.destroystokyo.paper.event.entity.PreSpawnerSpawnEvent(
+-                                org.bukkit.craftbukkit.util.CraftLocation.toBukkit(spawnPos, level),
+-                                org.bukkit.craftbukkit.entity.CraftEntityType.minecraftToBukkit(entityType.get()),
+-                                org.bukkit.craftbukkit.util.CraftLocation.toBukkit(pos, level)
+-                            );
+-                            if (!event.callEvent()) {
+-                                delay = true;
+-                                if (event.shouldAbortSpawn()) {
+-                                    break;
+-                                }
+-                                continue;
+-                            }
+-                            // Paper end - PreCreatureSpawnEvent
+-
+-                            Entity entity = EntityType.loadEntityRecursive(input, level, EntitySpawnReason.SPAWNER, e -> {
++                    Vec3 spawnPos = fixedSpawnPos.orElseGet(
++                        () -> new Vec3(
++                            pos.getX() + (random.nextDouble() - random.nextDouble()) * this.spawnRange + 0.5,
++                            pos.getY() + random.nextInt(3) - 1,
++                            pos.getZ() + (random.nextDouble() - random.nextDouble()) * this.spawnRange + 0.5
++                        )
++                    );
++                    if (level.noCollision(entityType.get().getSpawnAABB(spawnPos.x, spawnPos.y, spawnPos.z))) {
++                        BlockPos spawnBlockPos = BlockPos.containing(spawnPos);
++                        if (nextSpawnData.getCustomSpawnRules().isPresent()) {
++                            if (!entityType.get().getCategory().isFriendly() && level.getDifficulty() == Difficulty.PEACEFUL) {
++                                continue;
++                            }
++
++                            SpawnData.CustomSpawnRules customSpawnRules = nextSpawnData.getCustomSpawnRules().get();
++                            if (!customSpawnRules.isValidPosition(spawnBlockPos, level)) {
++                                continue;
++                            }
++                        } else if (!SpawnPlacements.checkSpawnRules(entityType.get(), level, EntitySpawnReason.SPAWNER, spawnBlockPos, level.getRandom())) {
++                            continue;
++                        }
++
++                        // Paper start - PreCreatureSpawnEvent
++                        com.destroystokyo.paper.event.entity.PreSpawnerSpawnEvent event = new com.destroystokyo.paper.event.entity.PreSpawnerSpawnEvent(
++                            org.bukkit.craftbukkit.util.CraftLocation.toBukkit(spawnPos, level),
++                            org.bukkit.craftbukkit.entity.CraftEntityType.minecraftToBukkit(entityType.get()),
++                            org.bukkit.craftbukkit.util.CraftLocation.toBukkit(pos, level)
++                        );
++                        if (!event.callEvent()) {
++                            delay = true;
++                            if (event.shouldAbortSpawn()) {
++                                break;
++                            }
++                            continue;
++                        }
++                        // Paper end - PreCreatureSpawnEvent
++
++                        // Gale start - Do less work - Only entity loading needs a fresh input
++                        Entity entity;
++                        try (ProblemReporter.ScopedCollector reporter = new ProblemReporter.ScopedCollector(this::toString, LOGGER)) {
++                            ValueInput input = TagValueInput.create(reporter, level.registryAccess(), nextSpawnData.getEntityToSpawn());
++                            entity = EntityType.loadEntityRecursive(input, level, EntitySpawnReason.SPAWNER, e -> {
+                                 e.snapTo(spawnPos.x, spawnPos.y, spawnPos.z, e.getYRot(), e.getXRot());
+                                 return e;
+                             });
+-                            if (entity == null) {
+-                                this.delay(level, pos);
+-                                return;
+-                            }
++                        }
++                        // Gale end - Do less work - Only entity loading needs a fresh input
++                        if (entity == null) {
++                            this.delay(level, pos);
++                            return;
++                        }
+ 
+-                            int nearBy = level.getEntities(
+-                                    EntityTypeTest.forExactClass(entity.getClass()),
+-                                    new AABB(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1).inflate(this.spawnRange),
+-                                    EntitySelector.NO_SPECTATORS
+-                                )
+-                                .size();
++                        int nearBy = level.getEntities(
++                                EntityTypeTest.forExactClass(entity.getClass()),
++                                nearbyEntitiesBox, // Gale - Do less work - Hoist nearby entity query box out of the spawn loop
++                                EntitySelector.NO_SPECTATORS
++                            )
++                            .size();
+                             if (nearBy >= this.maxNearbyEntities) {
+                                 this.delay(level, pos);
+                                 return;
+@@ -217,7 +_,6 @@
+                             // delay = true; // Paper - moved up above cancellable event
+                         }
+                     }
+-                }
+ 
+                 if (delay) {
+                     this.delay(level, pos);

@@ -1,0 +1,47 @@
+--- a/net/minecraft/world/level/gameevent/EuclideanGameEventListenerRegistry.java
++++ b/net/minecraft/world/level/gameevent/EuclideanGameEventListenerRegistry.java
+@@ -4,7 +_,6 @@
+ import com.google.common.collect.Sets;
+ import java.util.Iterator;
+ import java.util.List;
+-import java.util.Optional;
+ import java.util.Set;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.Holder;
+@@ -88,11 +_,15 @@
+                 if (this.listenersToRemove.remove(listener)) {
+                     iterator.remove();
+                 } else {
+-                    Optional<Vec3> optionalPosition = getPostableListenerPosition(this.level, sourcePosition, listener);
+-                    if (optionalPosition.isPresent()) {
+-                        action.visit(listener, optionalPosition.get());
++                    // Gale start - Do less work - Inline the range check to avoid Optional allocations per listener per event
++                    Vec3 listenerPosition = listener.getListenerSource().getPosition(this.level).orElse(null);
++                    if (listenerPosition != null
++                        && BlockPos.containing(listenerPosition).distSqr(BlockPos.containing(sourcePosition))
++                            <= (long) listener.getListenerRadius() * listener.getListenerRadius()) {
++                        action.visit(listener, listenerPosition);
+                         applicable = true;
+                     }
++                    // Gale end - Do less work - Inline the range check to avoid Optional allocations per listener per event
+                 }
+             }
+         } finally {
+@@ -110,17 +_,6 @@
+         }
+ 
+         return applicable;
+-    }
+-
+-    private static Optional<Vec3> getPostableListenerPosition(final ServerLevel level, final Vec3 sourcePosition, final GameEventListener listener) {
+-        Optional<Vec3> position = listener.getListenerSource().getPosition(level);
+-        if (position.isEmpty()) {
+-            return Optional.empty();
+-        }
+-
+-        double distanceFromOrigin = BlockPos.containing(position.get()).distSqr(BlockPos.containing(sourcePosition));
+-        int radiusSqr = listener.getListenerRadius() * listener.getListenerRadius();
+-        return distanceFromOrigin > radiusSqr ? Optional.empty() : position;
+     }
+ 
+     @FunctionalInterface

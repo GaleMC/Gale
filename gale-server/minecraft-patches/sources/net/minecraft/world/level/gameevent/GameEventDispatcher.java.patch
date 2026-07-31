@@ -1,0 +1,107 @@
+--- a/net/minecraft/world/level/gameevent/GameEventDispatcher.java
++++ b/net/minecraft/world/level/gameevent/GameEventDispatcher.java
+@@ -1,5 +_,6 @@
+ package net.minecraft.world.level.gameevent;
+ 
++import com.google.common.collect.Lists;
+ import java.util.ArrayList;
+ import java.util.Collections;
+ import java.util.List;
+@@ -13,6 +_,13 @@
+ import net.minecraft.world.phys.Vec3;
+ 
+ public class GameEventDispatcher {
++    // Gale start - Do less work - Reuse a single visitor instance and dispatch list across event posts
++    private final List<GameEvent.ListenerInfo> eventsToDispatch = Lists.newArrayList();
++    private final GameEventListenerRegistry.ListenerVisitor visitor = this::visitListener;
++    private Holder<GameEvent> gameEvent;
++    private Vec3 position;
++    private GameEvent.Context context;
++    // Gale end - Do less work - Reuse a single visitor instance and dispatch list across event posts
+     private final ServerLevel level;
+ 
+     public GameEventDispatcher(final ServerLevel level) {
+@@ -37,30 +_,34 @@
+         int sectionMaxX = SectionPos.blockToSectionCoord(center.getX() + radius);
+         int sectionMaxY = SectionPos.blockToSectionCoord(center.getY() + radius);
+         int sectionMaxZ = SectionPos.blockToSectionCoord(center.getZ() + radius);
+-        List<GameEvent.ListenerInfo> toHandleByDistance = new ArrayList<>();
+-        GameEventListenerRegistry.ListenerVisitor visitListeners = (listener, pos) -> {
+-            if (listener.getDeliveryMode() == GameEventListener.DeliveryMode.BY_DISTANCE) {
+-                toHandleByDistance.add(new GameEvent.ListenerInfo(gameEvent, position, context, listener, pos));
+-            } else {
+-                listener.handleGameEvent(this.level, gameEvent, context, position);
+-            }
+-        };
++        // Gale start - Do less work - Reuse the visitor and dispatch list instead of allocating per post
++        Holder<GameEvent> prevGameEvent = this.gameEvent;
++        Vec3 prevPosition = this.position;
++        GameEvent.Context prevContext = this.context;
++        this.gameEvent = gameEvent;
++        this.position = position;
++        this.context = context;
+         boolean applicable = false;
+ 
+-        for (int chunkX = sectionMinX; chunkX <= sectionMaxX; chunkX++) {
+-            for (int chunkZ = sectionMinZ; chunkZ <= sectionMaxZ; chunkZ++) {
+-                ChunkAccess chunk = this.level.getChunkIfLoadedImmediately(chunkX, chunkZ); // Paper - Use getChunkIfLoadedImmediately
+-                if (chunk != null) {
+-                    for (int section = sectionMinY; section <= sectionMaxY; section++) {
+-                        applicable |= chunk.getListenerRegistry(section).visitInRangeListeners(gameEvent, position, context, visitListeners);
++        try {
++            for (int chunkX = sectionMinX; chunkX <= sectionMaxX; chunkX++) {
++                for (int chunkZ = sectionMinZ; chunkZ <= sectionMaxZ; chunkZ++) {
++                    ChunkAccess chunk = this.level.getChunkIfLoadedImmediately(chunkX, chunkZ); // Paper - Use getChunkIfLoadedImmediately
++                    if (chunk != null) {
++                        for (int section = sectionMinY; section <= sectionMaxY; section++) {
++                            applicable |= chunk.getListenerRegistry(section).visitInRangeListeners(gameEvent, position, context, this.visitor);
++                        }
+                     }
+                 }
+             }
+-        }
+ 
+-        if (!toHandleByDistance.isEmpty()) {
+-            this.handleGameEventMessagesInQueue(toHandleByDistance);
++            this.dispatchPendingEvents();
++        } finally {
++            this.gameEvent = prevGameEvent;
++            this.position = prevPosition;
++            this.context = prevContext;
+         }
++        // Gale end - Do less work - Reuse the visitor and dispatch list instead of allocating per post
+ 
+         if (applicable) {
+             this.level
+@@ -68,6 +_,31 @@
+                 .broadcastEventToTracking(BlockPos.containing(position), DebugSubscriptions.GAME_EVENTS, new DebugGameEventInfo(gameEvent, position));
+         }
+     }
++
++    // Gale start - Do less work - Reusable visitor entry point
++    private void visitListener(final GameEventListener listener, final Vec3 pos) {
++        if (listener.getDeliveryMode() == GameEventListener.DeliveryMode.BY_DISTANCE) {
++            this.eventsToDispatch.add(new GameEvent.ListenerInfo(this.gameEvent, this.position, this.context, listener, pos));
++        } else {
++            listener.handleGameEvent(this.level, this.gameEvent, this.context, this.position);
++        }
++    }
++
++    private void dispatchPendingEvents() {
++        if (this.eventsToDispatch.isEmpty()) {
++            return;
++        }
++
++        List<GameEvent.ListenerInfo> toHandle = this.eventsToDispatch;
++        this.eventsToDispatch = new ArrayList<>();
++        try {
++            this.handleGameEventMessagesInQueue(toHandle);
++        } finally {
++            toHandle.clear();
++            this.eventsToDispatch = toHandle;
++        }
++    }
++    // Gale end - Do less work - Reusable visitor entry point
+ 
+     private void handleGameEventMessagesInQueue(final List<GameEvent.ListenerInfo> listenerInfos) {
+         Collections.sort(listenerInfos);
