@@ -12,9 +12,9 @@
 </p>
 
 <p align="center">
-  <a href="https://discord.gg/gwezNT8c24"><img src="https://img.shields.io/discord/1045402468416233592?color=5865F2&label=discord&logo=discord&style=flat-square" alt="Discord"></a>
-  <a href="https://github.com/GaleMC/Gale/releases"><img src="https://img.shields.io/github/v/release/GaleMC/Gale?style=flat-square&label=latest%20build" alt="Latest build"></a>
-  <a href="https://github.com/GaleMC/Gale/blob/main/LICENSE.md"><img src="https://img.shields.io/github/license/GaleMC/Gale?style=flat-square" alt="License"></a>
+  <a href="https://discord.gg/gwezNT8c24"><img src="https://img.shields.io/discord/1045402468416233592?color=5865F2&label=Discord&logo=discord&style=flat-square" alt="Discord"></a>
+  <a href="https://galemc.org/api/v2/latest"><img src="https://img.shields.io/badge/Download_latest_release-26.2-informational?style=flat-square" alt="Download latest release"></a>
+  <!--<a href="https://github.com/GaleMC/Gale/blob/main/LICENSE.md"><img src="https://img.shields.io/badge/License-GPL--3.0-lightgray?style=flat-square" alt="License"></a>-->
 </p>
 
 ---
