@@ -74,46 +74,14 @@
              profiler.push("entities");
              if (this.dragonFight != null && runs) {
                  profiler.push("dragonFight");
-@@ -887,9 +_,18 @@
-                     entity -> {
-                         if (!entity.isRemoved()) {
-                             if (!tickRateManager.isEntityFrozen(entity)) {
--                                profiler.push("checkDespawn");
-+                                // Gale start - Do less work - Skip profiler pushes when profiling is inactive
-+                                boolean isProfilerActive = profiler != net.minecraft.util.profiling.InactiveProfiler.INSTANCE;
-+                                if (isProfilerActive) {
-+                                    profiler.push("checkDespawn");
-+                                }
-+
+@@ -890,6 +_,7 @@
+                                 profiler.push("checkDespawn");
                                  entity.checkDespawn();
--                                profiler.pop();
-+                                if (isProfilerActive) {
-+                                    profiler.pop();
-+                                }
-+                                // Gale end - Do less work - Skip profiler pushes when profiling is inactive
+                                 profiler.pop();
 +                                if (!org.galemc.gale.async.SimulationFlag.REAL) return; // Gale - Speculative execution based on next tick simulation - Simulate next tick
                                  if (true) { // Paper - rewrite chunk system
                                      Entity vehicle = entity.getVehicle();
                                      if (vehicle != null) {
-@@ -900,9 +_,16 @@
-                                         entity.stopRiding();
-                                     }
- 
--                                    profiler.push("tick");
-+                                    // Gale start - Do less work - Skip profiler pushes when profiling is inactive
-+                                    if (isProfilerActive) {
-+                                        profiler.push("tick");
-+                                    }
-+
-                                     this.guardEntityTick(this::tickNonPassenger, entity);
--                                    profiler.pop();
-+                                    if (isProfilerActive) {
-+                                        profiler.pop();
-+                                    }
-+                                    // Gale end - Do less work - Skip profiler pushes when profiling is inactive
-                                 }
-                             }
-                         }
 @@ -913,9 +_,10 @@
              this.tickBlockEntities();
              profiler.pop();
@@ -149,24 +117,12 @@
      }
  
      // Paper start - optimise random ticking
-@@ -1013,6 +_,11 @@
-     // Paper end - optimise random ticking
- 
-     public void tickChunk(final LevelChunk chunk, final int tickSpeed) {
-+        // Gale start - Do less work - Skip the whole chunk tick when there is nothing to do
-+        if (tickSpeed <= 0) {
-+            return;
-+        }
-+        // Gale end - Do less work - Skip the whole chunk tick when there is nothing to do
-         final ca.spottedleaf.moonrise.common.util.SimpleThreadUnsafeRandom simpleRandom = this.simpleRandom; // Paper - optimise random ticking
-         ChunkPos chunkPos = chunk.getPos();
-         int minX = chunkPos.getMinBlockX();
 @@ -1037,13 +_,17 @@
      }
  
      public void tickThunder(final LevelChunk chunk) {
 +        // Gale start - Do less work - Skip the profiler and random calls when thunder cannot happen
-+        if (!this.isRaining() || this.paperConfig().environment.disableThunder || !this.isThundering() || this.spigotConfig.thunderChance <= 0) {
++        if (!this.isThundering() || this.paperConfig().environment.disableThunder || !this.isRaining() || this.spigotConfig.thunderChance <= 0) {
 +            return;
 +        }
 +        // Gale end - Do less work - Skip the profiler and random calls when thunder cannot happen
@@ -181,30 +137,16 @@
              BlockPos pos = this.findLightningTargetAround(this.getBlockRandomPos(minX, 0, minZ, 15));
              if (this.isRainingAt(pos)) {
                  DifficultyInstance difficulty = this.getCurrentDifficultyAt(pos);
-@@ -1396,16 +_,21 @@
+@@ -1396,7 +_,7 @@
              // Paper end - log detailed entity tick information
          entity.setOldPosAndRot();
          ProfilerFiller profiler = Profiler.get();
 -        entity.tickCount++;
 +        entity.setTickCount(entity.tickCount + 1); // Gale - Event-driven - Cat.canRemoveWhenFarAway, Ocelot.canRemoveWhenFarAway
          entity.totalEntityAge++; // Paper - age-like counter for all entities
-+        boolean profilerActive = profiler != net.minecraft.util.profiling.InactiveProfiler.INSTANCE; // Gale - Do less work - Avoid profiler supplier allocation and calls when profiling is disabled
-+        if (profilerActive) { // Gale - Do less work
          profiler.push(entity.typeHolder()::getRegisteredName);
          profiler.incrementCounter("tickNonPassenger");
-+        } // Gale end - Do less work
-         final boolean isActive = io.papermc.paper.entity.activation.ActivationRange.checkIfActive(entity); // Paper - EAR 2
-         if (isActive) { // Paper - EAR 2
-         entity.tick();
-         entity.postTick(); // CraftBukkit
-         } else {entity.inactiveTick();} // Paper - EAR 2
-+        if (profilerActive) { // Gale - Do less work
-         profiler.pop();
-+        } // Gale end - Do less work
- 
-         for (Entity passenger : entity.getPassengers()) {
-             this.tickPassenger(entity, passenger, isActive); // Paper - EAR 2
-@@ -1422,13 +_,16 @@
+@@ -1422,9 +_,9 @@
      private void tickPassenger(final Entity vehicle, final Entity entity, final boolean isActive) { // Paper - EAR 2
          if (entity.isRemoved() || entity.getVehicle() != vehicle) {
              entity.stopRiding();
@@ -215,24 +157,7 @@
 +            entity.setTickCount(entity.tickCount + 1); // Gale - Event-driven - Cat.canRemoveWhenFarAway, Ocelot.canRemoveWhenFarAway
              entity.totalEntityAge++; // Paper - age-like counter for all entities
              ProfilerFiller profiler = Profiler.get();
-+            boolean profilerActive = profiler != net.minecraft.util.profiling.InactiveProfiler.INSTANCE; // Gale - Do less work - Avoid profiler supplier allocation and calls when profiling is disabled
-+            if (profilerActive) { // Gale - Do less work
              profiler.push(entity.typeHolder()::getRegisteredName);
-             profiler.incrementCounter("tickPassenger");
-+            } // Gale end - Do less work
-             // Paper start - EAR 2
-             if (isActive) {
-             entity.rideTick();
-@@ -1440,7 +_,9 @@
-                 vehicle.positionRider(entity);
-             }
-             // Paper end - EAR 2
-+            if (profilerActive) { // Gale - Do less work
-             profiler.pop();
-+            } // Gale end - Do less work
- 
-             for (Entity passenger : entity.getPassengers()) {
-                 this.tickPassenger(entity, passenger, isActive); // Paper - EAR 2
 @@ -1717,6 +_,13 @@
  
      @Override

@@ -1,10 +1,9 @@
 --- a/net/minecraft/world/level/BaseSpawner.java
 +++ b/net/minecraft/world/level/BaseSpawner.java
-@@ -106,7 +_,7 @@
-                 boolean delay = false;
+@@ -107,6 +_,7 @@
                  RandomSource random = level.getRandom();
                  SpawnData nextSpawnData = this.getOrCreateNextSpawnData(level, random, pos);
--
+ 
 +                AABB nearbyEntitiesBox = new AABB(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1).inflate(this.spawnRange); // Gale - Do less work - Hoist nearby entity query box out of the spawn loop
                  for (int c = 0; c < this.spawnCount; c++) {
                      try (ProblemReporter.ScopedCollector reporter = new ProblemReporter.ScopedCollector(this::toString, LOGGER)) {

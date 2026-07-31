@@ -125,8 +125,8 @@
  
 -        public boolean hasBlockEntity() {
 -            return this.getBlock() instanceof EntityBlock;
++        // Gale start - Pre-compute - BlockBehaviour.hasBlockEntity()
 +        public final boolean hasBlockEntity() {
-+            // Gale start - Pre-compute - BlockBehaviour.hasBlockEntity()
 +            return this.gale$precompute_hasBlockEntity;
 +            // Gale end - Pre-compute - BlockBehaviour.hasBlockEntity()
          }

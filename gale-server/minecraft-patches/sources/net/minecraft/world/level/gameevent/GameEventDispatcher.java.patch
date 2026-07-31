@@ -21,7 +21,7 @@
      private final ServerLevel level;
  
      public GameEventDispatcher(final ServerLevel level) {
-@@ -37,30 +_,35 @@
+@@ -37,14 +_,15 @@
          int sectionMaxX = SectionPos.blockToSectionCoord(center.getX() + radius);
          int sectionMaxY = SectionPos.blockToSectionCoord(center.getY() + radius);
          int sectionMaxZ = SectionPos.blockToSectionCoord(center.getZ() + radius);
@@ -34,42 +34,36 @@
 -            }
 -        };
 +        // Gale start - Do less work - Reuse the visitor and dispatch list instead of allocating per post
++        this.eventsToDispatch.clear(); // Gale - clear stale entries if a previous post was interrupted by an exception
 +        Holder<GameEvent> prevGameEvent = this.gameEvent;
 +        Vec3 prevPosition = this.position;
 +        GameEvent.Context prevContext = this.context;
 +        this.gameEvent = gameEvent;
 +        this.position = position;
 +        this.context = context;
++        // Gale end - Do less work - Reuse the visitor and dispatch list instead of allocating per post
          boolean applicable = false;
  
--        for (int chunkX = sectionMinX; chunkX <= sectionMaxX; chunkX++) {
--            for (int chunkZ = sectionMinZ; chunkZ <= sectionMaxZ; chunkZ++) {
--                ChunkAccess chunk = this.level.getChunkIfLoadedImmediately(chunkX, chunkZ); // Paper - Use getChunkIfLoadedImmediately
--                if (chunk != null) {
--                    for (int section = sectionMinY; section <= sectionMaxY; section++) {
+         for (int chunkX = sectionMinX; chunkX <= sectionMaxX; chunkX++) {
+@@ -52,15 +_,18 @@
+                 ChunkAccess chunk = this.level.getChunkIfLoadedImmediately(chunkX, chunkZ); // Paper - Use getChunkIfLoadedImmediately
+                 if (chunk != null) {
+                     for (int section = sectionMinY; section <= sectionMaxY; section++) {
 -                        applicable |= chunk.getListenerRegistry(section).visitInRangeListeners(gameEvent, position, context, visitListeners);
-+        try {
-+            for (int chunkX = sectionMinX; chunkX <= sectionMaxX; chunkX++) {
-+                for (int chunkZ = sectionMinZ; chunkZ <= sectionMaxZ; chunkZ++) {
-+                    ChunkAccess chunk = this.level.getChunkIfLoadedImmediately(chunkX, chunkZ); // Paper - Use getChunkIfLoadedImmediately
-+                    if (chunk != null) {
-+                        for (int section = sectionMinY; section <= sectionMaxY; section++) {
-+                            applicable |= chunk.getListenerRegistry(section).visitInRangeListeners(gameEvent, position, context, this.visitor);
-+                        }
++                        applicable |= chunk.getListenerRegistry(section).visitInRangeListeners(gameEvent, position, context, this.visitor);
                      }
                  }
              }
--        }
+         }
  
 -        if (!toHandleByDistance.isEmpty()) {
 -            this.handleGameEventMessagesInQueue(toHandleByDistance);
-+            this.dispatchPendingEvents();
-+        } finally {
-+            this.eventsToDispatch.clear(); // Gale - do not leak stale entries if a listener throws mid-visit
-+            this.gameEvent = prevGameEvent;
-+            this.position = prevPosition;
-+            this.context = prevContext;
-         }
+-        }
++        // Gale start - Do less work - Reuse the visitor and dispatch list instead of allocating per post
++        this.dispatchPendingEvents();
++        this.gameEvent = prevGameEvent;
++        this.position = prevPosition;
++        this.context = prevContext;
 +        // Gale end - Do less work - Reuse the visitor and dispatch list instead of allocating per post
  
          if (applicable) {

@@ -4,10 +4,9 @@
          if (this.lastGossipDecayTime == 0L) {
              this.lastGossipDecayTime = timestamp;
          } else if (timestamp >= this.lastGossipDecayTime + 24000L) {
--            this.gossips.decay();
 +            // Gale start - Do less work - Skip gossip decay for villagers without any gossip
 +            if (!this.gossips.gossips.isEmpty()) {
-+                this.gossips.decay();
+             this.gossips.decay();
 +            }
 +            // Gale end - Do less work - Skip gossip decay for villagers without any gossip
              this.lastGossipDecayTime = timestamp;
