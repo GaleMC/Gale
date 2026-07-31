@@ -21,7 +21,7 @@
      private final ServerLevel level;
  
      public GameEventDispatcher(final ServerLevel level) {
-@@ -37,30 +_,34 @@
+@@ -37,30 +_,35 @@
          int sectionMaxX = SectionPos.blockToSectionCoord(center.getX() + radius);
          int sectionMaxY = SectionPos.blockToSectionCoord(center.getY() + radius);
          int sectionMaxZ = SectionPos.blockToSectionCoord(center.getZ() + radius);
@@ -65,6 +65,7 @@
 -            this.handleGameEventMessagesInQueue(toHandleByDistance);
 +            this.dispatchPendingEvents();
 +        } finally {
++            this.eventsToDispatch.clear(); // Gale - do not leak stale entries if a listener throws mid-visit
 +            this.gameEvent = prevGameEvent;
 +            this.position = prevPosition;
 +            this.context = prevContext;

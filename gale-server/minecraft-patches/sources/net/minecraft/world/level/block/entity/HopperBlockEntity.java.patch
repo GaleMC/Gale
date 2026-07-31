@@ -1,10 +1,11 @@
 --- a/net/minecraft/world/level/block/entity/HopperBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/HopperBlockEntity.java
-@@ -38,6 +_,7 @@
+@@ -38,6 +_,8 @@
      public int cooldownTime = -1;
      private long tickedGameTime;
      private Direction facing;
 +    private @Nullable AABB cachedSuckAabb; // Gale - Do less work - Cache hopper suck AABB
++    private @Nullable BlockPos cachedSuckPos; // Gale - Do less work - Cache hopper suck AABB (invalidate on position change)
  
      // CraftBukkit start - add fields and methods
      public List<org.bukkit.entity.HumanEntity> transaction = new java.util.ArrayList<>();
@@ -19,15 +20,17 @@
          return level.getEntitiesOfClass(ItemEntity.class, aabb, EntitySelector.ENTITY_STILL_ALIVE);
      }
  
-@@ -742,6 +_,16 @@
+@@ -742,6 +_,18 @@
          return true;
      }
  
 +    // Gale start - Do less work - Cache hopper suck AABB
 +    public AABB gale$getCachedSuckAabb() {
 +        AABB aabb = this.cachedSuckAabb;
-+        if (aabb == null) {
++        BlockPos pos = this.getBlockPos();
++        if (aabb == null || !pos.equals(this.cachedSuckPos)) {
 +            this.cachedSuckAabb = aabb = this.getSuckAabb().move(this.getLevelX() - 0.5, this.getLevelY() - 0.5, this.getLevelZ() - 0.5);
++            this.cachedSuckPos = pos;
 +        }
 +        return aabb;
 +    }
