@@ -12,7 +12,7 @@
  
  public class GameEventDispatcher {
 +    // Gale start - Do less work - Reuse a single visitor instance and dispatch list across event posts
-+    private final List<GameEvent.ListenerInfo> eventsToDispatch = Lists.newArrayList();
++    private List<GameEvent.ListenerInfo> eventsToDispatch = Lists.newArrayList();
 +    private final GameEventListenerRegistry.ListenerVisitor visitor = this::visitListener;
 +    private Holder<GameEvent> gameEvent;
 +    private Vec3 position;
