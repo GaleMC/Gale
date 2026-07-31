@@ -74,14 +74,46 @@
              profiler.push("entities");
              if (this.dragonFight != null && runs) {
                  profiler.push("dragonFight");
-@@ -890,6 +_,7 @@
-                                 profiler.push("checkDespawn");
+@@ -887,9 +_,18 @@
+                     entity -> {
+                         if (!entity.isRemoved()) {
+                             if (!tickRateManager.isEntityFrozen(entity)) {
+-                                profiler.push("checkDespawn");
++                                // Gale start - Do less work - Skip profiler pushes when profiling is inactive
++                                boolean isProfilerActive = profiler != net.minecraft.util.profiling.InactiveProfiler.INSTANCE;
++                                if (isProfilerActive) {
++                                    profiler.push("checkDespawn");
++                                }
++
                                  entity.checkDespawn();
-                                 profiler.pop();
+-                                profiler.pop();
++                                if (isProfilerActive) {
++                                    profiler.pop();
++                                }
++                                // Gale end - Do less work - Skip profiler pushes when profiling is inactive
 +                                if (!org.galemc.gale.async.SimulationFlag.REAL) return; // Gale - Speculative execution based on next tick simulation - Simulate next tick
                                  if (true) { // Paper - rewrite chunk system
                                      Entity vehicle = entity.getVehicle();
                                      if (vehicle != null) {
+@@ -900,9 +_,16 @@
+                                         entity.stopRiding();
+                                     }
+ 
+-                                    profiler.push("tick");
++                                    // Gale start - Do less work - Skip profiler pushes when profiling is inactive
++                                    if (isProfilerActive) {
++                                        profiler.push("tick");
++                                    }
++
+                                     this.guardEntityTick(this::tickNonPassenger, entity);
+-                                    profiler.pop();
++                                    if (isProfilerActive) {
++                                        profiler.pop();
++                                    }
++                                    // Gale end - Do less work - Skip profiler pushes when profiling is inactive
+                                 }
+                             }
+                         }
 @@ -913,9 +_,10 @@
              this.tickBlockEntities();
              profiler.pop();
@@ -102,6 +134,21 @@
      }
  
      @Override
+@@ -957,7 +_,13 @@
+ 
+     private void wakeUpAllPlayers() {
+         this.sleepStatus.removeAllSleepers();
+-        this.players.stream().filter(LivingEntity::isSleeping).collect(Collectors.toList()).forEach(player -> player.stopSleepInBed(false, false));
++        // Gale start - Do less work - Avoid stream and list allocation
++        for (ServerPlayer player : this.players) {
++            if (player.isSleeping()) {
++                player.stopSleepInBed(false, false);
++            }
++        }
++        // Gale end - Do less work - Avoid stream and list allocation
+     }
+ 
+     // Paper start - optimise random ticking
 @@ -1396,16 +_,21 @@
              // Paper end - log detailed entity tick information
          entity.setOldPosAndRot();
