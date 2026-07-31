@@ -3,6 +3,8 @@ on: [ push, pull_request ]
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      BUILD_NUMBER: ${{ github.run_number }}
     # Always run on PRs if the source branch is on someone else's repo, and otherwise, only run if the last commit does not start with [ci-skip]
     if: ${{ (github.event_name != 'pull_request' && !contains(github.event.commits[0].message, '[ci-skip]')) || github.repository != github.event.pull_request.head.repo.full_name }}
     steps:
@@ -26,7 +28,9 @@ jobs:
       - name: Create Paperclip jar
         run: ./gradlew :gale-server:createPaperclipJar --stacktrace
       - name: Rename and move JAR
-        run: mv gale-server/build/libs/gale-paperclip-*.jar gale-$(basename gale-server/build/libs/gale-paperclip-*.jar | sed -E 's/^gale-paperclip-(.*)\.jar$/\1/').jar
+        run: |
+          MC_VERSION=$(grep -E '^mcVersion=' gradle.properties | cut -d= -f2 | tr -d '[:space:]')
+          mv gale-server/build/libs/gale-paperclip-*.jar gale-${MC_VERSION}-${{ github.run_number }}.jar
       - name: Upload Paperclip jar
         uses: actions/upload-artifact@v7
         with:
