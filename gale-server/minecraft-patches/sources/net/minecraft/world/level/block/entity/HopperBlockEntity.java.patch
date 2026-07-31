@@ -1,0 +1,47 @@
+--- a/net/minecraft/world/level/block/entity/HopperBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/HopperBlockEntity.java
+@@ -38,6 +_,7 @@
+     public int cooldownTime = -1;
+     private long tickedGameTime;
+     private Direction facing;
++    private @Nullable AABB cachedSuckAabb; // Gale - Do less work - Cache hopper suck AABB
+ 
+     // CraftBukkit start - add fields and methods
+     public List<org.bukkit.entity.HumanEntity> transaction = new java.util.ArrayList<>();
+@@ -668,7 +_,9 @@
+     }
+ 
+     public static List<ItemEntity> getItemsAtAndAbove(final Level level, final Hopper hopper) {
+-        AABB aabb = hopper.getSuckAabb().move(hopper.getLevelX() - 0.5, hopper.getLevelY() - 0.5, hopper.getLevelZ() - 0.5);
++        AABB aabb = hopper instanceof HopperBlockEntity hopperBlockEntity // Gale - Do less work - Cache hopper suck AABB
++            ? hopperBlockEntity.gale$getCachedSuckAabb()
++            : hopper.getSuckAabb().move(hopper.getLevelX() - 0.5, hopper.getLevelY() - 0.5, hopper.getLevelZ() - 0.5);
+         return level.getEntitiesOfClass(ItemEntity.class, aabb, EntitySelector.ENTITY_STILL_ALIVE);
+     }
+ 
+@@ -742,6 +_,16 @@
+         return true;
+     }
+ 
++    // Gale start - Do less work - Cache hopper suck AABB
++    public AABB gale$getCachedSuckAabb() {
++        AABB aabb = this.cachedSuckAabb;
++        if (aabb == null) {
++            this.cachedSuckAabb = aabb = this.getSuckAabb().move(this.getLevelX() - 0.5, this.getLevelY() - 0.5, this.getLevelZ() - 0.5);
++        }
++        return aabb;
++    }
++    // Gale end - Do less work - Cache hopper suck AABB
++
+     public void setCooldown(final int time) {
+         this.cooldownTime = time;
+     }
+@@ -767,7 +_,7 @@
+     public static void entityInside(final Level level, final BlockPos pos, final BlockState blockState, final Entity entity, final HopperBlockEntity hopper) {
+         if (entity instanceof ItemEntity itemEntity
+             && !itemEntity.getItem().isEmpty()
+-            && entity.getBoundingBox().move(-pos.getX(), -pos.getY(), -pos.getZ()).intersects(hopper.getSuckAabb())) {
++            && entity.getBoundingBox().intersects(hopper.gale$getCachedSuckAabb())) { // Gale - Do less work - Cache hopper suck AABB, avoids AABB allocation per item entity
+             tryMoveItems(level, pos, blockState, hopper, () -> addItem(hopper, itemEntity));
+         }
+     }

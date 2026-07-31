@@ -102,16 +102,30 @@
      }
  
      @Override
-@@ -1396,7 +_,7 @@
+@@ -1396,16 +_,21 @@
              // Paper end - log detailed entity tick information
          entity.setOldPosAndRot();
          ProfilerFiller profiler = Profiler.get();
 -        entity.tickCount++;
 +        entity.setTickCount(entity.tickCount + 1); // Gale - Event-driven - Cat.canRemoveWhenFarAway, Ocelot.canRemoveWhenFarAway
          entity.totalEntityAge++; // Paper - age-like counter for all entities
++        boolean profilerActive = profiler != net.minecraft.util.profiling.InactiveProfiler.INSTANCE; // Gale - Do less work - Avoid profiler supplier allocation and calls when profiling is disabled
++        if (profilerActive) { // Gale - Do less work
          profiler.push(entity.typeHolder()::getRegisteredName);
          profiler.incrementCounter("tickNonPassenger");
-@@ -1422,9 +_,9 @@
++        } // Gale end - Do less work
+         final boolean isActive = io.papermc.paper.entity.activation.ActivationRange.checkIfActive(entity); // Paper - EAR 2
+         if (isActive) { // Paper - EAR 2
+         entity.tick();
+         entity.postTick(); // CraftBukkit
+         } else {entity.inactiveTick();} // Paper - EAR 2
++        if (profilerActive) { // Gale - Do less work
+         profiler.pop();
++        } // Gale end - Do less work
+ 
+         for (Entity passenger : entity.getPassengers()) {
+             this.tickPassenger(entity, passenger, isActive); // Paper - EAR 2
+@@ -1422,13 +_,16 @@
      private void tickPassenger(final Entity vehicle, final Entity entity, final boolean isActive) { // Paper - EAR 2
          if (entity.isRemoved() || entity.getVehicle() != vehicle) {
              entity.stopRiding();
@@ -122,7 +136,24 @@
 +            entity.setTickCount(entity.tickCount + 1); // Gale - Event-driven - Cat.canRemoveWhenFarAway, Ocelot.canRemoveWhenFarAway
              entity.totalEntityAge++; // Paper - age-like counter for all entities
              ProfilerFiller profiler = Profiler.get();
++            boolean profilerActive = profiler != net.minecraft.util.profiling.InactiveProfiler.INSTANCE; // Gale - Do less work - Avoid profiler supplier allocation and calls when profiling is disabled
++            if (profilerActive) { // Gale - Do less work
              profiler.push(entity.typeHolder()::getRegisteredName);
+             profiler.incrementCounter("tickPassenger");
++            } // Gale end - Do less work
+             // Paper start - EAR 2
+             if (isActive) {
+             entity.rideTick();
+@@ -1440,7 +_,9 @@
+                 vehicle.positionRider(entity);
+             }
+             // Paper end - EAR 2
++            if (profilerActive) { // Gale - Do less work
+             profiler.pop();
++            } // Gale end - Do less work
+ 
+             for (Entity passenger : entity.getPassengers()) {
+                 this.tickPassenger(entity, passenger, isActive); // Paper - EAR 2
 @@ -1717,6 +_,13 @@
  
      @Override
