@@ -14,10 +14,10 @@ Every feature is identified in source code by corresponding `// Gale` marker com
 
 ### Gale
 
-> Below is a copyright notice for [Gale](github.com/GaleMC/Gale).\
+> Below is a copyright notice for [Gale](https://github.com/GaleMC/Gale).\
 > It applies to Gale as a whole, so it must always be preserved.
 
-Copyright (c) 2026 Gale authors and contributors, including but not limited to:
+Copyright (c) 2022–2026 Gale authors and contributors, including but not limited to:
 * [Dreeam](https://github.com/Dreeam-qwq)
 * [Martijn Muijsers](https://github.com/MartijnMuijsers)
 * [noramibu](https://github.com/noramibu)
@@ -25,10 +25,10 @@ Copyright (c) 2026 Gale authors and contributors, including but not limited to:
 
 ### Leaf
 
-> Below is a copyright notice for [Leaf](github.com/Winds-Studio/Leaf).\
+> Below is a copyright notice for [Leaf](https://github.com/Winds-Studio/Leaf).\
 > It applies to Gale as a whole, so it must always be preserved.
 
-Copyright (c) 2026 Leaf authors and contributors, including but not limited to:
+Copyright (c) 2022–2026 Leaf authors and contributors, including but not limited to:
 * [Dreeam](https://github.com/Dreeam-qwq)
 * [HaHaWTH](https://github.com/HaHaWTH)
 * [hayanesuru](https://github.com/hayanesuru)
