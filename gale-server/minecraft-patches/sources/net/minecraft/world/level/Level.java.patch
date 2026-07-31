@@ -288,6 +288,33 @@
          this.tickingBlockEntities = true;
          if (!this.pendingBlockEntityTickers.isEmpty()) {
              this.blockEntityTickers.addAll(this.pendingBlockEntityTickers);
+@@ -1498,11 +_,13 @@
+         // Paper start - Fix MC-117075 use removeAll
+         final it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet<@Nullable TickingBlockEntity> toRemove = new it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet<>();
+         toRemove.add(null);
++        boolean removeAny = false; // Gale - Do less work - Skip the removeAll scan when nothing was removed
+         for (int tickerIndex = 0; tickerIndex < this.blockEntityTickers.size(); tickerIndex++) {
+             final TickingBlockEntity ticker = this.blockEntityTickers.get(tickerIndex);
+         // Paper end - Fix MC-117075 use removeAll
+             if (ticker.isRemoved()) {
+                 toRemove.add(ticker); // Paper - Fix MC-117075 use removeAll
++                removeAny = true; // Gale - Do less work - Skip the removeAll scan when nothing was removed
+             } else if (tickBlockEntities && this.shouldTickBlocksAt(ticker.getPos())) {
+                 ticker.tick();
+                 // Paper start - rewrite chunk system
+@@ -1513,7 +_,11 @@
+             }
+         }
+ 
+-        this.blockEntityTickers.removeAll(toRemove); // Paper - Fix MC-117075 use removeAll
++        // Gale start - Do less work - Skip the removeAll scan when nothing was removed
++        if (removeAny) {
++            this.blockEntityTickers.removeAll(toRemove); // Paper - Fix MC-117075 use removeAll
++        }
++        // Gale end - Do less work - Skip the removeAll scan when nothing was removed
+         this.tickingBlockEntities = false;
+     }
+ 
 @@ -2127,6 +_,13 @@
      public BiomeManager getBiomeManager() {
          return this.biomeManager;
