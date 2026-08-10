@@ -1,0 +1,24 @@
+--- a/net/minecraft/world/entity/ai/goal/FollowPlayerRiddenEntityGoal.java
++++ b/net/minecraft/world/entity/ai/goal/FollowPlayerRiddenEntityGoal.java
+@@ -75,7 +_,9 @@
+                 BlockPos behindEntityPos = this.following.blockPosition().relative(this.following.getDirection().getOpposite());
+                 behindEntityPos = behindEntityPos.offset(0, -1, 0);
+                 this.mob.getNavigation().moveTo(behindEntityPos.getX(), behindEntityPos.getY(), behindEntityPos.getZ(), 1.0);
+-                if (this.mob.distanceTo(this.following) < 4.0F) {
++                // Gale start - use squared distance checks
++                if (this.mob.distanceToSqr(this.following) < 4.0F * 4.0F) {
++                // Gale end - use squared distance checks
+                     this.timeToRecalcPath = 0;
+                     this.currentGoal = FollowPlayerRiddenEntityGoal.FollowEntityGoal.GO_IN_ENTITY_DIRECTION;
+                 }
+@@ -83,7 +_,9 @@
+                 Direction direction = this.following.getMotionDirection();
+                 BlockPos goTo = this.following.blockPosition().relative(direction, 10);
+                 this.mob.getNavigation().moveTo(goTo.getX(), goTo.getY() - 1, goTo.getZ(), 1.0);
+-                if (this.mob.distanceTo(this.following) > 12.0F) {
++                // Gale start - use squared distance checks
++                if (this.mob.distanceToSqr(this.following) > 12.0F * 12.0F) {
++                // Gale end - use squared distance checks
+                     this.timeToRecalcPath = 0;
+                     this.currentGoal = FollowPlayerRiddenEntityGoal.FollowEntityGoal.GO_TO_ENTITY;
+                 }
