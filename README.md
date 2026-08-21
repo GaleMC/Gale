@@ -71,6 +71,7 @@ If you want features or optimizations that change behavior, check out [Leaf](htt
   <a href="https://github.com/Smorki"><img src="https://github.com/Smorki.png?size=80" width="45" height="45" style="border-radius: 50%; object-fit: cover;" alt="Smorki" title="Smorki"/></a>
   <a href="https://github.com/Taiyou06"><img src="https://github.com/Taiyou06.png?size=80" width="45" height="45" style="border-radius: 50%; object-fit: cover;" alt="Taiyou" title="Taiyou"/></a>
   <a href="https://github.com/vytskalt"><img src="https://github.com/vytskalt.png?size=80" width="45" height="45" style="border-radius: 50%; object-fit: cover;" alt="vytskalt" title="vytskalt"/></a>
+  <a href="https://github.com/ichbinrather"><img src="https://github.com/ichbinrather.png?size=80" width="45" height="45" style="border-radius: 50%; object-fit: cover;" alt="ichbinrather" title="ichbinrather"/></a>
 </p>
 
 ### Third-party credits
