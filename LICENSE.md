@@ -5,6 +5,10 @@ Patches, code files, build files, workflow files and executable binaries are lic
 [GPL-3.0](https://www.gnu.org/licenses/gpl-3.0.html) (included in `license/GPL-3.0.txt`).
 No license is given for image files: all rights reserved.
 
+A non-transferable license to distribute branding assets (including the Gale name and logo), or derivative works thereof,
+is given, when solely for the purpose of identifying or referencing Gale in a non-disparaging manner,
+under the condition of not implying Gale's affiliation, endorsement, sponsorship, or support.
+
 ## Copyright notices
 
 Under GPL-3.0 section 4, publishing an appropriate copyright notice is required.
