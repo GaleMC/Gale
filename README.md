@@ -70,7 +70,6 @@ If you want features or optimizations that change behavior, check out [Leaf](htt
   <a href="https://github.com/RuleGaed"><img src="https://github.com/Nrleryxx.png?size=80" width="45" height="45" style="border-radius: 50%; object-fit: cover;" alt="RuleGaed" title="RuleGaed"/></a>
   <a href="https://github.com/Smorki"><img src="https://github.com/Smorki.png?size=80" width="45" height="45" style="border-radius: 50%; object-fit: cover;" alt="Smorki" title="Smorki"/></a>
   <a href="https://github.com/Taiyou06"><img src="https://github.com/Taiyou06.png?size=80" width="45" height="45" style="border-radius: 50%; object-fit: cover;" alt="Taiyou" title="Taiyou"/></a>
-  <a href="https://github.com/toprakdevx"><img src="https://github.com/toprakdevx.png?size=80" width="45" height="45" style="border-radius: 50%; object-fit: cover;" alt="Toprak" title="Toprak"/></a>
   <a href="https://github.com/vytskalt"><img src="https://github.com/vytskalt.png?size=80" width="45" height="45" style="border-radius: 50%; object-fit: cover;" alt="vytskalt" title="vytskalt"/></a>
 </p>
 
