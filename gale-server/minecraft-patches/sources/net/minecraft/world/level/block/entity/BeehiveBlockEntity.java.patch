@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/level/block/entity/BeehiveBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/BeehiveBlockEntity.java
+@@ -335,6 +_,7 @@
+     }
+ 
+     public static void serverTick(final Level level, final BlockPos blockPos, final BlockState state, final BeehiveBlockEntity entity) {
++        if (entity.stored.isEmpty()) return; // Gale - Do less work - Skip bee hive ticking when it holds no bees
+         tickOccupants(level, blockPos, state, entity.stored, entity.savedFlowerPos);
+         if (!entity.stored.isEmpty() && level.getRandom().nextDouble() < 0.005) {
+             double x = blockPos.getX() + 0.5;

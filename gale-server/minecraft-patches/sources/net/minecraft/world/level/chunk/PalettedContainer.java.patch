@@ -42,10 +42,12 @@
      private static <T> int[] reencodeContents(final BitStorage storage, final Palette<T> oldPalette, final Palette<T> newPalette) {
          int[] buffer = new int[storage.getSize()];
          storage.unpack(buffer);
-@@ -390,6 +_,48 @@
-         return buffer;
-     }
+@@ -388,6 +_,48 @@
+         }
  
+         return buffer;
++    }
++
 +    // Gale - Chunk serialization
 +    private static Optional<LongStream> asOptional(final long[] values) {
 +        return Optional.of(Arrays.stream(values));
@@ -86,8 +88,6 @@
 +        } finally {
 +            this.release();
 +        }
-+    }
-+
+     }
+ 
      @Override
-     public int getSerializedSize() {
-         return this.data.getSerializedSize(this.strategy.globalMap());

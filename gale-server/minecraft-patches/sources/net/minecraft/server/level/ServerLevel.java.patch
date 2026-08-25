@@ -102,6 +102,41 @@
      }
  
      @Override
+@@ -957,7 +_,13 @@
+ 
+     private void wakeUpAllPlayers() {
+         this.sleepStatus.removeAllSleepers();
+-        this.players.stream().filter(LivingEntity::isSleeping).collect(Collectors.toList()).forEach(player -> player.stopSleepInBed(false, false));
++        // Gale start - Do less work - Avoid stream and list allocation
++        for (ServerPlayer player : this.players) {
++            if (player.isSleeping()) {
++                player.stopSleepInBed(false, false);
++            }
++        }
++        // Gale end - Do less work - Avoid stream and list allocation
+     }
+ 
+     // Paper start - optimise random ticking
+@@ -1037,13 +_,17 @@
+     }
+ 
+     public void tickThunder(final LevelChunk chunk) {
++        // Gale start - Do less work - Skip the profiler and random calls when thunder cannot happen
++        if (!this.isThundering() || this.paperConfig().environment.disableThunder || !this.isRaining() || this.spigotConfig.thunderChance <= 0) {
++            return;
++        }
++        // Gale end - Do less work - Skip the profiler and random calls when thunder cannot happen
+         ChunkPos chunkPos = chunk.getPos();
+-        boolean raining = this.isRaining();
+         int minX = chunkPos.getMinBlockX();
+         int minZ = chunkPos.getMinBlockZ();
+         ProfilerFiller profiler = Profiler.get();
+         profiler.push("thunder");
+-        if (!this.paperConfig().environment.disableThunder && raining && this.isThundering() && this.spigotConfig.thunderChance > 0 && this.random.nextInt(this.spigotConfig.thunderChance) == 0) { // Spigot // Paper - Option to disable thunder
++        if (this.random.nextInt(this.spigotConfig.thunderChance) == 0) { // Spigot // Paper - Option to disable thunder
+             BlockPos pos = this.findLightningTargetAround(this.getBlockRandomPos(minX, 0, minZ, 15));
+             if (this.isRainingAt(pos)) {
+                 DifficultyInstance difficulty = this.getCurrentDifficultyAt(pos);
 @@ -1396,7 +_,7 @@
              // Paper end - log detailed entity tick information
          entity.setOldPosAndRot();
