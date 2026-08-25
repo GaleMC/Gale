@@ -1,0 +1,24 @@
+--- a/net/minecraft/world/entity/animal/bee/Bee.java
++++ b/net/minecraft/world/entity/animal/bee/Bee.java
+@@ -1191,7 +_,9 @@
+                     Bee.this.remainingCooldownBeforeLocatingNewFlower = 200;
+                 } else if (Bee.this.savedFlowerPos != null) { // Paper - add null check since API can manipulate this
+                     Vec3 flowerPos = Vec3.atBottomCenterOf(Bee.this.savedFlowerPos).add(0.0, 0.6F, 0.0);
+-                    if (flowerPos.distanceTo(Bee.this.position()) > 1.0) {
++                    // Gale start - use squared distance checks
++                    if (flowerPos.distanceToSqr(Bee.this.position()) > 1.0) {
++                    // Gale end - use squared distance checks
+                         this.hoverPos = flowerPos;
+                         this.setWantedPos();
+                     } else {
+@@ -1199,7 +_,9 @@
+                             this.hoverPos = flowerPos;
+                         }
+ 
+-                        boolean arrivedAtHoverPos = Bee.this.position().distanceTo(this.hoverPos) <= 0.1;
++                        // Gale start - use squared distance checks
++                        boolean arrivedAtHoverPos = Bee.this.position().distanceToSqr(this.hoverPos) <= 0.1 * 0.1;
++                        // Gale end - use squared distance checks
+                         boolean shouldSetWantedPos = true;
+                         if (!arrivedAtHoverPos && this.pollinatingTicks > 600) {
+                             Bee.this.dropFlower();
