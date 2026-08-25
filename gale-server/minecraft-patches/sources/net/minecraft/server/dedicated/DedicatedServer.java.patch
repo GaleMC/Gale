@@ -13,6 +13,15 @@
          // Paper end - initialize global and world-defaults configuration
          this.server.spark.enableEarlyIfRequested(); // Paper - spark
          // Paper start - fix converting txt to json file; convert old users earlier after PlayerList creation but before file load/save
+@@ -248,6 +_,8 @@
+         org.spigotmc.WatchdogThread.doStart(org.spigotmc.SpigotConfig.timeoutTime, org.spigotmc.SpigotConfig.restartOnCrash); // Paper - start watchdog thread
+         consoleThread.start(); // Paper - Enhance console tab completions for brigadier commands; start console thread after MinecraftServer.console & PaperConfig are initialized
+         io.papermc.paper.command.PaperCommands.registerCommands(this); // Paper - setup /paper command
++        org.galemc.gale.command.GaleCommands.registerCommands(this); // Gale - Gale commands
++        org.galemc.gale.task.BossBarTask.startAll(); // Gale - TPS bar and RAM bar
+         this.server.spark.registerCommandBeforePlugins(this.server); // Paper - spark
+         com.destroystokyo.paper.Metrics.PaperMetrics.startMetrics(); // Paper - start metrics
+         com.destroystokyo.paper.VersionHistoryManager.INSTANCE.getClass(); // Paper - load version history now
 @@ -402,7 +_,7 @@
      @Override
      protected void tickServer(final BooleanSupplier haveTime) {
@@ -21,6 +30,14 @@
 +        if (org.galemc.gale.async.SimulationFlag.REAL) if (this.jsonRpcServer != null) { // Gale - Speculative execution based on next tick simulation - Simulate next tick
              this.jsonRpcServer.tick();
          }
+     }
+@@ -906,6 +_,7 @@
+     @Override
+     protected void stopServer() {
+         this.notificationManager().serverShuttingDown();
++        org.galemc.gale.task.BossBarTask.stopAll(); // Gale - TPS bar and RAM bar
+         super.stopServer();
+         //Util.shutdownExecutors(); // Paper - Improved watchdog support; moved into super
      }
 @@ -917,7 +_,11 @@
  
