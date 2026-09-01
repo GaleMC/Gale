@@ -1,0 +1,46 @@
+--- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+@@ -2299,28 +_,43 @@
+     @Override
+     public int getSpawnLimit(SpawnCategory spawnCategory) {
+         Preconditions.checkArgument(spawnCategory != null, "SpawnCategory cannot be null");
+         Preconditions.checkArgument(CraftSpawnCategory.isValidForLimits(spawnCategory), "SpawnCategory." + spawnCategory + " does not have a spawn limit.");
+         return this.getSpawnLimitUnsafe(spawnCategory);
+     }
+ 
+     public int getSpawnLimitUnsafe(final SpawnCategory spawnCategory) {
+         return this.spawnCategoryLimit[spawnCategory.ordinal()]; // Gale - Collections - CraftServer.spawnCategoryLimit (use array)
+     }
+ 
+-    @Override
+-    public boolean isPrimaryThread() {
+-        return ca.spottedleaf.moonrise.common.util.TickThread.isTickThread(); // Paper - rewrite chunk system
+-    }
++    // Gale start - Parallel world ticking - Make Bukkit.isPrimaryThread() work on per-world tick threads
++    @Override
++    public boolean isPrimaryThread() {
++        Thread current = Thread.currentThread();
++        if (org.galemc.gale.tick.GaleThreadMarkers.isMainServerThread(current)) {
++            return true;
++        }
++        if (org.galemc.gale.tick.GaleThreadMarkers.isParallelTickActive()) {
++            return org.galemc.gale.tick.GaleThreadMarkers.getCurrentWorldMainThread() != null;
++        }
++        return ca.spottedleaf.moonrise.common.util.TickThread.isTickThread();
++    }
++    // Gale end - Parallel world ticking - Make Bukkit.isPrimaryThread() work on per-world tick threads
+ 
+     @Override
+     public net.kyori.adventure.text.Component motd() {
+         return this.console.motd();
+     }
+ 
+     @Override
+     public void motd(final net.kyori.adventure.text.Component motd) {
+         this.console.motd(motd);
+     }
+ 
+     @Override
+     public String getMotd() {
+         return this.console.getMotd();
+     }
