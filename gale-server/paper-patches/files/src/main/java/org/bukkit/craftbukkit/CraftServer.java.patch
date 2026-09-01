@@ -1,0 +1,37 @@
+--- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+@@ -2295,17 +_,32 @@
+     public int getSpawnLimit(final SpawnCategory spawnCategory, final World world) {
+         final net.minecraft.world.level.Level level = ((CraftWorld) world).getHandle();
+         final Integer worldLimit = level.spawnLimits.get(spawnCategory);
+         return worldLimit != null ? worldLimit : this.getSpawnLimitUnsafe(spawnCategory);
+     }
+ 
+     @Override
+     public int getSpawnLimitUnsafe(final SpawnCategory spawnCategory) {
+         return this.spawnCategoryLimit[spawnCategory.ordinal()]; // Gale - Collections - CraftServer.spawnCategoryLimit (use array)
+     }
+ 
++    // Gale start - Parallel world ticking - Make Bukkit.isPrimaryThread() work on per-world tick threads
++    @Override
++    public boolean isPrimaryThread() {
++        Thread current = Thread.currentThread();
++        if (org.galemc.gale.tick.GaleThreadMarkers.isMainServerThread(current)) {
++            return true;
++        }
++        if (org.galemc.gale.tick.GaleThreadMarkers.isParallelTickActive()) {
++            return org.galemc.gale.tick.GaleThreadMarkers.getCurrentWorldMainThread() != null;
++        }
++        return false;
++    }
++    // Gale end - Parallel world ticking - Make Bukkit.isPrimaryThread() work on per-world tick threads
++
+     @Override
+     public int getChunkGCTickInterval() {
+         return this.configuration.getInt("settings.chunk-gc-tick-interval", 600);
+     }
+ 
+     @Override
+     public io.papermc.paper.world.ChunkLoadLevel getChunkLoadLevel(boolean wasAlreadyTicked) {
+         return this.console.getChunkLoadLevel(wasAlreadyTicked);
+     }

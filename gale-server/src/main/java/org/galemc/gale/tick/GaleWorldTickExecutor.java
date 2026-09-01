@@ -35,7 +35,7 @@ public final class GaleWorldTickExecutor {
         if (!enabled) {
             return null;
         }
-        return new GaleWorldTickExecutor(Math.max(2, maxThreads));
+        return new GaleWorldTickExecutor(Math.max(2, Math.min(maxThreads, 16)));
     }
 
     public int getParallelism() {
