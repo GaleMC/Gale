@@ -4,6 +4,6 @@
                  state.initCache();
              }
          }
-+        Block.BLOCK_STATE_REGISTRY.trimToSize(); // Gale - Instrusive values - Global block state palette id
++        ((org.galemc.gale.registry.blockstate.BlockStateIdMapper) Block.BLOCK_STATE_REGISTRY).trimToSize(); // Gale - Instrusive values - Global block state palette id
      }
  }

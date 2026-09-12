@@ -2,3 +2,4 @@
 # See CONTRIBUTING.md on how to add access transformers.
 public net.minecraft.world.level.material.FlowingFluid canHoldAnyFluid(Lnet/minecraft/world/level/block/state/BlockState;)Z
 public-f net.minecraft.world.entity.Entity setPosRaw(DDDZ)V
+public-f net.minecraft.core.IdMapper byId(I)Ljava/lang/Object; # Gale - Global block state palette id - Allow overriding with array-backed storage

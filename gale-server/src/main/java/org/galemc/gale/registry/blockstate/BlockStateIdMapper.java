@@ -1,6 +1,5 @@
 package org.galemc.gale.registry.blockstate;
 
-import net.minecraft.core.IdMap;
 import net.minecraft.core.IdMapper;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -11,19 +10,21 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
- * A specialized {@link IdMap} for {@link Block#BLOCK_STATE_REGISTRY}.
+ * A specialized {@link IdMapper} for {@link Block#BLOCK_STATE_REGISTRY}.
  *
  * <p>
- * The implementation is based on {@link IdMapper}.
+ * The field keeps the {@link IdMapper} type for plugin binary compatibility
+ * (plugins such as FAWE access {@code Block.BLOCK_STATE_REGISTRY} directly).
  * </p>
  *
  * <p>
- * Uses a direct array instead of {@link java.util.ArrayList} to avoid
- * redundant bounds checks and virtual dispatch on the hot
- * {@link #byId(int)} path.
+ * Writes go to both the vanilla map/list and a direct array, so inherited
+ * methods stay correct while the hot paths - {@link #getId(Object)} via the
+ * intrusive {@link BlockState#indexInRegistry} and {@link #byId(int)} via the
+ * array - avoid map lookups and bounds-checked list access.
  * </p>
  */
-public class BlockStateIdMapper implements IdMap<BlockState> {
+public class BlockStateIdMapper extends IdMapper<BlockState> {
 
     public static final int EXPECTED_BLOCK_STATES = 32366; // As of 26.2, TODO keep up-to-date
 
@@ -31,20 +32,36 @@ public class BlockStateIdMapper implements IdMap<BlockState> {
     private int size;
 
     public BlockStateIdMapper() {
+        super();
         this.idToT = new BlockState[EXPECTED_BLOCK_STATES];
     }
 
-    public void add(final BlockState thing) {
-        if (this.size >= this.idToT.length) {
-            this.idToT = Arrays.copyOf(this.idToT, this.idToT.length + (this.idToT.length >> 1));
-        }
-        thing.indexInRegistry = this.size;
-        this.idToT[this.size++] = thing;
+    @Override
+    public void add(final BlockState state) {
+        super.add(state);
+        this.set(state, super.getId(state));
     }
 
     @Override
-    public int getId(final BlockState thing) {
-        return thing.indexInRegistry;
+    public void addMapping(final BlockState state, final int id) {
+        super.addMapping(state, id);
+        this.set(state, id);
+    }
+
+    private void set(final BlockState state, final int id) {
+        if (id >= this.idToT.length) {
+            this.idToT = Arrays.copyOf(this.idToT, Math.max(id + 1, this.idToT.length + (this.idToT.length >> 1)));
+        }
+        state.indexInRegistry = id;
+        this.idToT[id] = state;
+        if (id >= this.size) {
+            this.size = id + 1;
+        }
+    }
+
+    @Override
+    public int getId(final BlockState state) {
+        return state.indexInRegistry;
     }
 
     @Override
