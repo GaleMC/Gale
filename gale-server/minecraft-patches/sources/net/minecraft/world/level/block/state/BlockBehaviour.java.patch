@@ -100,22 +100,7 @@
  
          public boolean isSolidRender() {
              return this.solidRender;
-@@ -996,8 +_,10 @@
-             return this.is(tag) && predicate.test(this);
-         }
- 
--        public boolean hasBlockEntity() {
--            return this.getBlock() instanceof EntityBlock;
-+        public final boolean hasBlockEntity() {
-+            // Gale start - Pre-compute - BlockBehaviour.hasBlockEntity()
-+            return this.gale$precompute_hasBlockEntity;
-+            // Gale end - Pre-compute - BlockBehaviour.hasBlockEntity()
-         }
- 
-         public boolean shouldChangedStateKeepBlockEntity(final BlockState oldState) {
-@@ -1037,7 +_,15 @@
-         public VoxelShape getCollisionShape(final BlockGetter level, final BlockPos pos) {
-             return this.cache != null ? this.cache.collisionShape : this.getCollisionShape(level, pos, CollisionContext.empty());
+@@ -820,7 +_,17 @@
          }
  
          public VoxelShape getCollisionShape(final BlockGetter level, final BlockPos pos, final CollisionContext context) {
@@ -132,6 +117,21 @@
 +            }
 +            return shape;
          }
+ 
+         public VoxelShape getEntityInsideCollisionShape(final BlockGetter level, final BlockPos pos, final Entity entity) {
+@@ -996,8 +_,10 @@
+             return this.is(tag) && predicate.test(this);
+         }
+ 
+-        public boolean hasBlockEntity() {
+-            return this.getBlock() instanceof EntityBlock;
++        // Gale start - Pre-compute - BlockBehaviour.hasBlockEntity()
++        public final boolean hasBlockEntity() {
++            return this.gale$precompute_hasBlockEntity;
++            // Gale end - Pre-compute - BlockBehaviour.hasBlockEntity()
+         }
+ 
+         public boolean shouldChangedStateKeepBlockEntity(final BlockState oldState) {
 @@ -1447,6 +_,18 @@
      public interface StateArgumentPredicate<A> {
          boolean test(BlockState state, BlockGetter level, BlockPos pos, A a);
