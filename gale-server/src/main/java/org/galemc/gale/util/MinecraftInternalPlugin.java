@@ -1,6 +1,7 @@
 package org.galemc.gale.util;
 
 import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager;
+import org.jspecify.annotations.Nullable;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -12,8 +13,6 @@ import org.bukkit.plugin.PluginBase;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginLoader;
 import org.bukkit.plugin.PluginLogger;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.InputStream;
@@ -23,7 +22,7 @@ public class MinecraftInternalPlugin extends PluginBase {
     private boolean enabled = true;
 
     private final String pluginName;
-    private PluginDescriptionFile pdf;
+    private final PluginDescriptionFile pdf;
 
     public MinecraftInternalPlugin() {
         this.pluginName = "Minecraft";
@@ -90,12 +89,13 @@ public class MinecraftInternalPlugin extends PluginBase {
     }
 
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         return false;
     }
 
+    @Nullable
     @Override
-    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         return null;
     }
 
@@ -138,13 +138,13 @@ public class MinecraftInternalPlugin extends PluginBase {
 
     @Nullable
     @Override
-    public BiomeProvider getDefaultBiomeProvider(@NotNull String worldName, @Nullable String id) {
+    public BiomeProvider getDefaultBiomeProvider(String worldName, @Nullable String id) {
         throw new UnsupportedOperationException("Not supported.");
     }
 
     @Nullable
     @Override
-    public ChunkGenerator getDefaultWorldGenerator(@NotNull String worldName, @Nullable String id) {
+    public ChunkGenerator getDefaultWorldGenerator(String worldName, @Nullable String id) {
         throw new UnsupportedOperationException("Not supported.");
     }
 
