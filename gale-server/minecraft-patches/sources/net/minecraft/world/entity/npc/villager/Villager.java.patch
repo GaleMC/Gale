@@ -1,0 +1,35 @@
+--- a/net/minecraft/world/entity/npc/villager/Villager.java
++++ b/net/minecraft/world/entity/npc/villager/Villager.java
+@@ -688,7 +_,9 @@
+ 
+     @Override
+     public boolean canBreed() {
+-        return this.foodLevel + this.countFoodPointsInInventory() >= 12 && !this.isSleeping() && this.getAge() == 0;
++        // Gale start - Local code optimization - skip inventory scan if food level sufficient
++        return (this.foodLevel >= 12 || this.foodLevel + this.countFoodPointsInInventory() >= 12) && !this.isSleeping() && this.getAge() == 0;
++        // Gale end - Local code optimization - skip inventory scan if food level sufficient
+     }
+ 
+     private boolean hungry() {
+@@ -843,8 +_,20 @@
+     }
+ 
+     private int countFoodPointsInInventory() {
++        // Gale start - Local code optimization - single pass food point count
+         SimpleContainer inventory = this.getInventory();
+-        return FOOD_POINTS.entrySet().stream().mapToInt(entry -> inventory.countItem(entry.getKey()) * entry.getValue()).sum();
++        int total = 0;
++        for (int slot = 0; slot < inventory.getContainerSize(); slot++) {
++            ItemStack itemStack = inventory.getItem(slot);
++            if (!itemStack.isEmpty()) {
++                Integer points = FOOD_POINTS.get(itemStack.getItem());
++                if (points != null) {
++                    total += points * itemStack.getCount();
++                }
++            }
++        }
++        return total;
++        // Gale end - Local code optimization - single pass food point count
+     }
+ 
+     public boolean hasFarmSeeds() {
