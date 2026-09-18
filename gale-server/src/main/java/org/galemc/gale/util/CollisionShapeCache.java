@@ -3,12 +3,13 @@ package org.galemc.gale.util;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jspecify.annotations.Nullable;
 
 public final class CollisionShapeCache {
 
     private static VoxelShape[] cache = new VoxelShape[0];
 
-    public static VoxelShape getCachedCollisionShape(BlockState state) {
+    public static @Nullable VoxelShape getCachedCollisionShape(BlockState state) {
         int index = state.indexInRegistry;
         return index >= 0 && index < cache.length ? cache[index] : null;
     }
