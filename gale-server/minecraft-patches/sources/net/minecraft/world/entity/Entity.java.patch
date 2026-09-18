@@ -66,7 +66,7 @@
          Entity.class, EntityDataSerializers.OPTIONAL_COMPONENT
      );
      private static final EntityDataAccessor<Boolean> DATA_CUSTOM_NAME_VISIBLE = SynchedEntityData.defineId(Entity.class, EntityDataSerializers.BOOLEAN);
-@@ -474,10 +_,7 @@
+@@ -475,10 +_,7 @@
  
      @Override
      public final boolean moonrise$hasAnyPlayerPassengers() {
@@ -78,7 +78,7 @@
      }
      // Paper end - rewrite chunk system
      // Paper start - optimise collisions
-@@ -675,6 +_,7 @@
+@@ -676,6 +_,7 @@
      }
  
      public final void discard(org.bukkit.event.entity.EntityRemoveEvent.@Nullable Cause cause) {
@@ -86,7 +86,7 @@
          this.remove(Entity.RemovalReason.DISCARDED, cause);
          // CraftBukkit end
      }
-@@ -1182,7 +_,18 @@
+@@ -1183,7 +_,18 @@
                  return;
              }
              // Paper end
@@ -106,7 +106,7 @@
              delta = this.maybeBackOffFromEdge(delta, moverType);
              Vec3 movement = this.collide(delta);
              double movementLength = movement.lengthSqr();
-@@ -1262,8 +_,15 @@
+@@ -1263,8 +_,15 @@
                      }
                  }
  
@@ -124,7 +124,7 @@
                  profiler.pop();
              }
          }
-@@ -1456,7 +_,7 @@
+@@ -1457,7 +_,7 @@
      }
  
      private boolean isStateClimbable(final BlockState state) {
@@ -133,7 +133,7 @@
      }
  
      private boolean vibrationAndSoundEffectsFromBlock(
-@@ -1540,9 +_,10 @@
+@@ -1541,9 +_,10 @@
              }
  
              BlockState belowState = this.level().getBlockState(getOnPos);
@@ -147,7 +147,7 @@
                  ? getOnPos.atY(Mth.floor(this.position.y - offset))
                  : getOnPos;
          } else {
-@@ -3368,7 +_,7 @@
+@@ -3370,7 +_,7 @@
              }
  
              this.setPose(Pose.STANDING);
@@ -156,7 +156,7 @@
              this.vehicle.addPassenger(this);
              if (sendEventAndTriggers) {
                  this.level().gameEvent(this, GameEvent.ENTITY_MOUNT, this.vehicle.position);
-@@ -3383,6 +_,21 @@
+@@ -3385,6 +_,21 @@
          }
      }
  
@@ -178,7 +178,7 @@
      protected boolean canRide(final Entity vehicle) {
          return !this.isShiftKeyDown() && this.boardingCooldown <= 0;
      }
-@@ -3402,8 +_,8 @@
+@@ -3404,8 +_,8 @@
          // Paper end - Force entity dismount during teleportation
          if (this.vehicle != null) {
              Entity oldVehicle = this.vehicle;
@@ -189,7 +189,7 @@
              Entity.RemovalReason removalReason = this.getRemovalReason();
              if (removalReason == null || removalReason.shouldDestroy()) {
                  this.level().gameEvent(this, GameEvent.ENTITY_DISMOUNT, oldVehicle.position);
-@@ -4580,6 +_,20 @@
+@@ -4589,6 +_,20 @@
      }
  
      public final void setBoundingBox(final AABB bb) {
@@ -210,7 +210,7 @@
          // CraftBukkit start - block invalid bounding boxes
          double minX = bb.minX,
                  minY = bb.minY,
-@@ -4718,13 +_,44 @@
+@@ -4727,13 +_,44 @@
      }
  
      public int countPlayerPassengers() {
@@ -259,10 +259,10 @@
  
      public Entity getRootVehicle() {
          Entity result = this;
-@@ -5193,6 +_,7 @@
-         final boolean alreadyRemoved = this.removalReason != null; // Paper - Folia schedulers
+@@ -5203,6 +_,7 @@
          if (this.removalReason == null) {
              this.removalReason = reason;
+             this.removeEventCause = cause; // Paper
 +            if (this instanceof LivingEntity livingEntity) livingEntity.gale$eventDriven_isAlive_update(); // Gale - Event-driven - LivingEntity.isAlive
          }
  

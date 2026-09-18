@@ -1,6 +1,6 @@
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
-@@ -102,6 +_,7 @@
+@@ -106,6 +_,7 @@
      // Paper start - Folia shedulers
      public final io.papermc.paper.threadedregions.EntityScheduler taskScheduler = new io.papermc.paper.threadedregions.EntityScheduler(this);
      private final io.papermc.paper.threadedregions.scheduler.FoliaEntityScheduler apiScheduler = new io.papermc.paper.threadedregions.scheduler.FoliaEntityScheduler(this);
@@ -8,7 +8,7 @@
  
      @Override
      public final io.papermc.paper.threadedregions.scheduler.EntityScheduler getScheduler() {
-@@ -113,6 +_,23 @@
+@@ -117,6 +_,23 @@
          this.server = server;
          this.entity = entity;
          this.entityType = CraftEntityType.minecraftToBukkit(entity.getType());
@@ -32,7 +32,7 @@
      }
  
      public static <T extends Entity> CraftEntity getEntity(CraftServer server, T entity) {
-@@ -578,7 +_,7 @@
+@@ -604,7 +_,7 @@
      @Override
      public void setTicksLived(int value) {
          Preconditions.checkArgument(value > 0, "Age value (%s) must be greater than 0", value);
@@ -41,7 +41,7 @@
          this.getHandle().totalEntityAge = value;
      }
  
-@@ -736,6 +_,20 @@
+@@ -762,6 +_,20 @@
          return this.getHandle().visibleByDefault;
      }
  
@@ -62,7 +62,7 @@
      @Override
      public Set<Player> getTrackedBy() {
          Preconditions.checkState(!this.entity.generation, "Cannot get tracking players during world generation");
-@@ -745,7 +_,7 @@
+@@ -771,7 +_,7 @@
          ChunkMap.TrackedEntity entityTracker = world.getChunkSource().chunkMap.entityMap.get(this.getEntityId());
  
          if (entityTracker != null) {
@@ -71,7 +71,7 @@
                  players.add(connection.getPlayer().getBukkitEntity());
              }
          }
-@@ -762,7 +_,10 @@
+@@ -788,7 +_,10 @@
          ChunkMap.TrackedEntity entityTracker = world.getChunkSource().chunkMap.entityMap.get(this.getEntityId());
          if (entityTracker == null) return false;
  
@@ -83,7 +83,7 @@
      }
  
      @Override
-@@ -1080,7 +_,7 @@
+@@ -1106,7 +_,7 @@
              return;
          }
  
@@ -92,7 +92,7 @@
              this.getHandle().resendPossiblyDesyncedEntityData(connection.getPlayer());
          }
      }
-@@ -1225,8 +_,8 @@
+@@ -1251,8 +_,8 @@
              return java.util.Collections.emptySet();
          }
  

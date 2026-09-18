@@ -74,7 +74,7 @@
          for (ServerLevel world : this.console.getAllLevels()) {
              // world.serverLevelData.setDifficulty(config.difficulty); // Paper - per level difficulty
              world.setSpawnSettings(world.isSpawningMonsters()); // Paper - per level difficulty (from MinecraftServer#setDifficulty(ServerLevel, Difficulty, boolean))
-@@ -2303,7 +_,7 @@
+@@ -2302,7 +_,7 @@
      }
  
      public int getSpawnLimitUnsafe(final SpawnCategory spawnCategory) {

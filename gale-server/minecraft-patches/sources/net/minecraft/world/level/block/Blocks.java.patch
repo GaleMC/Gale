@@ -1,9 +1,9 @@
 --- a/net/minecraft/world/level/block/Blocks.java
 +++ b/net/minecraft/world/level/block/Blocks.java
-@@ -6002,5 +_,6 @@
-                 state.initCache();
-             }
-         }
+@@ -6014,5 +_,6 @@
+         // Make sure this stays as a method reference, else the synthetic lambda method makes this blow up
+         statesToInit.parallelStream().forEach(BlockBehaviour.BlockStateBase::initCache);
+         // Paper end - Perf: Optimize block state cache initialization
 +        ((org.galemc.gale.registry.blockstate.BlockStateIdMapper) Block.BLOCK_STATE_REGISTRY).trimToSize(); // Gale - Instrusive values - Global block state palette id
      }
  }

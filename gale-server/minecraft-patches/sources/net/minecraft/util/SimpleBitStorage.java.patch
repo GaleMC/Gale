@@ -36,10 +36,11 @@
      public SimpleBitStorage(final int bits, final int size) {
          this(bits, size, (long[])null);
      }
-@@ -399,6 +_,41 @@
+@@ -397,6 +_,41 @@
+     @Override
      public BitStorage copy() {
          return new SimpleBitStorage(this.bits, this.size, (long[])this.data.clone());
-     }
++    }
 +
 +    // Gale - Chunk serialization
 +    @Override
@@ -74,7 +75,6 @@
 +                bits >>= this.bits;
 +            }
 +        }
-+    }
+     }
  
      // Paper start - block counting
-     @Override

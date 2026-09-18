@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/ai/sensing/SecondaryPoiSensor.java
 +++ b/net/minecraft/world/entity/ai/sensing/SecondaryPoiSensor.java
-@@ -22,16 +_,33 @@
+@@ -22,17 +_,33 @@
  
      @Override
      protected void doTick(final ServerLevel level, final Villager body) {
@@ -22,6 +22,7 @@
 +        final BlockPos.MutableBlockPos mutableTestPos = new BlockPos.MutableBlockPos();
 +        // Gale end - Local code optimization - SecondaryPoiSensor.doTick() (re-use BlockPos instance)
  
+-        if (!body.getVillagerData().profession().value().secondaryPoi().isEmpty()) // Paper - Perf: Only scan world if Villager profession has secondary POI
          for (int x = -4; x <= 4; x++) {
 +            mutableTestPos.setX(centerX + x); // Gale - Local code optimization - SecondaryPoiSensor.doTick() (re-use BlockPos instance)
              for (int y = -2; y <= 2; y++) {
