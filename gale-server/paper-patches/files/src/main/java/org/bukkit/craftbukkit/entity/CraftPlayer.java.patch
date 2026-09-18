@@ -1,6 +1,6 @@
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-@@ -235,7 +_,14 @@
+@@ -236,7 +_,14 @@
      private long lastPlayed = 0;
      private boolean hasPlayedBefore = false;
      private final ConversationTracker conversationTracker = new ConversationTracker();
@@ -16,7 +16,7 @@
      private final Set<UUID> unlistedEntities = new HashSet<>(); // Paper - Add Listing API for Player
      private static final WeakHashMap<Plugin, WeakReference<Plugin>> pluginWeakReferences = new WeakHashMap<>();
      private int hash = 0;
-@@ -251,6 +_,12 @@
+@@ -252,6 +_,12 @@
          super(server, entity);
  
          this.firstPlayed = System.currentTimeMillis();
@@ -29,7 +29,7 @@
      }
  
      @Override
-@@ -263,7 +_,11 @@
+@@ -264,7 +_,11 @@
          // Long-term, this should just use the super equals... for now, check the UUID
          if (obj == this) return true;
          if (!(obj instanceof OfflinePlayer other)) return false;
@@ -42,7 +42,7 @@
      }
  
      @Override
-@@ -1851,16 +_,23 @@
+@@ -1859,16 +_,23 @@
      }
  
      private boolean addInvertedVisibility(@Nullable Plugin plugin, org.bukkit.entity.Entity entity) {
@@ -69,7 +69,7 @@
  
          return true;
      }
-@@ -1896,7 +_,13 @@
+@@ -1904,7 +_,13 @@
              return;
          }
  
@@ -84,7 +84,7 @@
              this.untrackAndHideEntity(entity);
          }
      }
-@@ -1933,15 +_,22 @@
+@@ -1941,15 +_,22 @@
      }
  
      private boolean removeInvertedVisibility(@Nullable Plugin plugin, org.bukkit.entity.Entity entity) {
@@ -110,7 +110,7 @@
  
          return true;
      }
-@@ -1966,8 +_,14 @@
+@@ -1974,8 +_,14 @@
          }
  
          ChunkMap.TrackedEntity entry = tracker.entityMap.get(other.getId());
@@ -126,7 +126,7 @@
          }
  
          this.server.getPluginManager().callEvent(new PlayerShowEntityEvent(this, entity));
-@@ -2012,7 +_,13 @@
+@@ -2020,7 +_,13 @@
              return;
          }
  
@@ -141,7 +141,7 @@
              this.trackAndShowEntity(entity);
          }
      }
-@@ -2046,8 +_,28 @@
+@@ -2054,8 +_,28 @@
      // Paper end
  
      public void onEntityRemove(Entity entity) {
@@ -172,7 +172,7 @@
  
      @Override
      public boolean canSee(Player player) {
-@@ -2056,8 +_,14 @@
+@@ -2064,8 +_,14 @@
  
      @Override
      public boolean canSee(org.bukkit.entity.Entity entity) {
@@ -189,7 +189,7 @@
  
      public boolean canSeePlayer(UUID uuid) {
          org.bukkit.entity.Entity entity = this.getServer().getPlayer(uuid);
-@@ -2581,7 +_,12 @@
+@@ -2599,7 +_,12 @@
                  this.sendHealthUpdate();
              }
          }
@@ -203,7 +203,7 @@
  
          this.getHandle().maxHealthCache = this.getMaxHealth();
      }
-@@ -2714,7 +_,14 @@
+@@ -2732,7 +_,14 @@
  
      // Paper start
      public void setAffectsSpawning(boolean affects) {

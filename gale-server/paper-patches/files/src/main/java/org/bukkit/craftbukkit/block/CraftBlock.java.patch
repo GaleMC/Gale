@@ -1,6 +1,6 @@
 --- a/src/main/java/org/bukkit/craftbukkit/block/CraftBlock.java
 +++ b/src/main/java/org/bukkit/craftbukkit/block/CraftBlock.java
-@@ -304,7 +_,7 @@
+@@ -317,7 +_,7 @@
  
      @Override
      public double getTemperature() {

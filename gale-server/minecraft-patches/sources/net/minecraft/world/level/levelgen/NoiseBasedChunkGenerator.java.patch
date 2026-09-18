@@ -1,13 +1,12 @@
 --- a/net/minecraft/world/level/levelgen/NoiseBasedChunkGenerator.java
 +++ b/net/minecraft/world/level/levelgen/NoiseBasedChunkGenerator.java
-@@ -58,3 +_,5 @@
+@@ -58,11 +_,18 @@
      private static final BlockState AIR = Blocks.AIR.defaultBlockState();
      private final Holder<NoiseGeneratorSettings> settings;
      private final Supplier<Aquifer.FluidPicker> globalFluidPicker;
 +    private final org.galemc.gale.util.function.MemoizedBooleanSupplier hasCarvers; // Gale - Cache - NoiseBasedChunkGenerator.applyCarvers()
 +    private int cachedSeaLevel = Integer.MIN_VALUE; // Gale - Cache - NoiseBasedChunkGenerator.getSeaLevel()
-
-@@ -62,5 +_,10 @@
+ 
      public NoiseBasedChunkGenerator(final BiomeSource biomeSource, final Holder<NoiseGeneratorSettings> settings) {
          super(biomeSource);
          this.settings = settings;
@@ -18,6 +17,8 @@
 +        );
 +        // Gale end - Cache - NoiseBasedChunkGenerator.applyCarvers()
      }
+ 
+     private static Aquifer.FluidPicker createFluidPicker(final NoiseGeneratorSettings settings) {
 @@ -310,6 +_,13 @@
          final ChunkAccess chunk
      ) {
