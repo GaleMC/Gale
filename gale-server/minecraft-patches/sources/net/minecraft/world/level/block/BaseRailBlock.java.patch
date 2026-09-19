@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/BaseRailBlock.java
 +++ b/net/minecraft/world/level/block/BaseRailBlock.java
-@@ -35,7 +_,7 @@
+@@ -34,7 +_,7 @@
      }
  
      public static boolean isRail(final BlockState state) {

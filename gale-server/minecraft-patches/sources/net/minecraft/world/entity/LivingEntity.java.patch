@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/LivingEntity.java
 +++ b/net/minecraft/world/entity/LivingEntity.java
-@@ -189,7 +_,7 @@
+@@ -193,7 +_,7 @@
      protected static final int LIVING_ENTITY_FLAG_OFF_HAND = 2;
      public static final int LIVING_ENTITY_FLAG_SPIN_ATTACK = 4;
      protected static final EntityDataAccessor<Byte> DATA_LIVING_ENTITY_FLAGS = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.BYTE);
@@ -9,7 +9,7 @@
      private static final EntityDataAccessor<List<ParticleOptions>> DATA_EFFECT_PARTICLES = SynchedEntityData.defineId(
          LivingEntity.class, EntityDataSerializers.PARTICLES
      );
-@@ -254,7 +_,7 @@
+@@ -255,7 +_,7 @@
      public final ElytraAnimationState elytraAnimationState = new ElytraAnimationState(this);
      public @Nullable EntityReference<Player> lastHurtByPlayer;
      public int lastHurtByPlayerMemoryTime;
@@ -27,7 +27,7 @@
      private Waypoint.Icon locatorBarIcon = new Waypoint.Icon();
      public @Nullable Vec3 currentImpulseImpactPos;
      // CraftBukkit start
-@@ -319,6 +_,7 @@
+@@ -318,6 +_,7 @@
          this.setYRot(this.random.nextFloat() * (float) (Math.PI * 2));
          this.yHeadRot = this.getYRot();
          this.brain = this.makeBrain(Brain.Packed.EMPTY);
@@ -35,7 +35,7 @@
      }
  
      @Override
-@@ -561,13 +_,14 @@
+@@ -562,13 +_,14 @@
      }
  
      protected void tryAddFrost() {
@@ -51,7 +51,7 @@
  
                  float slowAmount = -0.05F * this.getPercentFrozen();
                  speed.addTransientModifier(new AttributeModifier(SPEED_MODIFIER_POWDER_SNOW_ID, slowAmount, AttributeModifier.Operation.ADD_VALUE));
-@@ -946,6 +_,7 @@
+@@ -944,6 +_,7 @@
  
      protected void tickEffects() {
          if (this.level() instanceof ServerLevel serverLevel) {
@@ -59,7 +59,7 @@
              Iterator<Holder<MobEffect>> iterator = this.activeEffects.keySet().iterator();
  
              this.tickingEffects = true; // CraftBukkit
-@@ -970,6 +_,7 @@
+@@ -968,6 +_,7 @@
              }
              // CraftBukkit start
              this.tickingEffects = false;
@@ -80,7 +80,7 @@
      }
  
      public boolean isDeadOrDying() {
-@@ -1857,6 +_,7 @@
+@@ -1865,6 +_,7 @@
                  this.deathDropItems = null;
                  if (deathEvent.isCancelled()) {
                      this.dead = false;
@@ -88,7 +88,7 @@
                      this.postDeathEventTasks.clear();
                      this.setHealth((float) deathEvent.getReviveHealth());
                      return;
-@@ -1881,6 +_,7 @@
+@@ -1889,6 +_,7 @@
  
      protected void handleKillingBlow() {
          this.dead = true;
@@ -96,7 +96,7 @@
      }
  
      protected void createWitherRose(final @Nullable LivingEntity killer) {
-@@ -2159,9 +_,9 @@
+@@ -2167,9 +_,9 @@
          } else {
              BlockPos ladderCheckPos = this.blockPosition();
              BlockState state = this.getInBlockState();
@@ -108,7 +108,7 @@
                  this.lastClimbablePos = Optional.of(ladderCheckPos);
                  return true;
              } else if (state.getBlock() instanceof TrapDoorBlock && this.trapdoorUsableAsLadder(ladderCheckPos, state)) {
-@@ -2184,8 +_,30 @@
+@@ -2192,8 +_,30 @@
  
      @Override
      public boolean isAlive() {
@@ -141,7 +141,7 @@
  
      public boolean isLookingAtMe(
          final LivingEntity target,
-@@ -3792,7 +_,13 @@
+@@ -3789,7 +_,13 @@
          if (this.level() instanceof ServerLevel serverLevel) {
              profiler.push("freezing");
              if ((!this.isInPowderSnow || !this.canFreeze()) && !this.freezeLocked) { // Paper - Freeze Tick Lock API

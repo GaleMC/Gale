@@ -3,7 +3,7 @@
 @@ -71,9 +_,26 @@
          boolean advanceTime = this.advanceTime(); // Paper - per-world time
          if (advanceTime) {
-             this.clocks.values().forEach(ServerClockManager.ClockInstance::tick);
+             this.clocks.values().forEach(ServerClockManager.ServerClockInstance::tick);
 +            // Gale start - Speculative execution based on next tick simulation - Simulate next tick
 +            if (org.galemc.gale.async.SimulationFlag.REAL) {
              this.setDirty();
@@ -22,14 +22,14 @@
 +    public void rewind() {
 +        if (this.needsRewind) {
 +            this.needsRewind = false;
-+            this.clocks.values().forEach(ServerClockManager.ClockInstance::rewind);
++            this.clocks.values().forEach(ServerClockManager.ServerClockInstance::rewind);
 +        }
 +    }
 +    // Gale end - Speculative execution based on next tick simulation - Simulate next tick
  
-     private ServerClockManager.ClockInstance getInstance(final Holder<WorldClock> definition) {
-         ServerClockManager.ClockInstance instance = this.clocks.get(definition);
-@@ -217,12 +_,33 @@
+     @Override
+     public ServerClockManager.ServerClockInstance getInstance(final Holder<WorldClock> definition) {
+@@ -231,6 +_,13 @@
  
          public void tick() {
              if (!this.paused) {
@@ -43,8 +43,9 @@
                  this.partialTick = this.partialTick + this.rate;
                  int fullTicks = Mth.floor(this.partialTick);
                  this.partialTick -= fullTicks;
-                 this.totalTicks += fullTicks;
-             }
+@@ -257,6 +_,21 @@
+         public boolean isPaused() {
+             return this.paused;
          }
 +
 +        // Gale start - Speculative execution based on next tick simulation - Simulate next tick
@@ -52,6 +53,7 @@
 +        private float oldPartialTick;
 +        private boolean needsRewind;
 +
++        @Override
 +        public void rewind() {
 +            if (this.needsRewind) {
 +                this.needsRewind = false;

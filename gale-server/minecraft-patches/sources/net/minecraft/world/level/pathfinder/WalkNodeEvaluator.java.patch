@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/pathfinder/WalkNodeEvaluator.java
 +++ b/net/minecraft/world/level/pathfinder/WalkNodeEvaluator.java
-@@ -520,6 +_,12 @@
+@@ -518,6 +_,12 @@
              return PathType.BLOCKED;
          }
          // Paper end
@@ -13,7 +13,7 @@
          Block block = blockState.getBlock();
          if (blockState.isAir()) {
              return PathType.OPEN;
-@@ -570,8 +_,8 @@
+@@ -568,8 +_,8 @@
                      return PathType.LEAVES;
                  }
  

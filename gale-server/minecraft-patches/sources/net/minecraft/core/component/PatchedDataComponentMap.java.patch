@@ -1,6 +1,6 @@
 --- a/net/minecraft/core/component/PatchedDataComponentMap.java
 +++ b/net/minecraft/core/component/PatchedDataComponentMap.java
-@@ -221,7 +_,18 @@
+@@ -219,7 +_,18 @@
  
      @Override
      public boolean equals(final Object obj) {

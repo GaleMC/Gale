@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/state/BlockState.java
 +++ b/net/minecraft/world/level/block/state/BlockState.java
-@@ -27,4 +_,8 @@
+@@ -34,4 +_,8 @@
      protected BlockState asState() {
          return this;
      }

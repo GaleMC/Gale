@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/RespawnAnchorBlock.java
 +++ b/net/minecraft/world/level/block/RespawnAnchorBlock.java
-@@ -163,14 +_,36 @@
+@@ -156,14 +_,36 @@
      private void explode(final BlockState state, final ServerLevel level, final BlockPos pos) {
          org.bukkit.block.BlockState blockState = org.bukkit.craftbukkit.block.CraftBlock.at(level, pos).getState(); // CraftBukkit - capture BlockState before remove block
          level.removeBlock(pos, false);

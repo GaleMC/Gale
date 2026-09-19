@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/FireBlock.java
 +++ b/net/minecraft/world/level/block/FireBlock.java
-@@ -136,7 +_,7 @@
+@@ -129,7 +_,7 @@
          if (!this.canBurn(belowState) && !belowState.isFaceSturdy(level, below, Direction.UP)) {
              BlockState result = this.defaultBlockState();
  
@@ -9,7 +9,7 @@
                  BooleanProperty property = PROPERTY_BY_DIRECTION.get(direction);
                  if (property != null) {
                      result = result.setValue(property, this.canBurn(level.getBlockState(pos.relative(direction))));
-@@ -306,7 +_,7 @@
+@@ -299,7 +_,7 @@
      }
  
      private boolean isValidFireLocation(final BlockGetter level, final BlockPos pos) {
@@ -18,7 +18,7 @@
              if (this.canBurn(level.getBlockState(pos.relative(direction)))) {
                  return true;
              }
-@@ -322,7 +_,7 @@
+@@ -315,7 +_,7 @@
  
          int odds = 0;
  

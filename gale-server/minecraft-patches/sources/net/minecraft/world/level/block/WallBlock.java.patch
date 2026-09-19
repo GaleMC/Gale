@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/WallBlock.java
 +++ b/net/minecraft/world/level/block/WallBlock.java
-@@ -105,7 +_,7 @@
+@@ -98,7 +_,7 @@
      private boolean connectsTo(final BlockState state, final boolean faceSolid, final Direction direction) {
          Block block = state.getBlock();
          boolean connectedFenceGate = block instanceof FenceGateBlock && FenceGateBlock.connectsToDirection(state, direction);

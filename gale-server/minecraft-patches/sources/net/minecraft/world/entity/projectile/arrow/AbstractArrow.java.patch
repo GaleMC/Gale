@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/projectile/arrow/AbstractArrow.java
 +++ b/net/minecraft/world/entity/projectile/arrow/AbstractArrow.java
-@@ -184,12 +_,13 @@
+@@ -182,12 +_,13 @@
  
      @Override
      public void tick() {
@@ -16,7 +16,7 @@
              if (!shape.isEmpty()) {
                  Vec3 position = this.position();
  
-@@ -212,7 +_,7 @@
+@@ -210,7 +_,7 @@
          }
  
          if (this.isInGround() && physicsEnabled) {
@@ -25,7 +25,7 @@
                  if (this.lastState != blockState && this.shouldFall()) {
                      this.startFalling();
                  } else {
-@@ -225,12 +_,12 @@
+@@ -223,12 +_,12 @@
                  this.applyEffectsFromBlocks();
              }
  
@@ -40,7 +40,7 @@
              if (maxArrowDespawnInvulnerability.enabled() && this.tickCount > maxArrowDespawnInvulnerability.intValue()) this.tickDespawn();
              // Paper end - tick life regardless after X seconds
              this.inGroundTime = 0;
-@@ -242,7 +_,7 @@
+@@ -240,7 +_,7 @@
  
              if (this.isCritArrow()) {
                  for (int i = 0; i < 4; i++) {
@@ -49,7 +49,7 @@
                          .addParticle(
                              ParticleTypes.CRIT,
                              originalPosition.x + movement.x * i / 4.0,
-@@ -267,10 +_,9 @@
+@@ -265,10 +_,9 @@
              this.setYRot(lerpRotation(this.getYRot(), yRot));
              this.checkLeftOwner();
              if (physicsEnabled) {

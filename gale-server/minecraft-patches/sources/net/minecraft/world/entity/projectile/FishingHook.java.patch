@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/projectile/FishingHook.java
 +++ b/net/minecraft/world/entity/projectile/FishingHook.java
-@@ -52,7 +_,7 @@
+@@ -53,7 +_,7 @@
  
  public class FishingHook extends Projectile {
      private static final Logger LOGGER = LogUtils.getLogger();
@@ -9,7 +9,7 @@
      private boolean biting;
      public int outOfWaterTime;
      private static final int MAX_OUT_OF_WATER_TIME = 10;
-@@ -90,6 +_,7 @@
+@@ -91,6 +_,7 @@
          this.minWaitTime = level.paperConfig().fishingTimeRange.minimum;
          this.maxWaitTime = level.paperConfig().fishingTimeRange.maximum;
          // Paper end - Configurable fishing time ranges

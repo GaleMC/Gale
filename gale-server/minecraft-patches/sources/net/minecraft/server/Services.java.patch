@@ -1,17 +1,14 @@
 --- a/net/minecraft/server/Services.java
 +++ b/net/minecraft/server/Services.java
-@@ -26,7 +_,9 @@
+@@ -26,6 +_,7 @@
      public record PaperServices(
          io.papermc.paper.configuration.PaperConfigurations configurations,
          io.papermc.paper.profile.PaperFilledProfileCache filledProfileCache
--    ) {}
 +        , org.galemc.gale.configuration.GaleConfigurations galeConfigurations // Gale - Configuration - Add configuration files
-+    ) {
-+    }
+     ) {}
  
-     public Services(MinecraftSessionService sessionService, ServicesKeySet servicesKeySet, GameProfileRepository profileRepository, UserNameToIdResolver nameToIdCache, ProfileResolver profileResolver) {
-         this(sessionService, servicesKeySet, profileRepository, nameToIdCache, profileResolver, null);
-@@ -46,9 +_,11 @@
+     public Services(SessionService sessionService, ServicesKeySet servicesKeySet, GameProfileRepository profileRepository, UserNameToIdResolver nameToIdCache, ProfileResolver profileResolver) {
+@@ -47,9 +_,11 @@
          final java.nio.file.Path legacyConfigPath = ((File) options.valueOf("paper-settings")).toPath();
          final java.nio.file.Path configDirPath = ((File) options.valueOf("paper-settings-directory")).toPath();
          io.papermc.paper.configuration.PaperConfigurations paperConfigurations = io.papermc.paper.configuration.PaperConfigurations.setup(legacyConfigPath, configDirPath, nameCacheDir.toPath(), (File) options.valueOf("spigot-settings"));

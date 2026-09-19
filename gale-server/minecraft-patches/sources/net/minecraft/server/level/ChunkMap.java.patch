@@ -1,15 +1,15 @@
 --- a/net/minecraft/server/level/ChunkMap.java
 +++ b/net/minecraft/server/level/ChunkMap.java
-@@ -139,7 +_,7 @@
+@@ -138,7 +_,7 @@
+     private final ChunkStatusUpdateListener chunkStatusListener;
      private final ChunkMap.DistanceManager distanceManager;
-     private final String storageName;
      private final PlayerMap playerMap = new PlayerMap();
 -    public final Int2ObjectMap<ChunkMap.TrackedEntity> entityMap = new Int2ObjectOpenHashMap<>();
 +    public final Int2ObjectMap<ChunkMap.TrackedEntity> entityMap = new it.unimi.dsi.fastutil.ints.Int2ObjectLinkedOpenHashMap<>(); // Gale - Collections - ChunkMap.entityMap
      private final Long2ByteMap chunkTypeCache = new Long2ByteOpenHashMap();
      // Paper - rewrite chunk system
      public int serverViewDistance;
-@@ -1145,12 +_,12 @@
+@@ -1109,12 +_,12 @@
  
      public boolean isTrackedByAnyPlayer(final Entity entity) {
          ChunkMap.TrackedEntity trackedEntity = this.entityMap.get(entity.getId());
@@ -24,7 +24,7 @@
                  consumer.accept(entity.entity);
              }
          }
-@@ -1234,7 +_,10 @@
+@@ -1194,7 +_,10 @@
          private final Entity entity;
          private final int range;
          private SectionPos lastSectionPos;
@@ -36,7 +36,7 @@
  
          // Paper start - optimise entity tracker
          private long lastChunkUpdate = -1L;
-@@ -1269,58 +_,87 @@
+@@ -1229,58 +_,87 @@
  
              if (lastChunkUpdate != currChunkUpdate || lastTrackedChunk != chunk) {
                  // need to purge any players possible not in the chunk list
@@ -145,13 +145,13 @@
          }
          // Paper end - optimise entity tracker
  
-         public TrackedEntity(final Entity entity, final int range, final int updateInterval, final boolean trackDelta) {
+         public TrackedEntity(final Entity entity, final int range, final UpdateInterval updateInterval, final boolean trackDelta) {
 -            this.serverEntity = new ServerEntity(ChunkMap.this.level, entity, updateInterval, trackDelta, this, this.seenBy); // Paper
 +            this.serverEntity = new ServerEntity(ChunkMap.this.level, entity, updateInterval, trackDelta, this, this.seenByList); // Paper // Gale - Collections - ChunkMap.TrackedEntity.seenBy
              this.entity = entity;
              this.range = range;
              this.lastSectionPos = SectionPos.of(entity);
-@@ -1338,7 +_,7 @@
+@@ -1298,7 +_,7 @@
  
          @Override
          public void sendToTrackingPlayers(final Packet<? super ClientGamePacketListener> packet) {
@@ -160,7 +160,7 @@
                  connection.send(packet);
              }
          }
-@@ -1353,7 +_,7 @@
+@@ -1313,7 +_,7 @@
  
          @Override
          public void sendToTrackingPlayersFiltered(final Packet<? super ClientGamePacketListener> packet, final Predicate<ServerPlayer> targetPredicate) {
@@ -169,7 +169,7 @@
                  if (targetPredicate.test(connection.getPlayer())) {
                      connection.send(packet);
                  }
-@@ -1361,20 +_,31 @@
+@@ -1321,20 +_,31 @@
          }
  
          public void broadcastRemoved() {
@@ -209,7 +209,7 @@
  
          public void updatePlayer(final ServerPlayer player) {
              org.spigotmc.AsyncCatcher.catchOp("player tracker update"); // Spigot
-@@ -1402,16 +_,22 @@
+@@ -1362,16 +_,22 @@
                      && ChunkMap.this.isChunkTracked(player, this.entity.chunkPosition().x(), this.entity.chunkPosition().z());
                  // Paper end - Configurable entity tracking range by Y
                  // CraftBukkit start - respect vanish API

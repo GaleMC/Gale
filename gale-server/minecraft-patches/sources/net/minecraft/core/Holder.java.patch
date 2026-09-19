@@ -1,6 +1,6 @@
 --- a/net/minecraft/core/Holder.java
 +++ b/net/minecraft/core/Holder.java
-@@ -129,11 +_,15 @@
+@@ -133,11 +_,15 @@
  
      non-sealed class Reference<T> implements Holder<T> {
          private final HolderOwner<T> owner;
@@ -17,7 +17,7 @@
  
          protected Reference(final Holder.Reference.Type type, final HolderOwner<T> owner, final @Nullable ResourceKey<T> key, final @Nullable T value) {
              this.owner = owner;
-@@ -178,17 +_,19 @@
+@@ -182,17 +_,19 @@
              return this.key() == key;
          }
  
@@ -45,7 +45,7 @@
          }
  
          @Override
-@@ -248,7 +_,26 @@
+@@ -252,7 +_,26 @@
          }
  
          void bindTags(final Collection<TagKey<T>> tags) {
@@ -73,7 +73,7 @@
          }
  
          public void bindComponents(final DataComponentMap components) {
-@@ -257,7 +_,7 @@
+@@ -261,7 +_,7 @@
  
          @Override
          public Stream<TagKey<T>> tags() {

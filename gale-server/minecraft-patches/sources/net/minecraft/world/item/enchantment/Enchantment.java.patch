@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/enchantment/Enchantment.java
 +++ b/net/minecraft/world/item/enchantment/Enchantment.java
-@@ -57,7 +_,73 @@
+@@ -56,7 +_,73 @@
  import net.minecraft.world.phys.Vec3;
  import org.apache.commons.lang3.mutable.MutableFloat;
  
@@ -75,7 +75,7 @@
      public static final int MAX_LEVEL = 255;
      public static final Codec<Enchantment> DIRECT_CODEC = RecordCodecBuilder.create(
          i -> i.group(
-@@ -107,8 +_,10 @@
+@@ -106,8 +_,10 @@
      public Map<EquipmentSlot, ItemStack> getSlotItems(final LivingEntity entity) {
          Map<EquipmentSlot, ItemStack> itemStacks = Maps.newEnumMap(EquipmentSlot.class);
  
@@ -88,7 +88,7 @@
                  ItemStack itemStack = entity.getItemBySlot(slot);
                  if (!itemStack.isEmpty()) {
                      itemStacks.put(slot, itemStack);
-@@ -124,6 +_,12 @@
+@@ -123,6 +_,12 @@
      }
  
      public boolean matchingSlot(final EquipmentSlot slot) {

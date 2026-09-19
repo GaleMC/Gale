@@ -2,7 +2,7 @@
 +++ b/net/minecraft/world/entity/monster/cubemob/SulfurCube.java
 @@ -96,7 +_,7 @@
      private int fuse = -1;
-     private List<SulfurCubeArchetype.ContactDamage> contactDamages = new ArrayList<>();
+     private final List<SulfurCubeArchetype.ContactDamage> contactDamages = new ArrayList<>();
      public static final EntityDataAccessor<Integer> MAX_FUSE = SynchedEntityData.defineId(SulfurCube.class, EntityDataSerializers.INT);
 -    private static final EntityDataAccessor<Boolean> FROM_BUCKET = SynchedEntityData.defineId(SulfurCube.class, EntityDataSerializers.BOOLEAN);
 +    private static final EntityDataAccessor<Boolean> FROM_BUCKET = SynchedEntityData.defineId(SulfurCube.class, EntityDataSerializers.BOOLEAN); // Gale - Event-driven - Mob.requiresCustomPersistence - TODO Watch for new set calls

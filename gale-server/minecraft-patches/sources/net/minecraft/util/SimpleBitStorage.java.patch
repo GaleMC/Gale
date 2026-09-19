@@ -1,6 +1,6 @@
 --- a/net/minecraft/util/SimpleBitStorage.java
 +++ b/net/minecraft/util/SimpleBitStorage.java
-@@ -251,6 +_,35 @@
+@@ -252,6 +_,35 @@
          }
      }
  
@@ -36,7 +36,7 @@
      public SimpleBitStorage(final int bits, final int size) {
          this(bits, size, (long[])null);
      }
-@@ -397,6 +_,41 @@
+@@ -411,6 +_,41 @@
      @Override
      public BitStorage copy() {
          return new SimpleBitStorage(this.bits, this.size, (long[])this.data.clone());

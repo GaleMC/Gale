@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/FenceGateBlock.java
 +++ b/net/minecraft/world/level/block/FenceGateBlock.java
-@@ -136,7 +_,7 @@
+@@ -126,7 +_,7 @@
      }
  
      private boolean isWall(final BlockState state) {

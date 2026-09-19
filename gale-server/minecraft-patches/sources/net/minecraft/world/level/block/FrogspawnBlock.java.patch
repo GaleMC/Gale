@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/FrogspawnBlock.java
 +++ b/net/minecraft/world/level/block/FrogspawnBlock.java
-@@ -108,7 +_,7 @@
+@@ -101,7 +_,7 @@
      private static boolean mayPlaceOn(final BlockGetter level, final BlockPos pos) {
          FluidState fluidState = level.getFluidState(pos);
          FluidState fluidAbove = level.getFluidState(pos.above());

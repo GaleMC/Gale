@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/item/ItemEntity.java
 +++ b/net/minecraft/world/entity/item/ItemEntity.java
-@@ -255,13 +_,19 @@
+@@ -248,13 +_,19 @@
  
      private void mergeWithNeighbours() {
          if (this.isMergable()) {

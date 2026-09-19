@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/vehicle/minecart/OldMinecartBehavior.java
 +++ b/net/minecraft/world/entity/vehicle/minecart/OldMinecartBehavior.java
-@@ -275,7 +_,7 @@
+@@ -267,7 +_,7 @@
          int xt = Mth.floor(x);
          int yt = Mth.floor(y);
          int zt = Mth.floor(z);
@@ -9,7 +9,7 @@
              yt--;
          }
  
-@@ -313,7 +_,7 @@
+@@ -305,7 +_,7 @@
          int xt = Mth.floor(x);
          int yt = Mth.floor(y);
          int zt = Mth.floor(z);

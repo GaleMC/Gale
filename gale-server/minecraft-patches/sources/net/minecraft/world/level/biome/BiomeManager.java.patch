@@ -2,7 +2,7 @@
 +++ b/net/minecraft/world/level/biome/BiomeManager.java
 @@ -14,8 +_,30 @@
      private static final int ZOOM_MASK = 3;
-     private final BiomeManager.NoiseBiomeSource noiseBiomeSource;
+     private final BiomeResolver noiseBiomeSource;
      private final long biomeZoomSeed;
 +    // Gale start - Cache - BiomeManager.getBiome()
 +    private final long @org.jspecify.annotations.Nullable [] biomeCacheKeys;
@@ -11,12 +11,12 @@
 +    private int cacheVersion;
 +    // Gale end - Cache - BiomeManager.getBiome()
  
-     public BiomeManager(final BiomeManager.NoiseBiomeSource noiseBiomeSource, final long seed) {
+     public BiomeManager(final BiomeResolver noiseBiomeSource, final long seed) {
 +        // Gale start - Cache - BiomeManager.getBiome()
 +        this(noiseBiomeSource, seed, false);
 +    }
 +
-+    public BiomeManager(final BiomeManager.NoiseBiomeSource noiseBiomeSource, final long seed, boolean initializeCache) {
++    public BiomeManager(final BiomeResolver noiseBiomeSource, final long seed, boolean initializeCache) {
 +        if (initializeCache) {
 +            this.biomeCacheKeys = new long[1 << 15];
 +            java.util.Arrays.fill(this.biomeCacheKeys, Long.MAX_VALUE); // Long.MAX_VALUE is not a possible BlockPos packed long
@@ -63,9 +63,9 @@
 +    // Gale end - Cache - BiomeManager.getBiome()
 +
      public Holder<Biome> getBiome(final BlockPos pos) {
-         int absX = pos.getX() - 2;
-         int absY = pos.getY() - 2;
-@@ -38,29 +_,177 @@
+         return this.getBiome(pos.getX(), pos.getY(), pos.getZ());
+     }
+@@ -42,29 +_,177 @@
          double fractX = (absX & 3) / 4.0;
          double fractY = (absY & 3) / 4.0;
          double fractZ = (absZ & 3) / 4.0;
@@ -266,7 +266,7 @@
          return this.noiseBiomeSource.getNoiseBiome(biomeX, biomeY, biomeZ);
      }
  
-@@ -101,7 +_,20 @@
+@@ -105,6 +_,19 @@
      }
  
      private static double getFiddle(final long rval) {
@@ -286,5 +286,4 @@
 +        // Gale end - Pre-compute - BiomeManager.getFiddle()
 +        return (double)(i - (1024/2)) * (0.9 / 1024.0); // Paper - avoid floorMod, fp division, and fp subtraction
      }
- 
-     public interface NoiseBiomeSource {
+ }

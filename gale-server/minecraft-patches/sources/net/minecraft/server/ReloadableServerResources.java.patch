@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/ReloadableServerResources.java
 +++ b/net/minecraft/server/ReloadableServerResources.java
-@@ -127,5 +_,13 @@
+@@ -124,5 +_,13 @@
      public void updateComponentsAndStaticRegistryTags() {
          this.postponedTags.forEach(Registry.PendingTags::apply);
          this.newComponents.forEach(DataComponentInitializers.PendingComponents::apply);

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/FenceBlock.java
 +++ b/net/minecraft/world/level/block/FenceBlock.java
-@@ -64,7 +_,7 @@
+@@ -57,7 +_,7 @@
      }
  
      private boolean isSameFence(final BlockState state) {

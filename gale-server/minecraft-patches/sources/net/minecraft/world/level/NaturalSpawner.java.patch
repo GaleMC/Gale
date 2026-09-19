@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/NaturalSpawner.java
 +++ b/net/minecraft/world/level/NaturalSpawner.java
-@@ -86,7 +_,7 @@
+@@ -73,7 +_,7 @@
          Object2IntOpenHashMap<MobCategory> mobCounts = new Object2IntOpenHashMap<>();
  
          for (Entity entity : entities) {
@@ -9,7 +9,7 @@
                  MobCategory category = entity.getType().getCategory();
                  if (category != MobCategory.MISC) {
                      // Paper start - Only count natural spawns
-@@ -477,7 +_,11 @@
+@@ -383,7 +_,11 @@
      public static boolean isInNetherFortressBounds(
          final BlockPos pos, final ServerLevel level, final MobCategory category, final StructureManager structureManager
      ) {

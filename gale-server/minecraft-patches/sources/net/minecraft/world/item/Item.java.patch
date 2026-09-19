@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/Item.java
 +++ b/net/minecraft/world/item/Item.java
-@@ -96,7 +_,7 @@
+@@ -109,7 +_,7 @@
  import org.jspecify.annotations.Nullable;
  import org.slf4j.Logger;
  
@@ -9,7 +9,7 @@
      public static final Codec<Holder<Item>> CODEC = BuiltInRegistries.ITEM
          .holderByNameCodec()
          .validate(item -> item.is(Items.AIR.builtInRegistryHolder()) ? DataResult.error(() -> "Item must not be minecraft:air") : DataResult.success(item));
-@@ -120,7 +_,7 @@
+@@ -133,7 +_,7 @@
      private final FeatureFlagSet requiredFeatures;
  
      public static int getId(final Item item) {

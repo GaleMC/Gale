@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/PointedDripstoneBlock.java
 +++ b/net/minecraft/world/level/block/PointedDripstoneBlock.java
-@@ -91,9 +_,12 @@
+@@ -81,9 +_,12 @@
      public static void maybeTransferFluid(final BlockState state, final ServerLevel level, final BlockPos pos, final float randomValue) {
          if (!(randomValue > 0.17578125F) || !(randomValue > 0.05859375F)) {
              if (isStalactiteStartPos(state, level, pos)) {
@@ -16,7 +16,7 @@
                      float transferProbability;
                      if (fluid == Fluids.WATER) {
                          transferProbability = 0.17578125F;
-@@ -108,12 +_,12 @@
+@@ -98,12 +_,12 @@
                      if (!(randomValue >= transferProbability)) {
                          BlockPos stalactiteTipPos = findTip(state, level, pos, 11, false);
                          if (stalactiteTipPos != null) {

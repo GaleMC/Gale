@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/entity/PotentSulfurBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/PotentSulfurBlockEntity.java
-@@ -173,7 +_,7 @@
+@@ -171,7 +_,7 @@
      }
  
      public static RandomSource geyserPositional(final ServerLevel level, final BlockPos pos) {

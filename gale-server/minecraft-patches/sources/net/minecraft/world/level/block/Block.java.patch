@@ -1,15 +1,15 @@
 --- a/net/minecraft/world/level/block/Block.java
 +++ b/net/minecraft/world/level/block/Block.java
-@@ -79,7 +_,7 @@
-     public static final MapCodec<Block> CODEC = simpleCodec(Block::new);
+@@ -78,7 +_,7 @@
+ public class Block extends BlockBehaviour implements ItemLike {
      private static final Logger LOGGER = LogUtils.getLogger();
      private final Holder.Reference<Block> builtInRegistryHolder = BuiltInRegistries.BLOCK.createIntrusiveHolder(this);
 -    public static final IdMapper<BlockState> BLOCK_STATE_REGISTRY = new IdMapper<>();
-+    public static final IdMapper<BlockState> BLOCK_STATE_REGISTRY = new org.galemc.gale.registry.blockstate.BlockStateIdMapper(); // Gale - Instrusive values - Global block state palette id
++    public static final IdMapper<BlockState> BLOCK_STATE_REGISTRY = new org.galemc.gale.registry.blockstate.BlockStateIdMapper(); // Gale - Intrusive values - Global block state palette id
      private static final LoadingCache<VoxelShape, Boolean> SHAPE_FULL_BLOCK_CACHE = CacheBuilder.newBuilder()
          .maximumSize(512L)
          .weakKeys()
-@@ -148,8 +_,7 @@
+@@ -142,8 +_,7 @@
              return 0;
          }
  

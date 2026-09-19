@@ -1,23 +1,23 @@
 --- a/net/minecraft/server/level/ServerLevel.java
 +++ b/net/minecraft/server/level/ServerLevel.java
-@@ -218,6 +_,7 @@
-     private @Nullable EnderDragonFight dragonFight;
+@@ -220,6 +_,7 @@
      private final Int2ObjectMap<EnderDragonPart> dragonParts = new Int2ObjectOpenHashMap<>();
+     private final BiomeResolver uncachedBiomeResolver;
      private final StructureManager structureManager;
 +    public final net.minecraft.world.level.levelgen.PositionalRandomFactory gale$precompute_potentSulfurBlockEntityGeyserPositionalRandomFactory; // Gale - Pre-compute - PotentSulfurBlockEntity.geyserPositional() PositionalRandomFactory
      private final StructureCheck structureCheck;
      private final boolean tickTime;
      private final LevelDebugSynchronizers debugSynchronizers = new LevelDebugSynchronizers(this);
-@@ -634,7 +_,7 @@
+@@ -636,7 +_,7 @@
          savedDataStorage.set(io.papermc.paper.world.saveddata.PaperWorldPDC.TYPE, loadedWorldData.pdc() == null ? io.papermc.paper.world.saveddata.PaperWorldPDC.TYPE.constructor().get() : loadedWorldData.pdc());
          final GameRules gameRules = new GameRules(server.getWorldData().enabledFeatures(), savedDataStorage.computeIfAbsent(net.minecraft.world.level.gamerules.GameRuleMap.TYPE));
          this.gameRules = gameRules;
--        super(levelData, dimension, server.registryAccess(), levelStem.type(), false, isDebug, biomeZoomSeed, server.getMaxChainedNeighborUpdates(), loadedWorldData.bukkitName(), gen, biomeProvider, env, spigotConfig -> server.paperConfigurations.createWorldConfig(io.papermc.paper.configuration.PaperConfigurations.createWorldContextMap(server.storageSource.getDimensionPath(dimension), dimension.identifier(), spigotConfig, server.registryAccess(), gameRules)), executor); // Paper - create paper world configs // Paper - Anti-Xray - Pass executor
-+        super(levelData, dimension, server.registryAccess(), levelStem.type(), false, isDebug, biomeZoomSeed, server.getMaxChainedNeighborUpdates(), loadedWorldData.bukkitName(), gen, biomeProvider, env, spigotConfig -> server.paperConfigurations.createWorldConfig(io.papermc.paper.configuration.PaperConfigurations.createWorldContextMap(server.storageSource.getDimensionPath(dimension), dimension.identifier(), spigotConfig, server.registryAccess(), gameRules)), spigotConfig -> null/*server.galeConfigurations.createWorldConfig(io.papermc.paper.configuration.PaperConfigurations.createWorldContextMap(server.storageSource.getDimensionPath(dimension), dimension.identifier(), spigotConfig, server.registryAccess(), gameRules))*/, executor); // Paper - create paper world configs // Paper - Anti-Xray - Pass executor // Gale - Configuration - Create world config // TODO Gale configuration temp disabled
+-        super(levelData, dimension, server.registryAccess(), levelStem.type(), false, isDebug, biomeZoomSeed, server.getMaxChainedNeighborUpdates(), loadedWorldData.bukkitName(), gen, biomeProvider, env, spigotConfig -> server.paperConfigurations.createWorldConfig(io.papermc.paper.configuration.PaperConfigurations.createWorldContextMap(server.storageSource.getDimensionPath(dimension), dimension.identifier(), spigotConfig, server.registryAccess(), gameRules))); // Paper - create paper world configs
++        super(levelData, dimension, server.registryAccess(), levelStem.type(), false, isDebug, biomeZoomSeed, server.getMaxChainedNeighborUpdates(), loadedWorldData.bukkitName(), gen, biomeProvider, env, spigotConfig -> server.paperConfigurations.createWorldConfig(io.papermc.paper.configuration.PaperConfigurations.createWorldContextMap(server.storageSource.getDimensionPath(dimension), dimension.identifier(), spigotConfig, server.registryAccess(), gameRules)), spigotConfig -> null/*server.galeConfigurations.createWorldConfig(io.papermc.paper.configuration.PaperConfigurations.createWorldContextMap(server.storageSource.getDimensionPath(dimension), dimension.identifier(), spigotConfig, server.registryAccess(), gameRules))*/); // Paper - create paper world configs // Gale - Configuration - Create world config // TODO Gale configuration temp disabled
          this.weatherData = savedDataStorage.computeIfAbsent(WeatherData.TYPE);
          this.weatherData.setLevel(this);
          this.typeKey = typeKey;
-@@ -703,6 +_,7 @@
+@@ -704,6 +_,7 @@
  
          WorldOptions options = worldGenSettings.options();
          long seed = options.seed();
@@ -25,7 +25,7 @@
          this.structureCheck = new StructureCheck(
              getTypeKey(), // Paper - pass level stem
              this.chunkSource.chunkScanner(),
-@@ -798,9 +_,12 @@
+@@ -804,9 +_,12 @@
      public void tick(final BooleanSupplier haveTime) {
          ProfilerFiller profiler = Profiler.get();
          this.handlingTick = true;
@@ -38,7 +38,7 @@
          if (runs) {
              profiler.push("world border");
              this.getWorldBorder().tick();
-@@ -839,6 +_,7 @@
+@@ -846,6 +_,7 @@
          if (runs) {
              this.tickTime();
          }
@@ -46,7 +46,7 @@
  
          profiler.push("tickPending");
          if (!this.isDebug() && runs) {
-@@ -857,14 +_,17 @@
+@@ -864,14 +_,17 @@
  
          profiler.popPush("chunkSource");
          this.getChunkSource().tick(haveTime, true);
@@ -64,7 +64,7 @@
          if (isActive) {
              this.resetEmptyTime();
          }
-@@ -873,7 +_,8 @@
+@@ -880,7 +_,8 @@
              this.emptyTime++;
          }
  
@@ -74,7 +74,7 @@
              profiler.push("entities");
              if (this.dragonFight != null && runs) {
                  profiler.push("dragonFight");
-@@ -890,6 +_,7 @@
+@@ -897,6 +_,7 @@
                                  profiler.push("checkDespawn");
                                  entity.checkDespawn();
                                  profiler.pop();
@@ -82,7 +82,7 @@
                                  if (true) { // Paper - rewrite chunk system
                                      Entity vehicle = entity.getVehicle();
                                      if (vehicle != null) {
-@@ -913,9 +_,10 @@
+@@ -920,9 +_,10 @@
              this.tickBlockEntities();
              profiler.pop();
              } // Paper - option to disable ticking
@@ -94,36 +94,24 @@
          profiler.push("entityManagement");
          // Paper - rewrite chunk system
          profiler.pop();
-@@ -929,6 +_,7 @@
- 
+@@ -937,6 +_,7 @@
          this.debugSynchronizers.tick(this.server.debugSubscribers());
          profiler.pop();
+         this.chunkSource.randomState().garbageCollect();
 +        } // Gale - Speculative execution based on next tick simulation - Simulate next tick
      }
  
      @Override
-@@ -1396,7 +_,7 @@
-             // Paper end - log detailed entity tick information
-         entity.setOldPosAndRot();
-         ProfilerFiller profiler = Profiler.get();
--        entity.tickCount++;
-+        entity.setTickCount(entity.tickCount + 1); // Gale - Event-driven - Cat.canRemoveWhenFarAway, Ocelot.canRemoveWhenFarAway
-         entity.totalEntityAge++; // Paper - age-like counter for all entities
-         profiler.push(entity.typeHolder()::getRegisteredName);
-         profiler.incrementCounter("tickNonPassenger");
-@@ -1422,9 +_,9 @@
+@@ -1428,7 +_,7 @@
      private void tickPassenger(final Entity vehicle, final Entity entity, final boolean isActive) { // Paper - EAR 2
          if (entity.isRemoved() || entity.getVehicle() != vehicle) {
              entity.stopRiding();
 -        } else if (entity instanceof Player || this.entityTickList.contains(entity)) {
 +        } else if (entity instanceof Player || entity.gale$eventDriven_isInTickList) { // Gale - Event-driven - Entity.isInTickList
-             entity.setOldPosAndRot();
--            entity.tickCount++;
-+            entity.setTickCount(entity.tickCount + 1); // Gale - Event-driven - Cat.canRemoveWhenFarAway, Ocelot.canRemoveWhenFarAway
-             entity.totalEntityAge++; // Paper - age-like counter for all entities
              ProfilerFiller profiler = Profiler.get();
              profiler.push(entity.typeHolder()::getRegisteredName);
-@@ -1717,6 +_,13 @@
+             profiler.incrementCounter("tickPassenger");
+@@ -1721,6 +_,13 @@
  
      @Override
      public void destroyBlockProgress(final int id, final BlockPos blockPos, final int progress) {
@@ -137,7 +125,7 @@
          // CraftBukkit start
          Player breakerPlayer = null;
          Entity entity = this.getEntity(id);
-@@ -1733,7 +_,7 @@
+@@ -1737,7 +_,7 @@
                  .callEvent();
          }
          // Paper end - Add BlockBreakProgressUpdateEvent
@@ -146,7 +134,7 @@
              if (player.level() == this && player.getId() != id) {
                  double xd = blockPos.getX() - player.getX();
                  double yd = blockPos.getY() - player.getY();
-@@ -1744,7 +_,7 @@
+@@ -1748,7 +_,7 @@
                          continue;
                      }
                      // CraftBukkit end
@@ -155,7 +143,7 @@
                  }
              }
          }
-@@ -2387,27 +_,62 @@
+@@ -2653,27 +_,62 @@
  
      @Override
      public void updatePOIOnBlockStateChange(final BlockPos pos, final BlockState oldState, final BlockState newState) {
@@ -239,7 +227,7 @@
  
      public PoiManager getPoiManager() {
          return this.getChunkSource().getPoiManager();
-@@ -2857,6 +_,7 @@
+@@ -3113,6 +_,7 @@
              // ServerLevel.this.getChunkSource().addEntity(entity); // Paper - ignore and warn about illegal addEntity calls instead of crashing server; moved down below valid=true
              if (entity instanceof ServerPlayer player) {
                  ServerLevel.this.players.add(player);
@@ -247,7 +235,7 @@
                  if (player.isReceivingWaypoints()) {
                      ServerLevel.this.getWaypointManager().addPlayer(player);
                  }
-@@ -2935,6 +_,7 @@
+@@ -3191,6 +_,7 @@
              ServerLevel.this.getChunkSource().removeEntity(entity);
              if (entity instanceof ServerPlayer player) {
                  ServerLevel.this.players.remove(player);

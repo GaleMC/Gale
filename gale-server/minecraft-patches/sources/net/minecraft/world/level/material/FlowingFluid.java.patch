@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/material/FlowingFluid.java
 +++ b/net/minecraft/world/level/material/FlowingFluid.java
-@@ -397,7 +_,7 @@
+@@ -396,7 +_,7 @@
          final FluidState testFluidState
      ) {
          return !this.isSourceBlockOfThisType(testFluidState)
@@ -9,7 +9,7 @@
              && canPassThroughWall(direction, level, sourcePos, sourceState, testPos, testState);
      }
  
-@@ -479,7 +_,7 @@
+@@ -468,7 +_,7 @@
      }
  
      private static boolean canHoldFluid(final BlockGetter level, final BlockPos pos, final BlockState state, final Fluid newFluid) {

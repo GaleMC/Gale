@@ -1,0 +1,9 @@
+--- a/net/minecraft/world/clock/ClockInstance.java
++++ b/net/minecraft/world/clock/ClockInstance.java
+@@ -8,4 +_,6 @@
+     float rate();
+ 
+     boolean isPaused();
++
++    void rewind(); // Gale - Speculative execution based on next tick simulation - Simulate next tick
+ }

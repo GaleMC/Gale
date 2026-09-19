@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/chunk/ChunkGenerator.java
 +++ b/net/minecraft/world/level/chunk/ChunkGenerator.java
-@@ -347,7 +_,7 @@
+@@ -380,7 +_,7 @@
              Map<Integer, List<Structure>> structuresByStep = structuresRegistry.stream()
                  .collect(Collectors.groupingBy(structure -> structure.step().ordinal()));
              List<FeatureSorter.StepFeatureData> featureList = this.featuresPerStep.get();
@@ -9,7 +9,7 @@
              long decorationSeed = random.setDecorationSeed(level.getSeed(), origin.getX(), origin.getZ());
              Set<Holder<Biome>> possibleBiomes = new ObjectArraySet<>();
              ChunkPos.rangeClosed(sectionPos.chunk(), 1).forEach(chunkPos -> {
-@@ -363,10 +_,13 @@
+@@ -397,10 +_,13 @@
              try {
                  Registry<PlacedFeature> featureRegistry = level.registryAccess().lookupOrThrow(Registries.PLACED_FEATURE);
                  int generationSteps = Math.max(GenerationStep.Decoration.values().length, featureStepCount);
@@ -24,11 +24,11 @@
                          for (Structure structure : structuresByStep.getOrDefault(stepIndex, Collections.emptyList())) {
                              random.setFeatureSeed(decorationSeed, index, stepIndex);
                              Supplier<String> currentlyGenerating = () -> structuresRegistry.getResourceKey(structure)
-@@ -375,8 +_,14 @@
+@@ -409,8 +_,14 @@
  
                              try {
                                  level.setCurrentlyGenerating(currentlyGenerating);
--                                structureManager.startsForStructure(sectionPos, structure)
+-                                structureManager.startsForStructure(sectionPos.x(), sectionPos.z(), structure)
 -                                    .forEach(start -> start.placeInChunk(level, structureManager, this, random, getWritableArea(chunk), centerPos));
 +                                // Gale start - Local code optimization - ChunkGenerator.addVanillaDecorations() - Reuse the structureStarts list instance
 +                                structureStarts.clear();
@@ -41,7 +41,7 @@
                              } catch (Exception e) {
                                  CrashReport report = CrashReport.forThrowable(e, "Feature placement");
                                  report.addCategory("Feature").setDetail("Description", currentlyGenerating::get);
-@@ -432,6 +_,7 @@
+@@ -466,6 +_,7 @@
                          }
                      }
                  }

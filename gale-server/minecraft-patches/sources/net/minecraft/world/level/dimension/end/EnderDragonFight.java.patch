@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/dimension/end/EnderDragonFight.java
 +++ b/net/minecraft/world/level/dimension/end/EnderDragonFight.java
-@@ -176,6 +_,7 @@
+@@ -181,6 +_,7 @@
      }
  
      public void tick() {
@@ -8,9 +8,9 @@
          this.dragonEvent.setVisible(!this.dragonKilled);
          if (++this.ticksSinceLastPlayerScan >= 20) {
              this.updatePlayers();
-@@ -465,7 +_,7 @@
+@@ -470,7 +_,7 @@
              .registryAccess()
-             .lookup(Registries.CONFIGURED_FEATURE)
+             .lookup(Registries.FEATURE)
              .flatMap(registry -> registry.get(EndFeatures.END_GATEWAY_DELAYED))
 -            .ifPresent(endGateway -> endGateway.value().place(this.level, this.level.getChunkSource().getGenerator(), RandomSource.create(), pos));
 +            .ifPresent(endGateway -> endGateway.value().place(this.level, this.level.getChunkSource().getGenerator(), this.level.getRandom(), pos)); // Gale - Reduce allocations - RandomSource

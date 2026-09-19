@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/level/ServerChunkCache.java
 +++ b/net/minecraft/server/level/ServerChunkCache.java
-@@ -480,6 +_,7 @@
+@@ -477,6 +_,7 @@
  
      @Override
      public void tick(final BooleanSupplier haveTime, final boolean tickChunks) {

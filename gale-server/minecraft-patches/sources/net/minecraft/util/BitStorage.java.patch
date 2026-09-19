@@ -1,6 +1,6 @@
 --- a/net/minecraft/util/BitStorage.java
 +++ b/net/minecraft/util/BitStorage.java
-@@ -21,6 +_,8 @@
+@@ -23,6 +_,8 @@
  
      BitStorage copy();
  

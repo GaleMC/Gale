@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/LevelReader.java
 +++ b/net/minecraft/world/level/LevelReader.java
-@@ -56,6 +_,12 @@
+@@ -60,6 +_,12 @@
          return this.getBiomeManager().getBiome(pos);
      }
  

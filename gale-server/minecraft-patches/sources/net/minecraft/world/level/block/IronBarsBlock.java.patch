@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/IronBarsBlock.java
 +++ b/net/minecraft/world/level/block/IronBarsBlock.java
-@@ -99,7 +_,7 @@
+@@ -91,7 +_,7 @@
      }
  
      public final boolean attachsTo(final BlockState state, final boolean faceSolid) {

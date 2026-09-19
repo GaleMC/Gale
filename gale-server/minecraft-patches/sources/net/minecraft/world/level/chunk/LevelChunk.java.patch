@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/chunk/LevelChunk.java
 +++ b/net/minecraft/world/level/chunk/LevelChunk.java
-@@ -275,14 +_,27 @@
+@@ -274,14 +_,27 @@
          return this.getBlockStateFinal(x, y, z);
      }
  
