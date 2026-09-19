@@ -1,35 +1,29 @@
 --- a/net/minecraft/world/level/saveddata/maps/MapDecorationType.java
 +++ b/net/minecraft/world/level/saveddata/maps/MapDecorationType.java
-@@ -9,7 +_,47 @@
+@@ -9,7 +_,39 @@
  import net.minecraft.network.codec.StreamCodec;
  import net.minecraft.resources.Identifier;
  
--public record MapDecorationType(Identifier assetId, boolean showOnItemFrame, int mapColor, boolean explorationMapElement, boolean trackCount) {
+-public record MapDecorationType(Identifier assetId, boolean showOnItemFrame, boolean trackCount) {
 +// Gale start - Intrusive values - Registry elements - Value to id - Implement
 +public final class MapDecorationType extends org.galemc.gale.registry.idawarevalue.FieldIdAwareRegistryValue {
 +    private final Identifier assetId;
 +    private final boolean showOnItemFrame;
-+    private final int mapColor;
-+    private final boolean explorationMapElement;
 +    private final boolean trackCount;
-+    public MapDecorationType(Identifier assetId, boolean showOnItemFrame, int mapColor, boolean explorationMapElement, boolean trackCount) {
++    public MapDecorationType(Identifier assetId, boolean showOnItemFrame, boolean trackCount) {
 +        this.assetId = assetId;
 +        this.showOnItemFrame = showOnItemFrame;
-+        this.mapColor = mapColor;
-+        this.explorationMapElement = explorationMapElement;
 +        this.trackCount = trackCount;
 +    }
 +    public Identifier assetId() { return this.assetId; }
 +    public boolean showOnItemFrame() { return this.showOnItemFrame; }
-+    public int mapColor() { return this.mapColor; }
-+    public boolean explorationMapElement() { return this.explorationMapElement; }
 +    public boolean trackCount() { return this.trackCount; }
 +
 +    private int gale$cached_hashCode;
 +
 +    @Override
 +    public boolean equals(Object obj) {
-+        return this == obj || obj instanceof MapDecorationType other && this.assetId.equals(other.assetId) && this.showOnItemFrame == other.showOnItemFrame && this.mapColor == other.mapColor && this.explorationMapElement == other.explorationMapElement && this.trackCount == other.trackCount;
++        return this == obj || obj instanceof MapDecorationType other && this.assetId.equals(other.assetId) && this.showOnItemFrame == other.showOnItemFrame && this.trackCount == other.trackCount;
 +    }
 +
 +    @Override
@@ -38,14 +32,12 @@
 +        if (hashCode == 0) {
 +            hashCode = 1 + this.assetId.hashCode();
 +            hashCode = 31 * hashCode + (this.showOnItemFrame ? 1 : 0);
-+            hashCode = 31 * hashCode + this.mapColor;
-+            hashCode = 31 * hashCode + (this.explorationMapElement ? 1 : 0);
 +            hashCode = 31 * hashCode + (this.trackCount ? 1 : 0);
 +            this.gale$cached_hashCode = hashCode;
 +        }
 +        return hashCode;
 +    }
 +    // Gale end - Intrusive values - Registry elements - Value to id - Implement
-     public static final int NO_MAP_COLOR = -1;
      public static final Codec<Holder<MapDecorationType>> CODEC = BuiltInRegistries.MAP_DECORATION_TYPE.holderByNameCodec();
      public static final StreamCodec<RegistryFriendlyByteBuf, Holder<MapDecorationType>> STREAM_CODEC = ByteBufCodecs.holderRegistry(
+         Registries.MAP_DECORATION_TYPE

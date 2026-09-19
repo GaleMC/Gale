@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/state/BlockBehaviour.java
 +++ b/net/minecraft/world/level/block/state/BlockBehaviour.java
-@@ -466,6 +_,11 @@
+@@ -465,6 +_,11 @@
          private BlockBehaviour.BlockStateBase.@Nullable Cache cache;
          private FluidState fluidState = Fluids.EMPTY.defaultFluidState();
          private boolean isRandomlyTicking;
@@ -12,7 +12,7 @@
          private boolean solidRender;
          private VoxelShape occlusionShape;
          private VoxelShape[] occlusionShapesByFace;
-@@ -490,6 +_,16 @@
+@@ -489,6 +_,16 @@
          private boolean emptyCollisionShape;
          private boolean emptyConstantCollisionShape;
          private VoxelShape constantCollisionShape;
@@ -29,7 +29,7 @@
  
          private static void initCaches(final VoxelShape shape, final boolean neighbours) {
              ((ca.spottedleaf.moonrise.patches.collisions.shape.CollisionVoxelShape)shape).moonrise$isFullBlock();
-@@ -623,6 +_,11 @@
+@@ -624,6 +_,11 @@
  
              this.propagatesSkylightDown = this.owner.propagatesSkylightDown(this.asState());
              this.lightDampening = this.owner.getLightDampening(this.asState());
@@ -41,7 +41,7 @@
              // Paper start - rewrite chunk system
              this.isConditionallyFullOpaque = this.canOcclude & this.useShapeForLightOcclusion;
              // Paper end - rewrite chunk system
-@@ -669,6 +_,13 @@
+@@ -670,16 +_,33 @@
              return this.getBlock().builtInRegistryHolder();
          }
  
@@ -53,9 +53,7 @@
 +        // Gale end - Faster implementation for subclass - BlockBehaviour.BlockStateBase.is(Block)
 +
          @Deprecated
-         public boolean blocksMotion() {
-             Block block = this.getBlock();
-@@ -680,11 +_,21 @@
+         public boolean isSolid() {
              return this.legacySolid;
          }
  
@@ -81,12 +79,12 @@
  
          public boolean isValidSpawn(final BlockGetter level, final BlockPos pos, final EntityType<?> type) {
              return this.getBlock().properties.isValidSpawn.test(this.asState(), level, pos, type);
-@@ -791,9 +_,15 @@
+@@ -790,9 +_,15 @@
              return this.getBlock().getDirectSignal(this.asState(), level, pos, direction);
          }
  
 -        public PushReaction getPistonPushReaction() {
--            return !this.isDestroyable() ? PushReaction.BLOCK : this.pushReaction; // Paper - Protect Bedrock and End Portal/Frames from being destroyed
+-            return !this.isDestroyable() ? PushReaction.IMMOVEABLE : this.pushReaction; // Paper - Protect Bedrock and End Portal/Frames from being destroyed
 -        }
 +        // Gale start - Event-driven - BlockBehaviour.getPistonPushReaction()
 +        public final PushReaction getPistonPushReaction() {
@@ -100,7 +98,7 @@
  
          public boolean isSolidRender() {
              return this.solidRender;
-@@ -820,7 +_,17 @@
+@@ -819,7 +_,17 @@
          }
  
          public VoxelShape getCollisionShape(final BlockGetter level, final BlockPos pos, final CollisionContext context) {
@@ -119,7 +117,7 @@
          }
  
          public VoxelShape getEntityInsideCollisionShape(final BlockGetter level, final BlockPos pos, final Entity entity) {
-@@ -996,8 +_,10 @@
+@@ -1003,8 +_,10 @@
              return this.is(tag) && predicate.test(this);
          }
  
@@ -132,7 +130,7 @@
          }
  
          public boolean shouldChangedStateKeepBlockEntity(final BlockState oldState) {
-@@ -1447,6 +_,18 @@
+@@ -1474,6 +_,18 @@
      public interface StateArgumentPredicate<A> {
          boolean test(BlockState state, BlockGetter level, BlockPos pos, A a);
      }
