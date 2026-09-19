@@ -1,6 +1,6 @@
 --- a/net/minecraft/network/syncher/EntityDataSerializers.java
 +++ b/net/minecraft/network/syncher/EntityDataSerializers.java
-@@ -49,7 +_,7 @@
+@@ -50,7 +_,7 @@
  import org.jspecify.annotations.Nullable;
  
  public class EntityDataSerializers {
@@ -9,7 +9,7 @@
      public static final EntityDataSerializer<Byte> BYTE = EntityDataSerializer.forValueType(ByteBufCodecs.BYTE);
      public static final EntityDataSerializer<Integer> INT = EntityDataSerializer.forValueType(ByteBufCodecs.VAR_INT);
      public static final EntityDataSerializer<Long> LONG = EntityDataSerializer.forValueType(ByteBufCodecs.VAR_LONG);
-@@ -76,7 +_,7 @@
+@@ -77,7 +_,7 @@
          }
      };
      // Paper end - do not obfuscate items sent as entity data
@@ -18,8 +18,8 @@
          @Override
          public StreamCodec<? super RegistryFriendlyByteBuf, ItemStack> codec() {
              return OVERSIZED_ITEM_CODEC; // Paper - do not obfuscate items sent as entity data
-@@ -168,15 +_,16 @@
-     public static final EntityDataSerializer<HumanoidArm> HUMANOID_ARM = EntityDataSerializer.forValueType(HumanoidArm.STREAM_CODEC);
+@@ -170,15 +_,16 @@
+     public static final EntityDataSerializer<DyeColor> DYE_COLOR = EntityDataSerializer.forValueType(DyeColor.STREAM_CODEC);
  
      public static void registerSerializer(final EntityDataSerializer<?> serializer) {
 +        serializer.setIndexInList(SERIALIZERS.size()); // Gale - Intrusive values - EntityDataSerializers.SERIALIZERS
@@ -37,10 +37,10 @@
      }
  
      private EntityDataSerializers() {
-@@ -226,5 +_,6 @@
-         registerSerializer(QUATERNION);
+@@ -229,5 +_,6 @@
          registerSerializer(RESOLVABLE_PROFILE);
          registerSerializer(HUMANOID_ARM);
+         registerSerializer(DYE_COLOR);
 +        SERIALIZERS.trim(); // Gale - Intrusive values - EntityDataSerializers.SERIALIZERS
      }
  }

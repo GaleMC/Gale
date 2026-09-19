@@ -12,7 +12,7 @@
 </p>
 
 <p align="center">
-  <a href="https://galemc.org/downloads/gale"><img src="https://img.shields.io/badge/Downloads-MC_26.2-informational?style=flat-square" alt="Downloads"></a>
+  <a href="https://galemc.org/downloads/gale"><img src="https://img.shields.io/badge/Downloads-MC_26.3-informational?style=flat-square" alt="Downloads"></a>
   <a href="https://galemc.org/docs"><img src="https://img.shields.io/badge/Docs-galemc.org-28639e?style=flat-square" alt="Documentation"></a>
   <a href="https://discord.gg/gwezNT8c24"><img src="https://img.shields.io/discord/1045402468416233592?color=5865F2&label=Discord&logo=discord&style=flat-square" alt="Discord"></a>
   <!--<a href="https://github.com/GaleMC/Gale/blob/main/LICENSE.md"><img src="https://img.shields.io/badge/License-GPL--3.0-lightgray?style=flat-square" alt="License"></a>-->

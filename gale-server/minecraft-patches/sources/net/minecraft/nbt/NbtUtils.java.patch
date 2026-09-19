@@ -1,8 +1,8 @@
 --- a/net/minecraft/nbt/NbtUtils.java
 +++ b/net/minecraft/nbt/NbtUtils.java
-@@ -134,14 +_,17 @@
+@@ -131,14 +_,17 @@
          BlockState result = block.defaultBlockState();
-         Optional<CompoundTag> properties = tag.getCompound("Properties");
+         Optional<CompoundTag> properties = tag.getCompound("properties");
          if (properties.isPresent()) {
 +            // Gale start - avoid repeated Optional.get() calls in loop
 +            CompoundTag propertiesTag = properties.get();

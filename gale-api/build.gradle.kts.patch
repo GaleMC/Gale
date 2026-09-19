@@ -20,9 +20,9 @@
  }
 +*/
  
- val annotationsVersion = "26.0.2"
+ val annotationsVersion = "26.1.0"
  val adventureVersion = "5.2.0"
-@@ -105,10 +_,10 @@
+@@ -103,10 +_,10 @@
      testRuntimeOnly("org.junit.platform:junit-platform-launcher:6.0.3")
  
      // checkstyle
@@ -35,7 +35,7 @@
  idea {
      module {
          generatedSourceDirs.add(generatedDir.toFile())
-@@ -118,6 +_,18 @@
+@@ -116,6 +_,18 @@
      main {
          java {
              srcDir(generatedDir)

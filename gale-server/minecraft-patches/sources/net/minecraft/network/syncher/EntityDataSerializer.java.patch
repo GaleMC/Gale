@@ -1,10 +1,10 @@
 --- a/net/minecraft/network/syncher/EntityDataSerializer.java
 +++ b/net/minecraft/network/syncher/EntityDataSerializer.java
-@@ -13,13 +_,45 @@
+@@ -13,13 +_,44 @@
      T copy(T value);
  
      static <T> EntityDataSerializer<T> forValueType(final StreamCodec<? super RegistryFriendlyByteBuf, T> codec) {
--        return (ForValueType<T>)() -> codec;
+-        return (EntityDataSerializer.ForValueType<T>)() -> codec;
 +        return new ForValueType<>(codec); // Gale - Intrusive values - EntityDataSerializers.SERIALIZERS
      }
  
@@ -48,5 +48,4 @@
 +        }
 +    }
 +    // Gale end - Intrusive values - EntityDataSerializers.SERIALIZERS
-+
  }
