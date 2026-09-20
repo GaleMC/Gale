@@ -48,7 +48,6 @@ public abstract class SpatialGrid implements AbstractSpatialGrid {
 
     private int freeHead = -1;      // head of free slot singly-linked list (-1 = none)
     private int[] freeNext;         // per-slot next pointer for free list
-    private int[] slotNext; // per-slot next pointer (if used elsewhere)
 
     private static final long MULT = 0x9E3779B97F4A7C15L;
 
@@ -121,8 +120,6 @@ public abstract class SpatialGrid implements AbstractSpatialGrid {
 
         freeNext = new int[capacity];
         Arrays.fill(freeNext, -1);
-        slotNext = new int[capacity];
-        Arrays.fill(slotNext, -1);
     }
 
     // ---------------- utilities ----------------
@@ -203,9 +200,9 @@ public abstract class SpatialGrid implements AbstractSpatialGrid {
         }
     }
 
-    private void ensureTableForNewBucket() {
+    private void ensureTableForNewBucket(long key) {
         int tableSize = tableMask + 1;
-        if (usedBuckets * 2 >= tableSize) {
+        if (usedBuckets * 2 >= tableSize && findIndex(key) == -1) {
             rehash(tableSize << 1);
         }
     }
@@ -293,7 +290,7 @@ public abstract class SpatialGrid implements AbstractSpatialGrid {
 
     // insert key with slot using robin-hood; correct initialization for current bucket
     private void insertKeyWithSlot(long key, int slot) {
-        ensureTableForNewBucket();
+        ensureTableForNewBucket(key);
 
         int idx = idealIndex(key);
         int tableSize = tableMask + 1;
@@ -304,6 +301,7 @@ public abstract class SpatialGrid implements AbstractSpatialGrid {
         int curOverflowHead = -1;
         double curMinX = xs[slot], curMinY = ys[slot], curMinZ = zs[slot];
         double curMaxX = xs[slot], curMaxY = ys[slot], curMaxZ = zs[slot];
+        boolean curDirty = false;
 
         int probeDist = 0;
         while (true) {
@@ -315,7 +313,7 @@ public abstract class SpatialGrid implements AbstractSpatialGrid {
                 overflowHead[idx] = curOverflowHead;
                 bMinX[idx] = curMinX; bMinY[idx] = curMinY; bMinZ[idx] = curMinZ;
                 bMaxX[idx] = curMaxX; bMaxY[idx] = curMaxY; bMaxZ[idx] = curMaxZ;
-                aabbDirty[idx] = false;
+                aabbDirty[idx] = curDirty;
                 usedBuckets++;
                 return;
             }
@@ -360,7 +358,7 @@ public abstract class SpatialGrid implements AbstractSpatialGrid {
                 overflowHead[idx] = curOverflowHead;
                 bMinX[idx] = curMinX; bMinY[idx] = curMinY; bMinZ[idx] = curMinZ;
                 bMaxX[idx] = curMaxX; bMaxY[idx] = curMaxY; bMaxZ[idx] = curMaxZ;
-                aabbDirty[idx] = false;
+                aabbDirty[idx] = curDirty;
 
                 curKey = displacedKey;
                 curInlineCount = dCount;
@@ -368,6 +366,7 @@ public abstract class SpatialGrid implements AbstractSpatialGrid {
                 curOverflowHead = dOvHead;
                 curMinX = dMinX; curMinY = dMinY; curMinZ = dMinZ;
                 curMaxX = dMaxX; curMaxY = dMaxY; curMaxZ = dMaxZ;
+                curDirty = dDirty;
                 probeDist = occDist;
             }
             idx = (idx + 1) & tableMask;
@@ -428,26 +427,21 @@ public abstract class SpatialGrid implements AbstractSpatialGrid {
         double[] nx = new double[ncap], ny = new double[ncap], nz = new double[ncap];
         long[] nc = new long[ncap];
         int[] fn = new int[ncap];
-        int[] sn = new int[ncap]; // slotNext copy
 
         System.arraycopy(xs, 0, nx, 0, capacity);
         System.arraycopy(ys, 0, ny, 0, capacity);
         System.arraycopy(zs, 0, nz, 0, capacity);
         System.arraycopy(slotPackedCell, 0, nc, 0, capacity);
-        System.arraycopy(slotNext, 0, sn, 0, capacity);
         System.arraycopy(freeNext, 0, fn, 0, capacity);
 
         for (int i = capacity; i < ncap; i++) {
             nc[i] = SLOT_EMPTY;
             fn[i] = -1;
-            sn[i] = -1;
         }
 
         xs = nx; ys = ny; zs = nz;
         slotPackedCell = nc;
-        slotNext = sn;
         freeNext = fn;
-        // if you keep slotNext alias nn, ensure consistency; here nn was unused so removed
         capacity = ncap;
     }
 
@@ -462,16 +456,13 @@ public abstract class SpatialGrid implements AbstractSpatialGrid {
             slot = freeHead;
             freeHead = freeNext[slot];
             freeNext[slot] = -1;
-            slotNext[slot] = -1; // <--- ensure initialized
         } else {
             ensureSlotCapacity();
             slot = everAllocatedSlotCount++;
-            slotNext[slot] = -1; // <--- ensure initialized for newly allocated slot
         }
         xs[slot] = x;
         ys[slot] = y;
         zs[slot] = z;
-        slotNext[slot] = -1;
         int cx = fx >> shiftXZ;
         int cy = fy >> shiftY;
         int cz = fz >> shiftXZ;

@@ -20,6 +20,8 @@ public abstract class BossBarTask extends BukkitRunnable {
 
     abstract void updateBossBar(BossBar bossbar, Player player);
 
+    abstract int getUpdateInterval();
+
     @Override
     public void run() {
         Iterator<Map.Entry<UUID, BossBar>> iter = bossbars.entrySet().iterator();
@@ -77,7 +79,8 @@ public abstract class BossBarTask extends BukkitRunnable {
 
     public void start() {
         stop();
-        this.runTaskTimerAsynchronously(new MinecraftInternalPlugin(), 1, 1);
+        int interval = getUpdateInterval();
+        this.runTaskTimer(new MinecraftInternalPlugin(), interval, interval);
         started = true;
     }
 
