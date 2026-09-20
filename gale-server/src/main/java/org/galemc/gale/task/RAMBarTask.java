@@ -28,7 +28,6 @@ public class RAMBarTask extends BossBarTask {
     private long xmx = 0L;
     private long xms = 0L;
     private float percent = 0F;
-    private int tick = 0;
 
     public static RAMBarTask instance() {
         if (instance == null) {
@@ -56,12 +55,12 @@ public class RAMBarTask extends BossBarTask {
     }
 
     @Override
-    public void run() {
-        if (++this.tick < COMMAND_RAM_BAR_TICK_INTERVAL) {
-            return;
-        }
-        this.tick = 0;
+    int getUpdateInterval() {
+        return COMMAND_RAM_BAR_TICK_INTERVAL;
+    }
 
+    @Override
+    public void run() {
         MemoryUsage heap = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage();
 
         this.allocated = heap.getCommitted();

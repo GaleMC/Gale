@@ -24,7 +24,6 @@ public class TPSBarTask extends BossBarTask {
     private static TPSBarTask instance;
     private double tps = 20.0D;
     private double mspt = 0.0D;
-    private int tick = 0;
 
     public static TPSBarTask instance() {
         if (instance == null) {
@@ -50,12 +49,12 @@ public class TPSBarTask extends BossBarTask {
     }
 
     @Override
-    public void run() {
-        if (++tick < COMMAND_TPS_BAR_TICK_INTERVAL) {
-            return;
-        }
-        tick = 0;
+    int getUpdateInterval() {
+        return COMMAND_TPS_BAR_TICK_INTERVAL;
+    }
 
+    @Override
+    public void run() {
         this.tps = Math.max(Math.min(Bukkit.getTPS()[0], 20.0D), 0.0D);
         this.mspt = Bukkit.getAverageTickTime();
 
