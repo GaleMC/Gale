@@ -5,6 +5,7 @@ gradle.projectsEvaluated {
     def sourceSets = server.extensions.getByType(org.gradle.api.tasks.SourceSetContainer)
     def benchmark = sourceSets.create('pathfindingBenchmark')
     benchmark.java.srcDir(server.file('src/jmh/java'))
+    benchmark.java.include('org/galemc/gale/pathfinding/**')
     benchmark.compileClasspath += sourceSets.test.output + sourceSets.test.runtimeClasspath
     benchmark.runtimeClasspath += sourceSets.test.output + sourceSets.test.runtimeClasspath
 
