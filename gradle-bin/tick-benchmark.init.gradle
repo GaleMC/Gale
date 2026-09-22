@@ -1,0 +1,89 @@
+gradle.projectsEvaluated {
+    def server = gradle.rootProject.findProject(':gale-server')
+    if (server == null) return
+
+    def sourceSets = server.extensions.getByType(org.gradle.api.tasks.SourceSetContainer)
+    def benchmark = sourceSets.create('tickBenchmark')
+    benchmark.java.srcDir(server.file('src/jmh/java'))
+    benchmark.java.include('org/galemc/gale/tick/**', 'net/minecraft/**')
+    benchmark.compileClasspath += sourceSets.test.output + sourceSets.test.runtimeClasspath
+    benchmark.runtimeClasspath += sourceSets.test.output + sourceSets.test.runtimeClasspath
+    def generated = server.layout.buildDirectory.dir('generated/tick-benchmark')
+    benchmark.java.srcDir(generated)
+
+    def generate = server.tasks.register('generateTickBenchmarkReference') {
+        def sources = server.file('src/minecraft/java')
+        inputs.file(new File(sources, 'net/minecraft/world/ticks/LevelTicks.java'))
+        inputs.file(new File(sources, 'net/minecraft/world/entity/ai/goal/GoalSelector.java'))
+        outputs.dir(generated)
+        doLast {
+            def replaceOnce = { String text, String before, String after ->
+                if (text.indexOf(before) < 0 || text.indexOf(before) != text.lastIndexOf(before)) {
+                    throw new GradleException("Reference source no longer matches: " + before)
+                }
+                text.replace(before, after)
+            }
+            def ticks = new File(sources, 'net/minecraft/world/ticks/LevelTicks.java').getText('UTF-8').replace('\r\n', '\n')
+            ticks = replaceOnce(ticks, '''        if (currentTick < this.nextTickScan) {
+            return;
+        }
+        this.nextTickScan = Long.MAX_VALUE;
+''', '')
+            ticks = ticks.readLines().findAll {
+                !it.contains('this.nextTickScan =') && !it.contains('private long nextTickScan =') && !it.contains('nextScan =')
+            }.join('\n')
+            ticks = replaceOnce(ticks, '''                    } else {
+                    }
+                }
+            } else {
+            }''', '''                    }
+                }
+            }''')
+            ticks = ticks.replaceAll('\\bLevelTicks\\b', 'ReferenceLevelTicks')
+
+            def goals = new File(sources, 'net/minecraft/world/entity/ai/goal/GoalSelector.java').getText('UTF-8').replace('\r\n', '\n')
+            goals = replaceOnce(goals, '''        for (Goal.Flag flag : GOAL_FLAG_VALUES) {
+            WrappedGoal goal = this.lockedFlags.get(flag);
+            if (goal != null && !goal.isRunning()) {
+                this.lockedFlags.remove(flag);
+            }
+        }''', '''        this.lockedFlags.entrySet().removeIf(entry -> !entry.getValue().isRunning());''')
+            goals = goals.replaceAll('\\bGoalSelector\\b', 'ReferenceGoalSelector')
+
+            [
+                'net/minecraft/world/ticks/ReferenceLevelTicks.java': ticks,
+                'net/minecraft/world/entity/ai/goal/ReferenceGoalSelector.java': goals
+            ].each { path, text ->
+                def output = new File(generated.get().asFile, path)
+                output.parentFile.mkdirs()
+                output.setText(text, 'UTF-8')
+            }
+        }
+    }
+
+    server.dependencies.add(benchmark.implementationConfigurationName, 'org.openjdk.jmh:jmh-core:1.37')
+    server.dependencies.add(benchmark.annotationProcessorConfigurationName, 'org.openjdk.jmh:jmh-generator-annprocess:1.37')
+    server.tasks.named(benchmark.compileJavaTaskName) {
+        dependsOn generate, server.tasks.named('testClasses')
+    }
+    def equivalence = server.tasks.register('tickEquivalenceCheck', JavaExec) {
+        dependsOn server.tasks.named(benchmark.classesTaskName)
+        classpath = benchmark.runtimeClasspath
+        mainClass = 'org.galemc.gale.tick.TickEquivalenceCheck'
+        workingDir = temporaryDir
+    }
+    server.tasks.register('tickBenchmark', JavaExec) {
+        dependsOn equivalence
+        classpath = benchmark.runtimeClasspath
+        mainClass = 'org.openjdk.jmh.Main'
+        workingDir = temporaryDir
+        def report = server.layout.buildDirectory.file('reports/tick-jmh.json')
+        args 'org.galemc.gale.tick.TickBenchmark', '-foe', 'true', '-prof', 'gc', '-rf', 'json', '-rff', report.get().asFile.absolutePath
+        if (server.hasProperty('jmhArgs')) {
+            setArgs(server.property('jmhArgs').toString().split('\\s+') as List)
+        }
+        doFirst {
+            report.get().asFile.parentFile.mkdirs()
+        }
+    }
+}

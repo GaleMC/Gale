@@ -1,5 +1,21 @@
 --- a/net/minecraft/world/ticks/LevelTicks.java
 +++ b/net/minecraft/world/ticks/LevelTicks.java
+@@ -33,6 +_,7 @@
+     private final LongPredicate tickCheck;
+     private final Long2ObjectMap<LevelChunkTicks<T>> allContainers = new Long2ObjectOpenHashMap<>();
+     private final Long2LongMap nextTickForContainer = Util.make(new Long2LongOpenHashMap(), m -> m.defaultReturnValue(Long.MAX_VALUE));
++    private long nextTickScan = Long.MAX_VALUE;
+     private final Queue<LevelChunkTicks<T>> containersToTick = new PriorityQueue<>(CONTAINER_DRAIN_ORDER);
+     private final Queue<ScheduledTick<T>> toRunThisTick = new ArrayDeque<>();
+     private final List<ScheduledTick<T>> alreadyRunThisTick = new ArrayList<>();
+@@ -53,6 +_,7 @@
+         ScheduledTick<T> nextTick = container.peek();
+         if (nextTick != null) {
+             this.nextTickForContainer.put(posKey, nextTick.triggerTick());
++            this.nextTickScan = Math.min(this.nextTickScan, nextTick.triggerTick());
+         }
+ 
+         container.setOnTickAdded(this.chunkScheduleUpdater);
 @@ -79,6 +_,7 @@
      }
  
@@ -8,3 +24,43 @@
          ProfilerFiller profiler = Profiler.get();
          profiler.push("collect");
          this.collectTicks(currentTick, maxTicksToProcess, profiler);
+@@ -98,6 +_,11 @@
+     }
+ 
+     private void sortContainersToTick(final long currentTick) {
++        if (currentTick < this.nextTickScan) {
++            return;
++        }
++        this.nextTickScan = Long.MAX_VALUE;
++        long nextScan = Long.MAX_VALUE;
+         ObjectIterator<Entry> it = Long2LongMaps.fastIterator(this.nextTickForContainer);
+ 
+         while (it.hasNext()) {
+@@ -114,13 +_,19 @@
+                         it.remove();
+                     } else if (scheduledTick.triggerTick() > currentTick) {
+                         entry.setValue(scheduledTick.triggerTick());
++                        nextScan = Math.min(nextScan, scheduledTick.triggerTick());
+                     } else if (this.tickCheck.test(chunkPos)) {
+                         it.remove();
+                         this.containersToTick.add(candidateContainer);
++                    } else {
++                        nextScan = Math.min(nextScan, nextTick);
+                     }
+                 }
++            } else {
++                nextScan = Math.min(nextScan, nextTick);
+             }
+         }
++        this.nextTickScan = Math.min(this.nextTickScan, nextScan);
+     }
+ 
+     private void drainContainers(final long currentTick, final int maxTicksToProcess) {
+@@ -148,6 +_,7 @@
+ 
+     private void updateContainerScheduling(final ScheduledTick<T> nextTick) {
+         this.nextTickForContainer.put(ChunkPos.pack(nextTick.pos()), nextTick.triggerTick());
++        this.nextTickScan = Math.min(this.nextTickScan, nextTick.triggerTick());
+     }
+ 
+     private void drainFromCurrentContainer(

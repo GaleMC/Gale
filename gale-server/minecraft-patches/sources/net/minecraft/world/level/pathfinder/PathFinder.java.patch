@@ -55,6 +55,12 @@
 -        List<Node> nodes = Lists.newArrayList();
 -        Node node = closest;
 -        nodes.add(0, node);
+-
+-        while (node.cameFrom != null) {
+-            node = node.cameFrom;
+-            nodes.add(0, node);
+-        }
+-
 +    private @Nullable Path selectBestPath(final List<Map.Entry<Target, BlockPos>> targets, final boolean reached) {
 +        if (targets.isEmpty()) {
 +            return null;
@@ -84,18 +90,15 @@
 +
 +        return this.reconstructPath(bestNode, best.getValue(), reached, bestLength);
 +    }
- 
--        while (node.cameFrom != null) {
--            node = node.cameFrom;
--            nodes.add(0, node);
++
 +    private static int getNodeCount(final Node closest) {
 +        int count = 1;
 +        for (Node node = closest; node.cameFrom != null; node = node.cameFrom) {
 +            count++;
-         }
++        }
 +        return count;
 +    }
- 
++
 +    private Path reconstructPath(final Node closest, final BlockPos target, final boolean reached, final int nodeCount) {
 +        List<Node> nodes = Lists.newArrayListWithCapacity(nodeCount);
 +        for (Node node = closest; node != null; node = node.cameFrom) {

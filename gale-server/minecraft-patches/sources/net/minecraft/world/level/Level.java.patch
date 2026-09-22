@@ -288,6 +288,37 @@
          this.tickingBlockEntities = true;
          if (!this.pendingBlockEntityTickers.isEmpty()) {
              this.blockEntityTickers.addAll(this.pendingBlockEntityTickers);
+@@ -1496,12 +_,15 @@
+ 
+         int tickedEntities = 0; // Paper - rewrite chunk system
+         // Paper start - Fix MC-117075 use removeAll
+-        final it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet<@Nullable TickingBlockEntity> toRemove = new it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet<>();
+-        toRemove.add(null);
++        it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet<@Nullable TickingBlockEntity> toRemove = null;
+         for (int tickerIndex = 0; tickerIndex < this.blockEntityTickers.size(); tickerIndex++) {
+             final TickingBlockEntity ticker = this.blockEntityTickers.get(tickerIndex);
+         // Paper end - Fix MC-117075 use removeAll
+             if (ticker.isRemoved()) {
++                if (toRemove == null) {
++                    toRemove = new it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet<>();
++                    toRemove.add(null);
++                }
+                 toRemove.add(ticker); // Paper - Fix MC-117075 use removeAll
+             } else if (tickBlockEntities && this.shouldTickBlocksAt(ticker.getPos())) {
+                 ticker.tick();
+@@ -1513,7 +_,11 @@
+             }
+         }
+ 
+-        this.blockEntityTickers.removeAll(toRemove); // Paper - Fix MC-117075 use removeAll
++        if (toRemove == null) {
++            this.blockEntityTickers.removeIf(java.util.Objects::isNull);
++        } else {
++            this.blockEntityTickers.removeAll(toRemove); // Paper - Fix MC-117075 use removeAll
++        }
+         this.tickingBlockEntities = false;
+     }
+ 
 @@ -2127,6 +_,13 @@
      public BiomeManager getBiomeManager() {
          return this.biomeManager;

@@ -1,0 +1,19 @@
+--- a/net/minecraft/world/level/BaseSpawner.java
++++ b/net/minecraft/world/level/BaseSpawner.java
+@@ -107,6 +_,7 @@
+                 RandomSource random = level.getRandom();
+                 SpawnData nextSpawnData = this.getOrCreateNextSpawnData(level, random, pos);
+ 
++                AABB nearbyEntitiesBox = new AABB(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1).inflate(this.spawnRange); // Gale - Do less work - Hoist nearby entity query box out of the spawn loop
+                 for (int c = 0; c < this.spawnCount; c++) {
+                     try (ProblemReporter.ScopedCollector reporter = new ProblemReporter.ScopedCollector(this::toString, LOGGER)) {
+                         ValueInput input = TagValueInput.create(reporter, level.registryAccess(), nextSpawnData.getEntityToSpawn());
+@@ -165,7 +_,7 @@
+ 
+                             int nearBy = level.getEntities(
+                                     EntityTypeTest.forExactClass(entity.getClass()),
+-                                    new AABB(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1).inflate(this.spawnRange),
++                                    nearbyEntitiesBox, // Gale - Do less work - Hoist nearby entity query box out of the spawn loop
+                                     EntitySelector.NO_SPECTATORS
+                                 )
+                                 .size();

@@ -1,0 +1,16 @@
+--- a/net/minecraft/world/entity/ai/goal/GoalSelector.java
++++ b/net/minecraft/world/entity/ai/goal/GoalSelector.java
+@@ -91,7 +_,12 @@
+             }
+         }
+ 
+-        this.lockedFlags.entrySet().removeIf(entry -> !entry.getValue().isRunning());
++        for (Goal.Flag flag : GOAL_FLAG_VALUES) {
++            WrappedGoal goal = this.lockedFlags.get(flag);
++            if (goal != null && !goal.isRunning()) {
++                this.lockedFlags.remove(flag);
++            }
++        }
+         profiler.pop();
+         profiler.push("goalUpdate");
+ 
