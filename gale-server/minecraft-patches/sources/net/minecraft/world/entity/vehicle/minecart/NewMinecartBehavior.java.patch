@@ -1,0 +1,13 @@
+--- a/net/minecraft/world/entity/vehicle/minecart/NewMinecartBehavior.java
++++ b/net/minecraft/world/entity/vehicle/minecart/NewMinecartBehavior.java
+@@ -461,7 +_,9 @@
+             }
+         }
+ 
+-        if (this.position().distanceTo(oldPosition) < 1.0E-5F && newPosition.distanceTo(oldPosition) > 1.0E-5F) {
++        // Gale start - use squared distance checks
++        if (this.position().distanceToSqr(oldPosition) < 1.0E-5F * 1.0E-5F && newPosition.distanceToSqr(oldPosition) > 1.0E-5F * 1.0E-5F) {
++        // Gale end - use squared distance checks
+             this.setDeltaMovement(Vec3.ZERO);
+             return 0.0;
+         } else {
